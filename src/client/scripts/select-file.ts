@@ -1,4 +1,4 @@
-import { faUpload, faCloud, faLink } from '@fortawesome/free-solid-svg-icons';
+import { faUpload, faCloud } from '@fortawesome/free-solid-svg-icons';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 
@@ -37,6 +37,7 @@ export function selectFile(src: any, label: string | null, multiple = false) {
 			});
 		};
 
+		/*
 		const chooseFileFromUrl = () => {
 			os.dialog({
 				title: i18n.global.t('uploadFromUrl'),
@@ -67,6 +68,7 @@ export function selectFile(src: any, label: string | null, multiple = false) {
 				});
 			});
 		};
+		*/
 
 		os.modalMenu([label ? {
 			text: label,
@@ -79,10 +81,6 @@ export function selectFile(src: any, label: string | null, multiple = false) {
 			text: i18n.global.t('fromDrive'),
 			icon: faCloud,
 			action: chooseFileFromDrive
-		}, {
-			text: i18n.global.t('fromUrl'),
-			icon: faLink,
-			action: chooseFileFromUrl
 		}], src);
 	});
 }
