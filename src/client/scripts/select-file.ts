@@ -40,9 +40,9 @@ export function selectFile(src: any, label: string | null, multiple = false) {
 		/*
 		const chooseFileFromUrl = () => {
 			os.dialog({
-				title: i18n.global.t('uploadFromUrl'),
+				title: i18n.locale.uploadFromUrl,
 				input: {
-					placeholder: i18n.global.t('uploadFromUrlDescription')
+					placeholder: i18n.locale.uploadFromUrlDescription
 				}
 			}).then(({ canceled, result: url }) => {
 				if (canceled) return;
@@ -63,8 +63,8 @@ export function selectFile(src: any, label: string | null, multiple = false) {
 				});
 
 				os.dialog({
-					title: i18n.global.t('uploadFromUrlRequested'),
-					text: i18n.global.t('uploadFromUrlMayTakeTime')
+					title: i18n.locale.uploadFromUrlRequested,
+					text: i18n.locale.uploadFromUrlMayTakeTime
 				});
 			});
 		};
@@ -74,11 +74,11 @@ export function selectFile(src: any, label: string | null, multiple = false) {
 			text: label,
 			type: 'label'
 		} : undefined, {
-			text: i18n.global.t('upload'),
+			text: i18n.locale.upload,
 			icon: faUpload,
 			action: chooseFileFromPc
 		}, {
-			text: i18n.global.t('fromDrive'),
+			text: i18n.locale.fromDrive,
 			icon: faCloud,
 			action: chooseFileFromDrive
 		}], src);
