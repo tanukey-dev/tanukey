@@ -683,7 +683,7 @@ export default defineComponent({
 						text: this.$ts.reportAbuse,
 						action: () => {
 							const u = `${url}/notes/${this.appearNote.id}`;
-							window.open(`https://team.nijimiss.app/abuse?your-id=${this.$i.id}&target=${u}`, `_blank`)
+							window.open(`https://team.nijimiss.app/abuse?your-id=${this.$i.id}&target=${u}`, '_blank')
 						}
 					}]
 					: []
