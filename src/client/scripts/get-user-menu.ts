@@ -104,7 +104,7 @@ export function getUserMenu(user) {
 	}
 
 	function reportAbuse() {
-		window.open(`https://team.nijimiss.moe/abuse?your-id=${meId}&target=${user.id}`, `_blank`);
+		window.open(`https://team.nijimiss.app/abuse?your-id=${meId}&target=${user.id}`, `_blank`);
 	}
 
 	async function getConfirmed(text: string): Promise<boolean> {
