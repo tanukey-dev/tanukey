@@ -683,10 +683,7 @@ export default defineComponent({
 						text: this.$ts.reportAbuse,
 						action: () => {
 							const u = `${url}/notes/${this.appearNote.id}`;
-							os.popup(import('@/components/abuse-report-window.vue'), {
-								user: this.appearNote.user,
-								initialComment: `Note: ${u}\n-----\n`
-							}, {}, 'closed');
+							window.open(`https://team.nijimiss.moe/abuse?your-id=${this.$i.id}&target=${u}`, `_blank`)
 						}
 					}]
 					: []
