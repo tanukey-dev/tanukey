@@ -49,6 +49,7 @@ copyUsername: "ユーザー名をコピー"
 searchUser: "ユーザーを検索"
 reply: "返信"
 loadMore: "もっと見る"
+showMore: "もっと見る"
 youGotNewFollower: "フォローされました"
 receiveFollowRequest: "フォローリクエストされました"
 followRequestAccepted: "フォローが承認されました"
@@ -665,6 +666,14 @@ makeExplorable: "アカウントを見つけやすくする"
 makeExplorableDescription: "オフにすると、「みつける」にアカウントが載らなくなります。"
 showGapBetweenNotesInTimeline: "タイムラインのノートを離して表示"
 duplicate: "複製"
+left: "左"
+center: "中央"
+wide: "広い"
+narrow: "狭い"
+reloadToApplySetting: "設定はページリロード後に反映されます。今すぐリロードしますか？"
+showTitlebar: "タイトルバーを表示する"
+clearCache: "キャッシュをクリア"
+onlineUsersCount: "{n}人がオンライン"
 
 _aboutMisskey:
   about: "Misskeyはsyuiloによって2014年から開発されている、オープンソースのソフトウェアです。"
@@ -1006,6 +1015,8 @@ _widgets:
   federation: "連合"
   postForm: "投稿フォーム"
   slideshow: "スライドショー"
+  button: "ボタン"
+  onlineUsers: "オンラインユーザー"
 
 _cw:
   hide: "隠す"
@@ -1515,6 +1526,8 @@ _notification:
 _deck:
   alwaysShowMainColumn: "常にメインカラムを表示"
   columnAlign: "カラムの寄せ"
+  columnMargin: "カラム間のマージン"
+  columnHeaderHeight: "カラムのヘッダー幅"
   addColumn: "カラムを追加"
   swapLeft: "左に移動"
   swapRight: "右に移動"
@@ -1524,6 +1537,7 @@ _deck:
   popRight: "右に出す"
 
   _columns:
+    main: "メイン"
     widgets: "ウィジェット"
     notifications: "通知"
     tl: "タイムライン"

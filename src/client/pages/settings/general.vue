@@ -1,5 +1,6 @@
 <template>
 <FormBase>
+	<FormSwitch v-model:value="titlebar">{{ $ts.showTitlebar }}</FormSwitch>
 	<FormSwitch v-model:value="showFixedPostForm">{{ $ts.showFixedPostForm }}</FormSwitch>
 
 	<FormSelect v-model:value="lang">
@@ -94,6 +95,7 @@ import MkLink from '@/components/link.vue';
 import { langs } from '@/config';
 import { defaultStore } from '@/store';
 import { ColdDeviceStorage } from '@/store';
+import * as os from '@/os';
 
 export default defineComponent({
 	components: {
@@ -132,6 +134,7 @@ export default defineComponent({
 		useOsNativeEmojis: defaultStore.makeGetterSetter('useOsNativeEmojis'),
 		disableShowingAnimatedImages: defaultStore.makeGetterSetter('disableShowingAnimatedImages'),
 		loadRawImages: defaultStore.makeGetterSetter('loadRawImages'),
+		titlebar: defaultStore.makeGetterSetter('titlebar'),
 		imageNewTab: defaultStore.makeGetterSetter('imageNewTab'),
 		nsfw: defaultStore.makeGetterSetter('nsfw'),
 		disablePagesScript: defaultStore.makeGetterSetter('disablePagesScript'),
@@ -146,7 +149,7 @@ export default defineComponent({
 		lang() {
 			localStorage.setItem('lang', this.lang);
 			localStorage.removeItem('locale');
-			location.reload();
+			this.reloadAsk();
 		},
 
 		fontSize() {
@@ -155,7 +158,7 @@ export default defineComponent({
 			} else {
 				localStorage.setItem('fontSize', this.fontSize);
 			}
-			location.reload();
+			this.reloadAsk();
 		},
 
 		useSystemFont() {
@@ -164,16 +167,37 @@ export default defineComponent({
 			} else {
 				localStorage.removeItem('useSystemFont');
 			}
-			location.reload();
+			this.reloadAsk();
 		},
 
 		enableInfiniteScroll() {
-			location.reload()
+			this.reloadAsk();
+		},
+
+		showGapBetweenNotesInTimeline() {
+			this.reloadAsk();
+		},
+
+		titlebar() {
+			this.reloadAsk();
 		},
 	},
 
 	mounted() {
 		this.$emit('info', this.INFO);
 	},
+
+	methods: {
+		async reloadAsk() {
+			const { canceled } = await os.dialog({
+				type: 'info',
+				text: this.$ts.reloadToApplySetting,
+				showCancelButton: true
+			});
+			if (canceled) return;
+
+			location.reload();
+		}
+	}
 });
 </script>

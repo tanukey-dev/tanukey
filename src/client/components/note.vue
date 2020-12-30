@@ -36,7 +36,7 @@
 			<span class="localOnly" v-if="note.localOnly"><Fa :icon="faBiohazard"/></span>
 		</div>
 	</div>
-	<article class="article" @contextmenu="onContextmenu">
+	<article class="article" @contextmenu.stop="onContextmenu">
 		<MkAvatar class="avatar" :user="appearNote.user"/>
 		<div class="main">
 			<XNoteHeader class="header" :note="appearNote" :mini="true"/>
@@ -46,7 +46,7 @@
 					<Mfm v-if="appearNote.cw != ''" class="text" :text="appearNote.cw" :author="appearNote.user" :i="$i" :custom-emojis="appearNote.emojis"/>
 					<XCwButton v-model:value="showContent" :note="appearNote"/>
 				</p>
-				<div class="content" v-show="appearNote.cw == null || showContent">
+				<div class="content" :class="{ collapsed }" v-show="appearNote.cw == null || showContent">
 					<div class="text">
 						<span v-if="appearNote.isHidden" style="opacity: 0.5">({{ $ts.private }})</span>
 						<MkA class="reply" v-if="appearNote.replyId" :to="`/notes/${appearNote.replyId}`"><Fa :icon="faReply"/></MkA>
@@ -59,6 +59,9 @@
 					<XPoll v-if="appearNote.poll" :note="appearNote" ref="pollViewer" class="poll"/>
 					<MkUrlPreview v-for="url in urls" :url="url" :key="url" :compact="true" :detail="detail" class="url-preview"/>
 					<div class="renote" v-if="appearNote.renote"><XNotePreview :note="appearNote.renote"/></div>
+					<button v-if="collapsed" class="fade _button" @click="collapsed = false">
+						<span>{{ $ts.showMore }}</span>
+					</button>
 				</div>
 				<MkA v-if="appearNote.channel && !inChannel" class="channel" :to="`/channels/${appearNote.channel.id}`"><Fa :icon="faSatelliteDish"/> {{ appearNote.channel.name }}</MkA>
 			</div>
@@ -174,6 +177,7 @@ export default defineComponent({
 			conversation: [],
 			replies: [],
 			showContent: false,
+			collapsed: false,
 			isDeleted: false,
 			muted: false,
 			faEdit, faBolt, faTimes, faBullhorn, faPlus, faMinus, faRetweet, faReply, faReplyAll, faEllipsisH, faHome, faUnlock, faEnvelope, faThumbtack, faBan, faBiohazard, faPlug, faSatelliteDish
@@ -273,6 +277,12 @@ export default defineComponent({
 			this.connection = os.stream;
 		}
 
+		this.collapsed = this.appearNote.text && (
+			(this.appearNote.text.split('\n').length > 9) ||
+			(this.appearNote.text.length > 500)
+		);
+		this.muted = await checkWordMute(this.appearNote, this.$i, this.$store.state.mutedWords);
+
 		// plugin
 		if (noteViewInterruptors.length > 0) {
 			let result = this.note;
@@ -281,8 +291,6 @@ export default defineComponent({
 			}
 			this.$emit('update:note', Object.freeze(result));
 		}
-
-		this.muted = await checkWordMute(this.appearNote, this.$i, this.$store.state.mutedWords);
 
 		if (this.detail) {
 			os.api('notes/children', {
@@ -683,10 +691,7 @@ export default defineComponent({
 						text: this.$ts.reportAbuse,
 						action: () => {
 							const u = `${url}/notes/${this.appearNote.id}`;
-							os.popup(import('@/components/abuse-report-window.vue'), {
-								user: this.appearNote.user,
-								initialComment: `Note: ${u}\n-----\n`
-							}, {}, 'closed');
+							window.open(`https://team.nijimiss.app/abuse?your-id=${this.$i.id}&target=${u}`, '_blank')
 						}
 					}]
 					: []
@@ -881,6 +886,14 @@ export default defineComponent({
 	overflow: hidden;
 	contain: content;
 
+	// これらの指定はパフォーマンス向上には有効だが、ノートの高さは一定でないため、
+	// 下の方までスクロールすると上のノートの高さがここで決め打ちされたものに変化し、表示しているノートの位置が変わってしまう
+	// ノートがマウントされたときに自身の高さを取得し contain-intrinsic-size を設定しなおせばほぼ解決できそうだが、
+	// 今度はその処理自体がパフォーマンス低下の原因にならないか懸念される。また、被リアクションでも高さは変化するため、やはり多少のズレは生じる
+	// 一度レンダリングされた要素はブラウザがよしなにサイズを覚えておいてくれるような実装になるまで待った方が良さそう(なるのか？)
+	//content-visibility: auto;
+  //contain-intrinsic-size: 0 128px;
+
 	&:focus {
 		outline: none;
 
@@ -1030,6 +1043,37 @@ export default defineComponent({
 				}
 
 				> .content {
+					&.collapsed {
+						position: relative;
+						max-height: 9em;
+						overflow: hidden;
+
+						> .fade {
+							display: block;
+							position: absolute;
+							bottom: 0;
+							left: 0;
+							width: 100%;
+							height: 64px;
+							background: linear-gradient(0deg, var(--panel), var(--X15));
+
+							> span {
+								display: inline-block;
+								background: var(--panel);
+								padding: 6px 10px;
+								font-size: 0.8em;
+								border-radius: 999px;
+								box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
+							}
+
+							&:hover {
+								> span {
+									background: var(--panelHighlight);
+								}
+							}
+						}
+					}
+
 					> .text {
 						overflow-wrap: break-word;
 

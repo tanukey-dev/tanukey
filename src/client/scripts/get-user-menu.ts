@@ -104,9 +104,9 @@ export function getUserMenu(user) {
 	}
 
 	function reportAbuse() {
-		os.popup(import('@/components/abuse-report-window.vue'), {
-			user: user,
-		}, {}, 'closed');
+		window.open(
+			`https://team.nijimiss.app/abuse?your-id=${meId}&target=${user.username}${user.host !== null ? '@' + user.host : ''}`,
+			'_blank');
 	}
 
 	async function getConfirmed(text: string): Promise<boolean> {

@@ -28,8 +28,10 @@ if (localStorage.getItem('vuex') != null) {
 		}
 	}
 
+	localStorage.setItem('vuex-old', JSON.stringify(vuex));
 	localStorage.removeItem('vuex');
 	localStorage.removeItem('i');
+	localStorage.removeItem('locale');
 
 	location.reload();
 }
@@ -45,15 +47,17 @@ import { router } from '@/router';
 import { applyTheme } from '@/scripts/theme';
 import { isDeviceDarkmode } from '@/scripts/is-device-darkmode';
 import { i18n } from '@/i18n';
-import { stream, isMobile, dialog } from '@/os';
+import { stream, isMobile, dialog, post } from '@/os';
 import * as sound from '@/scripts/sound';
 import { $i, refreshAccount, login, updateAccount, signout } from '@/account';
 import { defaultStore, ColdDeviceStorage } from '@/store';
 import { fetchInstance, instance } from '@/instance';
+import { makeHotkey } from './scripts/hotkey';
+import { search } from './scripts/search';
 
 console.info(`Misskey v${version}`);
 
-window.clearTimeout(window.mkBootTimer);
+window.clearTimeout((window as any).mkBootTimer);
 
 if (_DEV_) {
 	console.warn('Development mode!!!');
@@ -86,10 +90,6 @@ if (_DEV_) {
 
 // タッチデバイスでCSSの:hoverを機能させる
 document.addEventListener('touchend', () => {}, { passive: true });
-
-if (localStorage.getItem('theme') == null) {
-	applyTheme(require('@/themes/l-light.json5'));
-}
 
 //#region SEE: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
 // TODO: いつの日にか消したい
@@ -200,7 +200,7 @@ watch(defaultStore.reactiveState.darkMode, (darkMode) => {
 		const themes = builtinThemes.concat(ColdDeviceStorage.get('themes'));
 		applyTheme(themes.find(x => x.id === (darkMode ? ColdDeviceStorage.get('darkTheme') : ColdDeviceStorage.get('lightTheme'))));
 	});
-});
+}, { immediate: localStorage.theme == null });
 
 //#region Sync dark mode
 if (ColdDeviceStorage.get('syncDeviceDarkMode')) {
@@ -213,6 +213,16 @@ window.matchMedia('(prefers-color-scheme: dark)').addListener(mql => {
 	}
 });
 //#endregion
+
+// shortcut
+document.addEventListener('keydown', makeHotkey({
+	'd': () => {
+		defaultStore.set('darkMode', !defaultStore.state.darkMode);
+	},
+	'p|n': post,
+	's': search,
+	//TODO: 'h|/': help
+}));
 
 watch(defaultStore.reactiveState.useBlurEffectForModal, v => {
 	document.documentElement.style.setProperty('--modalBgFilter', v ? 'blur(4px)' : 'none');
