@@ -70,6 +70,7 @@ export default defineComponent({
 			// TODO: ResizeObserver無くしたい
 			new ResizeObserver((entries, observer) => {
 				const rect = this.src.getBoundingClientRect();
+				
 				const width = popover.offsetWidth;
 				const height = popover.offsetHeight;
 
@@ -98,11 +99,11 @@ export default defineComponent({
 					}
 				} else {
 					if (left + width - window.pageXOffset > window.innerWidth) {
-						left = window.innerWidth - width + window.pageXOffset;
+						left = window.innerWidth - width + window.pageXOffset - 1;
 					}
 
 					if (top + height - window.pageYOffset > window.innerHeight) {
-						top = window.innerHeight - height + window.pageYOffset;
+						top = window.innerHeight - height + window.pageYOffset - 1;
 					}
 				}
 
