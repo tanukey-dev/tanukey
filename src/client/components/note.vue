@@ -1,6 +1,6 @@
 <template>
 <div
-	class="note _panel"
+	class="tkcbzcuz _panel"
 	v-if="!muted"
 	v-show="!isDeleted"
 	:tabindex="!isDeleted ? '-1' : null"
@@ -728,7 +728,13 @@ export default defineComponent({
 			};
 			if (isLink(e.target)) return;
 			if (window.getSelection().toString() !== '') return;
-			os.contextMenu(this.getMenu(), e).then(this.focus);
+
+			if (this.$store.state.useReactionPickerForContextMenu) {
+				e.preventDefault();
+				this.react();
+			} else {
+				os.contextMenu(this.getMenu(), e).then(this.focus);
+			}
 		},
 
 		menu(viaKeyboard = false) {
@@ -855,7 +861,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.note {
+.tkcbzcuz {
 	position: relative;
 	transition: box-shadow 0.1s ease;
 	overflow: hidden;
