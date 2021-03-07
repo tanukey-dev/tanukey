@@ -6,7 +6,6 @@ import * as fs from 'fs';
 import * as gulp from 'gulp';
 import * as ts from 'gulp-typescript';
 import * as rimraf from 'rimraf';
-import * as rename from 'gulp-rename';
 import * as replace from 'gulp-replace';
 const terser = require('gulp-terser');
 const cssnano = require('gulp-cssnano');
@@ -29,23 +28,23 @@ gulp.task('build:copy:views', () =>
 );
 
 gulp.task('build:copy:fonts', () =>
-	gulp.src('./node_modules/three/examples/fonts/**/*').pipe(gulp.dest('./built/client/assets/fonts/'))
+	gulp.src('./node_modules/three/examples/fonts/**/*').pipe(gulp.dest('./built/assets/fonts/'))
 );
 
 gulp.task('build:copy:locales', cb => {
-	fs.mkdirSync('./built/client/assets/locales', { recursive: true });
+	fs.mkdirSync('./built/assets/locales', { recursive: true });
 
 	const v = { '_version_': meta.version };
 
 	for (const [lang, locale] of Object.entries(locales)) {
-		fs.writeFileSync(`./built/client/assets/locales/${lang}.${meta.version}.json`, JSON.stringify({ ...locale, ...v }), 'utf-8');
+		fs.writeFileSync(`./built/assets/locales/${lang}.${meta.version}.json`, JSON.stringify({ ...locale, ...v }), 'utf-8');
 	}
 
 	cb();
 });
 
 gulp.task('build:client:script', () => {
-	return gulp.src(['./src/server/web/boot.js'])
+	return gulp.src(['./src/server/web/boot.js', './src/server/web/bios.js', './src/server/web/cli.js'])
 		.pipe(replace('VERSION', JSON.stringify(meta.version)))
 		.pipe(replace('LANGS', JSON.stringify(Object.keys(locales))))
 		.pipe(terser({
@@ -55,8 +54,10 @@ gulp.task('build:client:script', () => {
 });
 
 gulp.task('build:client:style', () => {
-	return gulp.src(['./src/server/web/style.css'])
-		.pipe(cssnano())
+	return gulp.src(['./src/server/web/style.css', './src/server/web/bios.css', './src/server/web/cli.css'])
+		.pipe(cssnano({
+			zindex: false
+		}))
 		.pipe(gulp.dest('./built/server/web/'));
 });
 
@@ -77,33 +78,17 @@ gulp.task('cleanall', gulp.parallel('clean', cb =>
 	rimraf('./node_modules', cb)
 ));
 
-gulp.task('copy:client', () =>
-		gulp.src([
-			'./assets/**/*',
-			'./src/client/assets/**/*',
-		])
-			.pipe(rename(path => {
-				path.dirname = path.dirname!.replace('assets', '.');
-			}))
-			.pipe(gulp.dest('./built/client/assets/'))
-);
-
 gulp.task('copy:docs', () =>
 		gulp.src([
 			'./src/docs/**/*',
 		])
-		.pipe(gulp.dest('./built/client/assets/docs/'))
+		.pipe(gulp.dest('./built/assets/docs/'))
 );
-
-gulp.task('build:client', gulp.parallel(
-	'copy:client',
-	'copy:docs'
-));
 
 gulp.task('build', gulp.parallel(
 	'build:ts',
 	'build:copy',
-	'build:client',
+	'copy:docs',
 ));
 
 gulp.task('default', gulp.task('build'));
