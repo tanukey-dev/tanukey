@@ -90,7 +90,7 @@ export const defaultStore = markRaw(new Storage('base', {
 		default: [] as {
 			name: string;
 			id: string;
-			place: string;
+			place: string | null;
 			data: Record<string, any>;
 		}[]
 	},
@@ -197,6 +197,14 @@ export const defaultStore = markRaw(new Storage('base', {
 	squareAvatars: {
 		where: 'device',
 		default: false
+	},
+	postFormWithHashtags: {
+		where: 'device',
+		default: false
+	},
+	postFormHashtags: {
+		where: 'device',
+		default: ''
 	},
 }));
 
