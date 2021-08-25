@@ -156,8 +156,10 @@ hr {
 
 ._button {
 	appearance: none;
+	display: inline-block;
 	padding: 0;
 	margin: 0; // for Safari
+	width: max-content;
 	background: none;
 	border: none;
 	cursor: pointer;
@@ -199,6 +201,11 @@ hr {
 	&:not(:disabled):active {
 		background: var(--X9);
 	}
+}
+
+._help {
+	color: var(--accent);
+	cursor: help
 }
 
 ._textButton {
@@ -330,6 +337,7 @@ hr {
 	contain: layout; // ふき出しがボックスから飛び出て表示されるようなデザインをする場合もあるので paint は contain することができない
 }
 
+// TODO: 廃止
 ._root {
 	box-sizing: border-box;
 	margin: var(--root-margin, 32px) auto;

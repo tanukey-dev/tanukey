@@ -1,12 +1,12 @@
 <template>
-<form class="mk-signup" @submit.prevent="onSubmit" :autocomplete="Math.random()">
+<form class="qlvuhzng" @submit.prevent="onSubmit" :autocomplete="Math.random()">
 	<template v-if="meta">
-		<MkInput v-if="meta.disableRegistration" v-model="invitationCode" type="text" :autocomplete="Math.random()" spellcheck="false" required>
+		<MkInput class="_inputNoTopMargin" v-if="meta.disableRegistration" v-model="invitationCode" type="text" :autocomplete="Math.random()" spellcheck="false" required>
 			<template #label>{{ $ts.invitationCode }}</template>
 			<template #prefix><i class="fas fa-key"></i></template>
 		</MkInput>
-		<MkInput v-model="username" type="text" pattern="^[a-zA-Z0-9_]{1,20}$" :autocomplete="Math.random()" spellcheck="false" required @update:modelValue="onChangeUsername">
-			<template #label>{{ $ts.username }}</template>
+		<MkInput class="_inputNoTopMargin" v-model="username" type="text" pattern="^[a-zA-Z0-9_]{1,20}$" :autocomplete="Math.random()" spellcheck="false" required @update:modelValue="onChangeUsername" data-cy-signup-username>
+			<template #label>{{ $ts.username }} <div class="_button _help" v-tooltip:dialog="$ts.usernameInfo"><i class="far fa-question-circle"></i></div></template>
 			<template #prefix>@</template>
 			<template #suffix>@{{ host }}</template>
 			<template #caption>
@@ -19,7 +19,7 @@
 				<span v-if="usernameState == 'max-range'" style="color: var(--error)"><i class="fas fa-exclamation-triangle fa-fw"></i> {{ $ts.tooLong }}</span>
 			</template>
 		</MkInput>
-		<MkInput v-model="password" type="password" :autocomplete="Math.random()" required @update:modelValue="onChangePassword">
+		<MkInput v-model="password" type="password" :autocomplete="Math.random()" required @update:modelValue="onChangePassword" data-cy-signup-password>
 			<template #label>{{ $ts.password }}</template>
 			<template #prefix><i class="fas fa-lock"></i></template>
 			<template #caption>
@@ -28,7 +28,7 @@
 				<span v-if="passwordStrength == 'high'" style="color: var(--success)"><i class="fas fa-check fa-fw"></i> {{ $ts.strongPassword }}</span>
 			</template>
 		</MkInput>
-		<MkInput v-model="retypedPassword" type="password" :autocomplete="Math.random()" required @update:modelValue="onChangePasswordRetype">
+		<MkInput v-model="retypedPassword" type="password" :autocomplete="Math.random()" required @update:modelValue="onChangePasswordRetype" data-cy-signup-password-retype>
 			<template #label>{{ $ts.password }} ({{ $ts.retype }})</template>
 			<template #prefix><i class="fas fa-lock"></i></template>
 			<template #caption>
@@ -46,7 +46,7 @@
 		</label>
 		<captcha v-if="meta.enableHcaptcha" class="captcha" provider="hcaptcha" ref="hcaptcha" v-model:value="hCaptchaResponse" :sitekey="meta.hcaptchaSiteKey"/>
 		<captcha v-if="meta.enableRecaptcha" class="captcha" provider="recaptcha" ref="recaptcha" v-model:value="reCaptchaResponse" :sitekey="meta.recaptchaSiteKey"/>
-		<MkButton type="submit" :disabled="shouldDisableSubmitting" primary>{{ $ts.start }}</MkButton>
+		<MkButton type="submit" :disabled="shouldDisableSubmitting" primary data-cy-signup-submit>{{ $ts.start }}</MkButton>
 	</template>
 </form>
 </template>
@@ -204,7 +204,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.mk-signup {
+.qlvuhzng {
 	.captcha {
 		margin: 16px 0;
 	}

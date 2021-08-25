@@ -4,9 +4,19 @@
 
 import '@client/style.scss';
 
+//#region account indexedDB migration
+import { set } from '@client/scripts/idb-proxy';
+
+if (localStorage.getItem('accounts') != null) {
+	set('accounts', JSON.parse(localStorage.getItem('accounts')));
+	localStorage.removeItem('accounts');
+}
+//#endregion
+
 import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
 import { computed, createApp, watch, markRaw } from 'vue';
+import compareVersions from 'compare-versions';
 
 import widgets from '@client/widgets';
 import directives from '@client/directives';
@@ -91,15 +101,12 @@ window.addEventListener('resize', () => {
 });
 //#endregion
 
-// Get the <head> element
-const head = document.getElementsByTagName('head')[0];
-
 // If mobile, insert the viewport meta tag
 if (isMobile || window.innerWidth <= 1024) {
 	const viewport = document.getElementsByName('viewport').item(0);
 	viewport.setAttribute('content',
 		`${viewport.getAttribute('content')},minimum-scale=1,maximum-scale=1,user-scalable=no`);
-	head.appendChild(viewport);
+	document.head.appendChild(viewport);
 }
 
 //#region Set lang attr
@@ -206,8 +213,12 @@ if (lastVersion !== version) {
 	// テーマリビルドするため
 	localStorage.removeItem('theme');
 
-	// TODO: バージョンが新しくなった時だけダイアログ出す
-	//popup();
+	try { // 変なバージョン文字列来るとcompareVersionsでエラーになるため
+		if (lastVersion != null && compareVersions(version, lastVersion) === 1) {
+			popup(import('@client/components/updated.vue'), {}, {}, 'closed');
+		}
+	} catch (e) {
+	}
 }
 
 // NOTE: この処理は必ず↑のクライアント更新時処理より後に来ること(テーマ再構築のため)
@@ -296,6 +307,13 @@ for (const plugin of ColdDeviceStorage.get('plugins').filter(p => p.active)) {
 }
 
 if ($i) {
+	if ($i.isDeleted) {
+		dialog({
+			type: 'warning',
+			text: i18n.locale.accountDeletionInProgress,
+		});
+	}
+
 	if ('Notification' in window) {
 		// 許可を得ていなかったらリクエスト
 		if (Notification.permission === 'default') {
