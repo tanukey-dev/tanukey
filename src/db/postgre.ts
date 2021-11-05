@@ -8,7 +8,6 @@ import { entities as charts } from '@/services/chart/entities';
 import { dbLogger } from './logger';
 import * as highlight from 'cli-highlight';
 
-import { Log } from '@/models/entities/log';
 import { User } from '@/models/entities/user';
 import { DriveFile } from '@/models/entities/drive-file';
 import { DriveFolder } from '@/models/entities/drive-folder';
@@ -18,6 +17,7 @@ import { PollVote } from '@/models/entities/poll-vote';
 import { Note } from '@/models/entities/note';
 import { NoteReaction } from '@/models/entities/note-reaction';
 import { NoteWatching } from '@/models/entities/note-watching';
+import { NoteThreadMuting } from '@/models/entities/note-thread-muting';
 import { NoteUnread } from '@/models/entities/note-unread';
 import { Notification } from '@/models/entities/notification';
 import { Meta } from '@/models/entities/meta';
@@ -139,12 +139,12 @@ export const entities = [
 	NoteFavorite,
 	NoteReaction,
 	NoteWatching,
+	NoteThreadMuting,
 	NoteUnread,
 	Page,
 	PageLike,
 	GalleryPost,
 	GalleryLike,
-	Log,
 	DriveFile,
 	DriveFolder,
 	Poll,

@@ -1,7 +1,5 @@
 <template>
 <div>
-	<MkHeader :info="header"/>
-
 	<MkSpacer :content-max="1200">
 		<div class="lznhrdub">
 			<div v-if="tab === 'local'">
@@ -65,13 +63,18 @@
 			</div>
 			<div v-else-if="tab === 'search'">
 				<div class="_isolated">
-					<MkInput v-model="query" :debounce="true" type="search">
+					<MkInput v-model="searchQuery" :debounce="true" type="search">
 						<template #prefix><i class="fas fa-search"></i></template>
 						<template #label>{{ $ts.searchUser }}</template>
 					</MkInput>
+					<MkRadios v-model="searchOrigin">
+						<option value="local">{{ $ts.local }}</option>
+						<option value="remote">{{ $ts.remote }}</option>
+						<option value="both">{{ $ts.both }}</option>
+					</MkRadios>
 				</div>
 
-				<XUserList v-if="query" class="_gap" :pagination="searchPagination" ref="search"/>
+				<XUserList v-if="searchQuery" class="_gap" :pagination="searchPagination" ref="search"/>
 			</div>
 		</div>
 	</MkSpacer>
@@ -83,6 +86,7 @@ import { computed, defineComponent } from 'vue';
 import XUserList from '@client/components/user-list.vue';
 import MkFolder from '@client/components/ui/folder.vue';
 import MkInput from '@client/components/form/input.vue';
+import MkRadios from '@client/components/form/radios.vue';
 import number from '@client/filters/number';
 import * as os from '@client/os';
 import * as symbols from '@client/symbols';
@@ -92,6 +96,7 @@ export default defineComponent({
 		XUserList,
 		MkFolder,
 		MkInput,
+		MkRadios,
 	},
 
 	props: {
@@ -103,13 +108,7 @@ export default defineComponent({
 
 	data() {
 		return {
-			[symbols.PAGE_INFO]: {
-				title: this.$ts.explore,
-				icon: 'fas fa-hashtag',
-				bg: 'var(--bg)',
-			},
-			tab: 'local',
-			header: computed(() => ({
+			[symbols.PAGE_INFO]: computed(() => ({
 				title: this.$ts.explore,
 				icon: 'fas fa-hashtag',
 				bg: 'var(--bg)',
@@ -127,6 +126,7 @@ export default defineComponent({
 					onClick: () => { this.tab = 'search'; },
 				},]
 			})),
+			tab: 'local',
 			pinnedUsers: { endpoint: 'pinned-users' },
 			popularUsers: { endpoint: 'users', limit: 10, noPaging: true, params: {
 				state: 'alive',
@@ -158,14 +158,16 @@ export default defineComponent({
 			searchPagination: {
 				endpoint: 'users/search',
 				limit: 10,
-				params: computed(() => (this.query && this.query !== '') ? {
-					query: this.query
+				params: computed(() => (this.searchQuery && this.searchQuery !== '') ? {
+					query: this.searchQuery,
+					origin: this.searchOrigin,
 				} : null)
 			},
 			tagsLocal: [],
 			tagsRemote: [],
 			stats: null,
-			query: null,
+			searchQuery: null,
+			searchOrigin: 'combined',
 			num: number,
 		};
 	},

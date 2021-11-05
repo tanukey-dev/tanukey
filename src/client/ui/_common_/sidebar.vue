@@ -25,8 +25,8 @@
 					</component>
 				</template>
 				<div class="divider"></div>
-				<MkA v-if="$i.isAdmin || $i.isModerator" class="item" active-class="active" to="/instance" v-click-anime>
-					<i class="fas fa-server fa-fw"></i><span class="text">{{ $ts.instance }}</span>
+				<MkA v-if="$i.isAdmin || $i.isModerator" class="item" active-class="active" to="/admin" v-click-anime>
+					<i class="fas fa-door-open fa-fw"></i><span class="text">{{ $ts.controlPanel }}</span>
 				</MkA>
 				<button class="item _button" @click="more" v-click-anime>
 					<i class="fa fa-ellipsis-h fa-fw"></i><span class="text">{{ $ts.more }}</span>
@@ -35,7 +35,7 @@
 				<MkA class="item" active-class="active" to="/settings" v-click-anime>
 					<i class="fas fa-cog fa-fw"></i><span class="text">{{ $ts.settings }}</span>
 				</MkA>
-				<button class="item _button post" @click="post">
+				<button class="item _button post" @click="post" data-cy-open-post-form>
 					<i class="fas fa-pencil-alt fa-fw"></i><span class="text">{{ $ts.note }}</span>
 				</button>
 			</div>
