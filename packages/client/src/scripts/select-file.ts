@@ -37,38 +37,6 @@ export function selectFile(src: any, label: string | null, multiple = false) {
 			});
 		};
 
-		const chooseFileFromUrl = () => {
-			os.dialog({
-				title: i18n.locale.uploadFromUrl,
-				input: {
-					placeholder: i18n.locale.uploadFromUrlDescription
-				}
-			}).then(({ canceled, result: url }) => {
-				if (canceled) return;
-
-				const marker = Math.random().toString(); // TODO: UUIDとか使う
-
-				const connection = os.stream.useChannel('main');
-				connection.on('urlUploadFinished', data => {
-					if (data.marker === marker) {
-						res(multiple ? [data.file] : data.file);
-						connection.dispose();
-					}
-				});
-
-				os.api('drive/files/upload-from-url', {
-					url: url,
-					folderId: defaultStore.state.uploadFolder,
-					marker
-				});
-
-				os.dialog({
-					title: i18n.locale.uploadFromUrlRequested,
-					text: i18n.locale.uploadFromUrlMayTakeTime
-				});
-			});
-		};
-
 		os.popupMenu([label ? {
 			text: label,
 			type: 'label'
@@ -80,10 +48,6 @@ export function selectFile(src: any, label: string | null, multiple = false) {
 			text: i18n.locale.fromDrive,
 			icon: 'fas fa-cloud',
 			action: chooseFileFromDrive
-		}, {
-			text: i18n.locale.fromUrl,
-			icon: 'fas fa-link',
-			action: chooseFileFromUrl
 		}], src);
 	});
 }
