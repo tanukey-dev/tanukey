@@ -14,7 +14,7 @@ export function selectFile(src: any, label: string | null, multiple = false) {
 				Promise.all(promises).then(driveFiles => {
 					res(multiple ? driveFiles : driveFiles[0]);
 				}).catch(e => {
-					os.dialog({
+					os.alert({
 						type: 'error',
 						text: e
 					});
