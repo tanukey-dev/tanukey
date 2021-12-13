@@ -59,6 +59,10 @@
 				</template>
 			</I18n>
 		</label>
+		<label class="_formBlock tou">
+			<input v-model="AgeVerification" type="checkbox">
+			<I18n :src="$ts.ageVerification" />
+		</label>
 		<captcha v-if="meta.enableHcaptcha" ref="hcaptcha" v-model="hCaptchaResponse" class="_formBlock captcha" provider="hcaptcha" :sitekey="meta.hcaptchaSiteKey"/>
 		<captcha v-if="meta.enableRecaptcha" ref="recaptcha" v-model="reCaptchaResponse" class="_formBlock captcha" provider="recaptcha" :sitekey="meta.recaptchaSiteKey"/>
 		<MkButton class="_formBlock" type="submit" :disabled="shouldDisableSubmitting" gradate data-cy-signup-submit>{{ $ts.start }}</MkButton>
@@ -110,6 +114,7 @@ export default defineComponent({
 			passwordRetypeState: null,
 			submitting: false,
 			ToSAgreement: false,
+			AgeVerification: false,
 			hCaptchaResponse: null,
 			reCaptchaResponse: null,
 		}
@@ -123,6 +128,7 @@ export default defineComponent({
 		shouldDisableSubmitting(): boolean {
 			return this.submitting ||
 				this.meta.tosUrl && !this.ToSAgreement ||
+				!this.AgeVerification ||
 				this.meta.enableHcaptcha && !this.hCaptchaResponse ||
 				this.meta.enableRecaptcha && !this.reCaptchaResponse ||
 				this.passwordRetypeState == 'not-match';
