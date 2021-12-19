@@ -634,14 +634,14 @@ export default defineComponent({
 		> .path {
 			display: inline-block;
 			vertical-align: bottom;
-			line-height: 38px;
+			line-height: 50px;
 			white-space: nowrap;
 
 			> * {
 				display: inline-block;
 				margin: 0;
 				padding: 0 8px;
-				line-height: 38px;
+				line-height: 50px;
 				cursor: pointer;
 
 				* {
@@ -676,6 +676,7 @@ export default defineComponent({
 
 		> .menu {
 			margin-left: auto;
+			padding: 0 12px;
 		}
 	}
 

@@ -1,5 +1,5 @@
 <template>
-<div class="omfetrab" :class="['w' + width, 'h' + height, { big }]">
+<div class="omfetrab" :class="['w' + width, 'h' + height, { big, asDrawer }]" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : null }">
 	<input ref="search" v-model.trim="q" class="search" data-prevent-emoji-insert :class="{ filled: q != null && q != '' }" :placeholder="$ts.search" @paste.stop="paste" @keyup.enter="done()">
 	<div ref="emojis" class="emojis">
 		<section class="result">
@@ -79,7 +79,7 @@ import { emojilist } from '@/scripts/emojilist';
 import { getStaticImageUrl } from '@/scripts/get-static-image-url';
 import Particle from '@/components/particle.vue';
 import * as os from '@/os';
-import { isDeviceTouch } from '@/scripts/is-device-touch';
+import { isTouchUsing } from '@/scripts/touch';
 import { isMobile } from '@/scripts/is-mobile';
 import { emojiCategories } from '@/instance';
 import XSection from './emoji-picker.section.vue';
@@ -92,9 +92,17 @@ export default defineComponent({
 	props: {
 		showPinned: {
 			required: false,
-			default: true
+			default: true,
 		},
 		asReactionPicker: {
+			required: false,
+		},
+		maxHeight: {
+			type: Number,
+			required: false,
+		},
+		asDrawer: {
+			type: Boolean,
 			required: false
 		},
 	},
@@ -108,7 +116,7 @@ export default defineComponent({
 			pinned: this.$store.reactiveState.reactions,
 			width: this.asReactionPicker ? this.$store.state.reactionPickerWidth : 3,
 			height: this.asReactionPicker ? this.$store.state.reactionPickerHeight : 2,
-			big: this.asReactionPicker ? isDeviceTouch : false,
+			big: this.asReactionPicker ? isTouchUsing : false,
 			customEmojiCategories: emojiCategories,
 			customEmojis: this.$instance.emojis,
 			q: null,
@@ -268,7 +276,7 @@ export default defineComponent({
 
 	methods: {
 		focus() {
-			if (!isMobile && !isDeviceTouch) {
+			if (!isMobile && !isTouchUsing) {
 				this.$refs.search.focus({
 					preventScroll: true
 				});
@@ -353,26 +361,60 @@ export default defineComponent({
 
 	&.w1 {
 		width: calc((var(--eachSize) * 5) + (#{$pad} * 2));
+		--columns: 1fr 1fr 1fr 1fr 1fr;
 	}
 
 	&.w2 {
 		width: calc((var(--eachSize) * 6) + (#{$pad} * 2));
+		--columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 	}
 
 	&.w3 {
 		width: calc((var(--eachSize) * 7) + (#{$pad} * 2));
+		--columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 	}
 
 	&.h1 {
-		--height: calc((var(--eachSize) * 4) + (#{$pad} * 2));
+		height: calc((var(--eachSize) * 4) + (#{$pad} * 2));
 	}
 
 	&.h2 {
-		--height: calc((var(--eachSize) * 6) + (#{$pad} * 2));
+		height: calc((var(--eachSize) * 6) + (#{$pad} * 2));
 	}
 
 	&.h3 {
-		--height: calc((var(--eachSize) * 8) + (#{$pad} * 2));
+		height: calc((var(--eachSize) * 8) + (#{$pad} * 2));
+	}
+
+	&.asDrawer {
+		width: 100% !important;
+
+		> .emojis {
+			::v-deep(section) {
+				> header {
+					height: 32px;
+					line-height: 32px;
+					padding: 0 12px;
+					font-size: 15px;
+				}
+
+				> div {
+					display: grid;
+					grid-template-columns: var(--columns);
+
+					> button {
+						aspect-ratio: 1 / 1;
+						width: auto;
+						height: auto;
+						min-width: 0;
+
+						> * {
+							font-size: 30px;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	> .search {
@@ -409,7 +451,7 @@ export default defineComponent({
 	}
 
 	> .emojis {
-		height: var(--height);
+		height: 100%;
 		overflow-y: auto;
 		overflow-x: hidden;
 
