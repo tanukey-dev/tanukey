@@ -568,10 +568,6 @@ function getMenu() {
 		text: i18n.locale.upload,
 		icon: 'fas fa-upload',
 		action: () => { selectLocalFile(); }
-	}, {
-		text: i18n.locale.fromUrl,
-		icon: 'fas fa-link',
-		action: () => { urlUpload(); }
 	}, null, {
 		text: folder.value ? folder.value.name : i18n.locale.drive,
 		type: 'label'
