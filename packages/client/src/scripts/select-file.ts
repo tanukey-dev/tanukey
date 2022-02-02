@@ -1,3 +1,4 @@
+import { ref } from 'vue';
 import * as os from '@/os';
 import { stream } from '@/stream';
 import { i18n } from '@/i18n';
@@ -6,12 +7,14 @@ import { DriveFile } from 'misskey-js/built/entities';
 
 function select(src: any, label: string | null, multiple: boolean): Promise<DriveFile | DriveFile[]> {
 	return new Promise((res, rej) => {
+		const keepOriginal = ref(defaultStore.state.keepOriginalUploading);
+
 		const chooseFileFromPc = () => {
 			const input = document.createElement('input');
 			input.type = 'file';
 			input.multiple = multiple;
 			input.onchange = () => {
-				const promises = Array.from(input.files).map(file => os.upload(file, defaultStore.state.uploadFolder));
+				const promises = Array.from(input.files).map(file => os.upload(file, defaultStore.state.uploadFolder, undefined, keepOriginal.value));
 
 				Promise.all(promises).then(driveFiles => {
 					res(multiple ? driveFiles : driveFiles[0]);
@@ -43,11 +46,15 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 			text: label,
 			type: 'label'
 		} : undefined, {
-			text: i18n.locale.upload,
+			type: 'switch',
+			text: i18n.ts.keepOriginalUploading,
+			ref: keepOriginal
+		}, {
+			text: i18n.ts.upload,
 			icon: 'fas fa-upload',
 			action: chooseFileFromPc
 		}, {
-			text: i18n.locale.fromDrive,
+			text: i18n.ts.fromDrive,
 			icon: 'fas fa-cloud',
 			action: chooseFileFromDrive
 		}], src);
