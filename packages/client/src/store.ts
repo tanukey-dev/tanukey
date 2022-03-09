@@ -17,7 +17,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	keepCw: {
 		where: 'account',
-		default: false
+		default: true
 	},
 	showFullAcct: {
 		where: 'account',
@@ -68,11 +68,10 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'deviceAccount',
 		default: [
 			'notifications',
-			'messaging',
+			'favorites',
 			'drive',
 			'followRequests',
 			'-',
-			'gallery',
 			'featured',
 			'explore',
 			'announcements',
@@ -182,13 +181,17 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'device',
 		default: 'remote' as 'none' | 'remote' | 'always'
 	},
+	reactionPickerSize: {
+		where: 'device',
+		default: 1
+	},
 	reactionPickerWidth: {
 		where: 'device',
 		default: 1
 	},
 	reactionPickerHeight: {
 		where: 'device',
-		default: 1
+		default: 2
 	},
 	reactionPickerUseDrawerForMobile: {
 		where: 'device',
@@ -225,6 +228,10 @@ export const defaultStore = markRaw(new Storage('base', {
 	postFormHashtags: {
 		where: 'device',
 		default: ''
+	},
+	themeInitial: {
+		where: 'device',
+		default: true,
 	},
 	aiChanMode: {
 		where: 'device',

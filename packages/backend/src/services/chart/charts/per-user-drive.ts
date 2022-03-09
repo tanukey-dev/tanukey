@@ -1,8 +1,7 @@
-import autobind from 'autobind-decorator';
-import Chart, { KVs } from '../core';
-import { DriveFiles } from '@/models/index';
-import { DriveFile } from '@/models/entities/drive-file';
-import { name, schema } from './entities/per-user-drive';
+import Chart, { KVs } from '../core.js';
+import { DriveFiles } from '@/models/index.js';
+import { DriveFile } from '@/models/entities/drive-file.js';
+import { name, schema } from './entities/per-user-drive.js';
 
 /**
  * ユーザーごとのドライブに関するチャート
@@ -13,8 +12,7 @@ export default class PerUserDriveChart extends Chart<typeof schema> {
 		super(name, schema, true);
 	}
 
-	@autobind
-	protected async queryCurrentState(group: string): Promise<Partial<KVs<typeof schema>>> {
+	protected async tickMajor(group: string): Promise<Partial<KVs<typeof schema>>> {
 		const [count, size] = await Promise.all([
 			DriveFiles.count({ userId: group }),
 			DriveFiles.calcDriveUsageOf(group),
@@ -26,7 +24,10 @@ export default class PerUserDriveChart extends Chart<typeof schema> {
 		};
 	}
 
-	@autobind
+	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
+		return {};
+	}
+
 	public async update(file: DriveFile, isAdditional: boolean): Promise<void> {
 		const fileSizeKb = file.size / 1000;
 		await this.commit({

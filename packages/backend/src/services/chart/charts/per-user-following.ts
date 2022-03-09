@@ -1,9 +1,8 @@
-import autobind from 'autobind-decorator';
-import Chart, { KVs } from '../core';
-import { Followings, Users } from '@/models/index';
+import Chart, { KVs } from '../core.js';
+import { Followings, Users } from '@/models/index.js';
 import { Not, IsNull } from 'typeorm';
-import { User } from '@/models/entities/user';
-import { name, schema } from './entities/per-user-following';
+import { User } from '@/models/entities/user.js';
+import { name, schema } from './entities/per-user-following.js';
 
 /**
  * ユーザーごとのフォローに関するチャート
@@ -14,8 +13,7 @@ export default class PerUserFollowingChart extends Chart<typeof schema> {
 		super(name, schema, true);
 	}
 
-	@autobind
-	protected async queryCurrentState(group: string): Promise<Partial<KVs<typeof schema>>> {
+	protected async tickMajor(group: string): Promise<Partial<KVs<typeof schema>>> {
 		const [
 			localFollowingsCount,
 			localFollowersCount,
@@ -36,7 +34,10 @@ export default class PerUserFollowingChart extends Chart<typeof schema> {
 		};
 	}
 
-	@autobind
+	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
+		return {};
+	}
+
 	public async update(follower: { id: User['id']; host: User['host']; }, followee: { id: User['id']; host: User['host']; }, isFollow: boolean): Promise<void> {
 		const prefixFollower = Users.isLocalUser(follower) ? 'local' : 'remote';
 		const prefixFollowee = Users.isLocalUser(followee) ? 'local' : 'remote';

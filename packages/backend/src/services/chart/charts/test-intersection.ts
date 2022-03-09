@@ -1,6 +1,5 @@
-import autobind from 'autobind-decorator';
-import Chart, { KVs } from '../core';
-import { name, schema } from './entities/test-intersection';
+import Chart, { KVs } from '../core.js';
+import { name, schema } from './entities/test-intersection.js';
 
 /**
  * For testing
@@ -11,19 +10,20 @@ export default class TestIntersectionChart extends Chart<typeof schema> {
 		super(name, schema);
 	}
 
-	@autobind
-	protected async queryCurrentState(): Promise<Partial<KVs<typeof schema>>> {
+	protected async tickMajor(): Promise<Partial<KVs<typeof schema>>> {
 		return {};
 	}
 
-	@autobind
+	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
+		return {};
+	}
+
 	public async addA(key: string): Promise<void> {
 		await this.commit({
 			a: [key],
 		});
 	}
 
-	@autobind
 	public async addB(key: string): Promise<void> {
 		await this.commit({
 			b: [key],

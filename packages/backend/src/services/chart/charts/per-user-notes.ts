@@ -1,9 +1,8 @@
-import autobind from 'autobind-decorator';
-import Chart, { KVs } from '../core';
-import { User } from '@/models/entities/user';
-import { Notes } from '@/models/index';
-import { Note } from '@/models/entities/note';
-import { name, schema } from './entities/per-user-notes';
+import Chart, { KVs } from '../core.js';
+import { User } from '@/models/entities/user.js';
+import { Notes } from '@/models/index.js';
+import { Note } from '@/models/entities/note.js';
+import { name, schema } from './entities/per-user-notes.js';
 
 /**
  * ユーザーごとのノートに関するチャート
@@ -14,8 +13,7 @@ export default class PerUserNotesChart extends Chart<typeof schema> {
 		super(name, schema, true);
 	}
 
-	@autobind
-	protected async queryCurrentState(group: string): Promise<Partial<KVs<typeof schema>>> {
+	protected async tickMajor(group: string): Promise<Partial<KVs<typeof schema>>> {
 		const [count] = await Promise.all([
 			Notes.count({ userId: group }),
 		]);
@@ -25,7 +23,10 @@ export default class PerUserNotesChart extends Chart<typeof schema> {
 		};
 	}
 
-	@autobind
+	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
+		return {};
+	}
+
 	public async update(user: { id: User['id'] }, note: Note, isAdditional: boolean): Promise<void> {
 		await this.commit({
 			'total': isAdditional ? 1 : -1,

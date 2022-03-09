@@ -1,6 +1,5 @@
-import autobind from 'autobind-decorator';
-import Chart, { KVs } from '../core';
-import { name, schema } from './entities/test';
+import Chart, { KVs } from '../core.js';
+import { name, schema } from './entities/test.js';
 
 /**
  * For testing
@@ -13,14 +12,16 @@ export default class TestChart extends Chart<typeof schema> {
 		super(name, schema);
 	}
 
-	@autobind
-	protected async queryCurrentState(): Promise<Partial<KVs<typeof schema>>> {
+	protected async tickMajor(): Promise<Partial<KVs<typeof schema>>> {
 		return {
 			'foo.total': this.total,
 		};
 	}
 
-	@autobind
+	protected async tickMinor(): Promise<Partial<KVs<typeof schema>>> {
+		return {};
+	}
+
 	public async increment(): Promise<void> {
 		this.total++;
 
@@ -30,7 +31,6 @@ export default class TestChart extends Chart<typeof schema> {
 		});
 	}
 
-	@autobind
 	public async decrement(): Promise<void> {
 		this.total--;
 

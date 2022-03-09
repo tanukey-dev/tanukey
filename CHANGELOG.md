@@ -10,6 +10,80 @@
 You should also include the user name that made the change.
 -->
 
+## 12.108.0 (2022/03/09)
+
+### NOTE
+このバージョンからNode v16.14.0以降が必要です
+
+### Changes
+- ノートの最大文字数を設定できる機能が廃止され、デフォルトで一律3000文字になりました @syuilo
+- Misskey can no longer terminate HTTPS connections. @Johann150
+  - If you did not use a reverse proxy (e.g. nginx) before, you will probably need to adjust
+    your configuration file and set up a reverse proxy. The `https` configuration key is no
+    longer recognized!
+
+### Improvements
+- インスタンスデフォルトテーマを設定できるように @syuilo
+- ミュートに期限を設定できるように @syuilo
+- アンケートが終了したときに通知が作成されるように @syuilo
+- プロフィールの追加情報を最大16まで保存できるように @syuilo
+- 連合チャートにPub&Subを追加 @syuilo
+- 連合チャートにActiveを追加 @syuilo
+- デフォルトで10秒以上時間がかかるデータベースへのクエリは中断されるように @syuilo
+	- 設定ファイルの`db.extra`に`statement_timeout`を設定することでタイムアウト時間を変更できます
+- Client: スプラッシュスクリーンにインスタンスのアイコンを表示するように @syuilo
+
+### Bugfixes
+- Client: リアクションピッカーの高さが低くなったまま戻らないことがあるのを修正 @syuilo
+- Client: ユーザー名オートコンプリートが正しく動作しない問題を修正 @syuilo
+- Client: タッチ操作だとウィジェットの編集がしにくいのを修正 @xianonn
+- Client: register_note_view_interruptor()が動かないのを修正 @syuilo
+- Client: iPhone X以降(?)でページの内容が全て表示しきれないのを修正 @tamaina
+- Client: fix image caption on mobile @nullobsi
+
+## 12.107.0 (2022/02/12)
+
+### Improvements
+- クライアント: テーマを追加 @syuilo
+
+### Bugfixes
+- API: stats APIで内部エラーが発生する問題を修正 @syuilo
+- クライアント: ソフトミュートですべてがマッチしてしまう場合があるのを修正 @tamaina
+- クライアント: デバイスのスクリーンのセーフエリアを考慮するように @syuilo
+- クライアント: 一部環境でサイドバーの投稿ボタンが表示されない問題を修正 @syuilo
+
+## 12.106.3 (2022/02/11)
+
+### Improvements
+- クライアント: スマートフォンでの余白を調整 @syuilo
+
+### Bugfixes
+- クライアント: ノートの詳細が表示されない問題を修正 @syuilo
+
+## 12.106.2 (2022/02/11)
+
+### Bugfixes
+- クライアント: 削除したノートがタイムラインから自動で消えない問題を修正 @syuilo
+- クライアント: リアクション数が正しくないことがある問題を修正 @syuilo
+- 一部環境でマイグレーションが動作しない問題を修正 @syuilo
+
+## 12.106.1 (2022/02/11)
+
+### Bugfixes
+- クライアント: ワードミュートが保存できない問題を修正 @syuilo
+
+## 12.106.0 (2022/02/11)
+
+### Improvements
+- Improve federation chart @syuilo
+- クライアント: リアクションピッカーのサイズを設定できるように @syuilo
+- クライアント: リアクションピッカーの幅、高さ制限を緩和 @syuilo
+- Docker: Update to Node v16.13.2 @mei23
+- Update dependencies
+
+### Bugfixes
+- validate regular expressions in word mutes @Johann150
+
 ## 12.105.0 (2022/02/09)
 
 ### Improvements
