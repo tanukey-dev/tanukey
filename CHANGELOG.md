@@ -10,6 +10,22 @@
 You should also include the user name that made the change.
 -->
 
+## 12.110.1 (2022/04/23)
+
+### Bugfixes
+- Fix GOP rendering @syuilo
+- Improve performance of antenna, clip, and list @xianon
+
+## 12.110.0 (2022/04/11)
+
+### Improvements
+- Improve webhook @syuilo
+- Client: Show loading icon on splash screen @syuilo
+
+### Bugfixes
+- API: parameter validation of users/show was wrong
+- Federation: リモートインスタンスへのダイレクト投稿が届かない問題を修正 @syuilo
+
 ## 12.109.2 (2022/04/03)
 
 ### Bugfixes
