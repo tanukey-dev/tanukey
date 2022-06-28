@@ -13,15 +13,14 @@ if (localStorage.getItem('accounts') != null) {
 }
 //#endregion
 
-import { computed, createApp, watch, markRaw, version as vueVersion } from 'vue';
+import { computed, createApp, watch, markRaw, version as vueVersion, defineAsyncComponent } from 'vue';
 import compareVersions from 'compare-versions';
-import * as JSON5 from 'json5';
+import JSON5 from 'json5';
 
 import widgets from '@/widgets';
 import directives from '@/directives';
 import components from '@/components';
 import { version, ui, lang, host } from '@/config';
-import { router } from '@/router';
 import { applyTheme } from '@/scripts/theme';
 import { isDeviceDarkmode } from '@/scripts/is-device-darkmode';
 import { i18n } from '@/i18n';
@@ -146,8 +145,7 @@ if ($i && $i.token) {
 		try {
 			document.body.innerHTML = '<div>Please wait...</div>';
 			await login(i);
-			location.reload();
-		} catch (e) {
+		} catch (err) {
 			// Render the error screen
 			// TODO: ちゃんとしたコンポーネントをレンダリングする(v10とかのトラブルシューティングゲーム付きのやつみたいな)
 			document.body.innerHTML = '<div id="err">Oops!</div>';
@@ -169,14 +167,13 @@ fetchInstanceMetaPromise.then(() => {
 	initializeSw();
 });
 
-const app = createApp(await (
-	window.location.search === '?zen' ? import('@/ui/zen.vue') :
-	!$i                               ? import('@/ui/visitor.vue') :
-	ui === 'deck'                     ? import('@/ui/deck.vue') :
-	ui === 'desktop'                  ? import('@/ui/desktop.vue') :
-	ui === 'classic'                  ? import('@/ui/classic.vue') :
-	import('@/ui/universal.vue')
-).then(x => x.default));
+const app = createApp(
+	window.location.search === '?zen' ? defineAsyncComponent(() => import('@/ui/zen.vue')) :
+	!$i ? defineAsyncComponent(() => import('@/ui/visitor.vue')) :
+	ui === 'deck' ? defineAsyncComponent(() => import('@/ui/deck.vue')) :
+	ui === 'classic' ? defineAsyncComponent(() => import('@/ui/classic.vue')) :
+	defineAsyncComponent(() => import('@/ui/universal.vue')),
+);
 
 if (_DEV_) {
 	app.config.performance = true;
@@ -190,13 +187,9 @@ app.config.globalProperties = {
 	$ts: i18n.ts,
 };
 
-app.use(router);
-
 widgets(app);
 directives(app);
 components(app);
-
-await router.isReady();
 
 const splash = document.getElementById('splash');
 // 念のためnullチェック(HTMLが古い場合があるため(そのうち消す))
@@ -204,8 +197,24 @@ if (splash) splash.addEventListener('transitionend', () => {
 	splash.remove();
 });
 
-const rootEl = document.createElement('div');
-document.body.appendChild(rootEl);
+// https://github.com/misskey-dev/misskey/pull/8575#issuecomment-1114239210
+// なぜかinit.tsの内容が2回実行されることがあるため、mountするdivを1つに制限する
+const rootEl = (() => {
+	const MISSKEY_MOUNT_DIV_ID = 'misskey_app';
+
+	const currentEl = document.getElementById(MISSKEY_MOUNT_DIV_ID);
+
+	if (currentEl) {
+		console.warn('multiple import detected');
+		return currentEl;
+	}
+
+	const rootEl = document.createElement('div');
+	rootEl.id = MISSKEY_MOUNT_DIV_ID;
+	document.body.appendChild(rootEl);
+	return rootEl;
+})();
+
 app.mount(rootEl);
 
 // boot.jsのやつを解除
@@ -231,10 +240,10 @@ if (lastVersion !== version) {
 		if (lastVersion != null && compareVersions(version, lastVersion) === 1) {
 			// ログインしてる場合だけ
 			if ($i) {
-				popup(import('@/components/updated.vue'), {}, {}, 'closed');
+				popup(defineAsyncComponent(() => import('@/components/updated.vue')), {}, {}, 'closed');
 			}
 		}
-	} catch (e) {
+	} catch (err) {
 	}
 }
 
@@ -278,16 +287,6 @@ fetchInstanceMetaPromise.then(() => {
 	}
 });
 
-// shortcut
-document.addEventListener('keydown', makeHotkey({
-	'd': () => {
-		defaultStore.set('darkMode', !defaultStore.state.darkMode);
-	},
-	'p|n': post,
-	's': search,
-	//TODO: 'h|/': help
-}));
-
 watch(defaultStore.reactiveState.useBlurEffectForModal, v => {
 	document.documentElement.style.setProperty('--modalBgFilter', v ? 'blur(4px)' : 'none');
 }, { immediate: true });
@@ -319,7 +318,7 @@ stream.on('_disconnected_', async () => {
 	}
 });
 
-stream.on('emojiAdded', data => {
+stream.on('emojiAdded', emojiData => {
 	// TODO
 	//store.commit('instance/set', );
 });
@@ -330,7 +329,17 @@ for (const plugin of ColdDeviceStorage.get('plugins').filter(p => p.active)) {
 	});
 }
 
+const hotkeys = {
+	'd': (): void => {
+		defaultStore.set('darkMode', !defaultStore.state.darkMode);
+	},
+	's': search,
+};
+
 if ($i) {
+	// only add post shortcuts if logged in
+	hotkeys['p|n'] = post;
+
 	if ($i.isDeleted) {
 		alert({
 			type: 'warning',
@@ -425,3 +434,6 @@ if ($i) {
 		signout();
 	});
 }
+
+// shortcut
+document.addEventListener('keydown', makeHotkey(hotkeys));

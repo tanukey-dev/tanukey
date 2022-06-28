@@ -19,6 +19,7 @@ export type Source = {
 	redis: {
 		host: string;
 		port: number;
+		family?: number;
 		pass: string;
 		db?: number;
 		prefix?: string;
@@ -80,6 +81,7 @@ export type Mixin = {
 	authUrl: string;
 	driveUrl: string;
 	userAgent: string;
+	clientEntry: string;
 };
 
 export type Config = Source & Mixin;

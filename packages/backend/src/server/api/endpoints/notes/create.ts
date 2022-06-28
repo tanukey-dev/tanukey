@@ -1,14 +1,15 @@
 import ms from 'ms';
+import { In } from 'typeorm';
 import create from '@/services/note/create.js';
-import define from '../../define.js';
-import { ApiError } from '../../error.js';
 import { User } from '@/models/entities/user.js';
 import { Users, DriveFiles, Notes, Channels, Blockings } from '@/models/index.js';
 import { DriveFile } from '@/models/entities/drive-file.js';
 import { Note } from '@/models/entities/note.js';
-import { noteVisibilities } from '../../../../types.js';
 import { Channel } from '@/models/entities/channel.js';
 import { MAX_NOTE_TEXT_LENGTH } from '@/const.js';
+import { noteVisibilities } from '../../../../types.js';
+import { ApiError } from '../../error.js';
+import define from '../../define.js';
 
 export const meta = {
 	tags: ['notes'],
@@ -82,7 +83,7 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		visibility: { type: 'string', enum: ['public', 'home', 'followers', 'specified'], default: "public" },
+		visibility: { type: 'string', enum: ['public', 'home', 'followers', 'specified'], default: 'public' },
 		visibleUserIds: { type: 'array', uniqueItems: true, items: {
 			type: 'string', format: 'misskey:id',
 		} },
@@ -133,7 +134,7 @@ export const paramDef = {
 		{
 			// (re)note with text, files and poll are optional
 			properties: {
-				text: { type: 'string', maxLength: MAX_NOTE_TEXT_LENGTH, nullable: false },
+				text: { type: 'string', minLength: 1, maxLength: MAX_NOTE_TEXT_LENGTH, nullable: false },
 			},
 			required: ['text'],
 		},
@@ -148,7 +149,7 @@ export const paramDef = {
 		{
 			// (re)note with poll, text and files are optional
 			properties: {
-				poll: { type: 'object', nullable: false, },
+				poll: { type: 'object', nullable: false },
 			},
 			required: ['poll'],
 		},
@@ -163,29 +164,32 @@ export const paramDef = {
 export default define(meta, paramDef, async (ps, user) => {
 	let visibleUsers: User[] = [];
 	if (ps.visibleUserIds) {
-		visibleUsers = (await Promise.all(ps.visibleUserIds.map(id => Users.findOneBy({ id }))))
-			.filter(x => x != null) as User[];
+		visibleUsers = await Users.findBy({
+			id: In(ps.visibleUserIds),
+		});
 	}
 
 	let files: DriveFile[] = [];
 	const fileIds = ps.fileIds != null ? ps.fileIds : ps.mediaIds != null ? ps.mediaIds : null;
 	if (fileIds != null) {
-		files = (await Promise.all(fileIds.map(fileId =>
-			DriveFiles.findOneBy({
-				id: fileId,
+		files = await DriveFiles.createQueryBuilder('file')
+			.where('file.userId = :userId AND file.id IN (:...fileIds)', {
 				userId: user.id,
+				fileIds,
 			})
-		))).filter(file => file != null) as DriveFile[];
+			.orderBy('array_position(ARRAY[:...fileIds], "id"::text)')
+			.setParameters({ fileIds })
+			.getMany();
 	}
 
-	let renote: Note | null;
+	let renote: Note | null = null;
 	if (ps.renoteId != null) {
 		// Fetch renote to note
 		renote = await Notes.findOneBy({ id: ps.renoteId });
 
 		if (renote == null) {
 			throw new ApiError(meta.errors.noSuchRenoteTarget);
-		} else if (renote.renoteId && !renote.text && !renote.fileIds && !renote.poll) {
+		} else if (renote.renoteId && !renote.text && !renote.fileIds && !renote.hasPoll) {
 			throw new ApiError(meta.errors.cannotReRenote);
 		}
 
@@ -201,14 +205,14 @@ export default define(meta, paramDef, async (ps, user) => {
 		}
 	}
 
-	let reply: Note | null;
+	let reply: Note | null = null;
 	if (ps.replyId != null) {
 		// Fetch reply
 		reply = await Notes.findOneBy({ id: ps.replyId });
 
 		if (reply == null) {
 			throw new ApiError(meta.errors.noSuchReplyTarget);
-		} else if (reply.renoteId && !reply.text && !reply.fileIds && !renote.poll) {
+		} else if (reply.renoteId && !reply.text && !reply.fileIds && !reply.hasPoll) {
 			throw new ApiError(meta.errors.cannotReplyToPureRenote);
 		}
 
@@ -234,7 +238,7 @@ export default define(meta, paramDef, async (ps, user) => {
 		}
 	}
 
-	let channel: Channel | undefined;
+	let channel: Channel | null = null;
 	if (ps.channelId != null) {
 		channel = await Channels.findOneBy({ id: ps.channelId });
 

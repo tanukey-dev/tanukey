@@ -5,9 +5,6 @@ pg.types.setTypeParser(20, Number);
 import { Logger, DataSource } from 'typeorm';
 import * as highlight from 'cli-highlight';
 import config from '@/config/index.js';
-import { envOption } from '../env.js';
-
-import { dbLogger } from './logger.js';
 
 import { User } from '@/models/entities/user.js';
 import { DriveFile } from '@/models/entities/drive-file.js';
@@ -74,6 +71,9 @@ import { UserPending } from '@/models/entities/user-pending.js';
 
 import { entities as charts } from '@/services/chart/entities.js';
 import { Webhook } from '@/models/entities/webhook.js';
+import { envOption } from '../env.js';
+import { dbLogger } from './logger.js';
+import { redisClient } from './redis.js';
 
 const sqlLogger = dbLogger.createSubLogger('sql', 'gray', false);
 
@@ -192,12 +192,13 @@ export const db = new DataSource({
 	synchronize: process.env.NODE_ENV === 'test',
 	dropSchema: process.env.NODE_ENV === 'test',
 	cache: !config.db.disableCache ? {
-		type: 'redis',
+		type: 'ioredis',
 		options: {
 			host: config.redis.host,
 			port: config.redis.port,
+			family: config.redis.family == null ? 0 : config.redis.family,
 			password: config.redis.pass,
-			prefix: `${config.redis.prefix}:query:`,
+			keyPrefix: `${config.redis.prefix}:query:`,
 			db: config.redis.db || 0,
 		},
 	} : false,
@@ -208,16 +209,25 @@ export const db = new DataSource({
 	migrations: ['../../migration/*.js'],
 });
 
-export async function initDb() {
+export async function initDb(force = false) {
+	if (force) {
+		if (db.isInitialized) {
+			await db.destroy();
+		}
+		await db.initialize();
+		return;
+	}
+
 	if (db.isInitialized) {
 		// nop
 	} else {
-		await db.connect();
+		await db.initialize();
 	}
 }
 
 export async function resetDb() {
 	const reset = async () => {
+		await redisClient.flushdb();
 		const tables = await db.query(`SELECT relname AS "table"
 		FROM pg_class C LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
 		WHERE nspname NOT IN ('pg_catalog', 'information_schema')

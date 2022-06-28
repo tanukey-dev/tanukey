@@ -8,9 +8,10 @@
 
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from 'vue';
-import { GetFormResultType } from '@/scripts/form';
 import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { GetFormResultType } from '@/scripts/form';
 import * as os from '@/os';
+import { useInterval } from '@/scripts/use-interval';
 
 const name = 'onlineUsers';
 
@@ -27,7 +28,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (e: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
 
 const { widgetProps, configure } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -43,12 +44,9 @@ const tick = () => {
 	});
 };
 
-onMounted(() => {
-	tick();
-	const intervalId = window.setInterval(tick, 1000 * 15);
-	onUnmounted(() => {
-		window.clearInterval(intervalId);
-	});
+useInterval(tick, 1000 * 15, {
+	immediate: true,
+	afterMounted: true,
 });
 
 defineExpose<WidgetComponentExpose>({

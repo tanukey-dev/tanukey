@@ -1,37 +1,29 @@
 import * as fs from 'node:fs';
-import * as tmp from 'tmp';
+import { createTempDir } from '@/misc/create-temp.js';
 import { IImage, convertToJpeg } from './image-processor.js';
-import * as FFmpeg from 'fluent-ffmpeg';
+import FFmpeg from 'fluent-ffmpeg';
 
-export async function GenerateVideoThumbnail(path: string): Promise<IImage> {
-	const [outDir, cleanup] = await new Promise<[string, any]>((res, rej) => {
-		tmp.dir((e, path, cleanup) => {
-			if (e) return rej(e);
-			res([path, cleanup]);
+export async function GenerateVideoThumbnail(source: string): Promise<IImage> {
+	const [dir, cleanup] = await createTempDir();
+
+	try {
+		await new Promise((res, rej) => {
+			FFmpeg({
+				source,
+			})
+			.on('end', res)
+			.on('error', rej)
+			.screenshot({
+				folder: dir,
+				filename: 'out.png',	// must have .png extension
+				count: 1,
+				timestamps: ['5%'],
+			});
 		});
-	});
 
-	await new Promise((res, rej) => {
-		FFmpeg({
-			source: path,
-		})
-		.on('end', res)
-		.on('error', rej)
-		.screenshot({
-			folder: outDir,
-			filename: 'output.png',
-			count: 1,
-			timestamps: ['5%'],
-		});
-	});
-
-	const outPath = `${outDir}/output.png`;
-
-	const thumbnail = await convertToJpeg(outPath, 498, 280);
-
-	// cleanup
-	await fs.promises.unlink(outPath);
-	cleanup();
-
-	return thumbnail;
+		// JPEGに変換 (Webpでもいいが、MastodonはWebpをサポートせず表示できなくなる)
+		return await convertToJpeg(`${dir}/out.png`, 498, 280);
+	} finally {
+		cleanup();
+	}
 }

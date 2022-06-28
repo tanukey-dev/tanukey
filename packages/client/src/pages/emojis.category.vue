@@ -36,7 +36,6 @@ import MkSelect from '@/components/form/select.vue';
 import MkFolder from '@/components/ui/folder.vue';
 import MkTab from '@/components/tab.vue';
 import * as os from '@/os';
-import * as symbols from '@/symbols';
 import { emojiCategories, emojiTags } from '@/instance';
 import XEmoji from './emojis.emoji.vue';
 
@@ -58,7 +57,7 @@ export default defineComponent({
 			tags: emojiTags,
 			selectedTags: new Set(),
 			searchEmojis: null,
-		}
+		};
 	},
 
 	watch: {
@@ -79,9 +78,9 @@ export default defineComponent({
 			}
 
 			if (this.selectedTags.size === 0) {
-				this.searchEmojis = this.customEmojis.filter(e => e.name.includes(this.q) || e.aliases.includes(this.q));
+				this.searchEmojis = this.customEmojis.filter(emoji => emoji.name.includes(this.q) || emoji.aliases.includes(this.q));
 			} else {
-				this.searchEmojis = this.customEmojis.filter(e => (e.name.includes(this.q) || e.aliases.includes(this.q)) && [...this.selectedTags].every(t => e.aliases.includes(t)));
+				this.searchEmojis = this.customEmojis.filter(emoji => (emoji.name.includes(this.q) || emoji.aliases.includes(this.q)) && [...this.selectedTags].every(t => emoji.aliases.includes(t)));
 			}
 		},
 

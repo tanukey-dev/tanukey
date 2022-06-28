@@ -1,20 +1,20 @@
-import { del, get, set } from '@/scripts/idb-proxy';
-import { reactive } from 'vue';
+import { defineAsyncComponent, reactive } from 'vue';
 import * as misskey from 'misskey-js';
+import { showSuspendedDialog } from './scripts/show-suspended-dialog';
+import { i18n } from './i18n';
+import { del, get, set } from '@/scripts/idb-proxy';
 import { apiUrl } from '@/config';
 import { waiting, api, popup, popupMenu, success, alert } from '@/os';
 import { unisonReload, reloadChannel } from '@/scripts/unison-reload';
-import { showSuspendedDialog } from './scripts/show-suspended-dialog';
-import { i18n } from './i18n';
 
 // TODO: 他のタブと永続化されたstateを同期
 
 type Account = misskey.entities.MeDetailed;
 
-const data = localStorage.getItem('account');
+const accountData = localStorage.getItem('account');
 
 // TODO: 外部からはreadonlyに
-export const $i = data ? reactive(JSON.parse(data) as Account) : null;
+export const $i = accountData ? reactive(JSON.parse(accountData) as Account) : null;
 
 export const iAmModerator = $i != null && ($i.isAdmin || $i.isModerator);
 
@@ -22,13 +22,9 @@ export async function signout() {
 	waiting();
 	localStorage.removeItem('account');
 
-	//#region Remove account
-	const accounts = await getAccounts();
-	accounts.splice(accounts.findIndex(x => x.id === $i.id), 1);
+	await removeAccount($i.id);
 
-	if (accounts.length > 0) await set('accounts', accounts);
-	else await del('accounts');
-	//#endregion
+	const accounts = await getAccounts();
 
 	//#region Remove service worker registration
 	try {
@@ -52,10 +48,10 @@ export async function signout() {
 					return Promise.all(registrations.map(registration => registration.unregister()));
 				});
 		}
-	} catch (e) {}
+	} catch (err) {}
 	//#endregion
 
-	document.cookie = `igi=; path=/`;
+	document.cookie = 'igi=; path=/';
 
 	if (accounts.length > 0) login(accounts[0].token);
 	else unisonReload('/');
@@ -72,14 +68,22 @@ export async function addAccount(id: Account['id'], token: Account['token']) {
 	}
 }
 
-function fetchAccount(token): Promise<Account> {
+export async function removeAccount(id: Account['id']) {
+	const accounts = await getAccounts();
+	accounts.splice(accounts.findIndex(x => x.id === id), 1);
+
+	if (accounts.length > 0) await set('accounts', accounts);
+	else await del('accounts');
+}
+
+function fetchAccount(token: string): Promise<Account> {
 	return new Promise((done, fail) => {
 		// Fetch user
 		fetch(`${apiUrl}/i`, {
 			method: 'POST',
 			body: JSON.stringify({
-				i: token
-			})
+				i: token,
+			}),
 		})
 		.then(res => res.json())
 		.then(res => {
@@ -104,8 +108,8 @@ function fetchAccount(token): Promise<Account> {
 	});
 }
 
-export function updateAccount(data) {
-	for (const [key, value] of Object.entries(data)) {
+export function updateAccount(accountData) {
+	for (const [key, value] of Object.entries(accountData)) {
 		$i[key] = value;
 	}
 	localStorage.setItem('account', JSON.stringify($i));
@@ -141,7 +145,7 @@ export async function openAccountMenu(opts: {
 	onChoose?: (account: misskey.entities.UserDetailed) => void;
 }, ev: MouseEvent) {
 	function showSigninDialog() {
-		popup(import('@/components/signin-dialog.vue'), {}, {
+		popup(defineAsyncComponent(() => import('@/components/signin-dialog.vue')), {}, {
 			done: res => {
 				addAccount(res.id, res.i);
 				success();
@@ -150,7 +154,7 @@ export async function openAccountMenu(opts: {
 	}
 
 	function createAccount() {
-		popup(import('@/components/signup-dialog.vue'), {}, {
+		popup(defineAsyncComponent(() => import('@/components/signup-dialog.vue')), {}, {
 			done: res => {
 				addAccount(res.id, res.i);
 				switchAccountWithToken(res.i);
@@ -216,13 +220,13 @@ export async function openAccountMenu(opts: {
 			type: 'link',
 			icon: 'fas fa-users',
 			text: i18n.ts.manageAccounts,
-			to: `/settings/accounts`,
+			to: '/settings/accounts',
 		}]], ev.currentTarget ?? ev.target, {
-			align: 'left'
+			align: 'left',
 		});
 	} else {
 		popupMenu([...(opts.includeCurrentAccount ? [createItem($i)] : []), ...accountItemPromises], ev.currentTarget ?? ev.target, {
-			align: 'left'
+			align: 'left',
 		});
 	}
 }

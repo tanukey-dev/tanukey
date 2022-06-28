@@ -1,5 +1,5 @@
 <template>
-<MkContainer :show-header="widgetProps.showHeader">
+<MkContainer :show-header="widgetProps.showHeader" class="mkw-trends">
 	<template #header><i class="fas fa-hashtag"></i>{{ $ts._widgets.trends }}</template>
 
 	<div class="wbrkwala">
@@ -19,11 +19,12 @@
 
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from 'vue';
-import { GetFormResultType } from '@/scripts/form';
 import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { GetFormResultType } from '@/scripts/form';
 import MkContainer from '@/components/ui/container.vue';
 import MkMiniChart from '@/components/mini-chart.vue';
 import * as os from '@/os';
+import { useInterval } from '@/scripts/use-interval';
 
 const name = 'hashtags';
 
@@ -40,7 +41,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (e: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
 
 const { widgetProps, configure } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -58,12 +59,9 @@ const fetch = () => {
 	});
 };
 
-onMounted(() => {
-	fetch();
-	const intervalId = window.setInterval(fetch, 1000 * 60);
-	onUnmounted(() => {
-		window.clearInterval(intervalId);
-	});
+useInterval(fetch, 1000 * 60, {
+	immediate: true,
+	afterMounted: true,
 });
 
 defineExpose<WidgetComponentExpose>({

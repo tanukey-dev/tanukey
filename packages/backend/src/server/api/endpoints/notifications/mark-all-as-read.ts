@@ -1,6 +1,7 @@
 import { publishMainStream } from '@/services/stream.js';
-import define from '../../define.js';
+import { pushNotification } from '@/services/push-notification.js';
 import { Notifications } from '@/models/index.js';
+import define from '../../define.js';
 
 export const meta = {
 	tags: ['notifications', 'account'],
@@ -28,4 +29,5 @@ export default define(meta, paramDef, async (ps, user) => {
 
 	// 全ての通知を読みましたよというイベントを発行
 	publishMainStream(user.id, 'readAllNotifications');
+	pushNotification(user.id, 'readAllNotifications', undefined);
 });

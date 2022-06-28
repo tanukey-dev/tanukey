@@ -31,6 +31,11 @@ module.exports = {
 			'beforeColon': false,
 			'afterColon': true,
 		}],
+		'arrow-spacing': ['error', {
+			'before': true,
+			'after': true,
+		}],
+		'padded-blocks': ['error', 'never'],
 		/* TODO: path aliasを使わないとwarnする
 		'no-restricted-imports': ['warn', {
 			'patterns': [
@@ -68,5 +73,8 @@ module.exports = {
 		}],
 		'import/no-unresolved': ['off'],
 		'import/no-default-export': ['warn'],
+		'import/order': ['warn', {
+			'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+		}]
 	},
 };

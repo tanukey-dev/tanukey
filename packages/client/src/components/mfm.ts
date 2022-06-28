@@ -17,30 +17,30 @@ export default defineComponent({
 	props: {
 		text: {
 			type: String,
-			required: true
+			required: true,
 		},
 		plain: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		nowrap: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		author: {
 			type: Object,
-			default: null
+			default: null,
 		},
 		i: {
 			type: Object,
-			default: null
+			default: null,
 		},
 		customEmojis: {
 			required: false,
 		},
 		isNote: {
 			type: Boolean,
-			default: true
+			default: true,
 		},
 	},
 
@@ -82,7 +82,7 @@ export default defineComponent({
 
 				case 'italic': {
 					return h('i', {
-						style: 'font-style: oblique;'
+						style: 'font-style: oblique;',
 					}, genEl(token.children));
 				}
 
@@ -91,7 +91,8 @@ export default defineComponent({
 					let style;
 					switch (token.props.name) {
 						case 'tada': {
-							style = `font-size: 150%;` + (this.$store.state.animatedMfm ? 'animation: tada 1s linear infinite both;' : '');
+							const speed = validTime(token.props.args.speed) || '1s';
+							style = 'font-size: 150%;' + (this.$store.state.animatedMfm ? `animation: tada ${speed} linear infinite both;` : '');
 							break;
 						}
 						case 'jelly': {
@@ -123,11 +124,13 @@ export default defineComponent({
 							break;
 						}
 						case 'jump': {
-							style = this.$store.state.animatedMfm ? 'animation: mfm-jump 0.75s linear infinite;' : '';
+							const speed = validTime(token.props.args.speed) || '0.75s';
+							style = this.$store.state.animatedMfm ? `animation: mfm-jump ${speed} linear infinite;` : '';
 							break;
 						}
 						case 'bounce': {
-							style = this.$store.state.animatedMfm ? 'animation: mfm-bounce 0.75s linear infinite; transform-origin: center bottom;' : '';
+							const speed = validTime(token.props.args.speed) || '0.75s';
+							style = this.$store.state.animatedMfm ? `animation: mfm-bounce ${speed} linear infinite; transform-origin: center bottom;` : '';
 							break;
 						}
 						case 'flip': {
@@ -139,16 +142,19 @@ export default defineComponent({
 							break;
 						}
 						case 'x2': {
-							style = `font-size: 200%;`;
-							break;
+							return h('span', {
+								class: 'mfm-x2',
+							}, genEl(token.children));
 						}
 						case 'x3': {
-							style = `font-size: 400%;`;
-							break;
+							return h('span', {
+								class: 'mfm-x3',
+							}, genEl(token.children));
 						}
 						case 'x4': {
-							style = `font-size: 600%;`;
-							break;
+							return h('span', {
+								class: 'mfm-x4',
+							}, genEl(token.children));
 						}
 						case 'font': {
 							const family =
@@ -168,7 +174,8 @@ export default defineComponent({
 							}, genEl(token.children));
 						}
 						case 'rainbow': {
-							style = this.$store.state.animatedMfm ? 'animation: mfm-rainbow 1s linear infinite;' : '';
+							const speed = validTime(token.props.args.speed) || '1s';
+							style = this.$store.state.animatedMfm ? `animation: mfm-rainbow ${speed} linear infinite;` : '';
 							break;
 						}
 						case 'sparkle': {
@@ -194,13 +201,13 @@ export default defineComponent({
 
 				case 'small': {
 					return [h('small', {
-						style: 'opacity: 0.7;'
+						style: 'opacity: 0.7;',
 					}, genEl(token.children))];
 				}
 
 				case 'center': {
 					return [h('div', {
-						style: 'text-align:center;'
+						style: 'text-align:center;',
 					}, genEl(token.children))];
 				}
 
@@ -224,7 +231,7 @@ export default defineComponent({
 					return [h(MkMention, {
 						key: Math.random(),
 						host: (token.props.host == null && this.author && this.author.host != null ? this.author.host : token.props.host) || host,
-						username: token.props.username
+						username: token.props.username,
 					})];
 				}
 
@@ -232,7 +239,7 @@ export default defineComponent({
 					return [h(MkA, {
 						key: Math.random(),
 						to: this.isNote ? `/tags/${encodeURIComponent(token.props.hashtag)}` : `/explore/tags/${encodeURIComponent(token.props.hashtag)}`,
-						style: 'color:var(--hashtag);'
+						style: 'color:var(--hashtag);',
 					}, `#${token.props.hashtag}`)];
 				}
 
@@ -248,18 +255,18 @@ export default defineComponent({
 					return [h(MkCode, {
 						key: Math.random(),
 						code: token.props.code,
-						inline: true
+						inline: true,
 					})];
 				}
 
 				case 'quote': {
 					if (!this.nowrap) {
 						return [h('div', {
-							class: 'quote'
+							class: 'quote',
 						}, genEl(token.children))];
 					} else {
 						return [h('span', {
-							class: 'quote'
+							class: 'quote',
 						}, genEl(token.children))];
 					}
 				}
@@ -269,7 +276,7 @@ export default defineComponent({
 						key: Math.random(),
 						emoji: `:${token.props.name}:`,
 						customEmojis: this.customEmojis,
-						normal: this.plain
+						normal: this.plain,
 					})];
 				}
 
@@ -278,7 +285,7 @@ export default defineComponent({
 						key: Math.random(),
 						emoji: token.props.emoji,
 						customEmojis: this.customEmojis,
-						normal: this.plain
+						normal: this.plain,
 					})];
 				}
 
@@ -286,7 +293,7 @@ export default defineComponent({
 					return [h(MkFormula, {
 						key: Math.random(),
 						formula: token.props.formula,
-						block: false
+						block: false,
 					})];
 				}
 
@@ -294,14 +301,14 @@ export default defineComponent({
 					return [h(MkFormula, {
 						key: Math.random(),
 						formula: token.props.formula,
-						block: true
+						block: true,
 					})];
 				}
 
 				case 'search': {
 					return [h(MkGoogle, {
 						key: Math.random(),
-						q: token.props.query
+						q: token.props.query,
 					})];
 				}
 
@@ -315,5 +322,5 @@ export default defineComponent({
 
 		// Parse ast to DOM
 		return h('span', genEl(ast));
-	}
+	},
 });

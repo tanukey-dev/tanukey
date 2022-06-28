@@ -1,12 +1,14 @@
-import define from '../../define.js';
+import { Brackets } from 'typeorm';
 import { UserProfiles, Users } from '@/models/index.js';
 import { User } from '@/models/entities/user.js';
-import { Brackets } from 'typeorm';
+import define from '../../define.js';
 
 export const meta = {
 	tags: ['users'],
 
 	requireCredential: false,
+
+	description: 'Search for users.',
 
 	res: {
 		type: 'array',
@@ -25,7 +27,7 @@ export const paramDef = {
 		query: { type: 'string' },
 		offset: { type: 'integer', default: 0 },
 		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		origin: { type: 'string', enum: ['local', 'remote', 'combined'], default: "combined" },
+		origin: { type: 'string', enum: ['local', 'remote', 'combined'], default: 'combined' },
 		detail: { type: 'boolean', default: true },
 	},
 	required: ['query'],
@@ -61,7 +63,14 @@ export default define(meta, paramDef, async (ps, me) => {
 			.getMany();
 	} else {
 		const nameQuery = Users.createQueryBuilder('user')
-			.where('user.name ILIKE :query', { query: '%' + ps.query + '%' })
+			.where(new Brackets(qb => { 
+				qb.where('user.name ILIKE :query', { query: '%' + ps.query + '%' });
+
+				// Also search username if it qualifies as username
+				if (Users.validateLocalUsername(ps.query)) {
+					qb.orWhere('user.usernameLower LIKE :username', { username: '%' + ps.query.toLowerCase() + '%' });
+				}
+			}))
 			.andWhere(new Brackets(qb => { qb
 				.where('user.updatedAt IS NULL')
 				.orWhere('user.updatedAt > :activeThreshold', { activeThreshold: activeThreshold });
@@ -104,7 +113,7 @@ export default define(meta, paramDef, async (ps, me) => {
 				.orderBy('user.updatedAt', 'DESC', 'NULLS LAST')
 				.take(ps.limit)
 				.skip(ps.offset)
-				.getMany()
+				.getMany(),
 			);
 		}
 	}

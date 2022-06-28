@@ -1,25 +1,19 @@
 import Limiter from 'ratelimiter';
-import { redisClient } from '../../db/redis.js';
-import { IEndpoint } from './endpoints.js';
-import * as Acct from '@/misc/acct.js';
 import { CacheableLocalUser, User } from '@/models/entities/user.js';
 import Logger from '@/services/logger.js';
+import { redisClient } from '../../db/redis.js';
+import { IEndpointMeta } from './endpoints.js';
 
 const logger = new Logger('limiter');
 
-export const limiter = (endpoint: IEndpoint & { meta: { limit: NonNullable<IEndpoint['meta']['limit']> } }, user: CacheableLocalUser) => new Promise<void>((ok, reject) => {
-	const limitation = endpoint.meta.limit;
+export const limiter = (limitation: IEndpointMeta['limit'] & { key: NonNullable<string> }, actor: string) => new Promise<void>((ok, reject) => {
+	if (process.env.NODE_ENV === 'test') ok();
 
-	const key = Object.prototype.hasOwnProperty.call(limitation, 'key')
-		? limitation.key
-		: endpoint.name;
-
-	const hasShortTermLimit =
-		Object.prototype.hasOwnProperty.call(limitation, 'minInterval');
+	const hasShortTermLimit = typeof limitation.minInterval === 'number';
 
 	const hasLongTermLimit =
-		Object.prototype.hasOwnProperty.call(limitation, 'duration') &&
-		Object.prototype.hasOwnProperty.call(limitation, 'max');
+		typeof limitation.duration === 'number' &&
+		typeof limitation.max === 'number';
 
 	if (hasShortTermLimit) {
 		min();
@@ -32,7 +26,7 @@ export const limiter = (endpoint: IEndpoint & { meta: { limit: NonNullable<IEndp
 	// Short-term limit
 	function min(): void {
 		const minIntervalLimiter = new Limiter({
-			id: `${user.id}:${key}:min`,
+			id: `${actor}:${limitation.key}:min`,
 			duration: limitation.minInterval,
 			max: 1,
 			db: redisClient,
@@ -43,7 +37,7 @@ export const limiter = (endpoint: IEndpoint & { meta: { limit: NonNullable<IEndp
 				return reject('ERR');
 			}
 
-			logger.debug(`@${Acct.toString(user)} ${endpoint.name} min remaining: ${info.remaining}`);
+			logger.debug(`${actor} ${limitation.key} min remaining: ${info.remaining}`);
 
 			if (info.remaining === 0) {
 				reject('BRIEF_REQUEST_INTERVAL');
@@ -60,7 +54,7 @@ export const limiter = (endpoint: IEndpoint & { meta: { limit: NonNullable<IEndp
 	// Long term limit
 	function max(): void {
 		const limiter = new Limiter({
-			id: `${user.id}:${key}`,
+			id: `${actor}:${limitation.key}`,
 			duration: limitation.duration,
 			max: limitation.max,
 			db: redisClient,
@@ -71,7 +65,7 @@ export const limiter = (endpoint: IEndpoint & { meta: { limit: NonNullable<IEndp
 				return reject('ERR');
 			}
 
-			logger.debug(`@${Acct.toString(user)} ${endpoint.name} max remaining: ${info.remaining}`);
+			logger.debug(`${actor} ${limitation.key} max remaining: ${info.remaining}`);
 
 			if (info.remaining === 0) {
 				reject('RATE_LIMIT_EXCEEDED');

@@ -1,5 +1,5 @@
 <template>
-<div class="kvausudm _panel" :style="{ height: widgetProps.height + 'px' }">
+<div class="kvausudm _panel mkw-slideshow" :style="{ height: widgetProps.height + 'px' }">
 	<div @click="choose">
 		<p v-if="widgetProps.folderId == null">
 			{{ $ts.folder }}
@@ -13,9 +13,10 @@
 
 <script lang="ts" setup>
 import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
-import { GetFormResultType } from '@/scripts/form';
 import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
+import { GetFormResultType } from '@/scripts/form';
 import * as os from '@/os';
+import { useInterval } from '@/scripts/use-interval';
 
 const name = 'slideshow';
 
@@ -37,7 +38,7 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 //const props = defineProps<WidgetComponentProps<WidgetProps>>();
 //const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const props = defineProps<{ widget?: Widget<WidgetProps>; }>();
-const emit = defineEmits<{ (e: 'updateProps', props: WidgetProps); }>();
+const emit = defineEmits<{ (ev: 'updateProps', props: WidgetProps); }>();
 
 const { widgetProps, configure, save } = useWidgetPropsManager(name,
 	widgetPropsDef,
@@ -51,7 +52,7 @@ const slideA = ref<HTMLElement>();
 const slideB = ref<HTMLElement>();
 
 const change = () => {
-	if (images.value.length == 0) return;
+	if (images.value.length === 0) return;
 
 	const index = Math.floor(Math.random() * images.value.length);
 	const img = `url(${ images.value[index].url })`;
@@ -75,7 +76,7 @@ const fetch = () => {
 	os.api('drive/files', {
 		folderId: widgetProps.folderId,
 		type: 'image/*',
-		limit: 100
+		limit: 100,
 	}).then(res => {
 		images.value = res;
 		fetching.value = false;
@@ -96,15 +97,15 @@ const choose = () => {
 	});
 };
 
+useInterval(change, 10000, {
+	immediate: false,
+	afterMounted: true,
+});
+
 onMounted(() => {
 	if (widgetProps.folderId != null) {
 		fetch();
 	}
-
-	const intervalId = window.setInterval(change, 10000);
-	onUnmounted(() => {
-		window.clearInterval(intervalId);
-	});
 });
 
 defineExpose<WidgetComponentExpose>({
