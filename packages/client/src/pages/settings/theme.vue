@@ -1,5 +1,5 @@
 <template>
-<div class="_formRoot root">
+<div class="_formRoot rsljpzjq">
 	<div v-adaptive-border class="rfqxtzch _panel _formBlock">
 		<div class="toggle">
 			<div class="toggleWrapper">
@@ -175,7 +175,7 @@ definePageMetadata({
 		> .toggleWrapper {
 			display: inline-block;
 			text-align: left;
-			overflow: clip;
+			overflow: hidden; overflow: clip;
 			padding: 0 100px;
 
 			input {
@@ -384,7 +384,7 @@ definePageMetadata({
 	}
 }
 
-.root {
+.rsljpzjq {
 	> .selects {
 		display: flex;
 		gap: 1.5em var(--margin);
