@@ -119,7 +119,6 @@ import * as ep___drive_files_findByHash from './endpoints/drive/files/find-by-ha
 import * as ep___drive_files_find from './endpoints/drive/files/find.js';
 import * as ep___drive_files_show from './endpoints/drive/files/show.js';
 import * as ep___drive_files_update from './endpoints/drive/files/update.js';
-import * as ep___drive_files_uploadFromUrl from './endpoints/drive/files/upload-from-url.js';
 import * as ep___drive_folders from './endpoints/drive/folders.js';
 import * as ep___drive_folders_create from './endpoints/drive/folders/create.js';
 import * as ep___drive_folders_delete from './endpoints/drive/folders/delete.js';
@@ -436,7 +435,6 @@ const eps = [
 	['drive/files/find', ep___drive_files_find],
 	['drive/files/show', ep___drive_files_show],
 	['drive/files/update', ep___drive_files_update],
-	['drive/files/upload-from-url', ep___drive_files_uploadFromUrl],
 	['drive/folders', ep___drive_folders],
 	['drive/folders/create', ep___drive_folders_create],
 	['drive/folders/delete', ep___drive_folders_delete],

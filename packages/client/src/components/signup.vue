@@ -57,9 +57,9 @@
 			</template>
 		</I18n>
 	</MkSwitch>
-    <MkSwitch v-model="AgeVerification" class="_formBlock tou">
-        <I18n :src="$ts.ageVerification" />
-    </MkSwitch>
+	<MkSwitch v-model="AgeVerification" class="_formBlock tou">
+			<I18n :src="$ts.ageVerification" />
+	</MkSwitch>
 	<MkCaptcha v-if="instance.enableHcaptcha" ref="hcaptcha" v-model="hCaptchaResponse" class="_formBlock captcha" provider="hcaptcha" :sitekey="instance.hcaptchaSiteKey"/>
 	<MkCaptcha v-if="instance.enableRecaptcha" ref="recaptcha" v-model="reCaptchaResponse" class="_formBlock captcha" provider="recaptcha" :sitekey="instance.recaptchaSiteKey"/>
 	<MkButton class="_formBlock" type="submit" :disabled="shouldDisableSubmitting" gradate data-cy-signup-submit>{{ $ts.start }}</MkButton>
@@ -107,12 +107,14 @@ let passwordStrength: '' | 'low' | 'medium' | 'high' = $ref('');
 let passwordRetypeState: null | 'match' | 'not-match' = $ref(null);
 let submitting: boolean = $ref(false);
 let ToSAgreement: boolean = $ref(false);
+let AgeVerification: boolean = $ref(false);
 let hCaptchaResponse = $ref(null);
 let reCaptchaResponse = $ref(null);
 
 const shouldDisableSubmitting = $computed((): boolean => {
 	return submitting ||
 		instance.tosUrl && !ToSAgreement ||
+		!AgeVerification ||
 		instance.enableHcaptcha && !hCaptchaResponse ||
 		instance.enableRecaptcha && !reCaptchaResponse ||
 		passwordRetypeState === 'not-match';
