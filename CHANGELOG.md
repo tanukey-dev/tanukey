@@ -9,6 +9,20 @@
 You should also include the user name that made the change.
 -->
 
+## 12.117.0 (2022/07/18)
+
+### Improvements
+- Client: ウィンドウを最大化できるように @syuilo
+- Client: Shiftキーを押した状態でリンクをクリックするとアプリ内ウィンドウで開くように @syuilo
+- Client: デッキを使用している際、Ctrlキーを押した状態でリンクをクリックするとページ遷移を強制できるように @syuilo
+- Client: UIのブラッシュアップ @syuilo
+
+## 12.116.1 (2022/07/17)
+
+### Bugfixes
+- Client: デッキUI時に ページで表示 ボタンが機能しない問題を修正 @syuilo
+- Error During Migration Run to 12.111.x
+
 ## 12.116.0 (2022/07/16)
 
 ### Improvements
