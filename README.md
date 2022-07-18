@@ -1,4 +1,21 @@
 <div align="center">
+<a href="https://nijimiss.moe/">
+	<img src="https://media.nijimiss.moe/nijimiss-moe-ja/null/dc158d85-683e-429f-b879-b8ad34f2712c.png" alt="Nijimiss logo" style="border-radius:50%" width="400"/>
+</a>
+
+### Fork of Misskey by Team Nijimiss
+
+</div>
+
+## 🔧 Differences from the original
+
+- Change note length limit to 5,000 characters.
+- Remove URL upload functionality.
+- Add checkbox for age verification at new registration.
+
+
+
+<div align="center">
 <a href="https://misskey-hub.net">
 	<img src="./assets/title_float.svg" alt="Misskey logo" style="border-radius:50%" width="400"/>
 </a>
