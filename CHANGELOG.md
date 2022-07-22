@@ -9,6 +9,27 @@
 You should also include the user name that made the change.
 -->
 
+## 12.x.x (unreleased)
+
+### Improvements
+- Client: Add vi-VN language support
+
+### Bugfixes
+- Client: 一度作ったwebhookの設定画面を開こうとするとページがフリーズする @syuilo
+- Client: MiAuth認証ページが機能していない @syuilo
+
+## 12.117.1 (2022/07/19)
+
+### Improvements
+- Client: UIのブラッシュアップ @syuilo
+
+### Bugfixes
+- Server: ファイルのアップロードに失敗することがある問題を修正 @acid-chicken
+- Client: リアクションピッカーがアプリ内ウィンドウの後ろに表示されてしまう問題を修正 @syuilo
+- Client: ユーザー情報の取得の再試行を修正 @xianonn
+- Client: MFMチートシートの挙動を修正 @syuilo
+- Client: 「インスタンスからのお知らせを受け取る」の設定を変更できない問題を修正 @syuilo
+
 ## 12.117.0 (2022/07/18)
 
 ### Improvements

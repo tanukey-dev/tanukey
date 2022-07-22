@@ -75,7 +75,7 @@ const props = withDefaults(defineProps<{
 	canResize: false,
 	closeButton: true,
 	mini: false,
-	front: true,
+	front: false,
 	contextmenu: null,
 	buttonsLeft: () => [],
 	buttonsRight: () => [],
@@ -170,6 +170,7 @@ function onHeaderMousedown(evt: MouseEvent) {
 	beforeClickedAt = Date.now();
 
 	const main = rootEl;
+	if (main == null) return;
 
 	if (!contains(main, document.activeElement)) main.focus();
 
