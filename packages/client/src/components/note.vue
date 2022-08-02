@@ -165,7 +165,7 @@ const reactButton = ref<HTMLElement>();
 let appearNote = $computed(() => isRenote ? note.renote as misskey.entities.Note : note);
 const isMyRenote = $i && ($i.id === note.userId);
 const showContent = ref(false);
-const collapsed = ref(appearNote.cw == null && appearNote.text != null && (
+const isLong = (appearNote.cw == null && appearNote.text != null && (
 	(appearNote.text.split('\n').length > 15) ||
 	(appearNote.text.length > 500)
 ));
