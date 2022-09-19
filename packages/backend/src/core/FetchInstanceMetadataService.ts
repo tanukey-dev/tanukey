@@ -6,12 +6,11 @@ import tinycolor from 'tinycolor2';
 import type { Instance } from '@/models/entities/Instance.js';
 import { InstancesRepository } from '@/models/index.js';
 import { AppLockService } from '@/core/AppLockService.js';
-import Logger from '@/logger.js';
+import type Logger from '@/logger.js';
 import { DI } from '@/di-symbols.js';
+import { LoggerService } from '@/core/LoggerService.js';
 import { HttpRequestService } from './HttpRequestService.js';
 import type { DOMWindow } from 'jsdom';
-
-const logger = new Logger('metadata', 'cyan');
 
 type NodeInfo = {
 	openRegistrations?: any;
@@ -33,13 +32,17 @@ type NodeInfo = {
 
 @Injectable()
 export class FetchInstanceMetadataService {
+	private logger: Logger;
+
 	constructor(
 		@Inject(DI.instancesRepository)
 		private instancesRepository: InstancesRepository,
 
 		private appLockService: AppLockService,
 		private httpRequestService: HttpRequestService,
+		private loggerService: LoggerService,
 	) {
+		this.logger = this.loggerService.getLogger('metadata', 'cyan');
 	}
 
 	public async fetchInstanceMetadata(instance: Instance, force = false): Promise<void> {
@@ -54,24 +57,24 @@ export class FetchInstanceMetadataService {
 			}
 		}
 	
-		logger.info(`Fetching metadata of ${instance.host} ...`);
+		this.logger.info(`Fetching metadata of ${instance.host} ...`);
 	
 		try {
 			const [info, dom, manifest] = await Promise.all([
-				this.#fetchNodeinfo(instance).catch(() => null),
-				this.#fetchDom(instance).catch(() => null),
-				this.#fetchManifest(instance).catch(() => null),
+				this.fetchNodeinfo(instance).catch(() => null),
+				this.fetchDom(instance).catch(() => null),
+				this.fetchManifest(instance).catch(() => null),
 			]);
 	
 			const [favicon, icon, themeColor, name, description] = await Promise.all([
-				this.#fetchFaviconUrl(instance, dom).catch(() => null),
-				this.#fetchIconUrl(instance, dom, manifest).catch(() => null),
-				this.#getThemeColor(info, dom, manifest).catch(() => null),
-				this.#getSiteName(info, dom, manifest).catch(() => null),
-				this.#getDescription(info, dom, manifest).catch(() => null),
+				this.fetchFaviconUrl(instance, dom).catch(() => null),
+				this.fetchIconUrl(instance, dom, manifest).catch(() => null),
+				this.getThemeColor(info, dom, manifest).catch(() => null),
+				this.getSiteName(info, dom, manifest).catch(() => null),
+				this.getDescription(info, dom, manifest).catch(() => null),
 			]);
 	
-			logger.succ(`Successfuly fetched metadata of ${instance.host}`);
+			this.logger.succ(`Successfuly fetched metadata of ${instance.host}`);
 	
 			const updates = {
 				infoUpdatedAt: new Date(),
@@ -93,16 +96,16 @@ export class FetchInstanceMetadataService {
 	
 			await this.instancesRepository.update(instance.id, updates);
 	
-			logger.succ(`Successfuly updated metadata of ${instance.host}`);
+			this.logger.succ(`Successfuly updated metadata of ${instance.host}`);
 		} catch (e) {
-			logger.error(`Failed to update metadata of ${instance.host}: ${e}`);
+			this.logger.error(`Failed to update metadata of ${instance.host}: ${e}`);
 		} finally {
 			unlock();
 		}
 	}
 
-	async #fetchNodeinfo(instance: Instance): Promise<NodeInfo> {
-		logger.info(`Fetching nodeinfo of ${instance.host} ...`);
+	private async fetchNodeinfo(instance: Instance): Promise<NodeInfo> {
+		this.logger.info(`Fetching nodeinfo of ${instance.host} ...`);
 	
 		try {
 			const wellknown = await this.httpRequestService.getJson('https://' + instance.host + '/.well-known/nodeinfo')
@@ -134,18 +137,18 @@ export class FetchInstanceMetadataService {
 					throw err.statusCode ?? err.message;
 				});
 	
-			logger.succ(`Successfuly fetched nodeinfo of ${instance.host}`);
+			this.logger.succ(`Successfuly fetched nodeinfo of ${instance.host}`);
 	
 			return info as NodeInfo;
 		} catch (err) {
-			logger.error(`Failed to fetch nodeinfo of ${instance.host}: ${err}`);
+			this.logger.error(`Failed to fetch nodeinfo of ${instance.host}: ${err}`);
 	
 			throw err;
 		}
 	}
 
-	async #fetchDom(instance: Instance): Promise<DOMWindow['document']> {
-		logger.info(`Fetching HTML of ${instance.host} ...`);
+	private async fetchDom(instance: Instance): Promise<DOMWindow['document']> {
+		this.logger.info(`Fetching HTML of ${instance.host} ...`);
 	
 		const url = 'https://' + instance.host;
 	
@@ -157,7 +160,7 @@ export class FetchInstanceMetadataService {
 		return doc;
 	}
 
-	async #fetchManifest(instance: Instance): Promise<Record<string, unknown> | null> {
+	private async fetchManifest(instance: Instance): Promise<Record<string, unknown> | null> {
 		const url = 'https://' + instance.host;
 	
 		const manifestUrl = url + '/manifest.json';
@@ -167,7 +170,7 @@ export class FetchInstanceMetadataService {
 		return manifest;
 	}
 
-	async #fetchFaviconUrl(instance: Instance, doc: DOMWindow['document'] | null): Promise<string | null> {
+	private async fetchFaviconUrl(instance: Instance, doc: DOMWindow['document'] | null): Promise<string | null> {
 		const url = 'https://' + instance.host;
 	
 		if (doc) {
@@ -194,7 +197,7 @@ export class FetchInstanceMetadataService {
 		return null;
 	}
 
-	async #fetchIconUrl(instance: Instance, doc: DOMWindow['document'] | null, manifest: Record<string, any> | null): Promise<string | null> {
+	private async fetchIconUrl(instance: Instance, doc: DOMWindow['document'] | null, manifest: Record<string, any> | null): Promise<string | null> {
 		if (manifest && manifest.icons && manifest.icons.length > 0 && manifest.icons[0].src) {
 			const url = 'https://' + instance.host;
 			return (new URL(manifest.icons[0].src, url)).href;
@@ -222,7 +225,7 @@ export class FetchInstanceMetadataService {
 		return null;
 	}
 
-	async #getThemeColor(info: NodeInfo | null, doc: DOMWindow['document'] | null, manifest: Record<string, any> | null): Promise<string | null> {
+	private async getThemeColor(info: NodeInfo | null, doc: DOMWindow['document'] | null, manifest: Record<string, any> | null): Promise<string | null> {
 		const themeColor = info?.metadata?.themeColor ?? doc?.querySelector('meta[name="theme-color"]')?.getAttribute('content') ?? manifest?.theme_color;
 	
 		if (themeColor) {
@@ -233,7 +236,7 @@ export class FetchInstanceMetadataService {
 		return null;
 	}
 
-	async #getSiteName(info: NodeInfo | null, doc: DOMWindow['document'] | null, manifest: Record<string, any> | null): Promise<string | null> {
+	private async getSiteName(info: NodeInfo | null, doc: DOMWindow['document'] | null, manifest: Record<string, any> | null): Promise<string | null> {
 		if (info && info.metadata) {
 			if (info.metadata.nodeName || info.metadata.name) {
 				return info.metadata.nodeName ?? info.metadata.name;
@@ -255,7 +258,7 @@ export class FetchInstanceMetadataService {
 		return null;
 	}
 
-	async #getDescription(info: NodeInfo | null, doc: DOMWindow['document'] | null, manifest: Record<string, any> | null): Promise<string | null> {
+	private async getDescription(info: NodeInfo | null, doc: DOMWindow['document'] | null, manifest: Record<string, any> | null): Promise<string | null> {
 		if (info && info.metadata) {
 			if (info.metadata.nodeDescription || info.metadata.description) {
 				return info.metadata.nodeDescription ?? info.metadata.description;

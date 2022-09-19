@@ -5,13 +5,14 @@ import { UsersRepository } from '@/models/index.js';
 import { Config } from '@/config.js';
 import { MetaService } from '@/core/MetaService.js';
 import { HttpRequestService } from '@/core/HttpRequestService.js';
-import Logger from '@/logger.js';
+import type Logger from '@/logger.js';
 import { query } from '@/misc/prelude/url.js';
+import { LoggerService } from '@/core/LoggerService.js';
 import type Koa from 'koa';
 
 @Injectable()
 export class UrlPreviewService {
-	#logger: Logger;
+	private logger: Logger;
 
 	constructor(
 		@Inject(DI.config)
@@ -22,11 +23,12 @@ export class UrlPreviewService {
 
 		private metaService: MetaService,
 		private httpRequestService: HttpRequestService,
+		private loggerService: LoggerService,
 	) {
-		this.#logger = new Logger('url-preview');
+		this.logger = this.loggerService.getLogger('url-preview');
 	}
 
-	#wrap(url?: string): string | null {
+	private wrap(url?: string): string | null {
 		return url != null
 			? url.match(/^https?:\/\//)
 				? `${this.config.url}/proxy/preview.webp?${query({
@@ -52,7 +54,7 @@ export class UrlPreviewService {
 	
 		const meta = await this.metaService.fetch();
 	
-		this.#logger.info(meta.summalyProxy
+		this.logger.info(meta.summalyProxy
 			? `(Proxy) Getting preview of ${url}@${lang} ...`
 			: `Getting preview of ${url}@${lang} ...`);
 	
@@ -65,17 +67,17 @@ export class UrlPreviewService {
 				lang: lang ?? 'ja-JP',
 			});
 	
-			this.#logger.succ(`Got preview of ${url}: ${summary.title}`);
+			this.logger.succ(`Got preview of ${url}: ${summary.title}`);
 	
-			summary.icon = this.#wrap(summary.icon);
-			summary.thumbnail = this.#wrap(summary.thumbnail);
+			summary.icon = this.wrap(summary.icon);
+			summary.thumbnail = this.wrap(summary.thumbnail);
 	
 			// Cache 7days
 			ctx.set('Cache-Control', 'max-age=604800, immutable');
 	
 			ctx.body = summary;
 		} catch (err) {
-			this.#logger.warn(`Failed to get preview of ${url}: ${err}`);
+			this.logger.warn(`Failed to get preview of ${url}: ${err}`);
 			ctx.status = 200;
 			ctx.set('Cache-Control', 'max-age=86400, immutable');
 			ctx.body = '{}';

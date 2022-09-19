@@ -13,13 +13,14 @@ import { ImageProcessingService } from '@/core/ImageProcessingService.js';
 import type { IImage } from '@/core/ImageProcessingService.js';
 import { FILE_TYPE_BROWSERSAFE } from '@/const.js';
 import { StatusError } from '@/misc/status-error.js';
-import Logger from '@/logger.js';
+import type Logger from '@/logger.js';
 import { FileInfoService } from '@/core/FileInfoService.js';
-
-const serverLogger = new Logger('server', 'gray', false);
+import { LoggerService } from '@/core/LoggerService.js';
 
 @Injectable()
 export class MediaProxyServerService {
+	private logger: Logger;
+
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
@@ -27,7 +28,9 @@ export class MediaProxyServerService {
 		private fileInfoService: FileInfoService,
 		private downloadService: DownloadService,
 		private imageProcessingService: ImageProcessingService,
+		private loggerService: LoggerService,
 	) {
+		this.logger = this.loggerService.getLogger('server', 'gray', false);
 	}
 
 	public createServer() {
@@ -41,7 +44,7 @@ export class MediaProxyServerService {
 		// Init router
 		const router = new Router();
 
-		router.get('/:url*', ctx => this.#handler(ctx));
+		router.get('/:url*', ctx => this.handler(ctx));
 
 		// Register router
 		app.use(router.routes());
@@ -49,7 +52,7 @@ export class MediaProxyServerService {
 		return app;
 	}
 
-	async #handler(ctx: Koa.Context) {
+	private async handler(ctx: Koa.Context) {
 		const url = 'url' in ctx.query ? ctx.query.url : 'https://' + ctx.params.url;
 	
 		if (typeof url !== 'string') {
@@ -123,7 +126,7 @@ export class MediaProxyServerService {
 			ctx.set('Cache-Control', 'max-age=31536000, immutable');
 			ctx.body = image.data;
 		} catch (err) {
-			serverLogger.error(`${err}`);
+			this.logger.error(`${err}`);
 	
 			if (err instanceof StatusError && (err.statusCode === 302 || err.isClientError)) {
 				ctx.status = err.statusCode;
