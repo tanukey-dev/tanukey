@@ -1,7 +1,7 @@
 <template>
 <div class="hoawjimk">
 	<XBanner v-for="media in mediaList.filter(media => !previewable(media))" :key="media.id" :media="media"/>
-	<div v-if="mediaList.filter(media => previewable(media)).length > 0" class="gird-container">
+	<div v-if="mediaList.filter(media => previewable(media)).length > 0" class="gird-container" :class="{ vertical: vertical() }">
 		<div ref="gallery" :data-count="mediaList.filter(media => previewable(media)).length">
 			<template v-for="media in mediaList.filter(media => previewable(media))">
 				<XVideo v-if="media.type.startsWith('video')" :key="media.id" :video="media"/>
@@ -94,6 +94,11 @@ onMounted(() => {
 	lightbox.init();
 });
 
+const vertical = () : boolean => {
+	const count = props.mediaList.filter(media => previewable(media)).length;
+	return count > 4 || (count === 1 && (props.mediaList[0].properties.width / props.mediaList[0].properties.height < 0.76));
+};
+
 const previewable = (file: misskey.entities.DriveFile): boolean => {
 	if (file.type === 'image/svg+xml') return true; // svgのwebpublic/thumbnailはpngなのでtrue
 	// FILE_TYPE_BROWSERSAFEに適合しないものはブラウザで表示するのに不適切
@@ -108,10 +113,18 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 		width: 100%;
 		margin-top: 4px;
 
+		&.vertical {
+			width: 75%;
+		}
+
 		&:before {
 			content: '';
 			display: block;
-			padding-top: 56.25% // 16:9;
+			padding-top: 56.25%; // 16:9
+		}
+
+		&.vertical:before {
+			padding-top: 133.33%; // 3:4
 		}
 
 		> div {
