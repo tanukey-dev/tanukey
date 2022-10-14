@@ -135,6 +135,7 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 			left: 0;
 			display: grid;
 			grid-gap: 8px;
+			grid-template-columns: 1fr 1fr;
 
 			> * {
 				overflow: hidden;
@@ -142,11 +143,11 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 			}
 
 			&[data-count="1"] {
+				grid-template-columns: 1fr;
 				grid-template-rows: 1fr;
 			}
 
 			&[data-count="2"] {
-				grid-template-columns: 1fr 1fr;
 				grid-template-rows: 1fr;
 			}
 
@@ -165,7 +166,6 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 			}
 
 			&[data-count="4"] {
-				grid-template-columns: 1fr 1fr;
 				grid-template-rows: 1fr 1fr;
 			}
 
