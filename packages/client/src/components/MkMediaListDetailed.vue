@@ -107,7 +107,7 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 	> .gird-container {
 		position: relative;
 		width: 100%;
-		margin-top: 4px;
+		margin-top: 8px;
 
 		> div {
 			position: relative;
@@ -117,44 +117,11 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 			left: 0;
 			display: grid;
 			grid-gap: 8px;
+			grid-template-columns: 1fr;
 
 			> * {
 				overflow: hidden;
 				border-radius: 6px;
-			}
-
-			&[data-count="1"] {
-				grid-template-rows: 1fr;
-			}
-
-			&[data-count="2"] {
-				grid-template-columns: 1fr 1fr;
-				grid-template-rows: 1fr;
-				aspect-ratio: 16 / 9;
-			}
-
-			&[data-count="3"] {
-				grid-template-columns: 1fr 0.5fr;
-				grid-template-rows: 1fr 1fr;
-				aspect-ratio: 16 / 9;
-
-				> *:nth-child(1) {
-					grid-row: 1 / 3;
-				}
-
-				> *:nth-child(3) {
-					grid-column: 2 / 3;
-					grid-row: 2 / 3;
-				}
-			}
-
-			:not(&[data-count="1"], &[data-count="2"], &[data-count="3"]) {
-				grid-template-columns: 1fr 1fr;
-				grid-template-rows: 1fr 1fr;
-
-				> .image {
-					aspect-ratio: 1;
-				}
 			}
 		}
 	}
