@@ -113,10 +113,6 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 		width: 100%;
 		margin-top: 4px;
 
-		&.vertical {
-			width: 75%;
-		}
-
 		&:before {
 			content: '';
 			display: block;
@@ -187,6 +183,12 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 			> *:nth-child(4) {
 				grid-column: 2 / 3;
 				grid-row: 2 / 3;
+			}
+		}
+
+		@media (min-width: 500px) {
+			&.vertical {
+				width: 75%;
 			}
 		}
 	}
