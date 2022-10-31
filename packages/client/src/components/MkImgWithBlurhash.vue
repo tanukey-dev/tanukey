@@ -64,7 +64,7 @@ onMounted(() => {
 	}
 
 	> img {
-		object-fit: cover;
+		object-fit: contain;
 	}
 
 	&.cover {
