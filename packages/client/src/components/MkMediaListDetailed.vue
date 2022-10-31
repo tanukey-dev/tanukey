@@ -1,19 +1,20 @@
 <template>
-<div class="hoawjimk">
-	<XBanner v-for="media in mediaList.filter(media => !previewable(media))" :key="media.id" :media="media"/>
-	<div v-if="mediaList.filter(media => previewable(media)).length > 0" class="gird-container" :class="{ vertical: vertical() }">
-		<div ref="gallery" :data-count="mediaList.filter(media => previewable(media)).length">
-			<template v-for="media in mediaList.filter(media => previewable(media))">
-				<XVideo v-if="media.type.startsWith('video')" :key="media.id" :video="media"/>
-				<XImage v-else-if="media.type.startsWith('image')" :key="media.id" class="image" :data-id="media.id" :image="media" :raw="raw"/>
-			</template>
+	<div class="rhaxqjmh">
+		<XBanner v-for="media in mediaList.filter(media => !previewable(media))" :key="media.id" :media="media"/>
+		<div v-if="mediaList.filter(media => previewable(media)).length > 0" class="gird-container">
+			<div ref="gallery" :data-count="mediaList.filter(media => previewable(media)).length">
+				<template v-for="media in mediaList.filter(media => previewable(media))">
+					<XVideo v-if="media.type.startsWith('video')" :key="media.id" :video="media"/>
+					<XImage v-else-if="media.type.startsWith('image')" :key="media.id" class="image" :data-id="media.id"
+									:image="media" :raw="raw"/>
+				</template>
+			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import * as misskey from 'misskey-js';
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import PhotoSwipe from 'photoswipe';
@@ -22,8 +23,8 @@ import XBanner from '@/components/MkMediaBanner.vue';
 import XImage from '@/components/MkMediaImage.vue';
 import XVideo from '@/components/MkMediaVideo.vue';
 import * as os from '@/os';
-import { FILE_TYPE_BROWSERSAFE } from '@/const';
-import { defaultStore } from '@/store';
+import {FILE_TYPE_BROWSERSAFE} from '@/const';
+import {defaultStore} from '@/store';
 
 const props = defineProps<{
 	mediaList: misskey.entities.DriveFile[];
@@ -73,10 +74,10 @@ onMounted(() => {
 	});
 
 	lightbox.on('itemData', (ev) => {
-		const { itemData } = ev;
+		const {itemData} = ev;
 
 		// element is children
-		const { element } = itemData;
+		const {element} = itemData;
 
 		const id = element.dataset.id;
 		const file = props.mediaList.find(media => media.id === id);
@@ -94,11 +95,6 @@ onMounted(() => {
 	lightbox.init();
 });
 
-const vertical = () : boolean => {
-	const count = props.mediaList.filter(media => previewable(media)).length;
-	return count > 4 || (count === 1 && (props.mediaList[0].properties.width / props.mediaList[0].properties.height < 0.76));
-};
-
 const previewable = (file: misskey.entities.DriveFile): boolean => {
 	if (file.type === 'image/svg+xml') return true; // svgのwebpublic/thumbnailはpngなのでtrue
 	// FILE_TYPE_BROWSERSAFEに適合しないものはブラウザで表示するのに不適切
@@ -107,88 +103,25 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 </script>
 
 <style lang="scss" scoped>
-.hoawjimk {
+.rhaxqjmh {
 	> .gird-container {
 		position: relative;
 		width: 100%;
-		margin-top: 4px;
-
-		&:before {
-			content: '';
-			display: block;
-			padding-top: 56.25%; // 16:9
-		}
-
-		&.vertical:before {
-			padding-top: 133.33%; // 3:4
-		}
+		margin-top: 8px;
 
 		> div {
-			position: absolute;
+			position: relative;
 			top: 0;
 			right: 0;
 			bottom: 0;
 			left: 0;
 			display: grid;
 			grid-gap: 8px;
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: 1fr;
 
 			> * {
 				overflow: hidden;
 				border-radius: 6px;
-			}
-
-			&[data-count="1"] {
-				grid-template-columns: 1fr;
-				grid-template-rows: 1fr;
-			}
-
-			&[data-count="2"] {
-				grid-template-rows: 1fr;
-			}
-
-			&[data-count="3"] {
-				grid-template-columns: 1fr 0.5fr;
-				grid-template-rows: 1fr 1fr;
-
-				> *:nth-child(1) {
-					grid-row: 1 / 3;
-				}
-
-				> *:nth-child(3) {
-					grid-column: 2 / 3;
-					grid-row: 2 / 3;
-				}
-			}
-
-			&[data-count="4"] {
-				grid-template-rows: 1fr 1fr;
-			}
-
-			> *:nth-child(1) {
-				grid-column: 1 / 2;
-				grid-row: 1 / 2;
-			}
-
-			> *:nth-child(2) {
-				grid-column: 2 / 3;
-				grid-row: 1 / 2;
-			}
-
-			> *:nth-child(3) {
-				grid-column: 1 / 2;
-				grid-row: 2 / 3;
-			}
-
-			> *:nth-child(4) {
-				grid-column: 2 / 3;
-				grid-row: 2 / 3;
-			}
-		}
-
-		@media (min-width: 500px) {
-			&.vertical {
-				width: 75%;
 			}
 		}
 	}
@@ -198,7 +131,7 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 <style lang="scss">
 .pswp {
 	// なぜか機能しない
-  //z-index: v-bind(pswpZIndex);
+	//z-index: v-bind(pswpZIndex);
 	z-index: 2000000;
 }
 </style>
