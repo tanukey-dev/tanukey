@@ -121,6 +121,7 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 			bottom: 0;
 			left: 0;
 			display: grid;
+			grid-template-columns: 1fr 1fr;
 			grid-gap: 8px;
 
 			> * {
@@ -129,11 +130,11 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 			}
 
 			&[data-count="1"] {
+				grid-template-columns: 1fr;
 				grid-template-rows: 1fr;
 			}
 
 			&[data-count="2"] {
-				grid-template-columns: 1fr 1fr;
 				grid-template-rows: 1fr;
 			}
 
@@ -152,28 +153,27 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 			}
 
 			&[data-count="4"] {
-				grid-template-columns: 1fr 1fr;
 				grid-template-rows: 1fr 1fr;
-			}
 
-			> *:nth-child(1) {
-				grid-column: 1 / 2;
-				grid-row: 1 / 2;
-			}
+				> *:nth-child(1) {
+					grid-column: 1 / 2;
+					grid-row: 1 / 2;
+				}
 
-			> *:nth-child(2) {
-				grid-column: 2 / 3;
-				grid-row: 1 / 2;
-			}
+				> *:nth-child(2) {
+					grid-column: 2 / 3;
+					grid-row: 1 / 2;
+				}
 
-			> *:nth-child(3) {
-				grid-column: 1 / 2;
-				grid-row: 2 / 3;
-			}
+				> *:nth-child(3) {
+					grid-column: 1 / 2;
+					grid-row: 2 / 3;
+				}
 
-			> *:nth-child(4) {
-				grid-column: 2 / 3;
-				grid-row: 2 / 3;
+				> *:nth-child(4) {
+					grid-column: 2 / 3;
+					grid-row: 2 / 3;
+				}
 			}
 		}
 	}
