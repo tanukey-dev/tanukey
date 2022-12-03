@@ -21,11 +21,9 @@ export class ApMentionService {
 	) {
 	}
 
-	public async extractApMentions(tags: IObject | IObject[] | null | undefined, resolver?: Resolver) {
+	public async extractApMentions(tags: IObject | IObject[] | null | undefined, resolver: Resolver) {
 		const hrefs = unique(this.extractApMentionObjects(tags).map(x => x.href as string));
-	
-		if (resolver == null) resolver = this.apResolverService.createResolver();
-	
+
 		const limit = promiseLimit<CacheableUser | null>(2);
 		const mentionedUsers = (await Promise.all(
 			hrefs.map(x => limit(() => this.apPersonService.resolvePerson(x, resolver).catch(() => null))),
