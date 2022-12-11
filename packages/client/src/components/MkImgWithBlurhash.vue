@@ -59,8 +59,9 @@ onMounted(() => {
 	}
 
 	> canvas {
-		position: absolute;
+		position: relative;
 		object-fit: cover;
+		aspect-ratio: 16 / 9;
 	}
 
 	> img {

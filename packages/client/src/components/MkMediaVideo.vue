@@ -74,6 +74,9 @@ const hide = ref((defaultStore.state.nsfw === 'force') ? true : props.video.isSe
 	align-items: center;
 	background: #111;
 	color: #fff;
+	width: 100%;
+	height: 100%;
+	aspect-ratio: 16 / 9;
 
 	> div {
 		display: table-cell;

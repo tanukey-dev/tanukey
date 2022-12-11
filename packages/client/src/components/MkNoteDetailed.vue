@@ -120,7 +120,7 @@ import * as misskey from 'misskey-js';
 import MkNoteSub from '@/components/MkNoteSub.vue';
 import XNoteSimple from '@/components/MkNoteSimple.vue';
 import XReactionsViewer from '@/components/MkReactionsViewer.vue';
-import XMediaList from '@/components/MkMediaList.vue';
+import XMediaList from '@/components/MkMediaListDetailed.vue';
 import XCwButton from '@/components/MkCwButton.vue';
 import XPoll from '@/components/MkPoll.vue';
 import XRenoteButton from '@/components/MkRenoteButton.vue';
