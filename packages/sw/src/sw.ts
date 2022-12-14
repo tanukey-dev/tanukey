@@ -1,5 +1,3 @@
-declare var self: ServiceWorkerGlobalScope;
-
 import { createEmptyNotification, createNotification } from '@/scripts/create-notification';
 import { swLang } from '@/scripts/lang';
 import { swNotificationRead } from '@/scripts/notification-read';
@@ -176,7 +174,6 @@ self.addEventListener('notificationclick', <K extends keyof pushNotificationData
 		}
 	
 		notification.close();
-	
 	})());
 });
 

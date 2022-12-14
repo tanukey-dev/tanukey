@@ -1,8 +1,6 @@
 /*
  * Notification manager for SW
  */
-declare var self: ServiceWorkerGlobalScope;
-
 import { swLang } from '@/scripts/lang';
 import { cli } from '@/scripts/operations';
 import { pushNotificationDataMap } from '@/types';
@@ -40,7 +38,7 @@ async function composeNotification<K extends keyof pushNotificationDataMap>(data
 		*/
 		case 'notification':
 			switch (data.body.type) {
-				case 'follow':
+				case 'follow': {
 					// users/showの型定義をswos.apiへ当てはめるのが困難なのでapiFetch.requestを直接使用
 					const account = await getAccountFromId(data.userId);
 					if (!account) return null;
@@ -57,6 +55,7 @@ async function composeNotification<K extends keyof pushNotificationDataMap>(data
 							}
 						],
 					}];
+				}
 
 				case 'mention':
 					return [t('_notification.youGotMention', { name: getUserName(data.body.user) }), {
@@ -120,7 +119,7 @@ async function composeNotification<K extends keyof pushNotificationDataMap>(data
 						],
 					}];
 
-				case 'reaction':
+				case 'reaction': {
 					let reaction = data.body.reaction;
 					let badge: string | undefined;
 
@@ -150,7 +149,6 @@ async function composeNotification<K extends keyof pushNotificationDataMap>(data
 						badge = `/twemoji-badge/${char2fileName(reaction)}.png`;
 					}
 
-
 					if (badge ? await fetch(badge).then(res => res.status !== 200).catch(() => true) : true) {
 						badge = iconUrl('plus');
 					}
@@ -167,6 +165,7 @@ async function composeNotification<K extends keyof pushNotificationDataMap>(data
 							}
 						],
 					}];
+				}
 
 				case 'pollVote':
 					return [t('_notification.youGotPoll', { name: getUserName(data.body.user) }), {
