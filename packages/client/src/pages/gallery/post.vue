@@ -1,7 +1,7 @@
 <template>
 <MkStickyContainer>
 	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :content-max="1000" :margin-min="16" :margin-max="32">
+	<MkSpacer :content-max="800" :margin-min="16" :margin-max="32">
 		<div class="_root">
 			<transition :name="$store.state.animation ? 'fade' : ''" mode="out-in">
 				<div v-if="post" class="rkxwuolj">
@@ -168,7 +168,6 @@ definePageMetadata(computed(() => post ? {
 			> img {
 				display: block;
 				max-width: 100%;
-				max-height: 500px;
 				margin: 0 auto;
 			}
 
