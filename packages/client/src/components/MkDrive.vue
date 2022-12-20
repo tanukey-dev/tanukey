@@ -603,7 +603,7 @@ function getMenu() {
 		action: () => { deleteFolder(folder.value as Misskey.entities.DriveFolder); },
 	} : undefined, {
 		text: i18n.ts.createFolder,
-		icon: 'fas fa-folder-plus',
+		icon: 'ti ti-folder-plus',
 		action: () => { createFolder(); },
 	}];
 }

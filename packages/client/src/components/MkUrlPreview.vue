@@ -26,7 +26,7 @@
 	</transition>
 	<div v-if="tweetId" class="expandTweet">
 		<a @click="tweetExpanded = true">
-			<i class="fab fa-twitter"></i> {{ i18n.ts.expandTweet }}
+			<i class="ti ti-brand-twitter"></i> {{ i18n.ts.expandTweet }}
 		</a>
 	</div>
 </div>
@@ -82,7 +82,7 @@ if (requestUrl.hostname === 'music.youtube.com' && requestUrl.pathname.match('^/
 	requestUrl.hostname = 'www.youtube.com';
 }
 
-const requestLang = (lang || 'ja-JP').replace('ja-KS', 'ja-JP');
+const requestLang = (lang ?? 'ja-JP').replace('ja-KS', 'ja-JP');
 
 requestUrl.hash = '';
 
