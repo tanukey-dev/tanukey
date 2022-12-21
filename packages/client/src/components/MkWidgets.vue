@@ -9,11 +9,12 @@
 			<MkButton inline primary class="mk-widget-add" @click="addWidget"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
 			<MkButton inline @click="$emit('exit')">{{ i18n.ts.close }}</MkButton>
 		</header>
-		<XDraggable
-			v-model="widgets_"
+		<Sortable
+			:model-value="props.widgets"
 			item-key="id"
 			handle=".handle"
-			animation="150"
+			:animation="150"
+			@update:modelValue="v => emit('updateWidgets', v)"
 		>
 			<template #item="{element}">
 				<div class="customize-container">
@@ -24,7 +25,7 @@
 					</div>
 				</div>
 			</template>
-		</XDraggable>
+		</Sortable>
 	</template>
 	<component :is="`mkw-${widget.name}`" v-for="widget in widgets" v-else :key="widget.id" :ref="el => widgetRefs[widget.id] = el" class="widget" :widget="widget" @updateProps="updateWidget(widget.id, $event)" @contextmenu.stop="onContextmenu(widget, $event)"/>
 </div>
@@ -38,8 +39,9 @@ import MkButton from '@/components/MkButton.vue';
 import { widgets as widgetDefs } from '@/widgets';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
+import { deepClone } from '@/scripts/clone';
 
-const XDraggable = defineAsyncComponent(() => import('vuedraggable'));
+const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
 
 type Widget = {
 	name: string;
@@ -82,12 +84,6 @@ const removeWidget = (widget) => {
 const updateWidget = (id, data) => {
 	emit('updateWidget', { id, data });
 };
-const widgets_ = computed({
-	get: () => props.widgets,
-	set: (value) => {
-		emit('updateWidgets', value);
-	},
-});
 
 function onContextmenu(widget: Widget, ev: MouseEvent) {
 	const isLink = (el: HTMLElement) => {

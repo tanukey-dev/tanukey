@@ -5212,7 +5212,7 @@ __metadata:
     vue-eslint-parser: ^9.1.0
     vue-prism-editor: 2.0.0-alpha.2
     vue-tsc: ^1.0.14
-    vuedraggable: 4.0.1
+    vuedraggable: next
   languageName: unknown
   linkType: soft
 
@@ -15315,10 +15315,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sortablejs@npm:1.10.2":
-  version: 1.10.2
-  resolution: "sortablejs@npm:1.10.2"
-  checksum: 37f8d47a9702b93c38077c5e0af90174dcf8e95cf96fe61a722033003eb293bdf3832e4a943f281eaedc433e24cd7d5a48a408706a71a21e75bc11ced0b358da
+"sortablejs@npm:1.14.0":
+  version: 1.14.0
+  resolution: "sortablejs@npm:1.14.0"
+  checksum: 7b9d2cbb0331f3f259b8703a17174ff46a941b6d59c77c75ca05a5bd484bf2b409a9c1d21344f9c933939880450803b254825c7c7d7f88034e8c7e675420b389
   languageName: node
   linkType: hard
 
@@ -17176,14 +17176,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vuedraggable@npm:4.0.1":
-  version: 4.0.1
-  resolution: "vuedraggable@npm:4.0.1"
+"vuedraggable@npm:next":
+  version: 4.1.0
+  resolution: "vuedraggable@npm:4.1.0"
   dependencies:
-    sortablejs: 1.10.2
+    sortablejs: 1.14.0
   peerDependencies:
     vue: ^3.0.1
-  checksum: 039e5d38560144299be3689270728639d041737b487cbb7dfec09b6c372b48804031785f9b40e6e14da0d213315b98ddc005713cc60a749cf98028e0c16fd866
+  checksum: 8b4c5a6b384361df97f7a3595d7772dfbb086bf97c6702a1117b532a9e49db2908cb5d21b7959cb10179714c4c2225e4be0b77b29f778923169ea8a8197a429f
   languageName: node
   linkType: hard
 
