@@ -1,6 +1,6 @@
 {
 	"name": "misskey",
-	"version": "13.0.0-alpha.11-nj",
+	"version": "13.0.0-beta.3-nj",
 	"codename": "indigo",
 	"repository": {
 		"type": "git",
@@ -8,7 +8,7 @@
 	},
 	"packageManager": "yarn@3.3.0",
 	"workspaces": [
-		"packages/client",
+		"packages/frontend",
 		"packages/backend",
 		"packages/sw"
 	],
