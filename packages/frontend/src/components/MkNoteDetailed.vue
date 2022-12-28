@@ -4,6 +4,7 @@
 	v-show="!isDeleted"
 	ref="el"
 	v-hotkey="keymap"
+	v-size="{ max: [500, 450, 350, 300] }"
 	class="lxwezrsl _block"
 	:tabindex="!isDeleted ? '-1' : null"
 	:class="{ renote: isRenote }"
@@ -118,7 +119,7 @@ import * as misskey from 'misskey-js';
 import MkNoteSub from '@/components/MkNoteSub.vue';
 import XNoteSimple from '@/components/MkNoteSimple.vue';
 import XReactionsViewer from '@/components/MkReactionsViewer.vue';
-import XMediaList from '@/components/MkMediaList.vue';
+import XMediaList from '@/components/MkMediaListDetailed.vue';
 import XCwButton from '@/components/MkCwButton.vue';
 import XPoll from '@/components/MkPoll.vue';
 import XRenoteButton from '@/components/MkRenoteButton.vue';
@@ -541,6 +542,64 @@ if (appearNote.replyId) {
 
 	> .reply {
 		border-top: solid 0.5px var(--divider);
+	}
+
+	&.max-width_500px {
+		font-size: 0.9em;
+	}
+
+	&.max-width_450px {
+		> .renote {
+			padding: 8px 16px 0 16px;
+		}
+
+		> .article {
+			padding: 16px;
+
+			> .header {
+				> .avatar {
+					width: 50px;
+					height: 50px;
+				}
+			}
+		}
+	}
+
+	&.max-width_350px {
+		> .article {
+			> .main {
+				> .footer {
+					> .button {
+						&:not(:last-child) {
+							margin-right: 18px;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	&.max-width_300px {
+		font-size: 0.825em;
+
+		> .article {
+			> .header {
+				> .avatar {
+					width: 50px;
+					height: 50px;
+				}
+			}
+
+			> .main {
+				> .footer {
+					> .button {
+						&:not(:last-child) {
+							margin-right: 12px;
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
