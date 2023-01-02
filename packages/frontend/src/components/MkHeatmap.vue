@@ -9,23 +9,7 @@
 
 <script lang="ts" setup>
 import { markRaw, version as vueVersion, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
-import {
-	Chart,
-	ArcElement,
-	LineElement,
-	BarElement,
-	PointElement,
-	BarController,
-	LineController,
-	CategoryScale,
-	LinearScale,
-	TimeScale,
-	Legend,
-	Title,
-	Tooltip,
-	SubTitle,
-	Filler,
-} from 'chart.js';
+import { Chart } from 'chart.js';
 import { enUS } from 'date-fns/locale';
 import tinycolor from 'tinycolor2';
 import * as os from '@/os';
@@ -35,24 +19,9 @@ import { useChartTooltip } from '@/scripts/use-chart-tooltip';
 import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
 import { chartVLine } from '@/scripts/chart-vline';
 import { alpha } from '@/scripts/color';
+import { initChart } from '@/scripts/init-chart';
 
-Chart.register(
-	ArcElement,
-	LineElement,
-	BarElement,
-	PointElement,
-	BarController,
-	LineController,
-	CategoryScale,
-	LinearScale,
-	TimeScale,
-	Legend,
-	Title,
-	Tooltip,
-	SubTitle,
-	Filler,
-	MatrixController, MatrixElement,
-);
+initChart();
 
 const props = defineProps<{
 	src: string;
@@ -123,11 +92,6 @@ async function renderChart() {
 
 	await nextTick();
 
-	const gridColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-
-	// フォントカラー
-	Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--fg');
-
 	const color = defaultStore.state.darkMode ? '#b4e900' : '#86b300';
 
 	// 視覚上の分かりやすさのため上から最も大きい3つの値の平均を最大値とする
@@ -191,8 +155,6 @@ async function renderChart() {
 					},
 					grid: {
 						display: false,
-						color: gridColor,
-						borderColor: 'rgb(0, 0, 0, 0)',
 					},
 					ticks: {
 						display: true,
@@ -206,8 +168,6 @@ async function renderChart() {
 					position: 'right',
 					grid: {
 						display: false,
-						color: gridColor,
-						borderColor: 'rgb(0, 0, 0, 0)',
 					},
 					ticks: {
 						maxRotation: 0,
@@ -220,7 +180,6 @@ async function renderChart() {
 					},
 				},
 			},
-			animation: false,
 			plugins: {
 				legend: {
 					display: false,

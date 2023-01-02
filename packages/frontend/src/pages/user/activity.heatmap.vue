@@ -8,20 +8,25 @@
 </template>
 
 <script lang="ts" setup>
-import { markRaw, version as vueVersion, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { markRaw, version as vueVersion, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 import { Chart } from 'chart.js';
 import { enUS } from 'date-fns/locale';
 import tinycolor from 'tinycolor2';
+import * as misskey from 'misskey-js';
 import * as os from '@/os';
 import 'chartjs-adapter-date-fns';
 import { defaultStore } from '@/store';
 import { useChartTooltip } from '@/scripts/use-chart-tooltip';
-import { MatrixController, MatrixElement } from 'chartjs-chart-matrix';
 import { chartVLine } from '@/scripts/chart-vline';
 import { alpha } from '@/scripts/color';
 import { initChart } from '@/scripts/init-chart';
 
 initChart();
+
+const props = defineProps<{
+	src: string;
+	user: misskey.entities.User;
+}>();
 
 const rootEl = $ref<HTMLDivElement>(null);
 const chartEl = $ref<HTMLCanvasElement>(null);
@@ -38,27 +43,39 @@ async function renderChart() {
 		chartInstance.destroy();
 	}
 
-	const wide = rootEl.offsetWidth > 600;
+	const wide = rootEl.offsetWidth > 700;
 	const narrow = rootEl.offsetWidth < 400;
 
-	const maxDays = wide ? 20 : narrow ? 7 : 14;
+	const weeks = wide ? 50 : narrow ? 10 : 25;
+	const chartLimit = 7 * weeks;
 
-	const raw = await os.api('retention', { });
+	const getDate = (ago: number) => {
+		const y = now.getFullYear();
+		const m = now.getMonth();
+		const d = now.getDate();
 
-	const data = [];
-	for (const record of raw) {
-		let i = 0;
-		for (const date of Object.keys(record.data).sort((a, b) => new Date(a).getTime() - new Date(b).getTime())) {
-			data.push({
-				x: i,
-				y: record.createdAt,
-				v: record.data[date],
-			});
-			i++;
-		}
+		return new Date(y, m, d - ago);
+	};
+
+	const format = (arr) => {
+		return arr.map((v, i) => {
+			const dt = getDate(i);
+			const iso = `${dt.getFullYear()}-${(dt.getMonth() + 1).toString().padStart(2, '0')}-${dt.getDate().toString().padStart(2, '0')}`;
+			return {
+				x: iso,
+				y: dt.getDay(),
+				d: iso,
+				v,
+			};
+		});
+	};
+
+	let values;
+
+	if (props.src === 'notes') {
+		const raw = await os.api('charts/user/notes', { userId: props.user.id, limit: chartLimit, span: 'day' });
+		values = raw.inc;
 	}
-
-	console.log(data);
 
 	fetching = false;
 
@@ -67,39 +84,43 @@ async function renderChart() {
 	const color = defaultStore.state.darkMode ? '#b4e900' : '#86b300';
 
 	// 視覚上の分かりやすさのため上から最も大きい3つの値の平均を最大値とする
-	//const max = raw.readWrite.slice().sort((a, b) => b - a).slice(0, 3).reduce((a, b) => a + b, 0) / 3;
-	const max = 4;
+	const max = values.slice().sort((a, b) => b - a).slice(0, 3).reduce((a, b) => a + b, 0) / 3;
 
-	const marginEachCell = 6;
+	const min = Math.max(0, Math.min(...values) - 1);
+
+	const marginEachCell = 4;
 
 	chartInstance = new Chart(chartEl, {
 		type: 'matrix',
 		data: {
 			datasets: [{
-				label: 'Active',
-				data: data,
+				label: '',
+				data: format(values),
 				pointRadius: 0,
 				borderWidth: 0,
 				borderJoinStyle: 'round',
 				borderRadius: 3,
 				backgroundColor(c) {
 					const value = c.dataset.data[c.dataIndex].v;
-					const a = value / max;
+					let a = (value - min) / max;
+					if (value !== 0) { // 0でない限りは完全に不可視にはしない
+						a = Math.max(a, 0.05);
+					}
 					return alpha(color, a);
 				},
 				fill: true,
 				width(c) {
 					const a = c.chart.chartArea ?? {};
-					return (a.right - a.left) / maxDays - marginEachCell;
+					return (a.right - a.left) / weeks - marginEachCell;
 				},
 				height(c) {
 					const a = c.chart.chartArea ?? {};
-					return (a.bottom - a.top) / maxDays - (marginEachCell / 1.5);
+					return (a.bottom - a.top) / 7 - marginEachCell;
 				},
 			}],
 		},
 		options: {
-			aspectRatio: wide ? 2 : narrow ? 2 : 2,
+			aspectRatio: wide ? 6 : narrow ? 1.8 : 3.2,
 			layout: {
 				padding: {
 					left: 8,
@@ -110,30 +131,30 @@ async function renderChart() {
 			},
 			scales: {
 				x: {
-					position: 'top',
-					suggestedMax: maxDays,
+					type: 'time',
+					offset: true,
+					position: 'bottom',
+					time: {
+						unit: 'week',
+						round: 'week',
+						isoWeekday: 0,
+						displayFormats: {
+							week: 'MMM dd',
+						},
+					},
 					grid: {
 						display: false,
 					},
 					ticks: {
 						display: true,
-						padding: 0,
 						maxRotation: 0,
-						autoSkipPadding: 0,
-						autoSkip: false,
-						callback: (value, index, values) => value + 1,
+						autoSkipPadding: 8,
 					},
 				},
 				y: {
-					type: 'time',
-					min: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - maxDays),
 					offset: true,
 					reverse: true,
-					position: 'left',
-					time: {
-						unit: 'day',
-						round: 'day',
-					},
+					position: 'right',
 					grid: {
 						display: false,
 					},
@@ -144,6 +165,7 @@ async function renderChart() {
 						font: {
 							size: 9,
 						},
+						callback: (value, index, values) => ['', 'Mon', '', 'Wed', '', 'Fri', ''][value],
 					},
 				},
 			},
@@ -160,7 +182,7 @@ async function renderChart() {
 						},
 						label(context) {
 							const v = context.dataset.data[context.dataIndex];
-							return ['Active: ' + v.v];
+							return [v.v];
 						},
 					},
 					//mode: 'index',
@@ -173,6 +195,11 @@ async function renderChart() {
 		},
 	});
 }
+
+watch(() => props.src, () => {
+	fetching = true;
+	renderChart();
+});
 
 onMounted(async () => {
 	renderChart();

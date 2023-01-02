@@ -299,7 +299,7 @@ if (appearNote.replyId) {
 .lxwezrsl {
 	position: relative;
 	transition: box-shadow 0.1s ease;
-	overflow: hidden;
+	overflow: clip;
 	contain: content;
 
 	&:focus-visible {

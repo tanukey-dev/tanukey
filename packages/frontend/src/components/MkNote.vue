@@ -469,7 +469,7 @@ function readPromo() {
 					&.collapsed {
 						position: relative;
 						max-height: 15em;
-						overflow: hidden;
+						overflow: clip;
 
 						> .fade {
 							display: block;
