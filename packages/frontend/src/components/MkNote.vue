@@ -181,7 +181,7 @@ const isMyRenote = $i && ($i.id === note.userId);
 const showContent = ref(false);
 const isLong = (appearNote.cw == null && appearNote.text != null && (
 	(appearNote.text.split('\n').length > 15) ||
-	(appearNote.text.length > 500)
+	(appearNote.text.length > 650)
 ));
 const collapsed = ref(appearNote.cw == null && isLong);
 const isDeleted = ref(false);
@@ -504,7 +504,7 @@ function readPromo() {
 
 .contentCollapsed {
 	position: relative;
-	max-height: 9em;
+	max-height: 15em;
 	overflow: clip;
 }
 
