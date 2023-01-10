@@ -647,6 +647,7 @@ middle: "Mediu"
 sent: "Trimite"
 searchByGoogle: "Caută"
 file: "Fișiere"
+show: "Arată"
 _email:
   _follow:
     title: "te-a urmărit"
@@ -666,6 +667,8 @@ _sfx:
   notification: "Notificări"
   chat: "Chat"
 _widgets:
+  profile: "Profil"
+  instanceInfo: "Informații despre instanță"
   notifications: "Notificări"
   timeline: "Cronologie"
   activity: "Activitate"
@@ -690,6 +693,9 @@ _charts:
   federation: "Federație"
 _timelines:
   home: "Acasă"
+_play:
+  script: "Script"
+  summary: "Descriere"
 _pages:
   blocks:
     image: "Imagini"
