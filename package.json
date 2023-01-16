@@ -1,7 +1,7 @@
 {
 	"name": "misskey",
-	"version": "13.0.0-rc.10-nj",
-	"codename": "indigo",
+	"version": "13.0.0-nj",
+	"codename": "nasubi",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/TeamNijimiss/misskey.git"
