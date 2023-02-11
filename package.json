@@ -1,12 +1,12 @@
 {
 	"name": "misskey",
-	"version": "13.5.2-nj",
+	"version": "13.6.0-nj",
 	"codename": "nasubi",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/TeamNijimiss/misskey.git"
 	},
-	"packageManager": "pnpm@7.24.3",
+	"packageManager": "pnpm@7.27.0",
 	"workspaces": [
 		"packages/frontend",
 		"packages/backend",
@@ -54,8 +54,8 @@
 	"devDependencies": {
 		"@types/gulp": "4.0.10",
 		"@types/gulp-rename": "2.0.1",
-		"@typescript-eslint/eslint-plugin": "5.50.0",
-		"@typescript-eslint/parser": "5.50.0",
+		"@typescript-eslint/eslint-plugin": "5.51.0",
+		"@typescript-eslint/parser": "5.51.0",
 		"cross-env": "7.0.3",
 		"cypress": "12.5.1",
 		"eslint": "8.33.0",
