@@ -1,8 +1,16 @@
 <template>
 <MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
+	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
 	<MkSpacer :content-max="800">
-		<XNotes class="" :pagination="pagination"/>
+		<div v-if="tab === 'all'">
+			<XNotes class="" :pagination="pagination"/>
+		</div>
+		<div v-else-if="tab === 'localOnly'">
+			<XNotes class="" :pagination="localOnlyPagination"/>
+		</div>
+		<div v-else-if="tab === 'withFiles'">
+			<XNotes class="" :pagination="withFilesPagination"/>
+		</div>
 	</MkSpacer>
 </MkStickyContainer>
 </template>
@@ -11,6 +19,9 @@
 import { computed } from 'vue';
 import XNotes from '@/components/MkNotes.vue';
 import { definePageMetadata } from '@/scripts/page-metadata';
+import { i18n } from '@/i18n';
+
+let tab = $ref('all');
 
 const props = defineProps<{
 	tag: string;
@@ -24,9 +35,36 @@ const pagination = {
 	})),
 };
 
+const localOnlyPagination = {
+	endpoint: 'notes/search-by-tag' as const,
+	limit: 10,
+	params: computed(() => ({
+		tag: props.tag,
+		local: true,
+	})),
+};
+
+const withFilesPagination = {
+	endpoint: 'notes/search-by-tag' as const,
+	limit: 10,
+	params: computed(() => ({
+		tag: props.tag,
+		withFiles: true,
+	})),
+};
+
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = $computed(() => [{
+	key: 'all',
+	title: i18n.ts.all,
+}, {
+	key: 'localOnly',
+	title: i18n.ts.localOnly,
+}, {
+	key: 'withFiles',
+	title: i18n.ts.withFiles,
+}]);
 
 definePageMetadata(computed(() => ({
 	title: props.tag,
