@@ -12,7 +12,7 @@
 - Change note length limit to 5,000 characters.
 - Remove URL upload functionality.
 - Add checkbox for age verification at new registration.
-- Customized image display
+- Customized image view
 
 
 
