@@ -3,13 +3,13 @@
 	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
 	<MkSpacer :content-max="800">
 		<div v-if="tab === 'all'">
-			<XNotes class="" :pagination="pagination"/>
+			<MkNotes class="" :pagination="pagination"/>
 		</div>
 		<div v-else-if="tab === 'localOnly'">
-			<XNotes class="" :pagination="localOnlyPagination"/>
+			<MkNotes class="" :pagination="localOnlyPagination"/>
 		</div>
 		<div v-else-if="tab === 'withFiles'">
-			<XNotes class="" :pagination="withFilesPagination"/>
+			<MkNotes class="" :pagination="withFilesPagination"/>
 		</div>
 	</MkSpacer>
 </MkStickyContainer>
@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import XNotes from '@/components/MkNotes.vue';
+import MkNotes from '@/components/MkNotes.vue';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { i18n } from '@/i18n';
 
