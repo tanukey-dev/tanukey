@@ -1335,6 +1335,7 @@ _aboutMisskey:
   contributors: "主要贡献者"
   allContributors: "全体贡献者"
   source: "源代码"
+  sourceOriginal: "源代码 (原始)"
   translation: "翻译Misskey"
   donate: "赞助Misskey"
   morePatrons: "还有很多其他的人也在支持我们，非常感谢🥰"

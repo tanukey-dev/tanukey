@@ -1335,6 +1335,7 @@ _aboutMisskey:
   contributors: "主な貢献者"
   allContributors: "全ての貢献者"
   source: "ソースコード"
+  sourceOriginal: "ソースコード (オリジナル)"
   translation: "Misskeyを翻訳"
   donate: "Misskeyに寄付"
   morePatrons: "他にもぎょうさんの人からサポートしてもろてんねん。ほんまおおきに🥰"

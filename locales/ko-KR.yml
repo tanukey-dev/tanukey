@@ -1331,6 +1331,7 @@ _aboutMisskey:
   contributors: "주요 기여자"
   allContributors: "모든 기여자"
   source: "소스 코드"
+  sourceOriginal: "소스 코드 (원본)"
   translation: "Misskey를 번역하기"
   donate: "Misskey에 기부하기"
   morePatrons: "이 외에도 다른 많은 분들이 도움을 주시고 계십니다. 감사합니다🥰"

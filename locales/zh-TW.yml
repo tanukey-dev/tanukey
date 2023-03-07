@@ -1334,6 +1334,7 @@ _aboutMisskey:
   contributors: "主要貢獻者"
   allContributors: "全體貢獻人員"
   source: "原始碼"
+  sourceOriginal: "原始碼 (原創)"
   translation: "翻譯Misskey"
   donate: "贊助Misskey"
   morePatrons: "還有許許多多幫助我們的其他人，非常感謝你們。 🥰"
