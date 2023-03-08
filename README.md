@@ -12,8 +12,9 @@
 - Change note length limit to 5,000 characters.
 - Remove URL upload functionality.
 - Add checkbox for age verification at new registration.
-- Customized image view
-
+- Customized image thumbnail display.
+- Add search filters to tag searches.
+- Add "日本語 (お嬢様)" to the display language. (Special Thanks to [緋色なつめ](https://nijimiss.moe/@Nattsume_hi_iro))
 
 
 <div align="center">
