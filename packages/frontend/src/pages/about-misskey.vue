@@ -24,9 +24,14 @@
 				</div>
 				<FormSection>
 					<div class="_formLinks">
-						<FormLink to="https://github.com/misskey-dev/misskey" external>
+						<FormLink to="https://github.com/TeamNijimiss/misskey" external>
 							<template #icon><i class="ti ti-code"></i></template>
 							{{ i18n.ts._aboutMisskey.source }}
+							<template #suffix>GitHub</template>
+						</FormLink>
+						<FormLink to="https://github.com/misskey-dev/misskey" external>
+							<template #icon><i class="ti ti-code"></i></template>
+							{{ i18n.ts._aboutMisskey.sourceOriginal }}
 							<template #suffix>GitHub</template>
 						</FormLink>
 						<FormLink to="https://crowdin.com/project/misskey" external>
@@ -83,6 +88,12 @@
 						<div v-for="patron in patrons" :key="patron">{{ patron }}</div>
 					</div>
 					<p>{{ i18n.ts._aboutMisskey.morePatrons }}</p>
+				</FormSection>
+				<FormSection>
+					<template #label>Special thanks</template>
+					<div style="text-align: center;">
+						<a style="display: inline-block;" class="dcadvirth" title="DC Advirth" href="https://www.dotchain.ltd/advirth" target="_blank"><img width="200" src="https://misskey-hub.net/sponsors/dcadvirth.png" alt="DC Advirth"></a>
+					</div>
 				</FormSection>
 			</div>
 		</MkSpacer>
@@ -203,6 +214,7 @@ const patrons = [
 	'pixeldesu',
 	'あめ玉',
 	'氷月氷華里',
+	'Ebise Lutica',
 ];
 
 let thereIsTreasure = $ref($i && !claimedAchievements.includes('foundTreasure'));

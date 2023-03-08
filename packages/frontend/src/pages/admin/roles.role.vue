@@ -11,7 +11,7 @@
 				<MkFolder>
 					<template #icon><i class="ti ti-info-circle"></i></template>
 					<template #label>{{ i18n.ts.info }}</template>
-					<XEditor v-model="role" readonly/>
+					<XEditor :model-value="role" readonly/>
 				</MkFolder>
 				<MkFolder v-if="role.target === 'manual'" default-open>
 					<template #icon><i class="ti ti-users"></i></template>
@@ -23,7 +23,7 @@
 						<MkPagination :pagination="usersPagination">
 							<template #empty>
 								<div class="_fullinfo">
-									<img src="https://xn--931a.moe/assets/info.jpg" class="_ghost"/>
+									<img src="https://media.nijimiss.app/assets/info.png" class="_ghost"/>
 									<div>{{ i18n.ts.noUsers }}</div>
 								</div>
 							</template>
