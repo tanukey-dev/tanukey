@@ -114,6 +114,9 @@ import * as ep___clips_list from './endpoints/clips/list.js';
 import * as ep___clips_notes from './endpoints/clips/notes.js';
 import * as ep___clips_show from './endpoints/clips/show.js';
 import * as ep___clips_update from './endpoints/clips/update.js';
+import * as ep___clips_favorite from './endpoints/clips/favorite.js';
+import * as ep___clips_unfavorite from './endpoints/clips/unfavorite.js';
+import * as ep___clips_myFavorites from './endpoints/clips/my-favorites.js';
 import * as ep___drive from './endpoints/drive.js';
 import * as ep___drive_files from './endpoints/drive/files.js';
 import * as ep___drive_files_attachedNotes from './endpoints/drive/files/attached-notes.js';
@@ -219,10 +222,14 @@ import * as ep___i_webhooks_update from './endpoints/i/webhooks/update.js';
 import * as ep___i_webhooks_delete from './endpoints/i/webhooks/delete.js';
 import * as ep___meta from './endpoints/meta.js';
 import * as ep___emojis from './endpoints/emojis.js';
+import * as ep___emoji from './endpoints/emoji.js';
 import * as ep___miauth_genToken from './endpoints/miauth/gen-token.js';
 import * as ep___mute_create from './endpoints/mute/create.js';
 import * as ep___mute_delete from './endpoints/mute/delete.js';
 import * as ep___mute_list from './endpoints/mute/list.js';
+import * as ep___renoteMute_create from './endpoints/renote-mute/create.js';
+import * as ep___renoteMute_delete from './endpoints/renote-mute/delete.js';
+import * as ep___renoteMute_list from './endpoints/renote-mute/list.js';
 import * as ep___my_apps from './endpoints/my/apps.js';
 import * as ep___notes from './endpoints/notes.js';
 import * as ep___notes_children from './endpoints/notes/children.js';
@@ -434,6 +441,9 @@ const $clips_list: Provider = { provide: 'ep:clips/list', useClass: ep___clips_l
 const $clips_notes: Provider = { provide: 'ep:clips/notes', useClass: ep___clips_notes.default };
 const $clips_show: Provider = { provide: 'ep:clips/show', useClass: ep___clips_show.default };
 const $clips_update: Provider = { provide: 'ep:clips/update', useClass: ep___clips_update.default };
+const $clips_favorite: Provider = { provide: 'ep:clips/favorite', useClass: ep___clips_favorite.default };
+const $clips_unfavorite: Provider = { provide: 'ep:clips/unfavorite', useClass: ep___clips_unfavorite.default };
+const $clips_myFavorites: Provider = { provide: 'ep:clips/my-favorites', useClass: ep___clips_myFavorites.default };
 const $drive: Provider = { provide: 'ep:drive', useClass: ep___drive.default };
 const $drive_files: Provider = { provide: 'ep:drive/files', useClass: ep___drive_files.default };
 const $drive_files_attachedNotes: Provider = { provide: 'ep:drive/files/attached-notes', useClass: ep___drive_files_attachedNotes.default };
@@ -539,10 +549,14 @@ const $i_webhooks_update: Provider = { provide: 'ep:i/webhooks/update', useClass
 const $i_webhooks_delete: Provider = { provide: 'ep:i/webhooks/delete', useClass: ep___i_webhooks_delete.default };
 const $meta: Provider = { provide: 'ep:meta', useClass: ep___meta.default };
 const $emojis: Provider = { provide: 'ep:emojis', useClass: ep___emojis.default };
+const $emoji: Provider = { provide: 'ep:emoji', useClass: ep___emoji.default };
 const $miauth_genToken: Provider = { provide: 'ep:miauth/gen-token', useClass: ep___miauth_genToken.default };
 const $mute_create: Provider = { provide: 'ep:mute/create', useClass: ep___mute_create.default };
 const $mute_delete: Provider = { provide: 'ep:mute/delete', useClass: ep___mute_delete.default };
 const $mute_list: Provider = { provide: 'ep:mute/list', useClass: ep___mute_list.default };
+const $renoteMute_create: Provider = { provide: 'ep:renote-mute/create', useClass: ep___renoteMute_create.default };
+const $renoteMute_delete: Provider = { provide: 'ep:renote-mute/delete', useClass: ep___renoteMute_delete.default };
+const $renoteMute_list: Provider = { provide: 'ep:renote-mute/list', useClass: ep___renoteMute_list.default };
 const $my_apps: Provider = { provide: 'ep:my/apps', useClass: ep___my_apps.default };
 const $notes: Provider = { provide: 'ep:notes', useClass: ep___notes.default };
 const $notes_children: Provider = { provide: 'ep:notes/children', useClass: ep___notes_children.default };
@@ -758,6 +772,9 @@ const $retention: Provider = { provide: 'ep:retention', useClass: ep___retention
 		$clips_notes,
 		$clips_show,
 		$clips_update,
+		$clips_favorite,
+		$clips_unfavorite,
+		$clips_myFavorites,
 		$drive,
 		$drive_files,
 		$drive_files_attachedNotes,
@@ -863,10 +880,14 @@ const $retention: Provider = { provide: 'ep:retention', useClass: ep___retention
 		$i_webhooks_delete,
 		$meta,
 		$emojis,
+		$emoji,
 		$miauth_genToken,
 		$mute_create,
 		$mute_delete,
 		$mute_list,
+		$renoteMute_create,
+		$renoteMute_delete,
+		$renoteMute_list,
 		$my_apps,
 		$notes,
 		$notes_children,
@@ -1076,6 +1097,9 @@ const $retention: Provider = { provide: 'ep:retention', useClass: ep___retention
 		$clips_notes,
 		$clips_show,
 		$clips_update,
+		$clips_favorite,
+		$clips_unfavorite,
+		$clips_myFavorites,
 		$drive,
 		$drive_files,
 		$drive_files_attachedNotes,
@@ -1181,10 +1205,14 @@ const $retention: Provider = { provide: 'ep:retention', useClass: ep___retention
 		$i_webhooks_delete,
 		$meta,
 		$emojis,
+		$emoji,
 		$miauth_genToken,
 		$mute_create,
 		$mute_delete,
 		$mute_list,
+		$renoteMute_create,
+		$renoteMute_delete,
+		$renoteMute_list,
 		$my_apps,
 		$notes,
 		$notes_children,
