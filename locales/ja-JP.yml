@@ -955,6 +955,7 @@ thisPostMayBeAnnoying: "この投稿は迷惑になる可能性があります�
 thisPostMayBeAnnoyingHome: "ホームに投稿"
 thisPostMayBeAnnoyingCancel: "やめる"
 thisPostMayBeAnnoyingIgnore: "このまま投稿"
+saveDraftNote: "投稿を保存しますか？"
 collapseRenotes: "見たことのあるRenoteを省略して表示"
 internalServerError: "サーバー内部エラー"
 internalServerErrorDescription: "サーバー内部で予期しないエラーが発生しました。"
