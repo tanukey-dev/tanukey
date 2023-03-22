@@ -83,7 +83,25 @@ export default defineComponent({
 						const res: (VNode | string)[] = [];
 						for (const t of text.split('\n')) {
 							res.push(h('br'));
-							res.push(t);
+							const text2 = t.replace(/<ruby>(.+?)<rt>(.+?)<\/rt><\/ruby>/g, '\n<ruby>$1<rt>$2</rt></ruby>\n')
+								.replace(/《《(.+?)》》/g, (match, c1) => c1.replace(/(.)/g, '\n<ruby>$1<rt>・</rt></ruby>\n'))
+								.replace(/[\|｜](.+?)《(.+?)》/g, '\n<ruby>$1<rt>$2</rt></ruby>\n')
+								.replace(/([一-龠]+)《(.+?)》/g, '\n<ruby>$1<rt>$2</rt></ruby>\n')
+								.replace(/[\|｜]《(.+?)》/g, '《$1》');
+							for (const t2 of text2.split('\n')) {
+								const match = t2.match(/<ruby>(.+?)<rt>(.+?)<\/rt><\/ruby>/);
+								if (match !== null && match.length > 2) {
+									if (match[1].length < match[2].length) {
+										res.push(h('ruby', { style: 'ruby-align:center' }, [match[1], h('rt', match[2])]));
+									} else {
+										res.push(h('ruby', { style: 'ruby-align:space-around' }, [match[1], h('rt', match[2])]));
+									}
+								} else {
+									if (t2 !== '') {
+										res.push(t2);
+									}
+								}
+							}
 						}
 						res.shift();
 						return res;
