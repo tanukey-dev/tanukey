@@ -61,13 +61,13 @@
 				<option value="likeOnlyForRemote">{{ i18n.ts.likeOnlyForRemote }}</option>
 			</MkSelect>
 		</div>
-		<button v-tooltip="i18n.ts.emoji" class="_button" :class="$style.emojiButton" @click="insertEmoji"><i class="ti ti-mood-happy"></i></button>
 		<footer :class="$style.footer">
 			<button v-tooltip="i18n.ts.attachFile" class="_button" :class="$style.footerButton" @click="chooseFileFrom"><i class="ti ti-photo-plus"></i></button>
 			<button v-tooltip="i18n.ts.poll" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: poll }]" @click="togglePoll"><i class="ti ti-chart-arrows"></i></button>
 			<button v-tooltip="i18n.ts.useCw" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]" @click="useCw = !useCw"><i class="ti ti-eye-off"></i></button>
 			<button v-tooltip="i18n.ts.mention" class="_button" :class="$style.footerButton" @click="insertMention"><i class="ti ti-at"></i></button>
 			<button v-tooltip="i18n.ts.hashtags" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: withHashtags }]" @click="withHashtags = !withHashtags"><i class="ti ti-hash"></i></button>
+			<button v-tooltip="i18n.ts.emoji" class="_button" :class="$style.footerButton" @click="insertEmoji"><i class="ti ti-mood-happy"></i></button>
 			<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugin" class="_button" :class="$style.footerButton" @click="showActions"><i class="ti ti-plug"></i></button>
 			<button v-tooltip="i18n.ts.more" class="_button" :class="$style.footerButton" @click="showingOptions = !showingOptions"><i class="ti ti-dots"></i></button>
 		</footer>
@@ -1053,18 +1053,6 @@ defineExpose({
 	&.footerButtonActive {
 		color: var(--accent);
 	}
-}
-
-.emojiButton {
-	position: absolute;
-	top: 55px;
-	right: 13px;
-	display: inline-block;
-	padding: 0;
-	margin: 0;
-	font-size: 1em;
-	width: 32px;
-	height: 32px;
 }
 
 @container (max-width: 500px) {
