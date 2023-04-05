@@ -46,6 +46,7 @@
 			</div>
 		</div>
 		<MkInfo v-if="localOnly && channel == null" warn :class="$style.disableFederationWarn">{{ i18n.ts.disableFederationWarn }}</MkInfo>
+		<MkInfo v-if="useCw" warn :class="$style.contentWarningWarn">{{ i18n.ts.contentWarningWarn }}</MkInfo>
 		<MkInfo v-if="hasNotSpecifiedMentions" warn :class="$style.hasNotSpecifiedMentions">{{ i18n.ts.notSpecifiedMentionWarning }} - <button class="_textButton" @click="addMissingMention()">{{ i18n.ts.add }}</button></MkInfo>
 		<input v-show="useCw" ref="cwInputEl" v-model="cw" :class="$style.cw" :placeholder="i18n.ts.annotation" @keydown="onKeydown">
 		<textarea ref="textareaEl" v-model="text" :class="[$style.text, { [$style.withCw]: useCw }]" :disabled="posting || posted" :placeholder="placeholder" data-cy-post-form-text @keydown="onKeydown" @paste="onPaste" @compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd"/>
@@ -979,6 +980,10 @@ defineExpose({
 }
 
 .disableFederationWarn {
+	margin: 0 20px 16px 20px;
+}
+
+.contentWarningWarn {
 	margin: 0 20px 16px 20px;
 }
 
