@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ulid } from 'ulid';
+import { ulid, decodeTime } from 'ulid';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import { genAid, parseAid } from '@/misc/id/aid.js';
@@ -40,7 +40,7 @@ export class IdService {
 			// TODO
 			//case 'meid':
 			//case 'meidg':
-			//case 'ulid':
+			case 'ulid': return { date: new Date(decodeTime(id)) };
 			//case 'objectid':
 			default: throw new Error('unrecognized id generation method');
 		}
