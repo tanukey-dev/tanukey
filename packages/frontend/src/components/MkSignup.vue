@@ -51,9 +51,7 @@
 			<span v-if="passwordRetypeState == 'not-match'" style="color: var(--error)"><i class="ti ti-alert-triangle ti-fw"></i> {{ i18n.ts.passwordNotMatched }}</span>
 		</template>
 	</MkInput>
-	<MkSwitch v-model="AgeVerification" class="_formBlock tou">
-			<I18n :src="$ts.ageVerification" />
-	</MkSwitch>
+	<MkSwitch v-model="AgeVerification" class="tou">{{ i18n.ts.ageVerification }}</MkSwitch>
 	<MkSwitch v-model="ToSAgreement" class="tou">
 		<template #label>{{ i18n.ts.agreeBelow }}</template>
 	</MkSwitch>
