@@ -31,6 +31,7 @@ export const paramDef = {
 		ratio: { type: 'integer' },
 		expiresAt: { type: 'integer' },
 		startsAt: { type: 'integer' },
+		forceShowAds: { type: 'boolean', nullable: false },
 	},
 	required: ['id', 'memo', 'url', 'imageUrl', 'place', 'priority', 'ratio', 'expiresAt', 'startsAt'],
 } as const;
@@ -56,6 +57,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				imageUrl: ps.imageUrl,
 				expiresAt: new Date(ps.expiresAt),
 				startsAt: new Date(ps.startsAt),
+				forceShowAds: ps.forceShowAds,
 			});
 		});
 	}
