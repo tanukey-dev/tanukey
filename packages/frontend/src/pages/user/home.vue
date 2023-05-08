@@ -114,7 +114,7 @@
 						</MkA>
 						<MkA v-else v-click-anime :to="userPage(user)">
 							<b>{{ i18n.ts._ffVisibility.private }}</b>
-							<span>{{ i18n.ts.following }}</span>
+							<span>{{ i18n.ts.followers }}</span>
 						</MkA>
 					</div>
 				</div>
