@@ -43,8 +43,7 @@ export const paramDef = {
 		offset: { type: 'integer', default: 0 },
 		host: {
 			type: 'string',
-			nullable: true,
-			description: 'The local host is represented with `null`.',
+			description: 'The local host is represented with `.`.',
 		},
 		userId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
 		channelId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
@@ -75,6 +74,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				userId: ps.userId,
 				channelId: ps.channelId,
 				origin: ps.origin,
+				host: ps.host,
 			}, {
 				untilId: ps.untilId,
 				sinceId: ps.sinceId,
