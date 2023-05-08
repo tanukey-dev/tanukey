@@ -32,11 +32,13 @@
 				</div>
 				<div :class="$style.statusItem">
 					<div :class="$style.statusItemLabel">{{ i18n.ts.following }}</div>
-					<div>{{ number(user.followingCount) }}</div>
+					<div v-if="user.isFollowing === undefined || user.ffVisibility === 'public' || (user.ffVisibility === 'followers' && user.isFollowing)">{{ number(user.followingCount) }}</div>
+					<div v-else>{{ i18n.ts._ffVisibility.private }}</div>
 				</div>
 				<div :class="$style.statusItem">
 					<div :class="$style.statusItemLabel">{{ i18n.ts.followers }}</div>
-					<div>{{ number(user.followersCount) }}</div>
+					<div v-if="user.isFollowing === undefined || user.ffVisibility === 'public' || (user.ffVisibility === 'followers' && user.isFollowing)">{{ number(user.followersCount) }}</div>
+					<div v-else>{{ i18n.ts._ffVisibility.private }}</div>
 				</div>
 			</div>
 			<button class="_button" :class="$style.menu" @click="showMenu"><i class="ti ti-dots"></i></button>
