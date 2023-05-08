@@ -36,6 +36,9 @@
 						<template #label>{{ i18n.ts.expiration }}</template>
 					</MkInput>
 				</FormSplit>
+				<MkSwitch v-model="ad.forceShowAds">
+					{{ i18n.ts.forceShowAds }}
+				</MkSwitch>
 				<MkTextarea v-model="ad.memo">
 					<template #label>{{ i18n.ts.memo }}</template>
 				</MkTextarea>
@@ -60,6 +63,7 @@ import MkInput from '@/components/MkInput.vue';
 import MkTextarea from '@/components/MkTextarea.vue';
 import MkRadios from '@/components/MkRadios.vue';
 import FormSplit from '@/components/form/split.vue';
+import MkSwitch from '@/components/MkSwitch.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
@@ -92,6 +96,7 @@ function add() {
 		priority: 'middle',
 		ratio: 1,
 		url: '',
+		forceShowAds: false,
 		imageUrl: null,
 		expiresAt: null,
 		startsAt: null,

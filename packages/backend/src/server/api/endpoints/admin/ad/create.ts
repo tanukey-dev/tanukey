@@ -22,6 +22,7 @@ export const paramDef = {
 		expiresAt: { type: 'integer' },
 		startsAt: { type: 'integer' },
 		imageUrl: { type: 'string', minLength: 1 },
+		forceShowAds: { type: 'boolean', nullable: false },
 	},
 	required: ['url', 'memo', 'place', 'priority', 'ratio', 'expiresAt', 'startsAt', 'imageUrl'],
 } as const;
@@ -47,6 +48,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				ratio: ps.ratio,
 				place: ps.place,
 				memo: ps.memo,
+				forceShowAds: ps.forceShowAds,
 			});
 		});
 	}
