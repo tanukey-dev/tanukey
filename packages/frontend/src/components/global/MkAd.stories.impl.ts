@@ -64,6 +64,7 @@ const common = {
 			id: 'someadid',
 			radio: 1,
 			url: '#test',
+			forceShowAds: false,
 		},
 		__hasReduce: true,
 	},
