@@ -1,10 +1,10 @@
 {
-	"name": "misskey",
-	"version": "13.12.0-beta.5",
-	"codename": "nasubi",
+	"name": "tanukey",
+	"version": "13.12.0-tanu-0.1.0",
+	"codename": "apple",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/misskey-dev/misskey.git"
+		"url": "https://github.com/tar-bin/tanukey"
 	},
 	"packageManager": "pnpm@8.3.1",
 	"workspaces": [
