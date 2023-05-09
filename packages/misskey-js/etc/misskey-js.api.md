@@ -2343,6 +2343,7 @@ type LiteInstanceMetadata = {
         place: string;
         url: string;
         imageUrl: string;
+        forceShowAds: boolean;
     }[];
     translatorAvailable: boolean;
     serverRules: string[];
