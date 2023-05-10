@@ -67,7 +67,7 @@
 		<div v-if="maxTextLength - textLength < 100" :class="['_acrylic', $style.textCount, { [$style.textOver]: textLength > maxTextLength }]">{{ maxTextLength - textLength }}</div>
 	</div>
 	<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
-	<XPostFormAttaches v-model="files" :class="$style.attaches" @detach="detachFile" @change-sensitive="updateFileSensitive" @change-name="updateFileName"/>
+	<XPostFormAttaches v-model="files" :class="$style.attaches" @detach="detachFile" @change-sensitive="updateFileSensitive" @change-name="updateFileName" @replace-media="replaceFile" />
 	<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
 	<MkNotePreview v-if="showPreview" :class="$style.preview" :text="text"/>
 	<div v-if="showingOptions" style="padding: 8px 16px;">
@@ -248,6 +248,10 @@ watch($$(text), () => {
 	checkMissingMention();
 }, { immediate: true });
 
+watch($$(visibility), () => {
+	checkMissingMention();
+}, { immediate: true });
+
 watch($$(visibleUsers), () => {
 	checkMissingMention();
 }, {
@@ -393,6 +397,10 @@ function chooseFileFrom(ev) {
 			files.push(file);
 		}
 	});
+}
+
+function replaceFile(id, file) {
+	files.splice(files.findIndex(x => x.id === id), 1, file);
 }
 
 function detachFile(id) {
@@ -913,27 +921,28 @@ defineExpose({
 }
 
 .headerLeft {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(36px, 50px));
-	grid-template-rows: minmax(40px, 100%);
+	display: flex;
+	flex: 0 1 100px;
 }
 
 .cancel {
 	padding: 0;
 	font-size: 1em;
 	height: 100%;
+	flex: 0 1 50px;
 }
 
 .account {
 	height: 100%;
 	display: inline-flex;
 	vertical-align: bottom;
+	flex: 0 1 50px;
 }
 
 .avatar {
 	width: 28px;
 	height: 28px;
-	margin: auto 0;
+	margin: auto;
 }
 
 .headerRight {

@@ -19,12 +19,14 @@ import { defineAsyncComponent } from 'vue';
 import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
+import * as misskey from "misskey-js";
 
 const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
 
 const props = defineProps<{
 	modelValue: any[];
 	detachMediaFn?: (id: string) => void;
+	replaceMediaFn?: (id: string, file: misskey.entities.DriveFile) => void;
 }>();
 
 const emit = defineEmits<{
@@ -32,6 +34,7 @@ const emit = defineEmits<{
 	(ev: 'detach', id: string): void;
 	(ev: 'changeSensitive'): void;
 	(ev: 'changeName'): void;
+	(ev: 'replaceMedia', id: string, file: misskey.entities.DriveFile): void;
 }>();
 
 let menuShowing = false;
@@ -52,6 +55,7 @@ function toggleSensitive(file) {
 		emit('changeSensitive', file, !file.isSensitive);
 	});
 }
+
 async function rename(file) {
 	const { canceled, result } = await os.inputText({
 		title: i18n.ts.enterFileName,
@@ -66,6 +70,18 @@ async function rename(file) {
 		emit('changeName', file, result);
 		file.name = result;
 	});
+}
+
+async function crop(file) {
+	const croppedFile = await os.cropImage(file, {
+		aspectRatio: NaN,
+	});
+
+	if (props.replaceMediaFn) {
+		props.replaceMediaFn(file.id, croppedFile);
+	} else {
+		emit('replaceMedia', file.id, croppedFile);
+	}
 }
 
 async function describe(file) {
@@ -88,6 +104,10 @@ async function describe(file) {
 function showFileMenu(file, ev: MouseEvent) {
 	if (menuShowing) return;
 	os.popupMenu([{
+		text: i18n.ts.cropImage,
+		icon: 'ti ti-cut',
+		action: () => { crop(file); },
+	}, {
 		text: i18n.ts.renameFile,
 		icon: 'ti ti-forms',
 		action: () => { rename(file); },
