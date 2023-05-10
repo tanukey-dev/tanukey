@@ -60,10 +60,6 @@ function select(src: any, label: string | null, multiple: boolean): Promise<Driv
 			text: i18n.ts.fromDrive,
 			icon: 'ti ti-cloud',
 			action: () => chooseFileFromDrive(multiple).then(files => res(files)),
-		}, {
-			text: i18n.ts.fromUrl,
-			icon: 'ti ti-link',
-			action: () => chooseFileFromUrl().then(file => res([file])),
 		}], src);
 	});
 }
