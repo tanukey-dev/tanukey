@@ -40,14 +40,10 @@ export function chooseFileFromDrive(multiple: boolean): Promise<DriveFile[]> {
 	});
 }
 
-export function chooseFileFromUrl(): Promise<DriveFile> {
+
+function select(src: any, label: string | null, multiple: boolean): Promise<DriveFile[]> {
 	return new Promise((res, rej) => {
-		os.inputText({
-			title: i18n.ts.uploadFromUrl,
-			type: 'url',
-			placeholder: i18n.ts.uploadFromUrlDescription,
-		}).then(({ canceled, result: url }) => {
-			if (canceled) return;
+		const keepOriginal = ref(defaultStore.state.keepOriginalUploading);
 
 		os.popupMenu([label ? {
 			text: label,
@@ -63,7 +59,11 @@ export function chooseFileFromUrl(): Promise<DriveFile> {
 		}, {
 			text: i18n.ts.fromDrive,
 			icon: 'ti ti-cloud',
-			action: chooseFileFromDrive,
+			action: () => chooseFileFromDrive(multiple).then(files => res(files)),
+		}, {
+			text: i18n.ts.fromUrl,
+			icon: 'ti ti-link',
+			action: () => chooseFileFromUrl().then(file => res([file])),
 		}], src);
 	});
 }
