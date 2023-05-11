@@ -278,6 +278,7 @@ import * as ep___pages_create from './endpoints/pages/create.js';
 import * as ep___pages_delete from './endpoints/pages/delete.js';
 import * as ep___pages_featured from './endpoints/pages/featured.js';
 import * as ep___pages_like from './endpoints/pages/like.js';
+import * as ep___pages_search from './endpoints/pages/search.js';
 import * as ep___pages_show from './endpoints/pages/show.js';
 import * as ep___pages_unlike from './endpoints/pages/unlike.js';
 import * as ep___pages_update from './endpoints/pages/update.js';
@@ -616,6 +617,7 @@ const $pages_create: Provider = { provide: 'ep:pages/create', useClass: ep___pag
 const $pages_delete: Provider = { provide: 'ep:pages/delete', useClass: ep___pages_delete.default };
 const $pages_featured: Provider = { provide: 'ep:pages/featured', useClass: ep___pages_featured.default };
 const $pages_like: Provider = { provide: 'ep:pages/like', useClass: ep___pages_like.default };
+const $pages_search: Provider = { provide: 'ep:pages/search', useClass: ep___pages_search.default };
 const $pages_show: Provider = { provide: 'ep:pages/show', useClass: ep___pages_show.default };
 const $pages_unlike: Provider = { provide: 'ep:pages/unlike', useClass: ep___pages_unlike.default };
 const $pages_update: Provider = { provide: 'ep:pages/update', useClass: ep___pages_update.default };
@@ -958,6 +960,7 @@ const $retention: Provider = { provide: 'ep:retention', useClass: ep___retention
 		$pages_delete,
 		$pages_featured,
 		$pages_like,
+		$pages_search,
 		$pages_show,
 		$pages_unlike,
 		$pages_update,
@@ -1294,6 +1297,7 @@ const $retention: Provider = { provide: 'ep:retention', useClass: ep___retention
 		$pages_delete,
 		$pages_featured,
 		$pages_like,
+		$pages_search,
 		$pages_show,
 		$pages_unlike,
 		$pages_update,
