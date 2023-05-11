@@ -132,7 +132,7 @@
 					</template>
 				</MkFolder>
 
-				<MkFolder>
+				<MkFolder :default-open="true">
 					<template #icon><i class="ti ti-cloud"></i></template>
 					<template #label>{{ i18n.ts.files }}</template>
 					<MkFileListForAdmin :pagination="filesPagination" view-mode="grid"/>
@@ -237,6 +237,7 @@ function createFetcher() {
 			silenced = info.isSilenced;
 			suspended = info.isSuspended;
 			moderationNote = info.moderationNote;
+			tab = 'moderation';
 
 			watch($$(moderationNote), async () => {
 				await os.api('admin/update-user-note', { userId: user.id, text: moderationNote });
