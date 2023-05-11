@@ -7,7 +7,7 @@
 		</div>
 		<div>
 			<div :class="$style.content">
-				<Mfm :text="text.trim()" :author="$i" :i="$i"/>
+				<Mfm :text="text.trimEnd()" :author="$i" :i="$i"/>
 				<MkUrlPreview v-for="url in urls" :key="url" :url="url" :compact="true" :detail="false" :class="$style.urlPreview"/>
 			</div>
 		</div>
