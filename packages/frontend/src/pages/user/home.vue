@@ -102,8 +102,8 @@
 							<b>{{ number(user.notesCount) }}</b>
 							<span>{{ i18n.ts.notes }}</span>
 						</MkA>
-						<MkA v-if = "user.isFollowing === undefined || user.ffVisibility === 'public' || (user.ffVisibility === 'followers' && user.isFollowing)" v-click-anime :to="userPage(user, 'following')">
-							<b >{{ number(user.followingCount) }}</b>
+						<MkA v-if="user.isFollowing === undefined || user.ffVisibility === 'public' || (user.ffVisibility === 'followers' && user.isFollowing)" v-click-anime :to="userPage(user, 'following')">
+							<b>{{ number(user.followingCount) }}</b>
 							<span>{{ i18n.ts.following }}</span>
 						</MkA>
 						<MkA v-else v-click-anime :to="userPage(user)">
@@ -111,7 +111,7 @@
 							<span>{{ i18n.ts.following }}</span>
 						</MkA>
 
-						<MkA v-if  = "user.isFollowing === undefined || user.ffVisibility === 'public' || (user.ffVisibility === 'followers' && user.isFollowing)" v-click-anime :to="userPage(user, 'followers')">
+						<MkA v-if="user.isFollowing === undefined || user.ffVisibility === 'public' || (user.ffVisibility === 'followers' && user.isFollowing)" v-click-anime :to="userPage(user, 'followers')">
 							<b>{{ number(user.followersCount) }}</b>
 							<span>{{ i18n.ts.followers }}</span>
 						</MkA>
