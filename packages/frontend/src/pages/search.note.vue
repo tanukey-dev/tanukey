@@ -20,6 +20,11 @@
 				</div>
 			</MkFolder>
 		</MkFolder>
+		<MkRadios v-model="searchOrigin" @update:model-value="search()">
+			<option value="combined">{{ i18n.ts.all }}</option>
+			<option value="local">{{ i18n.ts.local }}</option>
+			<option value="remote">{{ i18n.ts.remote }}</option>
+		</MkRadios>
 		<div>
 			<MkButton large primary gradate rounded style="margin: 0 auto;" @click="search">{{ i18n.ts.search }}</MkButton>
 		</div>
@@ -90,9 +95,11 @@ async function search() {
 		params: {
 			query: searchQuery,
 			userId: user ? user.id : null,
+			origin: searchOrigin,
 		},
 	};
 
 	key++;
 }
+
 </script>

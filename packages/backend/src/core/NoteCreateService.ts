@@ -281,7 +281,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 			if (data.text.length > DB_MAX_NOTE_TEXT_LENGTH) {
 				data.text = data.text.slice(0, DB_MAX_NOTE_TEXT_LENGTH);
 			}
-			data.text = data.text.trim();
+			data.text = data.text.trimEnd();
 		} else {
 			data.text = null;
 		}

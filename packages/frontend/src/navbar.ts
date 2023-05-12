@@ -7,6 +7,7 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { ui } from '@/config';
 import { unisonReload } from '@/scripts/unison-reload';
+import { defaultStore } from '@/store';
 
 export const navbarItemDef = reactive({
 	notifications: {
@@ -142,6 +143,14 @@ export const navbarItemDef = reactive({
 		icon: 'ti ti-refresh',
 		action: (ev) => {
 			location.reload();
+		},
+	},
+	switchLightOrDarkMode: {
+		title: i18n.ts.switchLightOrDarkMode,
+		icon: 'ti ti-palette',
+		action: (ev) => {
+			const mode = defaultStore.makeGetterSetter('darkMode');
+			mode.set(!mode.get());
 		},
 	},
 	profile: {
