@@ -41,7 +41,7 @@
 			</MkA>
 		</div>
 		<div class="bottom">
-			<button v-tooltip.noDelay.right="i18n.ts.note" class="item _button post" data-cy-open-post-form @click="os.post">
+			<button v-tooltip.noDelay.right="i18n.ts.note" class="item _button post" data-cy-open-post-form @click="openPostForm">
 				<i class="icon ti ti-pencil ti-fw"></i><span class="text">{{ i18n.ts.note }}</span>
 			</button>
 			<button v-click-anime v-tooltip.noDelay.right="`${i18n.ts.account}: @${$i.username}`" class="item _button account" @click="openAccountMenu">
@@ -89,6 +89,22 @@ function openAccountMenu(ev: MouseEvent) {
 	openAccountMenu_({
 		withExtraOperation: true,
 	}, ev);
+}
+
+async function openPostForm() {
+	//チャンネルページを開いている場合はチャンネルに投稿
+	const paths = location.href.split('/');
+	let channel: any = null;
+	if (paths.length > 4) {
+		if (paths[3] === 'channels') {
+			channel = await os.api('channels/show', {
+				channelId: paths[4],
+			});
+		}
+	}
+	os.post({
+		channel: channel,
+	});
 }
 
 function more(ev: MouseEvent) {
