@@ -1,5 +1,5 @@
 <template>
-<div v-if="chosen && !shouldHide" :class="$style.root">
+<div v-if="chosen && (chosen.forceShowAds || !shouldHide)" :class="$style.root">
 	<div v-if="!showMenu" :class="[$style.main, $style['form_' + chosen.place]]">
 		<a :href="chosen.url" target="_blank" :class="$style.link">
 			<img :src="chosen.imageUrl" :class="$style.img">

@@ -56,6 +56,11 @@ export class Ad {
 	})
 	public memo: string;
 
+	@Column('boolean', {
+		default: false,
+	})
+	public forceShowAds: boolean;
+
 	constructor(data: Partial<Ad>) {
 		if (data == null) return;
 

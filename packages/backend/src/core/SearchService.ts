@@ -68,7 +68,7 @@ export class SearchService {
 		private idService: IdService,
 	) {
 		if (meilisearch) {
-			this.meilisearchNoteIndex = meilisearch.index('notes');
+			this.meilisearchNoteIndex = meilisearch.index(`${config.meilisearch!.index}---notes`);
 			this.meilisearchNoteIndex.updateSettings({
 				searchableAttributes: [
 					'text',
@@ -82,6 +82,7 @@ export class SearchService {
 					'userId',
 					'userHost',
 					'channelId',
+					'tags',
 				],
 				typoTolerance: {
 					enabled: false,
@@ -107,6 +108,7 @@ export class SearchService {
 				channelId: note.channelId,
 				cw: note.cw,
 				text: note.text,
+				tags: note.tags,
 			}], {
 				primaryKey: 'id',
 			});
@@ -118,6 +120,7 @@ export class SearchService {
 		userId?: Note['userId'] | null;
 		channelId?: Note['channelId'] | null;
 		host?: string | null;
+		origin?: string;
 	}, pagination: {
 		untilId?: Note['id'];
 		sinceId?: Note['id'];
@@ -153,6 +156,12 @@ export class SearchService {
 			return notes.sort((a, b) => a.id > b.id ? -1 : 1);
 		} else {
 			const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), pagination.sinceId, pagination.untilId);
+
+			if (opts.origin === 'local') {
+				query.andWhere('note.userHost IS NULL');
+			} else if (opts.origin === 'remote') {
+				query.andWhere('note.userHost IS NOT NULL');
+			}
 
 			if (opts.userId) {
 				query.andWhere('note.userId = :userId', { userId: opts.userId });
