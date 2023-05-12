@@ -2,8 +2,8 @@
 name: "✨ Feature Request"
 about: Suggest an idea for this project
 title: ''
-labels: ''
-assignees: ''
+labels: 'Type: Feature'
+assignees: tar-bin
 
 ---
 
