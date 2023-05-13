@@ -31,7 +31,7 @@
 			</MkA>
 		</div>
 		<div class="bottom">
-			<button class="item _button post" data-cy-open-post-form @click="os.post">
+			<button class="item _button post" data-cy-open-post-form @click="openPostForm">
 				<i class="icon ti ti-pencil ti-fw"></i><span class="text">{{ i18n.ts.note }}</span>
 			</button>
 			<button v-click-anime class="item _button account" @click="openAccountMenu">
@@ -45,6 +45,7 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRef } from 'vue';
 import { openInstanceMenu } from './common';
+import { openPostForm } from './postnote';
 import * as os from '@/os';
 import { navbarItemDef } from '@/navbar';
 import { $i, openAccountMenu as openAccountMenu_ } from '@/account';
