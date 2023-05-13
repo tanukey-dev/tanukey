@@ -25,6 +25,7 @@ export const paramDef = {
 		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
 		query: { type: 'string' },
 		offset: { type: 'integer', default: 0 },
+		origin: { type: 'string', enum: ['local', 'remote', 'combined'], default: 'combined' },
 	},
 	required: ['query'],
 } as const;
@@ -37,11 +38,18 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private hashtagsRepository: HashtagsRepository,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const hashtags = await this.hashtagsRepository.createQueryBuilder('tag')
+			const query = this.hashtagsRepository.createQueryBuilder('tag')
 				.where('tag.name like :q', { q: sqlLikeEscape(ps.query.toLowerCase()) + '%' })
 				.orderBy('tag.count', 'DESC')
-				.groupBy('tag.id')
-				.take(ps.limit)
+				.groupBy('tag.id');
+
+			if (ps.origin === 'local') {
+				query.andWhere('tag.attachedLocalUsersCount > 0');
+			} else if (ps.origin === 'remote') {
+				query.andWhere('tag.attachedRemoteUsersCount > 0');
+			}
+
+			const hashtags = await query.take(ps.limit)
 				.skip(ps.offset)
 				.getMany();
 
