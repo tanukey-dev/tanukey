@@ -735,6 +735,10 @@ async function post(ev?: MouseEvent) {
 			posting = false;
 			postAccount = null;
 
+			//Postしたらハッシュタグを初期化
+			defaultStore.set('postFormWithHashtags', false);
+			defaultStore.set('postFormHashtags', '');
+
 			incNotesCount();
 			if (notesCount === 1) {
 				claimAchievement('notes1');
