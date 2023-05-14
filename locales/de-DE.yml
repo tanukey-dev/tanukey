@@ -1828,7 +1828,7 @@ _instanceCharts:
 _timelines:
   home: "Startseite"
   local: "Lokal"
-  media: "メディア"
+  media: "Medien"
   social: "Sozial"
   global: "Global"
 _play:
