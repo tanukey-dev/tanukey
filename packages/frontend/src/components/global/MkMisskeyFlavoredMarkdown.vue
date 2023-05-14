@@ -167,5 +167,32 @@ const props = withDefaults(defineProps<{
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
+
+	//iPhone等でルビがずれる問題の対応
+	ruby[data-ruby] {
+			position: relative;
+	}
+
+	ruby[data-ruby]::before {
+			content: attr(data-ruby);
+			position: absolute;
+			line-height: 100%;
+			text-align: center;
+			word-break: keep-all;
+			word-wrap: initial;
+			left: -7em;
+			right: -7em;
+			transform-origin: bottom center;
+			/* ルビの文字サイズを親文字に対する比率で指定 */
+			transform: scale(0.68);
+			/* 100%を越える部分が親文字とルビとのスペースになる。単位は親文字に対する比率 */
+			bottom: 100%;
+			/* デバッグ用 */
+			// background-color: rgba(255, 0, 0, 0.2);
+	}
+
+	ruby[data-ruby] rt {
+		opacity: 0;
+	}
 }
 </style>

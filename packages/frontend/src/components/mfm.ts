@@ -92,8 +92,7 @@ export default defineComponent({
 								.forEach( t2 => {
 									const match = t2.match(/<ruby>(.+?)<rt>(.+?)<\/rt><\/ruby>/);
 									if (match !== null && match.length > 2) {
-										const rubyAlign = match[1].length < match[2].length ? 'ruby-align:center' : 'ruby-align:space-around';
-										res.push(h('ruby', { style: rubyAlign }, [match[1], h('rt', match[2])]));
+										res.push(h('ruby', { 'data-ruby': match[2] }, [match[1], h('rt', match[2])]));
 									} else if (t2 !== '') {
 										res.push(t2);
 									}
