@@ -1828,7 +1828,7 @@ _instanceCharts:
 _timelines:
   home: "Home"
   local: "Locale"
-  media: "メディア"
+  media: "Contenuti multimediali"
   social: "Sociale"
   global: "Federata"
 _play:
