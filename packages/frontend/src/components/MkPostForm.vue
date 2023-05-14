@@ -65,6 +65,7 @@
 		<textarea ref="textareaEl" v-model="text" :class="[$style.text]" :disabled="posting || posted" :placeholder="placeholder" data-cy-post-form-text @keydown="onKeydown" @paste="onPaste" @compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd"/>
 		<div v-if="maxTextLength - textLength < 100" :class="['_acrylic', $style.textCount, { [$style.textOver]: textLength > maxTextLength }]">{{ maxTextLength - textLength }}</div>
 	</div>
+	<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
 	<XPostFormAttaches v-model="files" :class="$style.attaches" @detach="detachFile" @change-sensitive="updateFileSensitive" @change-name="updateFileName"/>
 	<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
 	<MkNotePreview v-if="showPreview" :class="$style.preview" :text="text"/>
@@ -76,6 +77,7 @@
 			<button v-tooltip="i18n.ts.poll" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: poll }]" @click="togglePoll"><i class="ti ti-chart-arrows"></i></button>
 			<button v-tooltip="i18n.ts.useCw" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]" @click="useCw = !useCw"><i class="ti ti-eye-off"></i></button>
 			<button v-tooltip="i18n.ts.mention" class="_button" :class="$style.footerButton" @click="insertMention"><i class="ti ti-at"></i></button>
+			<button v-tooltip="i18n.ts.hashtags" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: withHashtags }]" @click="withHashtags = !withHashtags"><i class="ti ti-hash"></i></button>
 			<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugin" class="_button" :class="$style.footerButton" @click="showActions"><i class="ti ti-plug"></i></button>
 			<button v-tooltip="i18n.ts.emoji" :class="['_button', $style.footerButton]" @click="insertEmoji"><i class="ti ti-mood-happy"></i></button>
 		</div>
@@ -84,6 +86,9 @@
 			<!--<button v-tooltip="i18n.ts.more" class="_button" :class="$style.footerButton" @click="showingOptions = !showingOptions"><i class="ti ti-dots"></i></button>-->
 		</div>
 	</footer>
+	<datalist id="hashtags">
+		<option v-for="hashtag in recentHashtags" :key="hashtag" :value="hashtag"/>
+	</datalist>
 </div>
 </template>
 
@@ -147,6 +152,7 @@ const emit = defineEmits<{
 
 const textareaEl = $shallowRef<HTMLTextAreaElement | null>(null);
 const cwInputEl = $shallowRef<HTMLInputElement | null>(null);
+const hashtagsInputEl = $shallowRef<HTMLInputElement | null>(null);
 const visibilityButton = $shallowRef<HTMLElement | null>(null);
 
 let posting = $ref(false);
@@ -173,6 +179,7 @@ let autocomplete = $ref(null);
 let draghover = $ref(false);
 let quoteId = $ref(null);
 let hasNotSpecifiedMentions = $ref(false);
+let recentHashtags = $ref(JSON.parse(miLocalStorage.getItem('hashtags') ?? '[]'));
 let imeText = $ref('');
 let showingOptions = $ref(false);
 
@@ -232,6 +239,9 @@ const canPost = $computed((): boolean => {
 		(textLength <= maxTextLength) &&
 		(!poll || poll.choices.length >= 2);
 });
+
+const withHashtags = $computed(defaultStore.makeGetterSetter('postFormWithHashtags'));
+const hashtags = $computed(defaultStore.makeGetterSetter('postFormHashtags'));
 
 watch($$(text), () => {
 	checkMissingMention();
@@ -688,6 +698,11 @@ async function post(ev?: MouseEvent) {
 		reactionAcceptance,
 	};
 
+	if (withHashtags && hashtags && hashtags.trim() !== '') {
+		const hashtags_ = hashtags.trim().split(' ').map(x => x.startsWith('#') ? x : '#' + x).join(' ');
+		postData.text = postData.text ? `${postData.text} ${hashtags_}` : hashtags_;
+	}
+
 	// plugin
 	if (notePostInterruptors.length > 0) {
 		for (const interruptor of notePostInterruptors) {
@@ -824,6 +839,7 @@ onMounted(() => {
 	// TODO: detach when unmount
 	new Autocomplete(textareaEl, $$(text));
 	new Autocomplete(cwInputEl, $$(cw));
+	new Autocomplete(hashtagsInputEl, $$(hashtags));
 
 	nextTick(() => {
 		// 書きかけの投稿を復元

@@ -1828,7 +1828,7 @@ _instanceCharts:
 _timelines:
   home: "Beranda"
   local: "Lokal"
-  media: "メディア"
+  media: "Media"
   social: "Sosial"
   global: "Global"
 _play:

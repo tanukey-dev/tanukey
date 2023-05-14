@@ -1828,7 +1828,7 @@ _instanceCharts:
 _timelines:
   home: "Домівка"
   local: "Локальна"
-  media: "メディア"
+  media: "Медіафайли"
   social: "Соціальна"
   global: "Глобальна"
 _play:
