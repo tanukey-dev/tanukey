@@ -23,9 +23,9 @@
 						<template #key>Misskey</template>
 						<template #value>{{ version }}</template>
 					</MkKeyValue>
-					<div v-html="i18n.t('poweredByMisskeyDescription', { name: instance.name ?? host })">
+					<div v-html="i18n.t('poweredByTanukeyDescription', { name: instance.name ?? host })">
 					</div>
-					<FormLink to="/about-misskey">{{ i18n.ts.aboutMisskey }}</FormLink>
+					<FormLink to="/about-tanukey">{{ i18n.ts.aboutTanukey }}</FormLink>
 				</div>
 			</FormSection>
 

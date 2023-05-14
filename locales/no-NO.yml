@@ -145,7 +145,7 @@ popularUsers: "Populære brukere"
 exploreUsersCount: "Det finnes {count} brukere"
 userList: "Lister"
 about: "Infomasjon"
-aboutMisskey: "Om Misskey"
+aboutTanukey: "Om Tanukey"
 share: "Del"
 help: "Hjelp"
 close: "Lukk"
@@ -262,7 +262,7 @@ numberOfLikes: "Likerklikk"
 show: "Vis"
 neverShow: "Ikke vis igjen"
 remindMeLater: "Kanskje senere"
-didYouLikeMisskey: "Likte du Misskey?"
+didYouLikeTanukey: "Likte du Tanukey?"
 roles: "Roller"
 role: "Rolle"
 color: "Farge"
@@ -318,7 +318,7 @@ _achievements:
       title: "Godt nytt år"
     _brainDiver:
       title: "Brain Diver"
-      flavor: "Misskey-Misskey La-Tu-Ma"
+      flavor: "Tanukey-Tanukey La-Tu-Ma"
 _role:
   options: "Alternativ"
   _priority:
@@ -339,9 +339,8 @@ _preferencesBackups:
 _registry:
   key: "Nøkkel"
   keys: "Nøkler"
-_aboutMisskey:
-  about: "Misskey er programvare med åpen kildekode som har blitt utviklet av syuilo siden 2014."
-  translation: "Oversett Misskey"
+_aboutTanukey:
+  translation: "Oversett Tanukey"
 _instanceTicker:
   none: "Ikke vis"
   always: "Alltid vis"
@@ -379,7 +378,7 @@ _time:
   hour: "Timer"
   day: "Dager"
 _timelineTutorial:
-  title: "Hvordan bruke Misskey"
+  title: "Hvordan bruke Tanukey"
 _2fa:
   renewTOTPCancel: "Avbryt"
 _weekday:

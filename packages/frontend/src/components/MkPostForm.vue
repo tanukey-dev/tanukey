@@ -730,8 +730,8 @@ async function post(ev?: MouseEvent) {
 			}
 
 			const text = postData.text?.toLowerCase() ?? '';
-			if ((text.includes('love') || text.includes('❤')) && text.includes('misskey')) {
-				claimAchievement('iLoveMisskey');
+			if ((text.includes('love') || text.includes('❤')) && text.includes('tanukey')) {
+				claimAchievement('iLoveTanukey');
 			}
 			if (
 				text.includes('https://youtu.be/Efrlqw8ytg4'.toLowerCase()) ||
