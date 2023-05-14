@@ -146,8 +146,8 @@ function more(ev: MouseEvent) {
 					height: 100%;
 					background-size: cover;
 					background-position: center center;
-					-webkit-mask-image: linear-gradient(0deg, rgba(0,0,0,0) 15%, rgba(0,0,0,0.75) 100%);
-					mask-image: linear-gradient(0deg, rgba(0,0,0,0) 15%, rgba(0,0,0,0.75) 100%);
+					-webkit-mask-image: linear-gradient(0deg,rgba(0,0,0,0) 0%,rgba(0,0,0,1) 15%);
+					mask-image: linear-gradient(0deg,rgba(0,0,0,0) 0%,rgba(0,0,0,1) 15%);
 				}
 
 				> .instance {
@@ -160,6 +160,7 @@ function more(ev: MouseEvent) {
 						display: inline-block;
 						width: 38px;
 						aspect-ratio: 1;
+						border-radius: 8%;
 					}
 				}
 			}
@@ -243,6 +244,7 @@ function more(ev: MouseEvent) {
 
 			> .middle {
 				flex: 1;
+				padding-top: 10px;
 
 				> .divider {
 					margin: 16px 16px;
