@@ -1828,6 +1828,7 @@ _instanceCharts:
 _timelines:
   home: "Domov"
   local: "Lokálne"
+  media: "メディア"
   social: "Sociálne"
   global: "Globálne"
 _play:
