@@ -79,10 +79,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			const tagNotes = await this.notesRepository.createQueryBuilder('note')
 				.where('note.createdAt > :date', { date: new Date(now.getTime() - rangeA) })
-				.andWhere(new Brackets(qb => { qb
-					.where('note.visibility = \'public\'')
-					.orWhere('note.visibility = \'home\'');
-				}))
+				.andWhere('(note.visibility = \'public\') AND (note.userHost IS NULL)')
 				.andWhere('note.tags != \'{}\'')
 				.select(['note.tags', 'note.userId'])
 				.cache(60000) // 1 min

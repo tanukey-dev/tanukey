@@ -222,6 +222,7 @@ function exec() {
 				os.api('hashtags/search', {
 					query: props.q,
 					limit: 30,
+					origin: 'local',
 				}).then(searchedHashtags => {
 					hashtags.value = searchedHashtags as any[];
 					fetching.value = false;

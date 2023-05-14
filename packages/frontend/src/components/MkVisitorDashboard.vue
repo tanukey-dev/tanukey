@@ -11,7 +11,7 @@
 			</h1>
 			<div :class="$style.mainAbout">
 				<!-- eslint-disable-next-line vue/no-v-html -->
-				<div v-html="meta.description || i18n.ts.headlineMisskey"></div>
+				<div v-html="meta.description || i18n.ts.headlineTanukey"></div>
 			</div>
 			<div v-if="instance.disableRegistration" :class="$style.mainWarn">
 				<MkInfo warn>{{ i18n.ts.invitationRequiredToRegister }}</MkInfo>
@@ -94,10 +94,10 @@ function showMenu(ev) {
 			os.pageWindow('/about');
 		},
 	}, {
-		text: i18n.ts.aboutMisskey,
+		text: i18n.ts.aboutTanukey,
 		icon: 'ti ti-info-circle',
 		action: () => {
-			os.pageWindow('/about-misskey');
+			os.pageWindow('/about-tanukey');
 		},
 	}, null, {
 		text: i18n.ts.help,
