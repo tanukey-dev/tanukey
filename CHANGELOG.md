@@ -16,6 +16,7 @@
 
 ### General
 - リリースノートをtanukey側に変更
+- MisskeyからTanukeyに各種名称を変更
 
 ### Client
 - トレンドの取得対象をパブリックかつローカルのみに変更
