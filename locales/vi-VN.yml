@@ -1828,6 +1828,7 @@ _instanceCharts:
 _timelines:
   home: "Trang chính"
   local: "Máy chủ này"
+  media: "メディア"
   social: "Xã hội"
   global: "Liên hợp"
 _play:
