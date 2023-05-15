@@ -8,6 +8,7 @@ import { GlobalEventService } from '@/core/GlobalEventService.js';
 import type { DriveFile } from '@/models/entities/DriveFile.js';
 import type { Emoji } from '@/models/entities/Emoji.js';
 import type { EmojisRepository } from '@/models/index.js';
+import type { DriveFilesRepository } from '@/models/index.js';
 import { bindThis } from '@/decorators.js';
 import { MemoryKVCache, RedisSingleCache } from '@/misc/cache.js';
 import { UtilityService } from '@/core/UtilityService.js';
@@ -32,6 +33,9 @@ export class CustomEmojiService {
 
 		@Inject(DI.emojisRepository)
 		private emojisRepository: EmojisRepository,
+
+		@Inject(DI.driveFilesRepository)
+		private driveFilesRepository: DriveFilesRepository,
 
 		private utilityService: UtilityService,
 		private idService: IdService,
@@ -94,18 +98,33 @@ export class CustomEmojiService {
 		category?: string | null;
 		aliases?: string[];
 		license?: string | null;
+		fileId?: string | null;
 	}): Promise<void> {
 		const emoji = await this.emojisRepository.findOneByOrFail({ id: id });
+		const driveFile = data.fileId !== null ? await this.driveFilesRepository.findOneBy({ id: data.fileId }) : null;
 		const sameNameEmoji = await this.emojisRepository.findOneBy({ name: data.name, host: IsNull() });
 		if (sameNameEmoji != null && sameNameEmoji.id !== id) throw new Error('name already exists');
 
-		await this.emojisRepository.update(emoji.id, {
-			updatedAt: new Date(),
-			name: data.name,
-			category: data.category,
-			aliases: data.aliases,
-			license: data.license,
-		});
+		if (driveFile !== null) {
+			await this.emojisRepository.update(emoji.id, {
+				updatedAt: new Date(),
+				name: data.name,
+				category: data.category,
+				aliases: data.aliases,
+				license: data.license,
+				originalUrl: driveFile.url,
+				publicUrl: driveFile.webpublicUrl ?? driveFile.url,
+				type: driveFile.webpublicType ?? driveFile.type,
+			});
+		} else {
+			await this.emojisRepository.update(emoji.id, {
+				updatedAt: new Date(),
+				name: data.name,
+				category: data.category,
+				aliases: data.aliases,
+				license: data.license,
+			});
+		}
 
 		this.localEmojisCache.refresh();
 
