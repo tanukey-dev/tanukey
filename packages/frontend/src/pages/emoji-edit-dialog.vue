@@ -11,7 +11,8 @@
 
 	<MkSpacer :margin-min="20" :margin-max="28">
 		<div class="yigymqpb _gaps_m">
-			<img :src="`/emoji/${emoji.name}.webp`" class="img"/>
+			<img :src="url" class="img"/>
+			<button v-tooltip="i18n.ts.attachFile" class="_button" @click="chooseFileFrom"><i class="ti ti-photo-plus"></i></button>
 			<MkInput v-model="name">
 				<template #label>{{ i18n.ts.name }}</template>
 			</MkInput>
@@ -33,9 +34,11 @@
 
 <script lang="ts" setup>
 import { } from 'vue';
+import { DriveFile } from 'misskey-js/built/entities';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
+import { selectFiles } from '@/scripts/select-file';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { customEmojiCategories } from '@/custom-emojis';
@@ -49,6 +52,8 @@ let name: string = $ref(props.emoji.name);
 let category: string = $ref(props.emoji.category);
 let aliases: string = $ref(props.emoji.aliases.join(' '));
 let license: string = $ref(props.emoji.license ?? '');
+let url = $ref(props.emoji.url);
+let chooseFile: DriveFile|null = $ref(null);
 
 const emit = defineEmits<{
 	(ev: 'done', v: { deleted?: boolean, updated?: any }): void,
@@ -66,6 +71,7 @@ async function update() {
 		category,
 		aliases: aliases.split(' '),
 		license: license === '' ? null : license,
+		fileId: chooseFile?.id,
 	});
 
 	emit('done', {
@@ -79,6 +85,13 @@ async function update() {
 	});
 
 	dialog.close();
+}
+
+function chooseFileFrom(ev) {
+	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(files_ => {
+		chooseFile = files_[0];
+		url = chooseFile.url;
+	});
 }
 
 async function del() {

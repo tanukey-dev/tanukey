@@ -45,9 +45,20 @@ async function search() {
 
 	if (query == null || query === '') return;
 
-	if (query.startsWith('https://')) {
+	console.log(query);
+
+	if (query.startsWith('https://') || query.match(/^@[\w]+@[\w.]+$/)) {
+		let url = query;
+
+		//@user@host 形式での検索に対応
+		const result = query.match(/^@([\w]+)@([\w.]+)$/);
+		if (result) {
+			url = 'https://' + result[2] + '/@' + result[1];
+		}
+
+		//照会
 		const promise = os.api('ap/show', {
-			uri: query,
+			uri: url,
 		});
 
 		os.promiseDialog(promise, null, null, i18n.ts.fetchingAsApObject);

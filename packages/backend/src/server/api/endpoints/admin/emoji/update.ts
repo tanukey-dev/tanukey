@@ -37,6 +37,7 @@ export const paramDef = {
 			type: 'string',
 		} },
 		license: { type: 'string', nullable: true },
+		fileId: { type: 'string', format: 'misskey:id', nullable: true },
 	},
 	required: ['id', 'name', 'aliases'],
 } as const;
@@ -53,6 +54,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				category: ps.category ?? null,
 				aliases: ps.aliases,
 				license: ps.license ?? null,
+				fileId: ps.fileId ?? null,
 			});
 		});
 	}

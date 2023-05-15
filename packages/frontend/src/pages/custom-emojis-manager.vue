@@ -26,7 +26,7 @@
 						<template #default="{items}">
 							<div class="ldhfsamy">
 								<button v-for="emoji in items" :key="emoji.id" class="emoji _panel _button" :class="{ selected: selectedEmojis.includes(emoji.id) }" @click="selectMode ? toggleSelect(emoji) : edit(emoji)">
-									<img :src="`/emoji/${emoji.name}.webp`" class="img" :alt="emoji.name"/>
+									<img :src="emoji.url" class="img" :alt="emoji.name"/>
 									<div class="body">
 										<div class="name _monospace">{{ emoji.name }}</div>
 										<div class="info">{{ emoji.category }}</div>
@@ -144,6 +144,7 @@ const edit = (emoji) => {
 					...oldEmoji,
 					...result.updated,
 				}));
+				emojisPaginationComponent.value.reload();
 			} else if (result.deleted) {
 				emojisPaginationComponent.value.removeItem((item) => item.id === emoji.id);
 			}
