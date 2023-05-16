@@ -188,6 +188,10 @@ if (noteViewInterruptors.length > 0) {
 	});
 }
 
+onMounted(async () => {
+	isReadNote.value = await checkReadNote();
+});
+
 const isRenote = (
 	note.renote != null &&
 	note.text == null &&
@@ -220,13 +224,12 @@ const translation = ref<any>(null);
 const translating = ref(false);
 const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultStore.state.instanceTicker === 'remote' && appearNote.user.instance);
 const canRenote = computed(() => ['public', 'home'].includes(appearNote.visibility) || appearNote.userId === $i.id);
+const isReadNote = ref(false);
 
-let renoteCollapsed = $ref(defaultStore.state.collapseRenotes && isRenote && (($i && ($i.id === note.userId)) || await checkReadNote()));
+let renoteCollapsed = $ref(defaultStore.state.collapseRenotes && isRenote && (($i && ($i.id === note.userId)) || isReadNote));
 
 //Renoteが既読かのチェック
 async function checkReadNote() {
-	console.log(appearNote.id);
-
 	const rnc = await readNoteCache.get(appearNote.id);
 	if (rnc !== undefined) {
 		readNoteCache.put(new ReadNote(appearNote.id, new Date()));
