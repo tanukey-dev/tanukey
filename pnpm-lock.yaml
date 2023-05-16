@@ -696,6 +696,9 @@ importers:
       date-fns:
         specifier: 2.30.0
         version: 2.30.0
+      dexie:
+        specifier: ^3.2.3
+        version: 3.2.3
       escape-regexp:
         specifier: 0.0.1
         version: 0.0.1
@@ -10033,6 +10036,11 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /dexie@3.2.3:
+    resolution: {integrity: sha512-iHayBd4UYryDCVUNa3PMsJMEnd8yjyh5p7a+RFeC8i8n476BC9wMhVvqiImq5zJZJf5Tuer+s4SSj+AA3x+ZbQ==}
+    engines: {node: '>=6.0'}
+    dev: false
 
   /diff-sequences@28.1.1:
     resolution: {integrity: sha512-FU0iFaH/E23a+a718l8Qa/19bF9p06kgE0KipMOMadwa3SjnaElKzPaUC0vnibs6/B/9ni97s61mcejk8W1fQw==}
