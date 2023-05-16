@@ -165,6 +165,7 @@ import { getNoteSummary } from '@/scripts/get-note-summary';
 import { MenuItem } from '@/types/menu';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
 import { showMovedDialog } from '@/scripts/show-moved-dialog';
+import { readNoteCache, ReadNote } from '@/scripts/read-note';
 
 const props = defineProps<{
 	note: misskey.entities.Note;
@@ -219,7 +220,22 @@ const translation = ref<any>(null);
 const translating = ref(false);
 const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultStore.state.instanceTicker === 'remote' && appearNote.user.instance);
 const canRenote = computed(() => ['public', 'home'].includes(appearNote.visibility) || appearNote.userId === $i.id);
-let renoteCollapsed = $ref(defaultStore.state.collapseRenotes && isRenote && (($i && ($i.id === note.userId)) || (appearNote.myReaction != null)));
+
+let renoteCollapsed = $ref(defaultStore.state.collapseRenotes && isRenote && (($i && ($i.id === note.userId)) || await checkReadNote()));
+
+//Renoteが既読かのチェック
+async function checkReadNote() {
+	console.log(appearNote.id);
+
+	const rnc = await readNoteCache.get(appearNote.id);
+	if (rnc !== undefined) {
+		readNoteCache.put(new ReadNote(appearNote.id, new Date()));
+		return true;
+	}
+
+	readNoteCache.put(new ReadNote(appearNote.id, new Date()));
+	return false;
+}
 
 const keymap = {
 	'r': () => reply(true),

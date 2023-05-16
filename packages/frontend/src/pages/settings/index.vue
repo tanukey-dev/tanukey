@@ -28,6 +28,7 @@ import MkInfo from '@/components/MkInfo.vue';
 import MkSuperMenu from '@/components/MkSuperMenu.vue';
 import { signout, $i } from '@/account';
 import { unisonReload } from '@/scripts/unison-reload';
+import { readNoteCache } from '@/scripts/read-note';
 import { instance } from '@/instance';
 import { useRouter } from '@/router';
 import { definePageMetadata, provideMetadataReceiver } from '@/scripts/page-metadata';
@@ -191,6 +192,7 @@ const menuDef = computed(() => [{
 			miLocalStorage.removeItem('theme');
 			miLocalStorage.removeItem('emojis');
 			miLocalStorage.removeItem('lastEmojisFetchedAt');
+			await readNoteCache.claerOldData();
 			await fetchCustomEmojis(true);
 			unisonReload();
 		},
