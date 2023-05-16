@@ -67,6 +67,7 @@ export class CustomEmojiService {
 		aliases: string[];
 		host: string | null;
 		license: string | null;
+		draft: boolean;
 	}): Promise<Emoji> {
 		const emoji = await this.emojisRepository.insert({
 			id: this.idService.genId(),
@@ -79,6 +80,7 @@ export class CustomEmojiService {
 			publicUrl: data.driveFile.webpublicUrl ?? data.driveFile.url,
 			type: data.driveFile.webpublicType ?? data.driveFile.type,
 			license: data.license,
+			draft: data.draft,
 		}).then(x => this.emojisRepository.findOneByOrFail(x.identifiers[0]));
 
 		if (data.host == null) {
@@ -99,6 +101,7 @@ export class CustomEmojiService {
 		aliases?: string[];
 		license?: string | null;
 		fileId?: string | null;
+		draft: boolean;
 	}): Promise<void> {
 		const emoji = await this.emojisRepository.findOneByOrFail({ id: id });
 		const driveFile = data.fileId !== null ? await this.driveFilesRepository.findOneBy({ id: data.fileId }) : null;
@@ -115,6 +118,7 @@ export class CustomEmojiService {
 				originalUrl: driveFile.url,
 				publicUrl: driveFile.webpublicUrl ?? driveFile.url,
 				type: driveFile.webpublicType ?? driveFile.type,
+				draft: data.draft,
 			});
 		} else {
 			await this.emojisRepository.update(emoji.id, {
@@ -123,6 +127,7 @@ export class CustomEmojiService {
 				category: data.category,
 				aliases: data.aliases,
 				license: data.license,
+				draft: data.draft,
 			});
 		}
 

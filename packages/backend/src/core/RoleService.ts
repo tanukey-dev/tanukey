@@ -22,6 +22,7 @@ export type RolePolicies = {
 	canPublicNote: boolean;
 	canInvite: boolean;
 	canManageCustomEmojis: boolean;
+	canRequestCustomEmojis: boolean;
 	canSearchNotes: boolean;
 	canHideAds: boolean;
 	driveCapacityMb: number;
@@ -43,6 +44,7 @@ export const DEFAULT_POLICIES: RolePolicies = {
 	canPublicNote: true,
 	canInvite: false,
 	canManageCustomEmojis: false,
+	canRequestCustomEmojis: false,
 	canSearchNotes: false,
 	canHideAds: false,
 	driveCapacityMb: 100,
@@ -278,6 +280,7 @@ export class RoleService implements OnApplicationShutdown {
 			canPublicNote: calc('canPublicNote', vs => vs.some(v => v === true)),
 			canInvite: calc('canInvite', vs => vs.some(v => v === true)),
 			canManageCustomEmojis: calc('canManageCustomEmojis', vs => vs.some(v => v === true)),
+			canRequestCustomEmojis: calc('canRequestCustomEmojis', vs => vs.some(v => v === true)),
 			canSearchNotes: calc('canSearchNotes', vs => vs.some(v => v === true)),
 			canHideAds: calc('canHideAds', vs => vs.some(v => v === true)),
 			driveCapacityMb: calc('driveCapacityMb', vs => Math.max(...vs)),

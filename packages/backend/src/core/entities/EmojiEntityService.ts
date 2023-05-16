@@ -26,6 +26,7 @@ export class EmojiEntityService {
 			category: emoji.category,
 			// || emoji.originalUrl してるのは後方互換性のため（publicUrlはstringなので??はだめ）
 			url: emoji.publicUrl || emoji.originalUrl,
+			draft: emoji.draft,
 		};
 	}
 
@@ -51,6 +52,7 @@ export class EmojiEntityService {
 			// || emoji.originalUrl してるのは後方互換性のため（publicUrlはstringなので??はだめ）
 			url: emoji.publicUrl || emoji.originalUrl,
 			license: emoji.license,
+			draft: emoji.draft,
 		};
 	}
 
