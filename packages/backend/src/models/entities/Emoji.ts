@@ -60,4 +60,10 @@ export class Emoji {
 		length: 1024, nullable: true,
 	})
 	public license: string | null;
+
+	@Column('boolean', {
+		default: false,
+		nullable: false,
+	})
+	public draft: boolean;
 }

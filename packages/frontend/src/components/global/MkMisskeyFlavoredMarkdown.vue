@@ -44,6 +44,7 @@ const props = withDefaults(defineProps<{
 
 .mfm-x2, .mfm-x3, .mfm-x4 {
 	font-size: var(--mfm-zoom-size);
+	vertical-align: middle;
 
 	.mfm-x2, .mfm-x3, .mfm-x4 {
 		/* only half effective */

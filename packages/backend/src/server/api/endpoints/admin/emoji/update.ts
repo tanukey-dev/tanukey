@@ -38,8 +38,9 @@ export const paramDef = {
 		} },
 		license: { type: 'string', nullable: true },
 		fileId: { type: 'string', format: 'misskey:id', nullable: true },
+		draft: { type: 'boolean' },
 	},
-	required: ['id', 'name', 'aliases'],
+	required: ['id', 'name', 'aliases', 'draft'],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -55,6 +56,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				aliases: ps.aliases,
 				license: ps.license ?? null,
 				fileId: ps.fileId ?? null,
+				draft: ps.draft,
 			});
 		});
 	}

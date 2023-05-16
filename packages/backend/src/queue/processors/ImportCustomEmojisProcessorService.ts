@@ -107,6 +107,7 @@ export class ImportCustomEmojisProcessorService {
 					aliases: emojiInfo.aliases,
 					driveFile,
 					license: emojiInfo.license,
+					draft: false,
 				});
 			}
 
