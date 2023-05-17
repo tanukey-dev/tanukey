@@ -12,7 +12,12 @@
 
 -->
 
-## 13.12.2-tanu-1.7.0 (unreleased)
+## 13.12.2-tanu-1.7.1
+
+### Server
+- emojis/addにdraftのrequiredがついていた不具合の修正
+
+## 13.12.2-tanu-1.7.0
 
 ### General
 - MFMの拡大表示を縦にセンタリングするように修正
