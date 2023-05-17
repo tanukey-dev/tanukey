@@ -47,6 +47,5 @@
 		"./**/*.vue"
 	],
 	"exclude": [
-		".storybook/**/*",
 	]
 }
