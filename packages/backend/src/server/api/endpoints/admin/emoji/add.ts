@@ -27,7 +27,7 @@ export const paramDef = {
 	properties: {
 		fileId: { type: 'string', format: 'misskey:id' },
 	},
-	required: ['fileId', 'draft'],
+	required: ['fileId'],
 } as const;
 
 // TODO: ロジックをサービスに切り出す
