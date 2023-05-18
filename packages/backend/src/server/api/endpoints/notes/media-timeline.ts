@@ -28,7 +28,7 @@ export const meta = {
 		ltlDisabled: {
 			message: 'Media timeline has been disabled.',
 			code: 'MTL_DISABLED',
-			id: '45a6eb02-7695-4393-b023-dd4be9aaaefd',
+			id: '45a6eb02-7695-4393-b023-dd3be9aaaefd',
 		},
 	},
 } as const;
@@ -36,11 +36,8 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		withFiles: {
-			type: 'boolean',
-			default: false,
-			description: 'Only show notes that have attached files.',
-		},
+		withFiles: { type: 'boolean', default: false },
+		withReplies: { type: 'boolean', default: false },
 		fileType: { type: 'array', items: {
 			type: 'string',
 		} },
@@ -87,7 +84,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				.leftJoinAndSelect('renote.user', 'renoteUser');
 
 			this.queryService.generateChannelQuery(query, me);
-			this.queryService.generateRepliesQuery(query, me);
+			this.queryService.generateRepliesQuery(query, ps.withReplies, me);
 			this.queryService.generateVisibilityQuery(query, me);
 			if (me) this.queryService.generateMutedUserQuery(query, me);
 			if (me) this.queryService.generateMutedNoteQuery(query, me);
