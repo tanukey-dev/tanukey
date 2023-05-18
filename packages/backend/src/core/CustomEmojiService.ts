@@ -7,14 +7,16 @@ import { EmojiEntityService } from '@/core/entities/EmojiEntityService.js';
 import { GlobalEventService } from '@/core/GlobalEventService.js';
 import type { DriveFile } from '@/models/entities/DriveFile.js';
 import type { Emoji } from '@/models/entities/Emoji.js';
-import type { EmojisRepository } from '@/models/index.js';
 import type { DriveFilesRepository } from '@/models/index.js';
+import type { EmojisRepository, Role } from '@/models/index.js';
 import { bindThis } from '@/decorators.js';
 import { MemoryKVCache, RedisSingleCache } from '@/misc/cache.js';
 import { UtilityService } from '@/core/UtilityService.js';
 import type { Config } from '@/config.js';
 import { query } from '@/misc/prelude/url.js';
 import type { Serialized } from '@/server/api/stream/types.js';
+
+const parseEmojiStrRegexp = /^(\w+)(?:@([\w.-]+))?$/;
 
 @Injectable()
 export class CustomEmojiService {
@@ -68,6 +70,9 @@ export class CustomEmojiService {
 		host: string | null;
 		license: string | null;
 		draft: boolean;
+		isSensitive: boolean;
+		localOnly: boolean;
+		roleIdsThatCanBeUsedThisEmojiAsReaction: Role['id'][];
 	}): Promise<Emoji> {
 		const emoji = await this.emojisRepository.insert({
 			id: this.idService.genId(),
@@ -81,6 +86,9 @@ export class CustomEmojiService {
 			type: data.driveFile.webpublicType ?? data.driveFile.type,
 			license: data.license,
 			draft: data.draft,
+			isSensitive: data.isSensitive,
+			localOnly: data.localOnly,
+			roleIdsThatCanBeUsedThisEmojiAsReaction: data.roleIdsThatCanBeUsedThisEmojiAsReaction,
 		}).then(x => this.emojisRepository.findOneByOrFail(x.identifiers[0]));
 
 		if (data.host == null) {
@@ -96,40 +104,34 @@ export class CustomEmojiService {
 
 	@bindThis
 	public async update(id: Emoji['id'], data: {
+		driveFile?: DriveFile;
 		name?: string;
 		category?: string | null;
 		aliases?: string[];
 		license?: string | null;
-		fileId?: string | null;
 		draft: boolean;
+		isSensitive?: boolean;
+		localOnly?: boolean;
+		roleIdsThatCanBeUsedThisEmojiAsReaction?: Role['id'][];
 	}): Promise<void> {
 		const emoji = await this.emojisRepository.findOneByOrFail({ id: id });
-		const driveFile = data.fileId !== null ? await this.driveFilesRepository.findOneBy({ id: data.fileId }) : null;
 		const sameNameEmoji = await this.emojisRepository.findOneBy({ name: data.name, host: IsNull() });
 		if (sameNameEmoji != null && sameNameEmoji.id !== id) throw new Error('name already exists');
 
-		if (driveFile !== null) {
-			await this.emojisRepository.update(emoji.id, {
-				updatedAt: new Date(),
-				name: data.name,
-				category: data.category,
-				aliases: data.aliases,
-				license: data.license,
-				originalUrl: driveFile.url,
-				publicUrl: driveFile.webpublicUrl ?? driveFile.url,
-				type: driveFile.webpublicType ?? driveFile.type,
-				draft: data.draft,
-			});
-		} else {
-			await this.emojisRepository.update(emoji.id, {
-				updatedAt: new Date(),
-				name: data.name,
-				category: data.category,
-				aliases: data.aliases,
-				license: data.license,
-				draft: data.draft,
-			});
-		}
+		await this.emojisRepository.update(emoji.id, {
+			updatedAt: new Date(),
+			name: data.name,
+			category: data.category,
+			aliases: data.aliases,
+			license: data.license,
+			draft: data.draft,
+			isSensitive: data.isSensitive,
+			localOnly: data.localOnly,
+			originalUrl: data.driveFile != null ? data.driveFile.url : undefined,
+			publicUrl: data.driveFile != null ? (data.driveFile.webpublicUrl ?? data.driveFile.url) : undefined,
+			type: data.driveFile != null ? (data.driveFile.webpublicType ?? data.driveFile.type) : undefined,
+			roleIdsThatCanBeUsedThisEmojiAsReaction: data.roleIdsThatCanBeUsedThisEmojiAsReaction ?? undefined,
+		});
 
 		this.localEmojisCache.refresh();
 
@@ -283,7 +285,7 @@ export class CustomEmojiService {
 
 	@bindThis
 	public parseEmojiStr(emojiName: string, noteUserHost: string | null) {
-		const match = emojiName.match(/^(\w+)(?:@([\w.-]+))?$/);
+		const match = emojiName.match(parseEmojiStrRegexp);
 		if (!match) return { name: null, host: null };
 
 		const name = match[1];

@@ -70,7 +70,8 @@
 				v-for="category in customEmojiCategories"
 				:key="`custom:${category}`"
 				:initial-shown="false"
-				:emojis="computed(() => customEmojis.filter(emoji => !emoji.draft).filter(e => category === null ? (e.category === 'null' || !e.category) : e.category === category).map(e => `:${e.name}:`))"
+				:initialShown="false"
+				:emojis="computed(() => customEmojis.filter(emoji => !emoji.draft).filter(e => category === null ? (e.category === 'null' || !e.category) : e.category === category).filter(filterAvailable).map(e => `:${e.name}:`))"
 				@chosen="chosen"
 			>
 				{{ category || i18n.ts.other }}
@@ -102,6 +103,7 @@ import { deviceKind } from '@/scripts/device-kind';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
 import { customEmojiCategories, customEmojis } from '@/custom-emojis';
+import { $i } from '@/account';
 
 const props = withDefaults(defineProps<{
 	showPinned?: boolean;
@@ -274,9 +276,13 @@ watch(q, () => {
 		return matches;
 	};
 
-	searchResultCustom.value = Array.from(searchCustom());
+	searchResultCustom.value = Array.from(searchCustom()).filter(filterAvailable);
 	searchResultUnicode.value = Array.from(searchUnicode());
 });
+
+function filterAvailable(emoji: Misskey.entities.CustomEmoji): boolean {
+	return (emoji.roleIdsThatCanBeUsedThisEmojiAsReaction == null || emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length === 0) || ($i && $i.roles.some(r => emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.includes(r.id)));
+}
 
 function focus() {
 	if (!['smartphone', 'tablet'].includes(deviceKind) && !isTouchUsing) {

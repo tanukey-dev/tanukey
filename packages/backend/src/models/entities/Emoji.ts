@@ -66,4 +66,21 @@ export class Emoji {
 		nullable: false,
 	})
 	public draft: boolean;
+
+	@Column('boolean', {
+		default: false,
+		nullable: false,
+	})
+	public localOnly: boolean;
+
+	@Column('boolean', {
+		default: false,
+	})
+	public isSensitive: boolean;
+
+	// TODO: 定期ジョブで存在しなくなったロールIDを除去するようにする
+	@Column('varchar', {
+		array: true, length: 128, default: '{}',
+	})
+	public roleIdsThatCanBeUsedThisEmojiAsReaction: string[];
 }
