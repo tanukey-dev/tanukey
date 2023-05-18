@@ -132,7 +132,7 @@
 					<XPhotos :key="user.id" :user="user"/>
 					<XActivity :key="user.id" :user="user"/>
 				</template>
-				<MkNotes v-if="!disableNotes" :class="$style.tl" :no-gap="true" :pagination="pagination"/>
+				<XTimeline v-if="!disableNotes" :user="user"/>
 			</div>
 		</div>
 		<div v-if="!narrow" class="sub _gaps" style="container-type: inline-size;">
@@ -165,11 +165,11 @@ import { i18n } from '@/i18n';
 import { $i, iAmModerator } from '@/account';
 import { dateString } from '@/filters/date';
 import { confetti } from '@/scripts/confetti';
-import MkNotes from '@/components/MkNotes.vue';
 import { api } from '@/os';
 
 const XPhotos = defineAsyncComponent(() => import('./index.photos.vue'));
 const XActivity = defineAsyncComponent(() => import('./index.activity.vue'));
+const XTimeline = defineAsyncComponent(() => import('./index.timeline.vue'));
 
 const props = withDefaults(defineProps<{
 	user: misskey.entities.UserDetailed;

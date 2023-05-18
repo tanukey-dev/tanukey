@@ -1,5 +1,5 @@
 <template>
-<MkSpacer :content-max="800" style="padding-top: 0">
+<MkSpacer :content-max="800" style="padding: 0">
 	<MkStickyContainer>
 		<template #header>
 			<MkTab v-model="include" :class="$style.tab">
