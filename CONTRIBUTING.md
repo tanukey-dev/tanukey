@@ -1,5 +1,5 @@
 # Contribution guide
-We're glad you're interested in contributing Misskey! In this document you will find the information you need to contribute to the project.
+We're glad you're interested in contributing Tanukey! In this document you will find the information you need to contribute to the project.
 
 > **Note**
 > This project uses Japanese as its major language, **but you do not need to translate and write the Issues/PRs in Japanese.**
@@ -8,14 +8,14 @@ We're glad you're interested in contributing Misskey! In this document you will 
 > It will also allow the reader to use the translation tool of their preference if necessary.
 
 ## Roadmap
-See [ROADMAP.md](./ROADMAP.md)
+See [ROADMAP](https://github.com/tanukey-dev/tanukey/wiki/ROADMAP)
 
 ## Issues
 Before creating an issue, please check the following:
 - To avoid duplication, please search for similar issues before creating a new issue.
 - Do not use Issues to ask questions or troubleshooting.
 	- Issues should only be used to feature requests, suggestions, and bug tracking.
-	- Please ask questions or troubleshooting in ~~the [Misskey Forum](https://forum.misskey.io/)~~ [GitHub Discussions](https://github.com/misskey-dev/misskey/discussions) or [Discord](https://discord.gg/Wp8gVStHW3).
+	- Please ask questions or troubleshooting in [GitHub Discussions](https://github.com/tanukey-dev/tanukey/discussions) or [Discord](https://discord.gg/dARyeAgDsW).
 
 > **Warning**
 > Do not close issues that are about to be resolved. It should remain open until a commit that actually resolves it is merged.
@@ -66,44 +66,15 @@ Be willing to comment on the good points and not just the things you want fixed 
 	- Are there any omissions or gaps?
 	- Does it check for anomalies?
 
-## Deploy
-The `/deploy` command by issue comment can be used to deploy the contents of a PR to the preview environment.
-```
-/deploy sha=<commit hash>
-```
-An actual domain will be assigned so you can test the federation.
-
-## Merge
-
-## Release
-### Release Instructions
-1. Commit version changes in the `develop` branch ([package.json](https://github.com/misskey-dev/misskey/blob/develop/package.json))
-2. Create a release PR.
-	- Into `master` from `develop` branch.
-	- The title must be in the format `Release: x.y.z`.
-		- `x.y.z` is the new version you are trying to release.
-3. Deploy and perform a simple QA check. Also verify that the tests passed.
-4. Merge it. (Do not squash commit)
-5. Create a [release of GitHub](https://github.com/misskey-dev/misskey/releases)
-	- The target branch must be `master`
-	- The tag name must be the version
-
-> **Note**
-> Why this instruction is necessary:
-> - To perform final QA checks
-> - To distribute responsibility
-> - To check direct commits to develop
-> - To celebrate the release together 🎉
-
 ## Localization (l10n)
-Misskey uses [Crowdin](https://crowdin.com/project/misskey) for localization management.
+Tanukey uses [Crowdin](https://crowdin.com/project/tanukey) for localization management.
 You can improve our translations with your Crowdin account.
 Your changes in Crowdin are automatically submitted as a PR (with the title "New Crowdin translations") to the repository.
-The owner [@syuilo](https://github.com/syuilo) merges the PR into the develop branch before the next release.
+The owner [@tar_bin](https://github.com/tar-bin) merges the PR into the develop branch before the next release.
 
 If your language is not listed in Crowdin, please open an issue.
 
-![Crowdin](https://d322cqt584bo4o.cloudfront.net/misskey/localized.svg)
+![Crowdin](https://crowdin.com/project/tanukey/discussions)
 
 ## Development
 During development, it is useful to use the 
@@ -171,17 +142,17 @@ TODO
 - `MISSKEY_WEBFINGER_USE_HTTP`: If it's set true, WebFinger requests will be http instead of https, useful for testing federation between servers in localhost. NEVER USE IN PRODUCTION.
 
 ## Continuous integration
-Misskey uses GitHub Actions for executing automated tests.
+Tanukey uses GitHub Actions for executing automated tests.
 Configuration files are located in [`/.github/workflows`](/.github/workflows).
 
 ## Vue
-Misskey uses Vue(v3) as its front-end framework.
+Tanukey uses Vue(v3) as its front-end framework.
 - Use TypeScript.
 - **When creating a new component, please use the Composition API (with [setup sugar](https://v3.vuejs.org/api/sfc-script-setup.html) and [ref sugar](https://github.com/vuejs/rfcs/discussions/369)) instead of the Options API.**
 	- Some of the existing components are implemented in the Options API, but it is an old implementation. Refactors that migrate those components to the Composition API are also welcome.
 
 ## nirax
-niraxは、Misskeyで使用しているオリジナルのフロントエンドルーティングシステムです。
+niraxは、Tanukeyで使用しているMisskeyから継承したオリジナルのフロントエンドルーティングシステムです。
 **vue-routerから影響を多大に受けているので、まずはvue-routerについて学ぶことをお勧めします。**
 
 ### ルート定義
@@ -207,115 +178,6 @@ niraxは、Misskeyで使用しているオリジナルのフロントエンド�
 ### 複数のルーター
 vue-routerとの最大の違いは、niraxは複数のルーターが存在することを許可している点です。
 これにより、アプリ内ウィンドウでブラウザとは個別にルーティングすることなどが可能になります。
-
-## Storybook
-
-Misskey uses [Storybook](https://storybook.js.org/) for UI development.
-
-### Setup & Run
-
-#### Universal
-
-##### Setup
-
-```bash
-pnpm --filter misskey-js build
-pnpm --filter frontend tsc -p .storybook && (node packages/frontend/.storybook/preload-locale.js & node packages/frontend/.storybook/preload-theme.js)
-```
-
-##### Run
-
-```bash
-node packages/frontend/.storybook/generate.js && pnpm --filter frontend storybook dev
-```
-
-#### macOS & Linux
-
-##### Setup
-
-```bash
-pnpm --filter misskey-js build
-```
-
-##### Run
-
-```bash
-pnpm --filter frontend storybook-dev
-```
-
-### Usage
-
-When you create a new component (in this example, `MyComponent.vue`), the story file (`MyComponent.stories.ts`) will be automatically generated by the `.storybook/generate.js` script.
-You can override the default story by creating a impl story file (`MyComponent.stories.impl.ts`).
-
-```ts
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { StoryObj } from '@storybook/vue3';
-import MyComponent from './MyComponent.vue';
-export const Default = {
-	render(args) {
-		return {
-			components: {
-				MyComponent,
-			},
-			setup() {
-				return {
-					args,
-				};
-			},
-			computed: {
-				props() {
-					return {
-						...this.args,
-					};
-				},
-			},
-			template: '<MyComponent v-bind="props" />',
-		};
-	},
-	args: {
-		foo: 'bar',
-	},
-	parameters: {
-		layout: 'centered',
-	},
-} satisfies StoryObj<typeof MkAvatar>;
-```
-
-If you want to opt-out from the automatic generation, create a `MyComponent.stories.impl.ts` file and add the following line to the file.
-
-```ts
-import MyComponent from './MyComponent.vue';
-void MyComponent;
-```
-
-You can override the component meta by creating a meta story file (`MyComponent.stories.meta.ts`).
-
-```ts
-export const argTypes = {
-	scale: {
-		control: {
-			type: 'range',
-			min: 1,
-			max: 4,
-		},
-};
-```
-
-Also, you can use msw to mock API requests in the storybook. Creating a `MyComponent.stories.msw.ts` file to define the mock handlers.
-
-```ts
-import { rest } from 'msw';
-export const handlers = [
-	rest.post('/api/notes/timeline', (req, res, ctx) => {
-		return res(
-			ctx.json([]),
-		);
-	}),
-];
-```
-
-Don't forget to re-run the `.storybook/generate.js` script after adding, editing, or removing the above files.
 
 ## Notes
 ### How to resolve conflictions occurred at pnpm-lock.yaml?
