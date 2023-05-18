@@ -7,6 +7,7 @@
 	@closed="$emit('closed')"
 >
 	<template v-if="emoji" #header>:{{ emoji.name }}:</template>
+	<template v-else-if="isRequest" #header>{{ i18n.ts.requestCustomEmojis }}</template>
 	<template v-else #header>New emoji</template>
 
 	<div>
@@ -27,11 +28,9 @@
 					</div>
 				</div>
 				<MkButton rounded style="margin: 0 auto;" @click="changeImage">{{ i18n.ts.selectFile }}</MkButton>
-				<MkSwitch v-if="!isRequest" v-model="draft" :disabled="isRequest">
-					{{ i18n.ts.draft }}
-				</MkSwitch>
 				<MkInput v-model="name">
 					<template #label>{{ i18n.ts.name }}</template>
+					<template #caption>{{ i18n.ts.emojiNameValidation }}</template>
 				</MkInput>
 				<MkInput v-model="category" :datalist="customEmojiCategories">
 					<template #label>{{ i18n.ts.category }}</template>
@@ -43,7 +42,7 @@
 				<MkInput v-model="license">
 					<template #label>{{ i18n.ts.license }}</template>
 				</MkInput>
-				<MkFolder>
+				<MkFolder v-if="!isRequest" >
 					<template #label>{{ i18n.ts.rolesThatCanBeUsedThisEmojiAsReaction }}</template>
 					<template #suffix>{{ rolesThatCanBeUsedThisEmojiAsReaction.length === 0 ? i18n.ts.all : rolesThatCanBeUsedThisEmojiAsReaction.length }}</template>
 
@@ -60,13 +59,19 @@
 						<MkInfo warn>{{ i18n.ts.rolesThatCanBeUsedThisEmojiAsReactionPublicRoleWarn }}</MkInfo>
 					</div>
 				</MkFolder>
-				<MkSwitch v-model="isSensitive">isSensitive</MkSwitch>
+				<MkSwitch v-model="isSensitive">{{ i18n.ts.isSensitive }}</MkSwitch>
 				<MkSwitch v-model="localOnly">{{ i18n.ts.localOnly }}</MkSwitch>
-				<MkButton danger @click="del()"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+				<MkSwitch v-if="!isRequest" v-model="draft" :disabled="isRequest">
+					{{ i18n.ts.draft }}
+				</MkSwitch>
 			</div>
 		</MkSpacer>
 		<div :class="$style.footer">
-			<MkButton primary rounded style="margin: 0 auto;" @click="done"><i class="ti ti-check"></i> {{ props.emoji ? i18n.ts.update : i18n.ts.create }}</MkButton>
+			<div :class="$style.footerButtons">
+				<MkButton v-if="!isRequest" danger rounded style="margin: 0 auto;" @click="del()"><i class="ti ti-check"></i> {{ i18n.ts.delete }}</MkButton>
+				<MkButton v-if="validation" primary rounded style="margin: 0 auto;" @click="done"><i class="ti ti-check"></i> {{ props.emoji ? i18n.ts.update : i18n.ts.create }}</MkButton>
+				<MkButton v-else rounded style="margin: 0 auto;"><i class="ti ti-check"></i> {{ props.emoji ? i18n.ts.update : i18n.ts.create }}</MkButton>
+			</div>
 		</div>
 	</div>
 </MkModalWindow>
@@ -101,14 +106,17 @@ let localOnly = $ref(props.emoji ? props.emoji.localOnly : false);
 let roleIdsThatCanBeUsedThisEmojiAsReaction = $ref(props.emoji ? props.emoji.roleIdsThatCanBeUsedThisEmojiAsReaction : []);
 let rolesThatCanBeUsedThisEmojiAsReaction = $ref([]);
 let file = $ref();
-let draft = $ref(props.emoji.draft);
+let draft = $ref(props.emoji ? props.emoji.draft : false);
 let isRequest = $ref(props.isRequest);
 
 watch($$(roleIdsThatCanBeUsedThisEmojiAsReaction), async () => {
 	rolesThatCanBeUsedThisEmojiAsReaction = (await Promise.all(roleIdsThatCanBeUsedThisEmojiAsReaction.map((id) => os.api('admin/roles/show', { roleId: id }).catch(() => null)))).filter(x => x != null);
 }, { immediate: true });
 
-const imgUrl = computed(() => file ? file.url : props.emoji ? `/emoji/${props.emoji.name}.webp` : null);
+const imgUrl = computed(() => file ? file.url : props.emoji ? props.emoji.url : null);
+const validation = computed(() => {
+	return name.match(/^[a-zA-Z0-9_]+$/) && imgUrl.value != null;
+})
 
 const emit = defineEmits<{
 	(ev: 'done', v: { deleted?: boolean; updated?: any; created?: any }): void,
@@ -139,7 +147,7 @@ async function done() {
 	const params = {
 		name,
 		category: category === '' ? null : category,
-		aliases: aliases.split(' ').filter(x => x !== ''),
+		aliases: aliases.replace('　', ' ').split(' ').filter(x => x !== ''),
 		license: license === '' ? null : license,
 		draft: draft,
 		isSensitive,
@@ -171,7 +179,9 @@ async function done() {
 
 		dialog.close();
 	} else {
-		const created = await os.apiWithDialog('admin/emoji/add', params);
+		const created = isRequest
+		 ? await os.apiWithDialog('admin/emoji/add-draft', params)
+		 : await os.apiWithDialog('admin/emoji/add', params);
 
 		emit('done', {
 			created: created,
@@ -249,5 +259,12 @@ async function del() {
 	border-top: solid 0.5px var(--divider);
 	-webkit-backdrop-filter: var(--blur, blur(15px));
 	backdrop-filter: var(--blur, blur(15px));
+}
+
+.footerButtons {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 </style>
