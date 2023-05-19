@@ -2,9 +2,7 @@
 <MkStickyContainer>
 	<template #header><MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin" :display-my-avatar="true"/></template>
 	<MkSpacer :content-max="800">
-		<div ref="rootEl" v-hotkey.global="keymap">
-			<XTutorial v-if="$i && defaultStore.reactiveState.timelineTutorial.value != -1" class="_panel" style="margin-bottom: var(--margin);"/>
-			<MkPostForm v-if="defaultStore.reactiveState.showFixedPostForm.value" :class="$style.postForm" class="post-form _panel" fixed style="margin-bottom: var(--margin);"/>
+		<div ref="rootEl">
 			<XCommonTimeline
 				v-if="!isNeedPinnedChannels()"
 				ref="tlComponent"
@@ -27,7 +25,6 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, computed, provide } from 'vue';
 import type { Tab } from '@/components/global/MkPageHeader.tabs.vue';
-import MkPostForm from '@/components/MkPostForm.vue';
 import * as os from '@/os';
 import { defaultStore } from '@/store';
 import { i18n } from '@/i18n';
@@ -37,7 +34,6 @@ import { definePageMetadata } from '@/scripts/page-metadata';
 
 provide('shouldOmitHeaderTitle', true);
 
-const XTutorial = defineAsyncComponent(() => import('./timeline.tutorial.vue'));
 const XCommonTimeline = defineAsyncComponent(() => import('@/components/MkTimelineWithScroll.vue'));
 const MkTimelineWithPinedChannel = defineAsyncComponent(() => import('@/components/MkTimelineWithPinedChannel.vue'));
 
@@ -47,9 +43,6 @@ function isNeedPinnedChannels(): boolean {
 
 const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable);
 const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
-const keymap = {
-	't': focus,
-};
 
 let srcWhenNotSignin = $ref(isLocalTimelineAvailable ? 'local' : 'global');
 const src = $computed({ get: () => ($i ? defaultStore.reactiveState.tl.value.src : srcWhenNotSignin), set: (x) => saveSrc(x) });
@@ -94,19 +87,6 @@ function saveSrc(newSrc: 'home' | 'local' | 'social' | 'global'): void {
 		src: newSrc,
 	});
 	srcWhenNotSignin = newSrc;
-}
-
-async function timetravel(): Promise<void> {
-	const { canceled, result: date } = await os.inputDate({
-		title: i18n.ts.date,
-	});
-	if (canceled) return;
-
-	tlComponent.timetravel(date);
-}
-
-function focus(): void {
-	tlComponent.focus();
 }
 
 const headerActions = $computed(() => []);
