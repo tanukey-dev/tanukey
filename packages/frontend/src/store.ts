@@ -106,6 +106,10 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'account',
 		default: false,
 	},
+	userPinnedLtlChannelIds: {
+		where: 'account',
+		default: [] as string[],
+	},
 
 	menu: {
 		where: 'deviceAccount',

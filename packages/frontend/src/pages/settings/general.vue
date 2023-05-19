@@ -28,6 +28,23 @@
 	</FormSection>
 
 	<FormSection>
+		<template #label>{{ i18n.ts.pinnedChannel }}</template>
+		<div class="_gaps_m">
+			<Multiselect
+				v-model="pinnedLtlChannelIds"
+				mode="tags"
+				:options="channnelAsyncFind"
+				:close-on-select="false"
+				:searchable="true"
+				:object="true"
+				:resolve-on-load="true"
+				:delay="0"
+				:min-chars="1"
+			/>
+		</div>
+	</FormSection>
+
+	<FormSection>
 		<template #label>{{ i18n.ts.displayOfNote }}</template>
 
 		<div class="_gaps_m">
@@ -172,6 +189,7 @@ import { unisonReload } from '@/scripts/unison-reload';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { miLocalStorage } from '@/local-storage';
+import Multiselect from '@vueform/multiselect';
 
 const lang = ref(miLocalStorage.getItem('lang'));
 const fontSize = ref(miLocalStorage.getItem('fontSize'));
@@ -218,6 +236,7 @@ const mediaListWithOneImageAppearance = computed(defaultStore.makeGetterSetter('
 const notificationPosition = computed(defaultStore.makeGetterSetter('notificationPosition'));
 const notificationStackAxis = computed(defaultStore.makeGetterSetter('notificationStackAxis'));
 const showTimelineReplies = computed(defaultStore.makeGetterSetter('showTimelineReplies'));
+const pinnedLtlChannelIds = computed(defaultStore.makeGetterSetter('userPinnedLtlChannelIds'));
 
 watch(lang, () => {
 	miLocalStorage.setItem('lang', lang.value as string);
@@ -262,4 +281,15 @@ definePageMetadata({
 	title: i18n.ts.general,
 	icon: 'ti ti-adjustments',
 });
+
+async function channnelAsyncFind(query) {
+	let chs = await os.api('channels/search', {
+		query: query === null ? '' : query.trim(),
+		type: 'nameOnly',
+	});
+	return chs.map(c => { return { value: c.id, label: c.name };});
+}
+
 </script>
+
+<style src="@vueform/multiselect/themes/default.css"></style>

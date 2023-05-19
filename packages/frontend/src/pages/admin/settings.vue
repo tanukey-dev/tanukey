@@ -169,7 +169,7 @@ import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import MkButton from '@/components/MkButton.vue';
 import MkColorInput from '@/components/MkColorInput.vue';
-import Multiselect from '@vueform/multiselect'
+import Multiselect from '@vueform/multiselect';
 
 let name: string | null = $ref(null);
 let description: string | null = $ref(null);
@@ -191,8 +191,6 @@ let swPrivateKey: any = $ref(null);
 let deeplAuthKey: string = $ref('');
 let deeplIsPro: boolean = $ref(false);
 let pinnedLtlChannelIds = $ref([]);
-
-watch(pinnedLtlChannelIds, (n, o) => console.log(n));
 
 async function init() {
 	const meta = await os.api('admin/meta');
