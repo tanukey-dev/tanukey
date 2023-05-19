@@ -22,7 +22,7 @@ const modal = shallowRef<InstanceType<typeof MkModal>>();
 
 const whatIsNew = () => {
 	modal.value.close();
-	window.open(`https://github.com/tar-bin/tanukey/releases/tag/${version}`, '_blank');
+	window.open('https://github.com/tanukey-dev/tanukey/releases', '_blank');
 };
 
 onMounted(() => {
