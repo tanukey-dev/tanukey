@@ -1,29 +1,27 @@
-<script lang="ts">
-import { defineComponent, h, resolveDirective, withDirectives } from 'vue';
+<template>
+<div class="pxhvhrfw">
+	<MkTabButton v-for="tab in tabs" :key="tab.value" :tab="tab" :active="isActive(tab)" @click="onClick"/>
+</div>
+</template>
 
-export default defineComponent({
-	props: {
-		modelValue: {
-			required: true,
-		},
-	},
-	setup(props, { emit, slots }) {
-		const options = slots.default();
+<script lang="ts" setup>
+import MkTabButton from '@/components/MkTabButton.vue';
 
-		return () => h('div', {
-			class: 'pxhvhrfw',
-		}, options.map(option => withDirectives(h('button', {
-			class: ['_button', { active: props.modelValue === option.props.value }],
-			key: option.key,
-			disabled: props.modelValue === option.props.value,
-			onClick: () => {
-				emit('update:modelValue', option.props.value);
-			},
-		}, option.children), [
-			[resolveDirective('click-anime')],
-		])));
-	},
-});
+const props = defineProps<{
+	modelValue: string|null,
+	tabs: Array<{ value: string, label: string }>,
+}>();
+
+const emits = defineEmits<{(e: 'update:modelValue', text: string): void}>();
+
+const isActive = (tab: any): boolean => {
+	return tab.value === props.modelValue;
+};
+
+const onClick = (value: string): void => {
+	emits('update:modelValue', value);
+};
+
 </script>
 
 <style lang="scss">

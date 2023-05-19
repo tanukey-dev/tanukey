@@ -1,10 +1,6 @@
 <template>
 <div class="_gaps_m">
-	<MkTab v-model="tab">
-		<option value="renoteMute">{{ i18n.ts.mutedUsers }} ({{ i18n.ts.renote }})</option>
-		<option value="mute">{{ i18n.ts.mutedUsers }}</option>
-		<option value="block">{{ i18n.ts.blockedUsers }}</option>
-	</MkTab>
+	<MkTab v-model="tab" :tabs="tabs"/>
 
 	<div v-if="tab === 'renoteMute'">
 		<MkPagination :pagination="renoteMutingPagination">
@@ -97,7 +93,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { ref } from 'vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkTab from '@/components/MkTab.vue';
 import FormInfo from '@/components/MkInfo.vue';
@@ -109,6 +105,11 @@ import MkUserCardMini from '@/components/MkUserCardMini.vue';
 import * as os from '@/os';
 
 let tab = $ref('renoteMute');
+const tabs = ref([
+	{ value: 'renoteMute', label: i18n.ts.mutedUsers + ' (' + i18n.ts.renote + ')' },
+	{ value: 'mute', label: i18n.ts.mutedUsers },
+	{ value: 'block', label: i18n.ts.blockedUsers },
+]);
 
 const renoteMutingPagination = {
 	endpoint: 'renote-mute/list' as const,

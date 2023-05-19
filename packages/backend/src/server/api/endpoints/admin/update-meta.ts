@@ -96,6 +96,7 @@ export const paramDef = {
 		enableChartsForFederatedInstances: { type: 'boolean' },
 		serverRules: { type: 'array', items: { type: 'string' } },
 		preservedUsernames: { type: 'array', items: { type: 'string' } },
+		pinnedLtlChannelIds: { type: 'array', items: { type: 'string' } },
 	},
 	required: [],
 } as const;
@@ -395,6 +396,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (ps.preservedUsernames !== undefined) {
 				set.preservedUsernames = ps.preservedUsernames;
+			}
+
+			if (ps.pinnedLtlChannelIds !== undefined) {
+				set.pinnedLtlChannelIds = ps.pinnedLtlChannelIds;
 			}
 
 			await this.metaService.update(set);

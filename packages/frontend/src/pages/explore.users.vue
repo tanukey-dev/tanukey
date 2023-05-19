@@ -1,9 +1,6 @@
 <template>
 <MkSpacer :content-max="1200">
-	<MkTab v-model="origin" style="margin-bottom: var(--margin);">
-		<option value="local">{{ i18n.ts.local }}</option>
-		<option value="remote">{{ i18n.ts.remote }}</option>
-	</MkTab>
+	<MkTab v-model="origin" :tabs="tabs" style="margin-bottom: var(--margin);"/>
 	<div v-if="origin === 'local'">
 		<template v-if="tag == null">
 			<MkFoldableSection class="_margin" persist-key="explore-pinned-users">
@@ -58,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
+import { watch, ref } from 'vue';
 import MkUserList from '@/components/MkUserList.vue';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
 import MkTab from '@/components/MkTab.vue';
@@ -73,6 +70,10 @@ let origin = $ref('local');
 let tagsEl = $shallowRef<InstanceType<typeof MkFoldableSection>>();
 let tagsLocal = $ref([]);
 let tagsRemote = $ref([]);
+const tabs = ref([
+	{ value: 'local', label: i18n.ts.local },
+	{ value: 'remote', label: i18n.ts.remote },
+]);
 
 watch(() => props.tag, () => {
 	if (tagsEl) tagsEl.toggleContent(props.tag == null);

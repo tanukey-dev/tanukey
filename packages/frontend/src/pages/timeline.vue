@@ -5,17 +5,20 @@
 		<div ref="rootEl" v-hotkey.global="keymap">
 			<XTutorial v-if="$i && defaultStore.reactiveState.timelineTutorial.value != -1" class="_panel" style="margin-bottom: var(--margin);"/>
 			<MkPostForm v-if="defaultStore.reactiveState.showFixedPostForm.value" :class="$style.postForm" class="post-form _panel" fixed style="margin-bottom: var(--margin);"/>
-
-			<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" @click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
-			<div :class="$style.tl">
-				<MkTimeline
-					ref="tlComponent"
-					:key="src"
-					:src="src"
-					:sound="true"
-					@queue="queueUpdated"
-				/>
-			</div>
+			<XCommonTimeline
+				v-if="src!=='local'"
+				ref="tlComponent"
+				:key="src"
+				:src="src"
+				:sound="true"
+			/>
+			<XLocalTimeline
+				v-if="src==='local'"
+				ref="tlComponent"
+				:key="src"
+				:src="src"
+				:sound="true"
+			/>
 		</div>
 	</MkSpacer>
 </MkStickyContainer>
@@ -24,9 +27,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, computed, watch, provide } from 'vue';
 import type { Tab } from '@/components/global/MkPageHeader.tabs.vue';
-import MkTimeline from '@/components/MkTimeline.vue';
 import MkPostForm from '@/components/MkPostForm.vue';
-import { scroll } from '@/scripts/scroll';
 import * as os from '@/os';
 import { defaultStore } from '@/store';
 import { i18n } from '@/i18n';
@@ -37,6 +38,8 @@ import { definePageMetadata } from '@/scripts/page-metadata';
 provide('shouldOmitHeaderTitle', true);
 
 const XTutorial = defineAsyncComponent(() => import('./timeline.tutorial.vue'));
+const XCommonTimeline = defineAsyncComponent(() => import('@/components/MkTimelineWithScroll.vue'));
+const XLocalTimeline = defineAsyncComponent(() => import('./timeline.local.vue'));
 
 const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable);
 const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
@@ -44,22 +47,8 @@ const keymap = {
 	't': focus,
 };
 
-const tlComponent = $shallowRef<InstanceType<typeof MkTimeline>>();
-const rootEl = $shallowRef<HTMLElement>();
-
-let queue = $ref(0);
 let srcWhenNotSignin = $ref(isLocalTimelineAvailable ? 'local' : 'global');
 const src = $computed({ get: () => ($i ? defaultStore.reactiveState.tl.value.src : srcWhenNotSignin), set: (x) => saveSrc(x) });
-
-watch ($$(src), () => queue = 0);
-
-function queueUpdated(q: number): void {
-	queue = q;
-}
-
-function top(): void {
-	if (rootEl) scroll(rootEl, { top: 0 });
-}
 
 async function chooseList(ev: MouseEvent): Promise<void> {
 	const lists = await os.api('users/lists/list');
@@ -182,32 +171,4 @@ definePageMetadata(computed(() => ({
 </script>
 
 <style lang="scss" module>
-.new {
-	position: sticky;
-	top: calc(var(--stickyTop, 0px) + 16px);
-	z-index: 1000;
-	width: 100%;
-	margin: calc(-0.675em - 8px) 0;
-
-	&:first-child {
-		margin-top: calc(-0.675em - 8px - var(--margin));
-	}
-
-	> button {
-		display: block;
-		margin: var(--margin) auto 0 auto;
-		padding: 8px 16px;
-		border-radius: 32px;
-	}
-}
-
-.postForm {
-	border-radius: var(--radius);
-}
-
-.tl {
-	background: var(--bg);
-	border-radius: var(--radius);
-	overflow: clip;
-}
 </style>

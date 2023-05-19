@@ -1,9 +1,6 @@
 <template>
 <div class="_gaps_m">
-	<MkTab v-model="tab">
-		<option value="soft">{{ i18n.ts._wordMute.soft }}</option>
-		<option value="hard">{{ i18n.ts._wordMute.hard }}</option>
-	</MkTab>
+	<MkTab v-model="tab" :tabs="tabs"/>
 	<div>
 		<div v-show="tab === 'soft'" class="_gaps_m">
 			<MkInfo>{{ i18n.ts._wordMute.softDescription }}</MkInfo>
@@ -55,6 +52,11 @@ const softMutedWords = ref(render(defaultStore.state.mutedWords));
 const hardMutedWords = ref(render($i!.mutedWords));
 const hardWordMutedNotesCount = ref(null);
 const changed = ref(false);
+const tabs = ref([
+	{ value: null, label: i18n.ts.notes },
+	{ value: 'soft', label: i18n.ts._wordMute.soft },
+	{ value: 'hard', label: i18n.ts._wordMute.hard },
+]);
 
 os.api('i/get-word-muted-notes-count', {}).then(response => {
 	hardWordMutedNotesCount.value = response?.count;

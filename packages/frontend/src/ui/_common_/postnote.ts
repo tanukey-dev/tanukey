@@ -1,16 +1,16 @@
+import { miLocalStorage } from '@/local-storage';
 import * as os from '@/os';
 
 export async function openPostForm() {
-	//チャンネルページを開いている場合はチャンネルに投稿
-	const paths = location.href.split('/');
+	const channelId: string|null = miLocalStorage.getItem('postChannel');
+
 	let channel: any = null;
-	if (paths.length > 4) {
-		if (paths[3] === 'channels') {
-			channel = await os.api('channels/show', {
-				channelId: paths[4],
-			});
-		}
+	if (channelId) {
+		channel = await os.api('channels/show', {
+			channelId: channelId,
+		});
 	}
+
 	os.post({
 		channel: channel,
 	});

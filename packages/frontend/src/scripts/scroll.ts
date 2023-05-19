@@ -70,7 +70,7 @@ export function onScrollBottom(el: HTMLElement, cb: () => unknown, tolerance = 1
 	return removeListener;
 }
 
-export function scroll(el: HTMLElement, options: ScrollToOptions | undefined) {
+export function scroll(el: HTMLElement | null, options: ScrollToOptions | undefined) {
 	const container = getScrollContainer(el);
 	if (container == null) {
 		window.scroll(options);
@@ -84,7 +84,7 @@ export function scroll(el: HTMLElement, options: ScrollToOptions | undefined) {
  * @param el Scroll container element
  * @param options Scroll options
  */
-export function scrollToTop(el: HTMLElement, options: { behavior?: ScrollBehavior; } = {}) {
+export function scrollToTop(el: HTMLElement | null, options: { behavior?: ScrollBehavior; } = {}) {
 	scroll(el, { top: 0, ...options });
 }
 

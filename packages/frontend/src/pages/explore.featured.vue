@@ -1,18 +1,21 @@
 <template>
 <MkSpacer :content-max="800">
-	<MkTab v-model="tab" style="margin-bottom: var(--margin);">
-		<option value="notes">{{ i18n.ts.notes }}</option>
-		<option value="polls">{{ i18n.ts.poll }}</option>
-	</MkTab>
+	<MkTab v-model="tab" :tabs="tabs" style="margin-bottom: var(--margin);"/>
 	<MkNotes v-if="tab === 'notes'" :pagination="paginationForNotes"/>
 	<MkNotes v-else-if="tab === 'polls'" :pagination="paginationForPolls"/>
 </MkSpacer>
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
 import MkNotes from '@/components/MkNotes.vue';
 import MkTab from '@/components/MkTab.vue';
 import { i18n } from '@/i18n';
+
+const tabs = ref([
+	{ value: 'notes', label: i18n.ts.notes },
+	{ value: 'polls', label: i18n.ts.poll },
+]);
 
 const paginationForNotes = {
 	endpoint: 'notes/featured' as const,

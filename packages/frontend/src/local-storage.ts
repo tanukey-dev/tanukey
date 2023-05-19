@@ -20,6 +20,7 @@ type Keys =
 	'ui_temp' |
 	'locale' |
 	'localeVersion' |
+	'postChannel' |
 	'theme' |
 	'customCss' |
 	'message_drafts' |

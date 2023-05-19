@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { id } from '../id.js';
 import { User } from './User.js';
 import type { Clip } from './Clip.js';
+import { Channel } from './Channel.js';
 
 @Entity()
 export class Meta {
@@ -417,4 +418,10 @@ export class Meta {
 		length: 1024, array: true, default: '{ "admin", "administrator", "root", "system", "maintainer", "host", "mod", "moderator", "owner", "superuser", "staff", "auth", "i", "me", "everyone", "all", "mention", "mentions", "example", "user", "users", "account", "accounts", "official", "help", "helps", "support", "supports", "info", "information", "informations", "announce", "announces", "announcement", "announcements", "notice", "notification", "notifications", "dev", "developer", "developers", "tech", "misskey" }',
 	})
 	public preservedUsernames: string[];
+
+	@Column({
+		...id(),
+		array: true, default: '{}',
+	})
+	public pinnedLtlChannelIds: Channel['id'][];
 }

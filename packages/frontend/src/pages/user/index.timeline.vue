@@ -2,11 +2,7 @@
 <MkSpacer :content-max="800" style="padding: 0">
 	<MkStickyContainer>
 		<template #header>
-			<MkTab v-model="include" :class="$style.tab">
-				<option :value="null">{{ i18n.ts.notes }}</option>
-				<option value="replies">{{ i18n.ts.notesAndReplies }}</option>
-				<option value="files">{{ i18n.ts.withFiles }}</option>
-			</MkTab>
+			<MkTab v-model="include" :tabs="tabs" :class="$style.tab"/>
 		</template>
 		<MkNotes :no-gap="true" :pagination="pagination" :class="$style.tl"/>
 	</MkStickyContainer>
@@ -24,7 +20,12 @@ const props = defineProps<{
 	user: misskey.entities.UserDetailed;
 }>();
 
-const include = ref<string | null>(null);
+const include = ref<string>('notes');
+const tabs = ref([
+	{ value: 'notes', label: i18n.ts.notes },
+	{ value: 'replies', label: i18n.ts.notesAndReplies },
+	{ value: 'files', label: i18n.ts.withFiles },
+]);
 
 const pagination = {
 	endpoint: 'users/notes' as const,
