@@ -1,22 +1,17 @@
 <template>
-<MkStickyContainer v-if="tabs.length > 1">
+<MkStickyContainer>
 	<template #header>
-		<MkTab v-model="tab" :tabs="tabs" :class="$style.tab"/>
+		<MkTab v-if="tabs.length > 1" v-model="tab" :tabs="tabs" :class="$style.tab"/>
 	</template>
-	<MkTimelineWithScroll
-		:key="srckey"
-		:src="srcCh"
-		:channel="tab"
-		:sound="true"
-	/>
+	<MkSpacer :content-max="800" style="padding: 0;">
+		<MkTimelineWithScroll
+			:key="srckey"
+			:src="srcCh"
+			:channel="tab"
+			:sound="true"
+		/>
+	</MkSpacer>
 </MkStickyContainer>
-<MkTimelineWithScroll
-	v-if="tabs.length == 1"
-	:key="srckey"
-	:src="srcCh"
-	:channel="tab"
-	:sound="true"
-/>
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
