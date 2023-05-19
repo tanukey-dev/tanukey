@@ -6,14 +6,14 @@
 			<XTutorial v-if="$i && defaultStore.reactiveState.timelineTutorial.value != -1" class="_panel" style="margin-bottom: var(--margin);"/>
 			<MkPostForm v-if="defaultStore.reactiveState.showFixedPostForm.value" :class="$style.postForm" class="post-form _panel" fixed style="margin-bottom: var(--margin);"/>
 			<XCommonTimeline
-				v-if="src!=='local'"
+				v-if="!isNeedPinnedChannels()"
 				ref="tlComponent"
 				:key="src"
 				:src="src"
 				:sound="true"
 			/>
-			<XLocalTimeline
-				v-if="src==='local'"
+			<MkTimelineWithPinedChannel
+				v-if="isNeedPinnedChannels()"
 				ref="tlComponent"
 				:key="src"
 				:src="src"
@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, watch, provide } from 'vue';
+import { defineAsyncComponent, computed, provide } from 'vue';
 import type { Tab } from '@/components/global/MkPageHeader.tabs.vue';
 import MkPostForm from '@/components/MkPostForm.vue';
 import * as os from '@/os';
@@ -39,7 +39,11 @@ provide('shouldOmitHeaderTitle', true);
 
 const XTutorial = defineAsyncComponent(() => import('./timeline.tutorial.vue'));
 const XCommonTimeline = defineAsyncComponent(() => import('@/components/MkTimelineWithScroll.vue'));
-const XLocalTimeline = defineAsyncComponent(() => import('./timeline.local.vue'));
+const MkTimelineWithPinedChannel = defineAsyncComponent(() => import('@/components/MkTimelineWithPinedChannel.vue'));
+
+function isNeedPinnedChannels(): boolean {
+	return src === 'local' || src === 'social';
+}
 
 const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable);
 const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
@@ -118,14 +122,14 @@ const headerTabs = $computed(() => [{
 	icon: 'ti ti-planet',
 	iconOnly: true,
 }, {
-	key: 'media',
-	title: i18n.ts._timelines.media,
-	icon: 'ti ti-photo',
-	iconOnly: true,
-}, {
 	key: 'social',
 	title: i18n.ts._timelines.social,
 	icon: 'ti ti-rocket',
+	iconOnly: true,
+}, {
+	key: 'media',
+	title: i18n.ts._timelines.media,
+	icon: 'ti ti-photo',
 	iconOnly: true,
 }] : []), ...(isGlobalTimelineAvailable ? [{
 	key: 'global',

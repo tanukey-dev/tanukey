@@ -19,8 +19,7 @@
 />
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, watch } from 'vue';
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import * as os from '@/os';
@@ -38,14 +37,16 @@ const srcCh = computed(() => tab.value === null ? src.value : 'channel');
 const srckey = computed(() => tab.value === null ? src.value : tab.value);
 
 onMounted(async () => {
+	let t: any[] = [];
 	for (let id of instance.pinnedLtlChannelIds) {
 		let ch = await os.api('channels/show', {
 			channelId: id,
 		});
 		if (ch != null) {
-			tabs.push({ value: ch.id, label: ch.name });
+			t.push({ value: ch.id, label: ch.name });
 		}
 	}
+	tabs.push(...t);
 });
 
 </script>
