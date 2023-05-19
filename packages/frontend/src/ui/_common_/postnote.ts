@@ -2,13 +2,22 @@ import { miLocalStorage } from '@/local-storage';
 import * as os from '@/os';
 
 export async function openPostForm() {
-	const channelId: string|null = miLocalStorage.getItem('postChannel');
-
 	let channel: any = null;
-	if (channelId) {
-		channel = await os.api('channels/show', {
-			channelId: channelId,
-		});
+
+	const paths = location.href.split('/');
+	if (paths.length > 4) {
+		if (paths[3] === 'channels') {
+			channel = await os.api('channels/show', {
+				channelId: paths[4],
+			});
+		}
+	} else {
+		const channelId: string|null = miLocalStorage.getItem('postChannel');
+		if (channelId) {
+			channel = await os.api('channels/show', {
+				channelId: channelId,
+			});
+		}
 	}
 
 	os.post({
