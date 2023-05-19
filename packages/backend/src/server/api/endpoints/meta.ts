@@ -190,6 +190,14 @@ export const meta = {
 				type: 'string',
 				optional: false, nullable: false,
 			},
+			pinnedLtlChannelIds: {
+				type: 'array',
+				optional: false, nullable: false,
+				items: {
+					type: 'string',
+					optional: false, nullable: false,
+				},
+			},
 			features: {
 				type: 'object',
 				optional: true, nullable: false,
@@ -317,6 +325,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				policies: { ...DEFAULT_POLICIES, ...instance.policies },
 
 				mediaProxy: this.config.mediaProxy,
+				pinnedLtlChannelIds: instance.pinnedLtlChannelIds,
 
 				...(ps.detail ? {
 					cacheRemoteFiles: instance.cacheRemoteFiles,

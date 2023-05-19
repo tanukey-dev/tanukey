@@ -22,6 +22,7 @@
 import { computed, onMounted, watch } from 'vue';
 import { ref } from 'vue';
 import { i18n } from '@/i18n';
+import { instance } from '@/instance';
 import * as os from '@/os';
 import MkTimelineWithScroll from '@/components/MkTimelineWithScroll.vue';
 import MkTab from '@/components/MkTab.vue';
@@ -37,8 +38,7 @@ const srcCh = computed(() => tab.value === null ? src.value : 'channel');
 const srckey = computed(() => tab.value === null ? src.value : tab.value);
 
 onMounted(async () => {
-	const meta = await os.api('admin/meta');
-	for (let id of meta.pinnedLtlChannelIds) {
+	for (let id of instance.pinnedLtlChannelIds) {
 		let ch = await os.api('channels/show', {
 			channelId: id,
 		});

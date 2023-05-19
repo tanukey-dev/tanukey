@@ -318,6 +318,7 @@ export type LiteInstanceMetadata = {
 	}[];
 	translatorAvailable: boolean;
 	serverRules: string[];
+	pinnedLtlChannelIds: string[];
 };
 
 export type DetailedInstanceMetadata = LiteInstanceMetadata & {
