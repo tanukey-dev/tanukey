@@ -118,7 +118,12 @@ if (props.src === 'antenna') {
 	connection.on('note', prepend);
 } else if (props.src === 'media') {
 	endpoint = 'notes/media-timeline';
-	connection = stream.useChannel('mediaTimeline');
+	query = {
+		withReplies: defaultStore.state.showTimelineReplies,
+	};
+	connection = stream.useChannel('mediaTimeline', {
+		withReplies: defaultStore.state.showTimelineReplies,
+	});
 	connection.on('note', prependFilterdMedia);
 } else if (props.src === 'social') {
 	endpoint = 'notes/hybrid-timeline';
