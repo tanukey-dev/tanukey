@@ -1,5 +1,5 @@
 <template>
-<button v-if="emoji.draft" class="_button emoji-draft" :class="$style.root" @click="menu">
+<button v-if="emoji.draft" class="_button" :class="[$style.root, $style.draft]" @click="menu">
 	<img :src="emoji.url" :class="$style.img" loading="lazy"/>
 	<div :class="$style.body">
 		<div :class="$style.name" class="_monospace">{{ emoji.name + ' (draft)' }}</div>
@@ -95,7 +95,7 @@ function menu(ev) {
 	overflow: hidden;
 }
 
-.emoji-draft {
+.draft {
 	--c: rgb(255 196 0 / 15%);;
 	background-image: linear-gradient(45deg,var(--c) 16.67%,transparent 16.67%,transparent 50%,var(--c) 50%,var(--c) 66.67%,transparent 66.67%,transparent 100%);
 	background-size: 16px 16px;
