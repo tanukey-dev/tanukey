@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import XPage from '@/components/page/page.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
@@ -96,6 +96,7 @@ const otherPostsPagination = {
 const path = $computed(() => props.username + '/' + props.pageName);
 
 function fetchPage() {
+	console.log('aaa');
 	page = null;
 	os.api('pages/show', {
 		name: props.pageName,
