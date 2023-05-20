@@ -2,7 +2,7 @@
 <button v-if="emoji.draft" class="_button" :class="[$style.root, $style.draft]" @click="menu">
 	<img :src="emoji.url" :class="$style.img" loading="lazy"/>
 	<div :class="$style.body">
-		<div :class="$style.name" class="_monospace">{{ emoji.name + ' (draft)' }}</div>
+		<div :class="$style.name" class="_monospace">{{ '(draft) ' + emoji.name }}</div>
 		<div :class="$style.info">{{ emoji.aliases.join(' ') }}</div>
 	</div>
 </button>
