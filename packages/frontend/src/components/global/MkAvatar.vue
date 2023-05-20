@@ -26,6 +26,7 @@ import { watch } from 'vue';
 import * as misskey from 'misskey-js';
 import MkImgWithBlurhash from '../MkImgWithBlurhash.vue';
 import MkA from './MkA.vue';
+import { instance } from '@/instance';
 import { getStaticImageUrl } from '@/scripts/media-proxy';
 import { extractAvgColorFromBlurhash } from '@/scripts/extract-avg-color-from-blurhash';
 import { acct, userPage } from '@/filters/user';
@@ -57,9 +58,17 @@ const bound = $computed(() => props.link
 	? { to: userPage(props.user), target: props.target }
 	: {});
 
-const url = $computed(() => defaultStore.state.disableShowingAnimatedImages
-	? getStaticImageUrl(props.user.avatarUrl)
-	: props.user.avatarUrl);
+const url = $computed(() => {
+	const u = defaultStore.state.disableShowingAnimatedImages
+		? getStaticImageUrl(props.user.avatarUrl)
+		: props.user.avatarUrl;
+	if (u.startsWith(instance.uri)) {
+		//ローカルでは相対パスにする
+		return u.substring(instance.uri.length, u.length);
+	} else {
+		return u;
+	}
+});
 
 function onClick(ev: MouseEvent): void {
 	if (props.link) return;
