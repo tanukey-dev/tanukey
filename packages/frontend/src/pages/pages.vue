@@ -1,7 +1,7 @@
 <template>
 <MkStickyContainer>
 	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :content-max="700">
+	<MkSpacer :contentMax="700">
 		<div v-if="tab === 'search'" class="rknalgpo">
 			<div class="_gaps">
 				<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search">

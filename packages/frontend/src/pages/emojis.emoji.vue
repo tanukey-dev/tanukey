@@ -1,16 +1,16 @@
 <template>
-<button v-if="emoji.draft" class="zuvgdzyu _button emoji-draft" @click="menu">
-	<img :src="emoji.url" class="img" loading="lazy"/>
-	<div class="body">
-		<div class="name _monospace">{{ emoji.name + ' (draft)' }}</div>
-		<div class="info">{{ emoji.aliases.join(' ') }}</div>
+<button v-if="emoji.draft" class="_button emoji-draft" :class="$style.root" @click="menu">
+	<img :src="emoji.url" :class="$style.img" loading="lazy"/>
+	<div :class="$style.body">
+		<div :class="$style.name" class="_monospace">{{ emoji.name + ' (draft)' }}</div>
+		<div :class="$style.info">{{ emoji.aliases.join(' ') }}</div>
 	</div>
 </button>
-<button v-else class="zuvgdzyu _button" @click="menu">
-	<img :src="emoji.url" class="img" loading="lazy"/>
-	<div class="body">
-		<div class="name _monospace">{{ emoji.name }}</div>
-		<div class="info">{{ emoji.aliases.join(' ') }}</div>
+<button v-else class="_button" :class="$style.root" @click="menu">
+	<img :src="emoji.url" :class="$style.img" loading="lazy"/>
+	<div :class="$style.body">
+		<div :class="$style.name" class="_monospace">{{ emoji.name }}</div>
+		<div :class="$style.info">{{ emoji.aliases.join(' ') }}</div>
 	</div>
 </button>
 </template>
@@ -57,8 +57,8 @@ function menu(ev) {
 }
 </script>
 
-<style lang="scss" scoped>
-.zuvgdzyu {
+<style lang="scss" module>
+.root {
 	display: flex;
 	align-items: center;
 	padding: 12px;
@@ -69,30 +69,30 @@ function menu(ev) {
 	&:hover {
 		border-color: var(--accent);
 	}
+}
 
-	> .img {
-		width: 42px;
-		height: 42px;
-		object-fit: contain;
-	}
+.img {
+	width: 42px;
+	height: 42px;
+	object-fit: contain;
+}
 
-	> .body {
-		padding: 0 0 0 8px;
-		white-space: nowrap;
-		overflow: hidden;
+.body {
+	padding: 0 0 0 8px;
+	white-space: nowrap;
+	overflow: hidden;
+}
 
-		> .name {
-			text-overflow: ellipsis;
-			overflow: hidden;
-		}
+.name {
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
 
-		> .info {
-			opacity: 0.5;
-			font-size: 0.9em;
-			text-overflow: ellipsis;
-			overflow: hidden;
-		}
-	}
+.info {
+	opacity: 0.5;
+	font-size: 0.9em;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .emoji-draft {

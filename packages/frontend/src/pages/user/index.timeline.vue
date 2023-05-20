@@ -1,10 +1,10 @@
 <template>
-<MkSpacer :content-max="800" style="padding: 0">
+<MkSpacer :contentMax="800" style="padding: 0">
 	<MkStickyContainer>
 		<template #header>
 			<MkTab v-model="include" :tabs="tabs" :class="$style.tab"/>
 		</template>
-		<MkNotes :no-gap="true" :pagination="pagination" :class="$style.tl"/>
+		<MkNotes :noGap="true" :pagination="pagination" :class="$style.tl"/>
 	</MkStickyContainer>
 </MkSpacer>
 </template>

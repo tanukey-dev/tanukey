@@ -1,5 +1,5 @@
 <template>
-<MkSpacer :content-max="800">
+<MkSpacer :contentMax="800">
 	<MkTab v-model="tab" :tabs="tabs" style="margin-bottom: var(--margin);"/>
 	<MkNotes v-if="tab === 'notes'" :pagination="paginationForNotes"/>
 	<MkNotes v-else-if="tab === 'polls'" :pagination="paginationForPolls"/>
