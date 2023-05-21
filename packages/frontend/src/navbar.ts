@@ -8,6 +8,7 @@ import { i18n } from '@/i18n';
 import { ui } from '@/config';
 import { unisonReload } from '@/scripts/unison-reload';
 import { defaultStore } from '@/store';
+import { clearCache } from '@/scripts/cache-clear';
 
 export const navbarItemDef = reactive({
 	notifications: {
@@ -159,4 +160,11 @@ export const navbarItemDef = reactive({
 		show: computed(() => $i != null),
 		to: `/@${$i?.username}`,
 	},
+	clearCache: {
+		title: i18n.ts.clearCache,
+		icon: 'ti ti-trash',
+		action: (ev) => {
+			clearCache();
+		},
+	}
 });
