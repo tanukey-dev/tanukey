@@ -91,7 +91,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, watch, nextTick, computed, onMounted, defineAsyncComponent } from 'vue';
+import { inject, watch, nextTick, computed, onMounted, defineAsyncComponent, onUnmounted } from 'vue';
 import * as mfm from 'mfm-js';
 import * as misskey from 'misskey-js';
 import insertTextAtCursor from 'insert-text-at-cursor';
@@ -896,6 +896,13 @@ onMounted(async () => {
 
 		nextTick(() => watchForDraft());
 	});
+});
+
+onUnmounted(() => {
+	//Deckモードでチャンネルに投稿した後はpublicに戻す
+	if (miLocalStorage.getItem('ui') === 'deck') {
+		postChannel.value = null;
+	}
 });
 
 defineExpose({
