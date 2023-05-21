@@ -3,14 +3,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, provide, onUnmounted, onMounted } from 'vue';
+import { computed, provide, onUnmounted } from 'vue';
 import MkNotes from '@/components/MkNotes.vue';
 import { useStream } from '@/stream';
-import { miLocalStorage } from '@/local-storage';
 import * as sound from '@/scripts/sound';
 import { $i } from '@/account';
 import { defaultStore } from '@/store';
-import { channel } from 'diagnostics_channel';
 
 const props = defineProps<{
 	src: string;
@@ -20,18 +18,6 @@ const props = defineProps<{
 	role?: string;
 	sound?: boolean;
 }>();
-
-onMounted(() => {
-	if (props.channel) {
-		miLocalStorage.setItem('postChannel', props.channel);
-		console.log('set channel:' + props.channel);
-	}
-});
-
-onUnmounted(() => {
-	miLocalStorage.removeItem('postChannel');
-	console.log('remove channel');
-});
 
 const emit = defineEmits<{
 	(ev: 'note'): void;

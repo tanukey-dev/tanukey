@@ -14,20 +14,18 @@
 			</button>
 		</div>
 		<div :class="$style.headerRight">
-			<template v-if="!(channel != null && fixed)">
-				<button v-if="channel == null" ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
-					<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
-					<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
-					<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
-					<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
-					<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
-				</button>
-				<button v-else :class="['_button', $style.headerRightItem, $style.visibility]" disabled>
-					<span><i class="ti ti-device-tv"></i></span>
-					<span :class="$style.headerRightButtonText">{{ channel.name }}</span>
-				</button>
-			</template>
-			<button v-click-anime v-tooltip="i18n.ts._visibility.disableFederation" :class="['_button', $style.headerRightItem, $style.localOnly, { [$style.danger]: localOnly }]" :disabled="channel != null || visibility === 'specified'" @click="toggleLocalOnly">
+			<button v-if="postChannel == null" ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
+				<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
+				<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
+				<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
+				<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
+				<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
+			</button>
+			<button v-else :class="['_button', $style.headerRightItem, $style.visibility]" disabled>
+				<span><i class="ti ti-device-tv"></i></span>
+				<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
+			</button>
+			<button v-click-anime v-tooltip="i18n.ts._visibility.disableFederation" :class="['_button', $style.headerRightItem, $style.localOnly, { [$style.danger]: localOnly }]" :disabled="postChannel != null || visibility === 'specified'" @click="toggleLocalOnly">
 				<span v-if="!localOnly"><i class="ti ti-rocket"></i></span>
 				<span v-else><i class="ti ti-rocket-off"></i></span>
 			</button>
@@ -93,7 +91,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, watch, nextTick, onMounted, defineAsyncComponent } from 'vue';
+import { inject, watch, nextTick, computed, onMounted, defineAsyncComponent } from 'vue';
 import * as mfm from 'mfm-js';
 import * as misskey from 'misskey-js';
 import insertTextAtCursor from 'insert-text-at-cursor';
@@ -182,9 +180,18 @@ let hasNotSpecifiedMentions = $ref(false);
 let recentHashtags = $ref(JSON.parse(miLocalStorage.getItem('hashtags') ?? '[]'));
 let imeText = $ref('');
 let showingOptions = $ref(false);
+let postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
+
+watch(postChannel, () => {
+	if (postChannel.value) {
+		localOnly = true;
+	} else {
+		localOnly = false;
+	}
+});
 
 const draftKey = $computed((): string => {
-	let key = props.channel ? `channel:${props.channel.id}` : '';
+	let key = postChannel.value ? `channel:${postChannel.value.id}` : '';
 
 	if (props.renote) {
 		key += `renote:${props.renote.id}`;
@@ -202,7 +209,7 @@ const placeholder = $computed((): string => {
 		return i18n.ts._postForm.quotePlaceholder;
 	} else if (props.reply) {
 		return i18n.ts._postForm.replyPlaceholder;
-	} else if (props.channel) {
+	} else if (postChannel.value) {
 		return i18n.ts._postForm.channelPlaceholder;
 	} else {
 		const xs = [
@@ -287,7 +294,7 @@ if (props.reply && props.reply.text != null) {
 	}
 }
 
-if (props.channel) {
+if (postChannel.value) {
 	visibility = 'public';
 	localOnly = true; // TODO: チャンネルが連合するようになった折には消す
 }
@@ -417,7 +424,7 @@ function upload(file: File, name?: string) {
 }
 
 function setVisibility() {
-	if (props.channel) {
+	if (postChannel.value) {
 		visibility = 'public';
 		localOnly = true; // TODO: チャンネルが連合するようになった折には消す
 		return;
@@ -438,7 +445,7 @@ function setVisibility() {
 }
 
 async function toggleLocalOnly() {
-	if (props.channel) {
+	if (postChannel.value) {
 		visibility = 'public';
 		localOnly = true; // TODO: チャンネルが連合するようになった折には消す
 		return;
@@ -691,7 +698,7 @@ async function post(ev?: MouseEvent) {
 		fileIds: files.length > 0 ? files.map(f => f.id) : undefined,
 		replyId: props.reply ? props.reply.id : undefined,
 		renoteId: props.renote ? props.renote.id : quoteId ? quoteId : undefined,
-		channelId: props.channel ? props.channel.id : undefined,
+		channelId: postChannel.value ? postChannel.value.id : undefined,
 		poll: poll,
 		cw: useCw ? cw ?? '' : undefined,
 		localOnly: localOnly,
@@ -829,7 +836,7 @@ function openAccountMenu(ev: MouseEvent) {
 	}, ev);
 }
 
-onMounted(() => {
+onMounted(async () => {
 	if (props.autofocus) {
 		focus();
 
@@ -842,6 +849,13 @@ onMounted(() => {
 	new Autocomplete(textareaEl, $$(text));
 	new Autocomplete(cwInputEl, $$(cw));
 	new Autocomplete(hashtagsInputEl, $$(hashtags));
+	
+	//チャンネル指定があった場合は書き換える
+	if (props.channel) {
+		postChannel.value = await os.api('channels/show', {
+			channelId: props.channel.id,
+		});
+	}
 
 	nextTick(() => {
 		// 書きかけの投稿を復元

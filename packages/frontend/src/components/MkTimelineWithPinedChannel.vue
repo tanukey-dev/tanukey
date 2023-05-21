@@ -14,7 +14,7 @@
 </MkStickyContainer>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import * as os from '@/os';
@@ -27,10 +27,22 @@ const props = defineProps<{
 }>();
 
 const tabs = $ref([{ value: null, label: i18n.ts.public }]);
-const tab = ref<string|null>(null);
 const src = ref(props.src);
 const srcCh = computed(() => tab.value === null ? src.value : 'channel');
 const srckey = computed(() => tab.value === null ? src.value : tab.value);
+let postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
+let tab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
+
+watch(tab, async () => {
+	if (tab.value) {
+		let channel = await os.api('channels/show', {
+			channelId: tab.value,
+		});
+		postChannel.value = channel;
+	} else {
+		postChannel.value = null;
+	}
+});
 
 onMounted(async () => {
 	let t: any[] = [];

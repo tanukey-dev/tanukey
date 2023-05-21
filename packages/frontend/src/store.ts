@@ -1,4 +1,5 @@
 import { markRaw, ref } from 'vue';
+import * as misskey from 'misskey-js';
 import { Storage } from './pizzax';
 
 interface PostFormAction {
@@ -295,6 +296,14 @@ export const defaultStore = markRaw(new Storage('base', {
 	postFormHashtags: {
 		where: 'device',
 		default: '',
+	},
+	postChannel: {
+		where: 'device',
+		default: null as misskey.entities.Channel|null,
+	},
+	selectedChannelTab: {
+		where: 'device',
+		default: null as string|null,
 	},
 	themeInitial: {
 		where: 'device',

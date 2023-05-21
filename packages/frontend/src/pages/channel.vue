@@ -1,63 +1,65 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700" :class="$style.main">
-		<div v-if="channel && tab === 'overview'" class="_gaps">
-			<div class="_panel" :class="$style.bannerContainer">
-				<XChannelFollowButton :channel="channel" :full="true" :class="$style.subscribe"/>
-				<MkButton v-if="favorited" v-tooltip="i18n.ts.unfavorite" asLike class="button" rounded primary :class="$style.favorite" @click="unfavorite()"><i class="ti ti-star"></i></MkButton>
-				<MkButton v-else v-tooltip="i18n.ts.favorite" asLike class="button" rounded :class="$style.favorite" @click="favorite()"><i class="ti ti-star"></i></MkButton>
-				<div :style="{ backgroundImage: channel.bannerUrl ? `url(${channel.bannerUrl})` : null }" :class="$style.banner">
-					<div :class="$style.bannerStatus">
-						<div><i class="ti ti-users ti-fw"></i><I18n :src="i18n.ts._channel.usersCount" tag="span" style="margin-left: 4px;"><template #n><b>{{ channel.usersCount }}</b></template></I18n></div>
-						<div><i class="ti ti-pencil ti-fw"></i><I18n :src="i18n.ts._channel.notesCount" tag="span" style="margin-left: 4px;"><template #n><b>{{ channel.notesCount }}</b></template></I18n></div>
+<KeepAlive>
+	<MkStickyContainer>
+		<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
+		<MkSpacer :contentMax="700" :class="$style.main">
+			<div v-if="channel && tab === 'overview'" class="_gaps">
+				<div class="_panel" :class="$style.bannerContainer">
+					<XChannelFollowButton :channel="channel" :full="true" :class="$style.subscribe"/>
+					<MkButton v-if="favorited" v-tooltip="i18n.ts.unfavorite" asLike class="button" rounded primary :class="$style.favorite" @click="unfavorite()"><i class="ti ti-star"></i></MkButton>
+					<MkButton v-else v-tooltip="i18n.ts.favorite" asLike class="button" rounded :class="$style.favorite" @click="favorite()"><i class="ti ti-star"></i></MkButton>
+					<div :style="{ backgroundImage: channel.bannerUrl ? `url(${channel.bannerUrl})` : null }" :class="$style.banner">
+						<div :class="$style.bannerStatus">
+							<div><i class="ti ti-users ti-fw"></i><I18n :src="i18n.ts._channel.usersCount" tag="span" style="margin-left: 4px;"><template #n><b>{{ channel.usersCount }}</b></template></I18n></div>
+							<div><i class="ti ti-pencil ti-fw"></i><I18n :src="i18n.ts._channel.notesCount" tag="span" style="margin-left: 4px;"><template #n><b>{{ channel.notesCount }}</b></template></I18n></div>
+						</div>
+						<div :class="$style.bannerFade"></div>
 					</div>
-					<div :class="$style.bannerFade"></div>
+					<div v-if="channel.description" :class="$style.description">
+						<Mfm :text="channel.description" :isNote="false" :i="$i"/>
+					</div>
 				</div>
-				<div v-if="channel.description" :class="$style.description">
-					<Mfm :text="channel.description" :isNote="false" :i="$i"/>
+
+				<MkFoldableSection>
+					<template #header><i class="ti ti-pin ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.pinnedNotes }}</template>
+					<div v-if="channel.pinnedNotes.length > 0" class="_gaps">
+						<MkNote v-for="note in channel.pinnedNotes" :key="note.id" class="_panel" :note="note"/>
+					</div>
+				</MkFoldableSection>
+			</div>
+			<div v-if="channel && tab === 'timeline'" class="_gaps">
+				<MkInfo v-if="channel.isArchived" warn>{{ i18n.ts.thisChannelArchived }}</MkInfo>
+
+				<!-- スマホ・タブレットの場合、キーボードが表示されると投稿が見づらくなるので、デスクトップ場合のみ自動でフォーカスを当てる -->
+				<MkPostForm v-if="$i && defaultStore.reactiveState.showFixedPostFormInChannel.value" :channel="channel" class="post-form _panel" fixed :autofocus="deviceKind === 'desktop'"/>
+
+				<MkTimeline :key="channelId" src="channel" :channel="channelId" @before="before" @after="after"/>
+			</div>
+			<div v-else-if="tab === 'featured'">
+				<MkNotes :pagination="featuredPagination"/>
+			</div>
+			<div v-else-if="tab === 'search'">
+				<div class="_gaps">
+					<div>
+						<MkInput v-model="searchQuery">
+							<template #prefix><i class="ti ti-search"></i></template>
+						</MkInput>
+						<MkButton primary rounded style="margin-top: 8px;" @click="search()">{{ i18n.ts.search }}</MkButton>
+					</div>
+					<MkNotes v-if="searchPagination" :key="searchKey" :pagination="searchPagination"/>
 				</div>
 			</div>
-
-			<MkFoldableSection>
-				<template #header><i class="ti ti-pin ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.pinnedNotes }}</template>
-				<div v-if="channel.pinnedNotes.length > 0" class="_gaps">
-					<MkNote v-for="note in channel.pinnedNotes" :key="note.id" class="_panel" :note="note"/>
-				</div>
-			</MkFoldableSection>
-		</div>
-		<div v-if="channel && tab === 'timeline'" class="_gaps">
-			<MkInfo v-if="channel.isArchived" warn>{{ i18n.ts.thisChannelArchived }}</MkInfo>
-
-			<!-- スマホ・タブレットの場合、キーボードが表示されると投稿が見づらくなるので、デスクトップ場合のみ自動でフォーカスを当てる -->
-			<MkPostForm v-if="$i && defaultStore.reactiveState.showFixedPostFormInChannel.value" :channel="channel" class="post-form _panel" fixed :autofocus="deviceKind === 'desktop'"/>
-
-			<MkTimeline :key="channelId" src="channel" :channel="channelId" @before="before" @after="after"/>
-		</div>
-		<div v-else-if="tab === 'featured'">
-			<MkNotes :pagination="featuredPagination"/>
-		</div>
-		<div v-else-if="tab === 'search'">
-			<div class="_gaps">
-				<div>
-					<MkInput v-model="searchQuery">
-						<template #prefix><i class="ti ti-search"></i></template>
-					</MkInput>
-					<MkButton primary rounded style="margin-top: 8px;" @click="search()">{{ i18n.ts.search }}</MkButton>
-				</div>
-				<MkNotes v-if="searchPagination" :key="searchKey" :pagination="searchPagination"/>
+		</MkSpacer>
+		<template #footer>
+			<div :class="$style.footer">
 			</div>
-		</div>
-	</MkSpacer>
-	<template #footer>
-		<div :class="$style.footer">
-		</div>
-	</template>
-</MkStickyContainer>
+		</template>
+	</MkStickyContainer>
+</KeepAlive>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { computed, onMounted, onUnmounted, watch, onActivated, onDeactivated } from 'vue';
 import MkPostForm from '@/components/MkPostForm.vue';
 import MkTimeline from '@/components/MkTimeline.vue';
 import XChannelFollowButton from '@/components/MkChannelFollowButton.vue';
@@ -96,6 +98,17 @@ const featuredPagination = $computed(() => ({
 		channelId: props.channelId,
 	},
 }));
+let postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
+
+onActivated(async () => {
+	postChannel.value = await os.api('channels/show', {
+		channelId: props.channelId,
+	});
+});
+
+onDeactivated(() => {
+	postChannel.value = null;
+});
 
 watch(() => props.channelId, async () => {
 	channel = await os.api('channels/show', {

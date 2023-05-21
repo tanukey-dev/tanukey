@@ -41,7 +41,7 @@
 			</MkA>
 		</div>
 		<div class="bottom">
-			<button v-tooltip.noDelay.right="i18n.ts.note" class="item _button post" data-cy-open-post-form @click="openPostForm">
+			<button v-tooltip.noDelay.right="i18n.ts.note" class="item _button post" data-cy-open-post-form @click="os.post()">
 				<i class="icon ti ti-pencil ti-fw"></i><span class="text">{{ i18n.ts.note }}</span>
 			</button>
 			<button v-click-anime v-tooltip.noDelay.right="`${i18n.ts.account}: @${$i.username}`" class="item _button account" @click="openAccountMenu">
@@ -55,7 +55,6 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref, watch } from 'vue';
 import { openInstanceMenu } from './common';
-import { openPostForm } from './postnote';
 import * as os from '@/os';
 import { navbarItemDef } from '@/navbar';
 import { $i, openAccountMenu as openAccountMenu_ } from '@/account';
