@@ -1,5 +1,5 @@
 <template>
-<span v-if="errored">:{{ customEmojiName }}:</span>
+<span v-if="errored || isDraft">:{{ customEmojiName }}:</span>
 <img v-else :class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]" :src="url" :alt="alt" :title="alt" decoding="async" @error="errored = true" @load="errored = false"/>
 </template>
 
@@ -7,7 +7,7 @@
 import { computed } from 'vue';
 import { getProxiedImageUrl, getStaticImageUrl } from '@/scripts/media-proxy';
 import { defaultStore } from '@/store';
-import { customEmojis } from '@/custom-emojis';
+import { customEmojisNameMap } from '@/custom-emojis';
 
 const props = defineProps<{
 	name: string;
@@ -20,13 +20,14 @@ const props = defineProps<{
 
 const customEmojiName = computed(() => (props.name[0] === ':' ? props.name.substr(1, props.name.length - 2) : props.name).replace('@.', ''));
 const isLocal = computed(() => !props.host && (customEmojiName.value.endsWith('@.') || !customEmojiName.value.includes('@')));
+const isDraft = computed(() => customEmojisNameMap.value.get(customEmojiName.value)?.draft ?? false);
 
 const rawUrl = computed(() => {
 	if (props.url) {
 		return props.url;
 	}
 	if (isLocal.value) {
-		return customEmojis.value.find(x => x.name === customEmojiName.value)?.url ?? null;
+		return customEmojisNameMap.value.get(customEmojiName.value)?.url ?? null;
 	}
 	return props.host ? `/emoji/${customEmojiName.value}@${props.host}.webp` : `/emoji/${customEmojiName.value}.webp`;
 });
