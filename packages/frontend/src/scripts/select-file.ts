@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { DriveFile } from 'misskey-js/built/entities';
 import * as os from '@/os';
-import { stream } from '@/stream';
+import { useStream } from '@/stream';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';
 import { uploadFile } from '@/scripts/upload';

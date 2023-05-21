@@ -2,8 +2,8 @@
 <div>
 	<MkStickyContainer>
 		<template #header><XHeader :actions="headerActions"/></template>
-		<MkSpacer :content-max="900">
-			<div class="xrmjdkdw">
+		<MkSpacer :contentMax="900">
+			<div>
 				<div>
 					<div class="inputs" style="display: flex; gap: var(--margin); flex-wrap: wrap;">
 						<MkSelect v-model="origin" style="margin: 0; flex: 1;">
@@ -24,7 +24,7 @@
 							<template #label>MIME type</template>
 						</MkInput>
 					</div>
-					<MkFileListForAdmin :pagination="pagination" :view-mode="viewMode"/>
+					<MkFileListForAdmin :pagination="pagination" :viewMode="viewMode"/>
 				</div>
 			</div>
 		</MkSpacer>
@@ -109,9 +109,3 @@ definePageMetadata(computed(() => ({
 	icon: 'ti ti-cloud',
 })));
 </script>
-
-<style lang="scss" scoped>
-.xrmjdkdw {
-	margin: var(--margin);
-}
-</style>
