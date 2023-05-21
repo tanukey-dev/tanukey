@@ -34,8 +34,6 @@
 		<XWidgets v-if="widgetsShowing" class="tray"/>
 	</Transition>
 
-	<iframe v-if="defaultStore.state.aiChanMode" ref="live2d" class="ivnzpscs" src="https://misskey-dev.github.io/mascot-web/?scale=2&y=1.4"></iframe>
-
 	<XCommon/>
 </div>
 </template>
@@ -151,28 +149,6 @@ onMounted(() => {
 	window.addEventListener('resize', () => {
 		isDesktop = (window.innerWidth >= DESKTOP_THRESHOLD);
 	}, { passive: true });
-
-	if (defaultStore.state.aiChanMode) {
-		const iframeRect = live2d.getBoundingClientRect();
-		window.addEventListener('mousemove', ev => {
-			live2d.contentWindow.postMessage({
-				type: 'moveCursor',
-				body: {
-					x: ev.clientX - iframeRect.left,
-					y: ev.clientY - iframeRect.top,
-				},
-			}, '*');
-		}, { passive: true });
-		window.addEventListener('touchmove', ev => {
-			live2d.contentWindow.postMessage({
-				type: 'moveCursor',
-				body: {
-					x: ev.touches[0].clientX - iframeRect.left,
-					y: ev.touches[0].clientY - iframeRect.top,
-				},
-			}, '*');
-		}, { passive: true });
-	}
 });
 </script>
 

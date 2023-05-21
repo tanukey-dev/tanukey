@@ -87,7 +87,6 @@ const defaultStoreSaveKeys: (keyof typeof defaultStore['state'])[] = [
 	'reportError',
 	'squareAvatars',
 	'numberOfPageCache',
-	'aiChanMode',
 	'mediaListWithOneImageAppearance',
 ];
 const coldDeviceStorageSaveKeys: (keyof typeof ColdDeviceStorage.default)[] = [
