@@ -1,5 +1,6 @@
 <template>
-<MkStickyContainer>
+<XNotFound v-if="localOnly"/>
+<MkStickyContainer v-else>
 	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
 	<MkSpacer :contentMax="800">
 		<div>
@@ -51,6 +52,8 @@ import { i18n } from '@/i18n';
 import { dateString } from '@/filters/date';
 import MkClipPreview from '@/components/MkClipPreview.vue';
 import { defaultStore } from '@/store';
+import XNotFound from '@/pages/not-found.vue';
+import { $i } from '@/account';
 
 const props = defineProps<{
 	noteId: string;
@@ -63,6 +66,7 @@ let hasNext = $ref(false);
 let showPrev = $ref(false);
 let showNext = $ref(false);
 let error = $ref();
+let localOnly = computed(() => note?.localOnly && !$i);
 
 const prevPagination = {
 	endpoint: 'users/notes' as const,
