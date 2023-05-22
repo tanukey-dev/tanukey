@@ -3,15 +3,21 @@
 	<template #item="{element}">
 		<div :class="$style.item">
 			<!-- divが無いとエラーになる https://github.com/SortableJS/vue.draggable.next/issues/189 -->
-			<component :is="getType(element)" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
+			<XText v-if="element.type === 'text'" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
+			<XSection v-if="element.type === 'section'" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
+			<XImage v-if="element.type === 'image'" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
+			<XNote v-if="element.type === 'note'" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
 		</div>
 	</template>
 </Sortable>
 </template>
 
 <script lang="ts" setup>
-import { elements } from 'chart.js';
 import { defineAsyncComponent } from 'vue';
+import XText from './els/page-editor.el.text.vue';
+import XSection from './els/page-editor.el.section.vue';
+import XImage from './els/page-editor.el.image.vue';
+import XNote from './els/page-editor.el.note.vue';
 
 const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
 
@@ -22,19 +28,6 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(ev: 'update:modelValue', value: any[]): void;
 }>();
-
-const getType = (element) => {
-	switch (element.type) {
-		case 'text':
-			return defineAsyncComponent(() => import('./els/page-editor.el.text.vue'));
-		case 'section':
-			return defineAsyncComponent(() => import('./els/page-editor.el.section.vue'));
-		case 'image':
-			return defineAsyncComponent(() => import('./els/page-editor.el.image.vue'));
-		default:
-			return defineAsyncComponent(() => import('./els/page-editor.el.note.vue'));
-	}
-};
 
 function updateItem(v) {
 	const i = props.modelValue.findIndex(x => x.id === v.id);
