@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import rndstr from 'rndstr';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import type { DriveFilesRepository } from '@/models/index.js';
 import { DI } from '@/di-symbols.js';
@@ -18,6 +17,11 @@ export const meta = {
 			message: 'No such file.',
 			code: 'NO_SUCH_FILE',
 			id: 'fc46b5a4-6b92-4c33-ac66-b806659bb5cf',
+		},
+		sameNameEmojiExists: {
+			message: 'Emoji that have same name already exists.',
+			code: 'SAME_NAME_EMOJI_EXISTS',
+			id: '7180fe9d-1ee3-bff9-647d-fe9896d2ffb8',
 		},
 	},
 } as const;

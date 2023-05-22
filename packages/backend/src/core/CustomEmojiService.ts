@@ -74,6 +74,9 @@ export class CustomEmojiService {
 		localOnly: boolean;
 		roleIdsThatCanBeUsedThisEmojiAsReaction: Role['id'][];
 	}): Promise<Emoji> {
+		const sameNameEmoji = await this.emojisRepository.findOneBy({ name: data.name, host: IsNull() });
+		if (sameNameEmoji != null) throw new Error('name already exists');
+
 		const emoji = await this.emojisRepository.insert({
 			id: this.idService.genId(),
 			updatedAt: new Date(),
