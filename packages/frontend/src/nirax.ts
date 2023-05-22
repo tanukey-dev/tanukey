@@ -2,8 +2,8 @@
 
 import { EventEmitter } from 'eventemitter3';
 import { Component, shallowRef, ShallowRef } from 'vue';
-import { pleaseLogin } from '@/scripts/please-login';
 import { safeURIDecode } from '@/scripts/safe-uri-decode';
+import { $i } from '@/account';
 
 type RouteDef = {
 	path: string;
@@ -213,7 +213,9 @@ export class Router extends EventEmitter<{
 		}
 
 		if (res.route.loginRequired) {
-			pleaseLogin('/');
+			if (!$i) {
+				window.location.href = '/';
+			}
 		}
 
 		const isSamePath = beforePath === path;

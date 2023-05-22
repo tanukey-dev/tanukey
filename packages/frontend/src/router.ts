@@ -198,6 +198,7 @@ export const routes = [{
 }, {
 	path: '/announcements',
 	component: page(() => import('./pages/announcements.vue')),
+	loginRequired: true,
 }, {
 	path: '/about',
 	component: page(() => import('./pages/about.vue')),
@@ -208,6 +209,7 @@ export const routes = [{
 }, {
 	path: '/ads',
 	component: page(() => import('./pages/ads.vue')),
+	loginRequired: true,
 }, {
 	path: '/theme-editor',
 	component: page(() => import('./pages/theme-editor.vue')),
@@ -215,16 +217,20 @@ export const routes = [{
 }, {
 	path: '/roles/:role',
 	component: page(() => import('./pages/role.vue')),
+	loginRequired: true,
 }, {
 	path: '/user-tags/:tag',
 	component: page(() => import('./pages/user-tag.vue')),
+	loginRequired: true,
 }, {
 	path: '/explore',
 	component: page(() => import('./pages/explore.vue')),
 	hash: 'initialTab',
+	loginRequired: true,
 }, {
 	path: '/search',
 	component: page(() => import('./pages/search.vue')),
+	loginRequired: true,
 	query: {
 		q: 'query',
 		channel: 'channel',
@@ -246,6 +252,7 @@ export const routes = [{
 }, {
 	path: '/scratchpad',
 	component: page(() => import('./pages/scratchpad.vue')),
+	loginRequired: true,
 }, {
 	path: '/auth/:token',
 	component: page(() => import('./pages/auth.vue')),
@@ -261,6 +268,7 @@ export const routes = [{
 }, {
 	path: '/tags/:tag',
 	component: page(() => import('./pages/tag.vue')),
+	loginRequired: true,
 }, {
 	path: '/pages/new',
 	component: page(() => import('./pages/page-editor/page-editor.vue')),
@@ -272,6 +280,7 @@ export const routes = [{
 }, {
 	path: '/pages',
 	component: page(() => import('./pages/pages.vue')),
+	loginRequired: true,
 }, {
 	path: '/play/:id/edit',
 	component: page(() => import('./pages/flash/flash-edit.vue')),
@@ -283,9 +292,11 @@ export const routes = [{
 }, {
 	path: '/play/:id',
 	component: page(() => import('./pages/flash/flash.vue')),
+	loginRequired: true,
 }, {
 	path: '/play',
 	component: page(() => import('./pages/flash/flash-index.vue')),
+	loginRequired: true,
 }, {
 	path: '/gallery/:postId/edit',
 	component: page(() => import('./pages/gallery/edit.vue')),
@@ -300,6 +311,7 @@ export const routes = [{
 }, {
 	path: '/gallery',
 	component: page(() => import('./pages/gallery/index.vue')),
+	loginRequired: true,
 }, {
 	path: '/channels/:channelId/edit',
 	component: page(() => import('./pages/channel-editor.vue')),
@@ -311,27 +323,35 @@ export const routes = [{
 }, {
 	path: '/channels/:channelId',
 	component: page(() => import('./pages/channel.vue')),
+	loginRequired: true,
 }, {
 	path: '/channels',
 	component: page(() => import('./pages/channels.vue')),
+	loginRequired: true,
 }, {
 	path: '/custom-emojis-manager',
 	component: page(() => import('./pages/custom-emojis-manager.vue')),
+	loginRequired: true,
 }, {
 	path: '/registry/keys/system/:path(*)?',
 	component: page(() => import('./pages/registry.keys.vue')),
+	loginRequired: true,
 }, {
 	path: '/registry/value/system/:path(*)?',
 	component: page(() => import('./pages/registry.value.vue')),
+	loginRequired: true,
 }, {
 	path: '/registry',
 	component: page(() => import('./pages/registry.vue')),
+	loginRequired: true,
 }, {
 	path: '/admin/file/:fileId',
 	component: iAmModerator ? page(() => import('./pages/admin-file.vue')) : page(() => import('./pages/not-found.vue')),
+	loginRequired: true,
 }, {
 	path: '/admin',
 	component: iAmModerator ? page(() => import('./pages/admin/index.vue')) : page(() => import('./pages/not-found.vue')),
+	loginRequired: true,
 	children: [{
 		path: '/overview',
 		name: 'overview',
@@ -491,6 +511,7 @@ export const routes = [{
 }, {
 	path: '/timeline',
 	component: page(() => import('./pages/timeline.vue')),
+	loginRequired: true,
 }, {
 	name: 'index',
 	path: '/',
