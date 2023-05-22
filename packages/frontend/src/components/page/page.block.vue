@@ -1,35 +1,21 @@
 <template>
-<component :is="type" :key="block.id" :page="page" :block="block" :h="h"/>
+<XText v-if="block.type == 'text'" :key="block.id" :page="page" :block="block" :h="h"/>
+<XSection v-if="block.type == 'section'" :key="block.id" :page="page" :block="block" :h="h"/>
+<XImage v-if="block.type == 'image'" :key="block.id" :page="page" :block="block" :h="h"/>
+<XNote v-if="block.type == 'note'" :key="block.id" :page="page" :block="block" :h="h"/>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef, defineAsyncComponent } from 'vue';
 import * as Misskey from 'misskey-js';
-import { Block } from './block.type';
+import XText from './page.text.vue';
+import XSection from './page.section.vue';
+import XImage from './page.image.vue';
+import XNote from './page.note.vue';
 
-const props = defineProps<{
-	block: Block,
+defineProps<{
+	block: Misskey.entities.Block,
 	h: number,
 	page: Misskey.entities.Page,
 }>();
-
-const type = shallowRef();
-
-onMounted(() => {
-	switch (props.block.type) {
-		case 'text':
-			type.value = defineAsyncComponent(() => import('./page.text.vue'));
-			break;
-		case 'section':
-			type.value = defineAsyncComponent(() => import('./page.section.vue'));
-			break;
-		case 'image':
-			type.value = defineAsyncComponent(() => import('./page.image.vue'));
-			break;
-		default:
-			type.value = defineAsyncComponent(() => import('./page.note.vue'));
-			break;
-	}
-});
 
 </script>

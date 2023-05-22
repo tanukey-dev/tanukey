@@ -7,11 +7,10 @@
 <script lang="ts" setup>
 import { } from 'vue';
 import * as Misskey from 'misskey-js';
-import { ImageBlock } from './block.type';
 import ImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
 
 const props = defineProps<{
-	block: ImageBlock,
+	block: Misskey.entities.ImageBlock,
 	page: Misskey.entities.Page,
 }>();
 

@@ -9,14 +9,13 @@
 import { defineAsyncComponent } from 'vue';
 import * as mfm from 'mfm-js';
 import * as Misskey from 'misskey-js';
-import { TextBlock } from './block.type';
 import { extractUrlFromMfm } from '@/scripts/extract-url-from-mfm';
 import { $i } from '@/account';
 
 const MkUrlPreview = defineAsyncComponent(() => import('@/components/MkUrlPreview.vue'));
 
 const props = defineProps<{
-	block: TextBlock,
+	block: Misskey.entities.TextBlock,
 	page: Misskey.entities.Page,
 }>();
 

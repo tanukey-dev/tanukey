@@ -11,12 +11,11 @@
 <script lang="ts" setup>
 import { defineAsyncComponent } from 'vue';
 import * as Misskey from 'misskey-js';
-import { SectionBlock } from './block.type';
 
 const XBlock = defineAsyncComponent(() => import('./page.block.vue'));
 
 defineProps<{
-	block: SectionBlock,
+	block: Misskey.entities.SectionBlock,
 	h: number,
 	page: Misskey.entities.Page,
 }>();
