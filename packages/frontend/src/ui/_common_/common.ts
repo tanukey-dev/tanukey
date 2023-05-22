@@ -47,11 +47,6 @@ export function openInstanceMenu(ev: MouseEvent) {
 			to: '/api-console',
 			text: 'API Console',
 			icon: 'ti ti-terminal-2',
-		}, {
-			type: 'link',
-			to: '/clicker',
-			text: '🍪👈',
-			icon: 'ti ti-cookie',
 		}, ($i && ($i.isAdmin || $i.policies.canInvite) && instance.disableRegistration) ? {
 			text: i18n.ts.invite,
 			icon: 'ti ti-user-plus',

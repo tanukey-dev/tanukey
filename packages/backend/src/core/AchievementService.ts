@@ -78,7 +78,6 @@ export const ACHIEVEMENT_TYPES = [
 	'clickedClickHere',
 	'justPlainLucky',
 	'setNameToSyuilo',
-	'cookieClicked',
 	'brainDiver',
 ] as const;
 

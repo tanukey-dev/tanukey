@@ -74,7 +74,6 @@ export const ACHIEVEMENT_TYPES = [
 	'clickedClickHere',
 	'justPlainLucky',
 	'setNameToSyuilo',
-	'cookieClicked',
 	'brainDiver',
 ] as const;
 
@@ -438,11 +437,6 @@ export const ACHIEVEMENT_BADGES = {
 		img: '/fluent-emoji/1f38d.png',
 		bg: 'linear-gradient(0deg, rgb(255 144 144), rgb(255 232 168))',
 		frame: 'silver',
-	},
-	'cookieClicked': {
-		img: '/fluent-emoji/1f36a.png',
-		bg: 'linear-gradient(0deg, rgb(187 183 59), rgb(255 143 77))',
-		frame: 'bronze',
 	},
 	'brainDiver': {
 		img: '/fluent-emoji/1f9e0.png',
