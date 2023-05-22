@@ -7,8 +7,6 @@
 	"scripts": {
 		"build": "tsc",
 		"tsd": "tsd",
-		"api": "pnpm api-extractor run --local --verbose",
-		"api-prod": "pnpm api-extractor run --verbose",
 		"eslint": "eslint . --ext .js,.jsx,.ts,.tsx",
 		"typecheck": "tsc --noEmit",
 		"lint": "pnpm typecheck && pnpm eslint",
@@ -20,7 +18,6 @@
 		"url": "git+https://github.com/misskey-dev/misskey.js.git"
 	},
 	"devDependencies": {
-		"@microsoft/api-extractor": "7.34.7",
 		"@swc/jest": "0.2.26",
 		"@types/jest": "29.5.1",
 		"@types/node": "18.16.3",
