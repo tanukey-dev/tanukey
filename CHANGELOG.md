@@ -12,6 +12,13 @@
 
 -->
 
+## 13.13.0-beta.3-tanu-1.12.0
+### General
+- 指定したチャンネルで連合を切り替えできるように修正
+
+### Client
+- style: PageEditorの保存ボタン類が上部固定になるように修正
+
 ## 13.13.0-beta.3-tanu-1.11.0
 ### General
 - delete: misskey-assetsへの依存とaiChan関連の実装を削除
