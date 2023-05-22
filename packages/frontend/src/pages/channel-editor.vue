@@ -23,6 +23,10 @@
 				</div>
 			</div>
 
+			<MkSwitch v-model="federation">
+				{{ i18n.ts.channelFederation }}
+			</MkSwitch>
+
 			<MkFolder :defaultOpen="true">
 				<template #label>{{ i18n.ts.pinnedNotes }}</template>
 				
@@ -58,6 +62,7 @@
 <script lang="ts" setup>
 import { computed, ref, watch, defineAsyncComponent } from 'vue';
 import MkTextarea from '@/components/MkTextarea.vue';
+import MkSwitch from '@/components/MkSwitch.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkColorInput from '@/components/MkColorInput.vue';
@@ -82,6 +87,7 @@ let description = $ref(null);
 let bannerUrl = $ref<string | null>(null);
 let bannerId = $ref<string | null>(null);
 let color = $ref('#000');
+let federation = ref(false);
 const pinnedNotes = ref([]);
 
 watch(() => bannerId, async () => {
@@ -105,6 +111,7 @@ async function fetchChannel() {
 	description = channel.description;
 	bannerId = channel.bannerId;
 	bannerUrl = channel.bannerUrl;
+	federation.value = channel.federation;
 	pinnedNotes.value = channel.pinnedNoteIds.map(id => ({
 		id,
 	}));
@@ -136,12 +143,14 @@ function save() {
 		description: description,
 		bannerId: bannerId,
 		pinnedNoteIds: pinnedNotes.value.map(x => x.id),
+		federation: federation.value,
 		color: color,
 	};
 
 	if (props.channelId) {
 		params.channelId = props.channelId;
-		os.api('channels/update', params).then(() => {
+		os.api('channels/update', params).then((u) => {
+			console.log(u);
 			os.success();
 		});
 	} else {

@@ -76,6 +76,7 @@ export class ChannelEntityService {
 			pinnedNoteIds: channel.pinnedNoteIds,
 			color: channel.color,
 			isArchived: channel.isArchived,
+			federation: channel.federation,
 			usersCount: channel.usersCount,
 			notesCount: channel.notesCount,
 

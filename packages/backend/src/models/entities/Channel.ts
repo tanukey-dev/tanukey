@@ -76,6 +76,11 @@ export class Channel {
 	})
 	public isArchived: boolean;
 
+	@Column('boolean', {
+		default: false,
+	})
+	public federation: boolean;
+
 	@Index()
 	@Column('integer', {
 		default: 0,

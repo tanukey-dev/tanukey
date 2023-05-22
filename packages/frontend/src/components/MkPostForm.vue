@@ -25,7 +25,7 @@
 				<span><i class="ti ti-device-tv"></i></span>
 				<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
 			</button>
-			<button v-click-anime v-tooltip="i18n.ts._visibility.disableFederation" :class="['_button', $style.headerRightItem, $style.localOnly, { [$style.danger]: localOnly }]" :disabled="postChannel != null || visibility === 'specified'" @click="toggleLocalOnly">
+			<button v-click-anime v-tooltip="i18n.ts._visibility.disableFederation" :class="['_button', $style.headerRightItem, $style.localOnly, { [$style.danger]: localOnly }]" :disabled="(postChannel != null && !postChannel.federation) || visibility === 'specified'" @click="toggleLocalOnly">
 				<span v-if="!localOnly"><i class="ti ti-rocket"></i></span>
 				<span v-else><i class="ti ti-rocket-off"></i></span>
 			</button>
@@ -184,7 +184,9 @@ let postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 
 watch(postChannel, () => {
 	if (postChannel.value) {
-		localOnly = true;
+		if (!postChannel.value.federation) {
+			localOnly = true;
+		}
 	} else {
 		localOnly = false;
 	}
@@ -296,7 +298,9 @@ if (props.reply && props.reply.text != null) {
 
 if (postChannel.value) {
 	visibility = 'public';
-	localOnly = true; // TODO: チャンネルが連合するようになった折には消す
+	if (!postChannel.value.federation) {
+		localOnly = true;
+	}
 }
 
 // 公開以外へのリプライ時は元の公開範囲を引き継ぐ
@@ -426,7 +430,7 @@ function upload(file: File, name?: string) {
 function setVisibility() {
 	if (postChannel.value) {
 		visibility = 'public';
-		localOnly = true; // TODO: チャンネルが連合するようになった折には消す
+		localOnly = true;
 		return;
 	}
 
@@ -447,8 +451,10 @@ function setVisibility() {
 async function toggleLocalOnly() {
 	if (postChannel.value) {
 		visibility = 'public';
-		localOnly = true; // TODO: チャンネルが連合するようになった折には消す
-		return;
+		if (!postChannel.value.federation) {
+			localOnly = true;
+			return;
+		}
 	}
 
 	const neverShowInfo = miLocalStorage.getItem('neverShowLocalOnlyInfo');

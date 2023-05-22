@@ -81,6 +81,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				name: ps.name,
 				description: ps.description ?? null,
 				bannerId: banner ? banner.id : null,
+				federation: false,
 				...(ps.color !== undefined ? { color: ps.color } : {}),
 			} as Channel).then(x => this.channelsRepository.findOneByOrFail(x.identifiers[0]));
 

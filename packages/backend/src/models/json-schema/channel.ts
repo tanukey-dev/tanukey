@@ -34,6 +34,10 @@ export const packedChannelSchema = {
 			type: 'boolean',
 			optional: false, nullable: false,
 		},
+		federation: {
+			type: 'boolean',
+			optional: false, nullable: false,
+		},
 		notesCount: {
 			type: 'number',
 			nullable: false, optional: false,

@@ -236,7 +236,6 @@ export class NoteCreateService implements OnApplicationShutdown {
 		if (data.localOnly == null) data.localOnly = false;
 		if (data.channel != null) data.visibility = 'public';
 		if (data.channel != null) data.visibleUsers = [];
-		if (data.channel != null) data.localOnly = true;
 
 		if (data.visibility === 'public' && data.channel == null) {
 			const sensitiveWords = (await this.metaService.fetch()).sensitiveWords;
