@@ -14,10 +14,13 @@
 
 ## 13.13.0-beta.3-tanu-1.11.0
 ### General
-- misskey-assetsへの依存とaiChan関連の実装を削除
+- delete: misskey-assetsへの依存とaiChan関連の実装を削除
+- delete: クッキークリッカー機能は削除
 
 ### Client
 - キャッシュをクリアボタンをナビゲーションメニューに追加
+- refactor: ページのブロックタイプの定義をmisskey-jsに移動
+- fix: ページの更新時に改行するとフォーカスが外れる不具合の修正
 
 ## 13.13.0-beta.3-tanu-1.10.5
 ### Client
