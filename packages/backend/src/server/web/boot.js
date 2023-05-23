@@ -29,18 +29,7 @@
 
 	//#region Detect language & fetch translations
 	if (!localStorage.hasOwnProperty('locale')) {
-		const supportedLangs = LANGS;
 		let lang = localStorage.getItem('lang');
-		if (lang == null || !supportedLangs.includes(lang)) {
-			if (supportedLangs.includes(navigator.language)) {
-				lang = navigator.language;
-			} else {
-				lang = supportedLangs.find(x => x.split('-')[0] === navigator.language);
-
-				// Fallback
-				if (lang == null) lang = 'en-US';
-			}
-		}
 
 		const metaRes = await window.fetch('/api/meta', {
 			method: 'POST',
