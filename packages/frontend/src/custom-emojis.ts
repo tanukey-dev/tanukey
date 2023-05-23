@@ -10,7 +10,7 @@ export const customEmojisNameMap = computed(() => new Map(customEmojis.value.map
 export const customEmojiCategories = computed<[ ...string[], null ]>(() => {
 	const categories = new Set<string>();
 	for (const emoji of customEmojis.value) {
-		if (emoji.category && emoji.category !== 'null') {
+		if (emoji.category && emoji.category !== 'null' && !emoji.draft) {
 			categories.add(emoji.category);
 		}
 	}

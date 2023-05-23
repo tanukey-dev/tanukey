@@ -10,6 +10,11 @@ export const packedEmojiSimpleSchema = {
 				format: 'id',
 			},
 		},
+		updatedAt: {
+			type: 'string',
+			format: 'date-time',
+			optional: false, nullable: true,
+		},
 		name: {
 			type: 'string',
 			optional: false, nullable: false,
@@ -49,6 +54,11 @@ export const packedEmojiDetailedSchema = {
 			type: 'string',
 			optional: false, nullable: false,
 			format: 'id',
+		},
+		updatedAt: {
+			type: 'string',
+			format: 'date-time',
+			optional: false, nullable: true,
 		},
 		aliases: {
 			type: 'array',

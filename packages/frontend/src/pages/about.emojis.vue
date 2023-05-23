@@ -22,10 +22,24 @@
 		</div>
 	</MkFoldableSection>
 	
+	<MkFoldableSection v-if="newEmojis.length > 0">
+		<template #header>{{ i18n.ts.newEmojis }}</template>
+		<div :class="$style.emojis">
+			<XEmoji v-for="emoji in newEmojis" :key="emoji.name" :emoji="emoji" :draft="emoji.draft"/>
+		</div>
+	</MkFoldableSection>
+
+	<MkFoldableSection v-if="draftEmojis.length > 0">
+		<template #header>{{ i18n.ts.draftEmojis }}</template>
+		<div :class="$style.emojis">
+			<XEmoji v-for="emoji in draftEmojis" :key="emoji.name" :emoji="emoji" :draft="emoji.draft"/>
+		</div>
+	</MkFoldableSection>
+
 	<MkFoldableSection v-for="category in customEmojiCategories" v-once :key="category">
 		<template #header>{{ category || i18n.ts.other }}</template>
 		<div :class="$style.emojis">
-			<XEmoji v-for="emoji in customEmojis.filter(e => e.category === category)" :key="emoji.name" :emoji="emoji" :draft="emoji.draft"/>
+			<XEmoji v-for="emoji in customEmojis.filter(e => e.category === category && !e.draft)" :key="emoji.name" :emoji="emoji" :draft="emoji.draft"/>
 		</div>
 	</MkFoldableSection>
 </div>
@@ -47,6 +61,19 @@ const customEmojiTags = getCustomEmojiTags();
 let q = $ref('');
 let searchEmojis = $ref<Misskey.entities.CustomEmoji[]>(null);
 let selectedTags = $ref(new Set());
+const newEmojis = customEmojis.value.filter(emoji => {
+	if (emoji.updatedAt === null) {
+		return false;
+	}
+	if (emoji.draft) {
+		return false;
+	}
+	// 3日以内の絵文字を抽出
+	const checkDate = new Date(emoji.updatedAt);
+	checkDate.setDate(checkDate.getDate() + 3);
+	return checkDate > new Date();
+});
+const draftEmojis = customEmojis.value.filter(emoji => emoji.draft);
 
 function search() {
 	if ((q === '' || q == null) && selectedTags.size === 0) {

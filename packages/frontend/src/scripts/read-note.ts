@@ -26,7 +26,6 @@ export class ReadNoteCache {
 		dexieDb.readNote
 			.filter(rn => {
 				const clearDate = rn.lastShowDate;
-				console.log(clearDate);
 				clearDate.setMonth(clearDate.getMonth() + 1);
 				return new Date() > clearDate;
 			})

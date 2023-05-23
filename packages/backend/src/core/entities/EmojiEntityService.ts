@@ -21,6 +21,7 @@ export class EmojiEntityService {
 		const emoji = typeof src === 'object' ? src : await this.emojisRepository.findOneByOrFail({ id: src });
 
 		return {
+			updatedAt: emoji.updatedAt ? emoji.updatedAt.toDateString() : null,
 			aliases: emoji.aliases,
 			name: emoji.name,
 			category: emoji.category,
@@ -47,6 +48,7 @@ export class EmojiEntityService {
 
 		return {
 			id: emoji.id,
+			updatedAt: emoji.updatedAt ? emoji.updatedAt.toDateString() : null,
 			aliases: emoji.aliases,
 			name: emoji.name,
 			category: emoji.category,

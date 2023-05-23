@@ -261,6 +261,7 @@ export type MessagingMessage = {
 
 export type CustomEmoji = {
 	id: string;
+	updatedAt: Date|null;
 	name: string;
 	url: string;
 	category: string;
