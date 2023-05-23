@@ -12,6 +12,10 @@
 
 -->
 
+## 13.13.0-beta.3-tanu-1.14.4
+### Client
+- feature: ナビメニューからプロフィールを削除してカスタム絵文字を追加
+- style: 固定チャンネルの表示をMkPageHeaderに変更
 
 ## 13.13.0-beta.3-tanu-1.14.3
 ### Client
