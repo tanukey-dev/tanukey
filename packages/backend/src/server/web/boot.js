@@ -29,7 +29,10 @@
 
 	//#region Detect language & fetch translations
 	if (!localStorage.hasOwnProperty('locale')) {
-		let lang = localStorage.getItem('lang');
+		let lang = 'en-US';
+		if (window.navigator.language === 'ja') {
+			lang = 'ja-JP';
+		}
 
 		const metaRes = await window.fetch('/api/meta', {
 			method: 'POST',
