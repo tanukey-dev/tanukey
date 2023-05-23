@@ -42,7 +42,7 @@ watch(tab, async () => {
 
 	if (tab.value !== null && tab.value !== 'public') {
 		let ch = await os.api('channels/show', {
-			channelId: tab.value.key,
+			channelId: tab.value,
 		});
 		postChannel.value = ch;
 	} else {
