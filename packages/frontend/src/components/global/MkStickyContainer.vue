@@ -34,7 +34,8 @@ provide(CURRENT_STICKY_BOTTOM, $$(childStickyBottom));
 const calc = () => {
 	// コンポーネントが表示されてないけどKeepAliveで残ってる場合などは null になる
 	if (headerEl != null) {
-		childStickyTop = parentStickyTop.value + headerEl.offsetHeight;
+		//微妙に隙間があくので-1する
+		childStickyTop = parentStickyTop.value + headerEl.offsetHeight - 1;
 		headerHeight = headerEl.offsetHeight.toString();
 	}
 
