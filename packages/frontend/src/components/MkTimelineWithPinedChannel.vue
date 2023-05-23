@@ -1,13 +1,13 @@
 <template>
 <MkStickyContainer>
 	<template #header>
-		<MkTab v-if="tabs.length > 1" v-model="tab" :tabs="tabs" :class="$style.tab"/>
+		<MkPageHeader v-if="tabs.length > 1" v-model:tab="tab" :actions="headerActions" :tabs="tabs"/>
 	</template>
-	<MkSpacer :content-max="800" style="padding: 0;">
+	<MkSpacer :contentMax="800" style="padding: 0;">
 		<MkTimelineWithScroll
 			:key="srckey"
 			:src="srcCh"
-			:channel="tab"
+			:channel="channel"
 			:sound="true"
 		/>
 	</MkSpacer>
@@ -15,30 +15,32 @@
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue';
+import { Tab } from './global/MkPageHeader.tabs.vue';
 import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import * as os from '@/os';
 import MkTimelineWithScroll from '@/components/MkTimelineWithScroll.vue';
-import MkTab from '@/components/MkTab.vue';
 import { defaultStore } from '@/store';
 
 const props = defineProps<{
 	src: string;
 }>();
 
-const tabs = $ref([{ value: null, label: i18n.ts.public }]);
+const tabs = ref<Tab[]>([{ key: 'public', title: i18n.ts.public, icon: 'ti ti-world-www' }]);
 const src = ref(props.src);
-const srcCh = computed(() => tab.value === null ? src.value : 'channel');
-const srckey = computed(() => tab.value === null ? src.value : tab.value);
-let postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
-let tab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
+const srcCh = computed(() => tab.value === 'public' ? src.value : 'channel');
+const srckey = computed(() => tab.value === 'public' ? src.value : tab.value);
+const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
+const tab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
+const channel = computed(() => tab.value === 'public' ? null : tab.value);
+const headerActions = computed(() => []);
 
 watch(tab, async () => {
-	if (tab.value) {
-		let channel = await os.api('channels/show', {
-			channelId: tab.value,
+	if (tab.value !== null && tab.value !== 'public') {
+		let ch = await os.api('channels/show', {
+			channelId: tab.value.key,
 		});
-		postChannel.value = channel;
+		postChannel.value = ch;
 	} else {
 		postChannel.value = null;
 	}
@@ -52,7 +54,7 @@ onMounted(async () => {
 			channelId: id,
 		});
 		if (ch != null) {
-			t.push({ value: ch.id, label: ch.name });
+			t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv-old' });
 			s.add(ch.id);
 		}
 	}
@@ -65,20 +67,15 @@ onMounted(async () => {
 				channelId: id.value,
 			});
 			if (ch != null) {
-				t.push({ value: ch.id, label: ch.name });
+				t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv' });
 			}
 		}
 	}
 
-	tabs.push(...t);
+	tabs.value.push(...t);
 });
 
 </script>
 
 <style lang="scss" module>
-.tab {
-	margin: calc(var(--margin) / 2) 0;
-	padding: calc(var(--margin) / 2) 0;
-	background: var(--bg);
-}
 </style>

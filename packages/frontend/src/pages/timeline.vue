@@ -1,7 +1,9 @@
 <template>
 <MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin" :display-my-avatar="true"/></template>
-	<MkSpacer :contentMax="800">
+	<template #header>
+		<MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin" :display-my-avatar="true"/>
+	</template>
+	<MkSpacer>
 		<div ref="rootEl">
 			<XCommonTimeline
 				v-if="!isNeedPinnedChannels()"

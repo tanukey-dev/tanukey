@@ -226,6 +226,9 @@ onUnmounted(() => {
 
 .tabTitle {
 	overflow: hidden;
+	max-width: 120px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 
 	&.animate {
 		transition: width .15s linear, padding-left .15s linear;
