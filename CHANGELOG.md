@@ -12,6 +12,10 @@
 
 -->
 
+## 15.13.0-beta.3-tanu-1.14.0
+### General
+- feature: チャンネルの検索避け機能の追加
+
 ## 13.13.0-beta.3-tanu-1.13.0
 ### General
 - security: ログインが必要なページを厳密化
