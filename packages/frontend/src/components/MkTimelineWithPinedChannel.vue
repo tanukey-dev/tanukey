@@ -51,6 +51,10 @@ watch(tab, async () => {
 });
 
 onMounted(async () => {
+	if (tab.value == null) {
+		tab.value = 'public';
+	}
+
 	let t: any[] = [];
 	let s: Set<string> = new Set<string>();
 	for (let id of instance.pinnedLtlChannelIds) {
