@@ -154,11 +154,10 @@ export const navbarItemDef = reactive({
 			mode.set(!mode.get());
 		},
 	},
-	profile: {
-		title: i18n.ts.profile,
-		icon: 'ti ti-user',
-		show: computed(() => $i != null),
-		to: `/@${$i?.username}`,
+	customEmojis: {
+		title: i18n.ts.customEmojis,
+		icon: 'ti ti-icons',
+		to: '/about#emojis',
 	},
 	clearCache: {
 		title: i18n.ts.clearCache,
