@@ -163,7 +163,6 @@ function save() {
 	if (props.channelId) {
 		params.channelId = props.channelId;
 		os.api('channels/update', params).then((u) => {
-			console.log(u);
 			os.success();
 		});
 	} else {
