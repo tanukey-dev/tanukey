@@ -36,6 +36,10 @@ const channel = computed(() => tab.value === 'public' ? null : tab.value);
 const headerActions = computed(() => []);
 
 watch(tab, async () => {
+	if (tab.value == null) {
+		tab.value = 'public';
+	}
+
 	if (tab.value !== null && tab.value !== 'public') {
 		let ch = await os.api('channels/show', {
 			channelId: tab.value.key,
