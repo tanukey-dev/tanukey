@@ -153,6 +153,7 @@ async function search() {
 		params: {
 			query: query,
 			channelId: channel.id,
+			checkChannelSearchable: false,
 		},
 	};
 

@@ -49,6 +49,7 @@ export const paramDef = {
 		bannerId: { type: 'string', format: 'misskey:id', nullable: true },
 		isArchived: { type: 'boolean', nullable: true },
 		federation: { type: 'boolean', nullable: true },
+		searchable: { type: 'boolean', nullable: true },
 		pinnedNoteIds: {
 			type: 'array',
 			items: {
@@ -110,6 +111,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				...(ps.color !== undefined ? { color: ps.color } : {}),
 				...(typeof ps.isArchived === 'boolean' ? { isArchived: ps.isArchived } : {}),
 				...(typeof ps.federation === 'boolean' ? { federation: ps.federation } : {}),
+				...(typeof ps.searchable === 'boolean' ? { searchable: ps.searchable } : {}),
 				...(banner ? { bannerId: banner.id } : {}),
 			});
 

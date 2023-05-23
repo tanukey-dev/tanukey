@@ -77,6 +77,7 @@ export class ChannelEntityService {
 			color: channel.color,
 			isArchived: channel.isArchived,
 			federation: channel.federation,
+			searchable: channel.searchable,
 			usersCount: channel.usersCount,
 			notesCount: channel.notesCount,
 

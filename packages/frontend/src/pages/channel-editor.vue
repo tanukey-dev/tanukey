@@ -27,6 +27,10 @@
 				{{ i18n.ts.channelFederation }}
 			</MkSwitch>
 
+			<MkSwitch v-model="searchable" :disabled="federation">
+				{{ i18n.ts.channelSearchable }}
+			</MkSwitch>
+
 			<MkFolder :defaultOpen="true">
 				<template #label>{{ i18n.ts.pinnedNotes }}</template>
 				
@@ -88,6 +92,7 @@ let bannerUrl = $ref<string | null>(null);
 let bannerId = $ref<string | null>(null);
 let color = $ref('#000');
 let federation = ref(false);
+let searchable = ref(true);
 const pinnedNotes = ref([]);
 
 watch(() => bannerId, async () => {
@@ -97,6 +102,12 @@ watch(() => bannerId, async () => {
 		bannerUrl = (await os.api('drive/files/show', {
 			fileId: bannerId,
 		})).url;
+	}
+});
+
+watch(federation, () => {
+	if (federation.value) {
+		searchable.value = true;
 	}
 });
 
@@ -112,6 +123,7 @@ async function fetchChannel() {
 	bannerId = channel.bannerId;
 	bannerUrl = channel.bannerUrl;
 	federation.value = channel.federation;
+	searchable.value = channel.federation ? true : channel.searchable;
 	pinnedNotes.value = channel.pinnedNoteIds.map(id => ({
 		id,
 	}));
@@ -144,6 +156,7 @@ function save() {
 		bannerId: bannerId,
 		pinnedNoteIds: pinnedNotes.value.map(x => x.id),
 		federation: federation.value,
+		searchable: federation.value ? true : searchable.value,
 		color: color,
 	};
 

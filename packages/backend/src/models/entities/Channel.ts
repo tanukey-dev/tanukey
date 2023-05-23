@@ -82,6 +82,12 @@ export class Channel {
 	public federation: boolean;
 
 	@Index()
+	@Column('boolean', {
+		default: true,
+	})
+	public searchable: boolean;
+
+	@Index()
 	@Column('integer', {
 		default: 0,
 		comment: 'The count of notes.',

@@ -47,6 +47,7 @@ export const paramDef = {
 		},
 		userId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
 		channelId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
+		checkChannelSearchable: { type: 'boolean', nullable: true, default: true },
 	},
 	required: ['query'],
 } as const;
@@ -75,6 +76,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				channelId: ps.channelId,
 				host: ps.host,
 				origin: ps.origin,
+				checkChannelSearchable: ps.checkChannelSearchable ?? true,
 			}, {
 				untilId: ps.untilId,
 				sinceId: ps.sinceId,

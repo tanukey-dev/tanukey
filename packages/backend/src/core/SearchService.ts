@@ -121,6 +121,7 @@ export class SearchService {
 		channelId?: Note['channelId'] | null;
 		host?: string | null;
 		origin?: string;
+		checkChannelSearchable?: boolean;
 	}, pagination: {
 		untilId?: Note['id'];
 		sinceId?: Note['id'];
@@ -167,6 +168,12 @@ export class SearchService {
 				query.andWhere('note.userId = :userId', { userId: opts.userId });
 			} else if (opts.channelId) {
 				query.andWhere('note.channelId = :channelId', { channelId: opts.channelId });
+			}
+
+			if (opts.checkChannelSearchable) {
+				query
+					.leftJoinAndSelect('note.channel', 'channel')
+					.andWhere('channel.searchable = true');
 			}
 
 			query

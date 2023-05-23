@@ -134,6 +134,10 @@ export const packedNoteSchema = {
 						type: 'string',
 						optional: false, nullable: true,
 					},
+					searchable: {
+						type: 'boolean',
+						optional: false, nullable: true,
+					},
 				},
 			},
 		},
