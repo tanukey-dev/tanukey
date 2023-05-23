@@ -76,7 +76,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				.leftJoinAndSelect('note.channel', 'channel')
 				.leftJoinAndSelect('reply.user', 'replyUser')
 				.leftJoinAndSelect('renote.user', 'renoteUser')
-				.andWhere('channel.searchable = true');
+				.andWhere(new Brackets(qb => {
+					qb.orWhere('channel.searchable IS NULL');
+					qb.orWhere('channel.searchable = true');
+				}));
 
 			this.queryService.generateVisibilityQuery(query, me);
 			if (me) this.queryService.generateMutedUserQuery(query, me);

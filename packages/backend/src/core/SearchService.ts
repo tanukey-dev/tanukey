@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
+import { In, Brackets } from 'typeorm';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import { bindThis } from '@/decorators.js';
@@ -173,7 +173,10 @@ export class SearchService {
 			if (opts.checkChannelSearchable) {
 				query
 					.leftJoinAndSelect('note.channel', 'channel')
-					.andWhere('channel.searchable = true');
+					.andWhere(new Brackets(qb => {
+						qb.orWhere('channel.searchable IS NULL');
+						qb.orWhere('channel.searchable = true');
+					}));
 			}
 
 			query
