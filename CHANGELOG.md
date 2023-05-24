@@ -12,6 +12,11 @@
 
 -->
 
+## 13.13.0-beta.3-tanu-1.16.0
+### General
+- feature: ノートの最大文字数を8000字に修正
+- feature: MFMからTFMに移行し、AsciiArt構文を追加
+
 ## 13.13.0-beta.3-tanu-1.15.1
 ### Client
 - fix: onMoutedでtabの値のチェックを行うように修正
