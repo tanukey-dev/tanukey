@@ -630,10 +630,37 @@ hr {
 	font-display: swap;
 }
 
+/* iPhone 縦 */
 .asciiart {
 	font-family: "aahub_light4";
 	white-space: pre;
 	font-size: 16px;
 	line-height: 18px;
-	overflow:hidden;
+	overflow-x: auto;
+	zoom: 0.40;
+}
+ 
+@media screen and (min-width:480px) { 
+	/*　for iPhone Landscape　(iPhone 横)　*/
+	.asciiart {
+		zoom: 0.55;
+	}
+}
+@media screen and (min-width:768px) and ( max-width:1024px) {
+	/*　for iPad 　*/
+	.asciiart {
+		zoom: 0.8;
+	}
+}
+@media screen and (min-width:1024px) {
+	/*　for PC　*/
+	.asciiart {
+		zoom: 0.9;
+	}
+}
+@media screen and (min-width:1280px) {
+	/*　for PC　*/
+	.asciiart {
+		zoom: 1.0;
+	}
 }
