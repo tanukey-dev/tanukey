@@ -637,9 +637,9 @@ hr {
 	font-size: 16px;
 	line-height: 18px;
 	overflow-x: auto;
-	zoom: 0.40;
-	text-size-adjust: 100%;
-	-webkit-text-size-adjust: 100%; /* Safari */
+	zoom: 0.55;
+	text-size-adjust: none;
+	-webkit-text-size-adjust: none; /* Safari */
 }
  
 @media screen and (min-width:480px) { 
