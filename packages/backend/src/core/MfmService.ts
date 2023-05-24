@@ -8,7 +8,7 @@ import { intersperse } from '@/misc/prelude/array.js';
 import type { IMentionedRemoteUsers } from '@/models/entities/Note.js';
 import { bindThis } from '@/decorators.js';
 import * as TreeAdapter from '../../node_modules/parse5/dist/tree-adapters/default.js';
-import type * as mfm from 'mfm-js';
+import type * as mfm from 'tfm-js';
 
 const treeAdapter = TreeAdapter.defaultTreeAdapter;
 
@@ -250,6 +250,10 @@ export class MfmService {
 				const el = doc.createElement('b');
 				appendChildren(node.children, el);
 				return el;
+			},
+
+			asciiart: (node) => {
+				return doc.createTextNode(node.props.text);
 			},
 	
 			small: (node) => {

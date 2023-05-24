@@ -7,7 +7,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent } from 'vue';
-import * as mfm from 'mfm-js';
+import * as mfm from 'tfm-js';
 import * as Misskey from 'misskey-js';
 import { extractUrlFromMfm } from '@/scripts/extract-url-from-mfm';
 import { $i } from '@/account';

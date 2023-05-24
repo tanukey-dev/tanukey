@@ -621,3 +621,19 @@ hr {
 	0% { filter: hue-rotate(0deg) contrast(150%) saturate(150%); }
 	100% { filter: hue-rotate(360deg) contrast(150%) saturate(150%); }
 }
+
+@font-face {
+	font-family: "aahub_light4";
+	src: url("https://ostanukey.tanukey.chat/assets/aahub_light4/aahub_light4.woff2") format("woff2"),
+		url("https://ostanukey.tanukey.chat/assets/aahub_light4/aahub_light4.woff") format("woff"),
+		url("https://ostanukey.tanukey.chat/assets/aahub_light4/aahub_light4.ttf") format("ttf");
+	font-display: swap;
+}
+
+.asciiart {
+	font-family: "aahub_light4";
+	white-space: pre;
+	font-size: 16px;
+	line-height: 18px;
+	overflow:hidden;
+}

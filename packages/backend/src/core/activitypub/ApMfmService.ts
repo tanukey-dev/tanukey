@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import * as mfm from 'mfm-js';
+import * as mfm from 'tfm-js';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import { MfmService } from '@/core/MfmService.js';

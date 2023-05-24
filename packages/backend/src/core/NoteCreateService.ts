@@ -1,5 +1,5 @@
 import { setImmediate } from 'node:timers/promises';
-import * as mfm from 'mfm-js';
+import * as mfm from 'tfm-js';
 import { In, DataSource } from 'typeorm';
 import * as Redis from 'ioredis';
 import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';

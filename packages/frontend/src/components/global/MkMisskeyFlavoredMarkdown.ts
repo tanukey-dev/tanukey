@@ -1,5 +1,5 @@
 import { VNode, h } from 'vue';
-import * as mfm from 'mfm-js';
+import * as mfm from 'tfm-js';
 import * as Misskey from 'misskey-js';
 import MkUrl from '@/components/global/MkUrl.vue';
 import MkLink from '@/components/MkLink.vue';
@@ -237,6 +237,12 @@ export default function(props: {
 						style: 'display: inline-block; ' + style,
 					}, genEl(token.children, scale));
 				}
+			}
+
+			case 'asciiart': {
+				return [h('div', {
+					class: 'asciiart',
+				}, token.props.text.replace(/(\r\n|\n|\r)/g, '\n'))];
 			}
 
 			case 'small': {
