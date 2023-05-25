@@ -13,7 +13,7 @@
 -->
 
 
-## 13.13.0-beta.3-tanu-1.16.6
+## 13.13.0-beta.3-tanu-1.16.7
 ### General
 - style: fontをSaitamaarに修正、zoomを微調整
 

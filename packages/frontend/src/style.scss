@@ -637,7 +637,7 @@ hr {
 	font-size: 16px;
 	line-height: 18px;
 	overflow-x: auto;
-	zoom: 0.55;
+	zoom: 0.75;
 	text-size-adjust: none;
 	-webkit-text-size-adjust: none; /* Safari */
 }
@@ -645,7 +645,7 @@ hr {
 @media screen and (min-width:480px) { 
 	/*　for iPhone Landscape　(iPhone 横)　*/
 	.asciiart {
-		zoom: 0.55;
+		zoom: 0.75;
 	}
 }
 @media screen and (min-width:768px) and ( max-width:1024px) {
