@@ -710,7 +710,7 @@ async function post(ev?: MouseEvent) {
 		for (let i = 0; i < dice; i++) {
 			rolls.push(Math.ceil(Math.random() * c2));
 		}
-		return match + ' => ' + rolls.map(r => r + plus).reduce((sum, ele) => sum + ele) + ' [' + rolls.map(r => r + (c3 ? '(' + (r + plus) + ')' : '')).join(',') + ']';
+		return '**' + match + ' => ' + rolls.map(r => r + plus).reduce((sum, ele) => sum + ele) + ' [' + rolls.map(r => r + (c3 ? '(' + (r + plus) + ')' : '')).join(',') + ']**';
 	});
 
 	let postData = {
