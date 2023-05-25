@@ -242,7 +242,11 @@ export default function(props: {
 			case 'asciiart': {
 				return [h('div', {
 					class: 'asciiart',
-				}, token.props.text.replace(/(\r\n|\n|\r)/g, '\n'))];
+				},
+				token.props.text
+					.replace(/(\r\n|\n|\r)/g, '\n')
+					.replace(/&#x([a-zA-Z0-9]{4})[;]{0,1}/g, (match, c1) => String.fromCharCode.apply(c1.toLowerCase())),
+				)];
 			}
 
 			case 'small': {
