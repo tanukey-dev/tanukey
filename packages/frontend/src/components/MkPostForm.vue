@@ -700,7 +700,7 @@ async function post(ev?: MouseEvent) {
 	}
 
 	//ダイスロール
-	text = text.replace(/!(\d{1,3})?[dD](\d{1,3})(([-+])(\d+))?/, (match, c1, c2, c3, c4, c5) => {
+	text = text.replace(/!(\d{1,3})?[dD](\d{1,3})(([-+])(\d+))?/g, (match, c1, c2, c3, c4, c5) => {
 		const dice: number = parseInt(c1 ?? 1);
 		const rolls: number[] = [];
 		let plus: number = parseInt(c3 ?? 0);
