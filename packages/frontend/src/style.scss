@@ -623,21 +623,21 @@ hr {
 }
 
 @font-face {
-	font-family: "aahub_light4";
-	src: url("https://ostanukey.tanukey.chat/assets/aahub_light4/aahub_light4.woff2") format("woff2"),
-		url("https://ostanukey.tanukey.chat/assets/aahub_light4/aahub_light4.woff") format("woff"),
-		url("https://ostanukey.tanukey.chat/assets/aahub_light4/aahub_light4.ttf") format("ttf");
+	font-family: "Saitamaar";
+	src: url("https://ostanukey.tanukey.chat/assets/Saitamaar/Saitamaar.woff2") format("woff2"),
+		url("https://ostanukey.tanukey.chat/assets/Saitamaar/Saitamaar.woff") format("woff"),
+		url("https://ostanukey.tanukey.chat/assets/Saitamaar/Saitamaar.ttf") format("ttf");
 	font-display: swap;
 }
 
 /* iPhone 縦 */
 .asciiart {
-	font-family: "aahub_light4";
+	font-family: "Saitamaar";
 	white-space: pre;
 	font-size: 16px;
 	line-height: 18px;
 	overflow-x: auto;
-	zoom: 0.55;
+	zoom: 0.50;
 	text-size-adjust: none;
 	-webkit-text-size-adjust: none; /* Safari */
 }
@@ -651,18 +651,18 @@ hr {
 @media screen and (min-width:768px) and ( max-width:1024px) {
 	/*　for iPad 　*/
 	.asciiart {
-		zoom: 0.8;
+		zoom: 0.75;
 	}
 }
 @media screen and (min-width:1024px) {
 	/*　for PC　*/
 	.asciiart {
-		zoom: 0.9;
+		zoom: 0.75;
 	}
 }
 @media screen and (min-width:1280px) {
 	/*　for PC　*/
 	.asciiart {
-		zoom: 1.0;
+		zoom: 0.75;
 	}
 }
