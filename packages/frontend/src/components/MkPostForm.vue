@@ -64,6 +64,7 @@
 		<div v-if="maxTextLength - textLength < 100" :class="['_acrylic', $style.textCount, { [$style.textOver]: textLength > maxTextLength }]">{{ maxTextLength - textLength }}</div>
 	</div>
 	<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
+	<textarea v-show="withAsciiArt" ref="asciiArtTextareaEl" v-model="asciiartText" :style="aaTextAreaStyles" :class="$style.asciiart" class="asciiart" :placeholder="i18n.ts.asciiart" spellcheck="false" ></textarea>
 	<XPostFormAttaches v-model="files" :class="$style.attaches" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName"/>
 	<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
 	<MkNotePreview v-if="showPreview" :class="$style.preview" :text="text"/>
@@ -76,6 +77,7 @@
 			<button v-tooltip="i18n.ts.useCw" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]" @click="useCw = !useCw"><i class="ti ti-eye-off"></i></button>
 			<button v-tooltip="i18n.ts.mention" class="_button" :class="$style.footerButton" @click="insertMention"><i class="ti ti-at"></i></button>
 			<button v-tooltip="i18n.ts.hashtags" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: withHashtags }]" @click="withHashtags = !withHashtags"><i class="ti ti-hash"></i></button>
+			<button v-tooltip="i18n.ts.asciiart" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: withAsciiArt }]" @click="withAsciiArt = !withAsciiArt"><i class="ti ti-letter-a"></i></button>
 			<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugin" class="_button" :class="$style.footerButton" @click="showActions"><i class="ti ti-plug"></i></button>
 			<button v-tooltip="i18n.ts.emoji" :class="['_button', $style.footerButton]" @click="insertEmoji"><i class="ti ti-mood-happy"></i></button>
 		</div>
@@ -91,7 +93,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, watch, nextTick, computed, onMounted, defineAsyncComponent, onUnmounted } from 'vue';
+import { inject, watch, nextTick, computed, onMounted, defineAsyncComponent, onUnmounted, ref } from 'vue';
 import * as mfm from 'tfm-js';
 import * as misskey from 'misskey-js';
 import insertTextAtCursor from 'insert-text-at-cursor';
@@ -151,6 +153,7 @@ const emit = defineEmits<{
 const textareaEl = $shallowRef<HTMLTextAreaElement | null>(null);
 const cwInputEl = $shallowRef<HTMLInputElement | null>(null);
 const hashtagsInputEl = $shallowRef<HTMLInputElement | null>(null);
+const asciiArtTextareaEl = $shallowRef<HTMLTextAreaElement | null>(null);
 const visibilityButton = $shallowRef<HTMLElement | null>(null);
 
 let posting = $ref(false);
@@ -244,13 +247,25 @@ const maxTextLength = $computed((): number => {
 
 const canPost = $computed((): boolean => {
 	return !posting && !posted &&
-		(1 <= textLength || 1 <= files.length || !!poll || !!props.renote) &&
+		(1 <= textLength || 1 <= files.length || !!poll || !!props.renote || 1 <= asciiartText.value.trim().length) &&
 		(textLength <= maxTextLength) &&
 		(!poll || poll.choices.length >= 2);
 });
 
 const withHashtags = $computed(defaultStore.makeGetterSetter('postFormWithHashtags'));
 const hashtags = $computed(defaultStore.makeGetterSetter('postFormHashtags'));
+const withAsciiArt = ref(false);
+const asciiartText = ref('');
+
+let aaTextareaHeight = ref("auto");
+
+let aaTextAreaStyles = computed(() => {
+	return { 'height': aaTextareaHeight.value };
+});
+
+watch(asciiartText, () => {
+	aaTextareaHeight.value = asciiArtTextareaEl.scrollHeight + 2 + 'px';
+});
 
 watch($$(text), () => {
 	checkMissingMention();
@@ -531,6 +546,8 @@ function removeVisibleUser(user) {
 function clear() {
 	text = '';
 	files = [];
+	asciiartText.value = '';
+	withAsciiArt.value = false;
 	poll = null;
 	quoteId = null;
 }
@@ -714,7 +731,7 @@ async function post(ev?: MouseEvent) {
 	});
 
 	let postData = {
-		text: text === '' ? undefined : text,
+		text: text,
 		fileIds: files.length > 0 ? files.map(f => f.id) : undefined,
 		replyId: props.reply ? props.reply.id : undefined,
 		renoteId: props.renote ? props.renote.id : quoteId ? quoteId : undefined,
@@ -730,6 +747,10 @@ async function post(ev?: MouseEvent) {
 	if (withHashtags && hashtags && hashtags.trim() !== '') {
 		const hashtags_ = hashtags.trim().split(' ').map(x => x.startsWith('#') ? x : '#' + x).join(' ');
 		postData.text = postData.text ? `${postData.text} ${hashtags_}` : hashtags_;
+	}
+
+	if (withAsciiArt.value && asciiartText.value && asciiartText.value.trim() !== '') {
+		postData.text = postData.text + '\n<asciiart>' + asciiartText.value + '\n</asciiart>\n';
 	}
 
 	// plugin
@@ -1097,6 +1118,7 @@ defineExpose({
 
 .cw,
 .hashtags,
+.asciiart,
 .text {
 	display: block;
 	box-sizing: border-box;
@@ -1129,6 +1151,18 @@ defineExpose({
 	z-index: 1;
 	padding-top: 8px;
 	padding-bottom: 8px;
+	border-top: solid 0.5px var(--divider);
+}
+
+.asciiart {
+	font-family: "Saitamaar";
+	font-size: 16px;
+	line-height: 18px;
+	z-index: 1;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	max-width: 100%;
+	min-width: 100%;
 	border-top: solid 0.5px var(--divider);
 }
 
