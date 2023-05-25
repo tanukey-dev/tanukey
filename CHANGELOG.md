@@ -13,6 +13,10 @@
 -->
 
 
+## 13.13.0-beta.3-tanu-1.16.5
+### General
+- style: fontをSaitamaarに修正、zoomを微調整
+
 ## 13.13.0-beta.3-tanu-1.16.2
 ### General
 - fix: Webkitでzoomが意図しない大きさになる不具合の修正
