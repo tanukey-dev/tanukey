@@ -699,6 +699,20 @@ async function post(ev?: MouseEvent) {
 		}
 	}
 
+	//ダイスロール
+	text = text.replace(/!(\d{1,3})?[dD](\d{1,3})(([-+])(\d+))?/, (match, c1, c2, c3, c4, c5) => {
+		const dice: number = parseInt(c1 ?? 1);
+		const rolls: number[] = [];
+		let plus: number = parseInt(c3 ?? 0);
+		if (c3 === '-') {
+			plus = -c4;
+		}
+		for (let i = 0; i < dice; i++) {
+			rolls.push(Math.ceil(Math.random() * c2));
+		}
+		return match + ' => ' + rolls.map(r => r + plus).reduce((sum, ele) => sum + ele) + ' [' + rolls.map(r => r + (c3 ? '(' + (r + plus) + ')' : '')).join(',') + ']';
+	});
+
 	let postData = {
 		text: text === '' ? undefined : text,
 		fileIds: files.length > 0 ? files.map(f => f.id) : undefined,
