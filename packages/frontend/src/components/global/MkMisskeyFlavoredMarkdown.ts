@@ -10,6 +10,7 @@ import MkCode from '@/components/MkCode.vue';
 import MkGoogle from '@/components/MkGoogle.vue';
 import MkSparkle from '@/components/MkSparkle.vue';
 import MkA from '@/components/global/MkA.vue';
+import MkAsciiArt from '@/components/global/MkAsciiArt.vue';
 import { host } from '@/config';
 import { defaultStore } from '@/store';
 
@@ -240,13 +241,11 @@ export default function(props: {
 			}
 
 			case 'asciiart': {
-				return [h('div', {
-					class: 'asciiart',
-				},
-				token.props.text
-					.replace(/(\r\n|\n|\r)/g, '\n')
-					.replace(/&#x([a-zA-Z0-9]{4})[;]{0,1}/g, (match, c1) => String.fromCharCode.apply(c1.toLowerCase())),
-				)];
+				return [h(MkAsciiArt, {
+					text: token.props.text
+						.replace(/(\r\n|\n|\r)/g, '\n')
+						.replace(/&#x([a-zA-Z0-9]{4})[;]{0,1}/g, (match, c1) => String.fromCharCode.apply(c1.toLowerCase())),
+				})];
 			}
 
 			case 'small': {

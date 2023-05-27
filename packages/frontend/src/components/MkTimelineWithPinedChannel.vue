@@ -40,6 +40,7 @@ const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 const tab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
 const channel = computed(() => tab.value === 'public' ? null : tab.value);
 const headerActions = computed(() => []);
+const disableSwipe = computed(defaultStore.makeGetterSetter('disableSwipe'));
 
 watch(tab, async () => {
 	if (tab.value == null) {
@@ -93,6 +94,10 @@ const onSwipeLeft = (): void => {
 	if (deviceKind === 'desktop') {
 		return;
 	}
+	if (disableSwipe.value) {
+		disableSwipe.value = false;
+		return;
+	}
 	const index = tabs.value.findIndex(x => x.key === tab.value);
 	if (index < tabs.value.length - 1) {
 		tab.value = tabs.value[index + 1].key;
@@ -101,6 +106,10 @@ const onSwipeLeft = (): void => {
 
 const onSwipeRight = (): void => {
 	if (deviceKind === 'desktop') {
+		return;
+	}
+	if (disableSwipe.value) {
+		disableSwipe.value = false;
 		return;
 	}
 	const index = tabs.value.findIndex(x => x.key === tab.value);
