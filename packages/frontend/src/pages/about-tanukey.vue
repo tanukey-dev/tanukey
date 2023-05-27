@@ -17,7 +17,7 @@
 					<button v-if="thereIsTreasure" class="_button treasure" @click="getTreasure"><img src="/fluent-emoji/1f3c6.png" class="treasureImg"></button>
 				</div>
 				<div style="text-align: center;">
-					{{ i18n.ts._aboutTanukey.about }}<br><a href="https://misskey-hub.net/docs/misskey.html" target="_blank" class="_link">{{ i18n.ts.learnMore }}</a>
+					{{ i18n.ts._aboutTanukey.about }}<br>
 				</div>
 				<div v-if="$i != null" style="text-align: center;">
 					<MkButton primary rounded inline @click="iLoveTanukey">I <Mfm text="$[jelly ❤]"/> #Tanukey</MkButton>
@@ -60,7 +60,7 @@
 						</div>
 					</div>
 					<div style="margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); grid-gap: 12px;">
-						<div v-for="patron in patrons" :key="patron">{{ patron }}</div>
+						<div v-for="patron in patrons" :key="patron"><a :href="patron.url" target="_blank" rel="noopener noreferrer">{{ patron.name }}</a></div>
 					</div>
 					<!-- <p>{{ i18n.ts._aboutTanukey.morePatrons }}</p> -->
 				</FormSection>
@@ -95,6 +95,7 @@ import { $i } from '@/account';
 const patronsWithIcon = [];
 
 const patrons = [
+	{ name: '峰岸', url: 'https://novelskey.tarbin.net/@minegishi_0' },
 ];
 
 let thereIsTreasure = $ref($i && !claimedAchievements.includes('foundTreasure'));

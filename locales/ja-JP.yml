@@ -1502,7 +1502,7 @@ _registry:
   createKey: "キーを作成"
 
 _aboutTanukey:
-  about: "Tanukeyは2023年にMisskeyからforkした、オープンソースのソフトウェアです。"
+  about: "Tanukeyは2023年にMisskeyからforkしたActivityPubに対応した分散型SNSのひとつでありオープンソースのソフトウェアです。"
   contributors: "主なコントリビューター"
   allContributors: "全てのコントリビューター"
   source: "ソースコード"
