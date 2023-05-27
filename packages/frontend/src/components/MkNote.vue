@@ -70,10 +70,10 @@
 					<MkPoll v-if="appearNote.poll" :note="appearNote" :class="$style.poll"/>
 					<MkUrlPreview v-for="url in urls" :key="url" :url="url" :compact="true" :detail="false" :class="$style.urlPreview"/>
 					<div v-if="appearNote.renote" :class="$style.quote"><MkNoteSimple :note="appearNote.renote" :class="$style.quoteNote"/></div>
-					<button v-if="isLong && collapsed" :class="$style.collapsed" class="_button" @click="collapsed = false">
+					<button v-if="(isLong && isNoteCollapsed) && collapsed" :class="$style.collapsed" class="_button" @click="collapsed = false">
 						<span :class="$style.collapsedLabel">{{ i18n.ts.showMore }}</span>
 					</button>
-					<button v-else-if="isLong && !collapsed" :class="$style.showLess" class="_button" @click="collapsed = true">
+					<button v-else-if="(isLong && isNoteCollapsed) && !collapsed" :class="$style.showLess" class="_button" @click="collapsed = true">
 						<span :class="$style.showLessLabel">{{ i18n.ts.showLess }}</span>
 					</button>
 				</div>
@@ -190,7 +190,6 @@ if (noteViewInterruptors.length > 0) {
 
 onMounted(async () => {
 	isReadNote.value = await checkReadNote();
-	console.log(appearNote.channel.isNoteCollapsed);
 });
 
 const isRenote = (
@@ -210,15 +209,15 @@ let appearNote = $computed(() => isRenote ? note.renote as misskey.entities.Note
 const isMyRenote = $i && ($i.id === note.userId);
 const showContent = ref(false);
 const urls = appearNote.text ? extractUrlFromMfm(mfm.parse(appearNote.text)) : null;
-const isLong = (appearNote.cw == null && appearNote.text != null &&
-	(appearNote.channel !== null && appearNote.channel?.isNoteCollapsed) && (
+const isLong = (appearNote.cw == null && appearNote.text != null && (
 	(appearNote.text.includes('$[x3')) ||
 	(appearNote.text.includes('$[x4')) ||
-	(appearNote.text.split('\n').length > 30) ||
+	(appearNote.text.split('\n').length > 35) ||
 	(appearNote.files.length >= 5) ||
 	(urls && urls.length >= 4)
 ));
-const collapsed = ref(appearNote.cw == null && isLong);
+const isNoteCollapsed = !appearNote.channel || (!appearNote.channel && appearNote.channel?.isNoteCollapsed);
+const collapsed = ref(appearNote.cw == null && isLong && isNoteCollapsed);
 const isDeleted = ref(false);
 const muted = ref(checkWordMute(appearNote, $i, defaultStore.state.mutedWords));
 const translation = ref<any>(null);
@@ -706,7 +705,7 @@ function showReactions(): void {
 
 .contentCollapsed {
 	position: relative;
-	max-height: 9em;
+	max-height: 35em;
 	overflow: clip;
 }
 
