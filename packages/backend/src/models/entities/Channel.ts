@@ -87,6 +87,11 @@ export class Channel {
 	})
 	public searchable: boolean;
 
+	@Column('boolean', {
+		default: true,
+	})
+	public isNoteCollapsed: boolean;
+
 	@Index()
 	@Column('integer', {
 		default: 0,

@@ -42,6 +42,10 @@ export const packedChannelSchema = {
 			type: 'boolean',
 			optional: false, nullable: false,
 		},
+		isNoteCollapsed: {
+			type: 'boolean',
+			optional: false, nullable: false,
+		},
 		notesCount: {
 			type: 'number',
 			nullable: false, optional: false,

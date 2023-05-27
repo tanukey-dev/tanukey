@@ -50,6 +50,7 @@ export const paramDef = {
 		isArchived: { type: 'boolean', nullable: true },
 		federation: { type: 'boolean', nullable: true },
 		searchable: { type: 'boolean', nullable: true },
+		isNoteCollapsed: { type: 'boolean', nullable: true },
 		pinnedNoteIds: {
 			type: 'array',
 			items: {
@@ -112,6 +113,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				...(typeof ps.isArchived === 'boolean' ? { isArchived: ps.isArchived } : {}),
 				...(typeof ps.federation === 'boolean' ? { federation: ps.federation } : {}),
 				...(typeof ps.searchable === 'boolean' ? { searchable: ps.searchable } : {}),
+				...(typeof ps.isNoteCollapsed === 'boolean' ? { isNoteCollapsed: ps.isNoteCollapsed } : {}),
 				...(banner ? { bannerId: banner.id } : {}),
 			});
 

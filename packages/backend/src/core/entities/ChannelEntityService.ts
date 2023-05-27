@@ -78,6 +78,7 @@ export class ChannelEntityService {
 			isArchived: channel.isArchived,
 			federation: channel.federation,
 			searchable: channel.searchable,
+			isNoteCollapsed: channel.isNoteCollapsed,
 			usersCount: channel.usersCount,
 			notesCount: channel.notesCount,
 

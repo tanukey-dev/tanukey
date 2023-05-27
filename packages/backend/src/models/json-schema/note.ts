@@ -138,6 +138,10 @@ export const packedNoteSchema = {
 						type: 'boolean',
 						optional: false, nullable: true,
 					},
+					isNoteCollapsed: {
+						type: 'boolean',
+						optional: false, nullable: false,
+					},
 				},
 			},
 		},

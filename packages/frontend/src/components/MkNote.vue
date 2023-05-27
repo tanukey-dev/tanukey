@@ -190,6 +190,7 @@ if (noteViewInterruptors.length > 0) {
 
 onMounted(async () => {
 	isReadNote.value = await checkReadNote();
+	console.log(appearNote.channel.isNoteCollapsed);
 });
 
 const isRenote = (
@@ -209,7 +210,8 @@ let appearNote = $computed(() => isRenote ? note.renote as misskey.entities.Note
 const isMyRenote = $i && ($i.id === note.userId);
 const showContent = ref(false);
 const urls = appearNote.text ? extractUrlFromMfm(mfm.parse(appearNote.text)) : null;
-const isLong = (appearNote.cw == null && appearNote.text != null && (
+const isLong = (appearNote.cw == null && appearNote.text != null &&
+	(appearNote.channel !== null && appearNote.channel.isNoteCollapsed) && (
 	(appearNote.text.includes('$[x3')) ||
 	(appearNote.text.includes('$[x4')) ||
 	(appearNote.text.split('\n').length > 30) ||

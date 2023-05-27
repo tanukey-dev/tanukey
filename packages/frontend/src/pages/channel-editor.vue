@@ -31,6 +31,10 @@
 				{{ i18n.ts.channelSearchable }}
 			</MkSwitch>
 
+			<MkSwitch v-model="isNoteCollapsed">
+				{{ i18n.ts.isNoteCollapsed }}
+			</MkSwitch>
+
 			<MkFolder :defaultOpen="true">
 				<template #label>{{ i18n.ts.pinnedNotes }}</template>
 				
@@ -93,6 +97,7 @@ let bannerId = $ref<string | null>(null);
 let color = $ref('#000');
 let federation = ref(false);
 let searchable = ref(true);
+let isNoteCollapsed = ref(true);
 const pinnedNotes = ref([]);
 
 watch(() => bannerId, async () => {
@@ -124,6 +129,7 @@ async function fetchChannel() {
 	bannerUrl = channel.bannerUrl;
 	federation.value = channel.federation;
 	searchable.value = channel.federation ? true : channel.searchable;
+	isNoteCollapsed.value = channel.isNoteCollapsed;
 	pinnedNotes.value = channel.pinnedNoteIds.map(id => ({
 		id,
 	}));
@@ -157,6 +163,7 @@ function save() {
 		pinnedNoteIds: pinnedNotes.value.map(x => x.id),
 		federation: federation.value,
 		searchable: federation.value ? true : searchable.value,
+		isNoteCollapsed: isNoteCollapsed.value,
 		color: color,
 	};
 

@@ -46,6 +46,7 @@ export const paramDef = {
 		color: { type: 'string', minLength: 1, maxLength: 16 },
 		federation: { type: 'boolean', nullable: true },
 		searchable: { type: 'boolean', nullable: true },
+		isNoteCollapsed: { type: 'boolean', nullable: true },
 	},
 	required: ['name'],
 } as const;
@@ -85,6 +86,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				bannerId: banner ? banner.id : null,
 				federation: ps.federation ?? false,
 				searchable: ps.searchable ?? true,
+				isNoteCollapsed: ps.isNoteCollapsed ?? true,
 				...(ps.color !== undefined ? { color: ps.color } : {}),
 			} as Channel).then(x => this.channelsRepository.findOneByOrFail(x.identifiers[0]));
 
