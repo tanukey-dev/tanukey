@@ -813,6 +813,9 @@ importers:
       vue-prism-editor:
         specifier: 2.0.0-alpha.2
         version: 2.0.0-alpha.2(vue@3.3.4)
+      vue3-touch-events:
+        specifier: ^4.1.2
+        version: 4.1.2
       vuedraggable:
         specifier: next
         version: 4.1.0(vue@3.3.4)
@@ -16357,6 +16360,10 @@ packages:
       semver: 7.5.1
       typescript: 5.0.4
     dev: true
+
+  /vue3-touch-events@4.1.2:
+    resolution: {integrity: sha512-9EijgPrktmM1chqCXVqHUTOqkhosfvJSA616q3vOm2aYd4VGkJMc8NVD992guyAr479lpb9jOESUfrTPC0YDrQ==}
+    dev: false
 
   /vue@2.7.14:
     resolution: {integrity: sha512-b2qkFyOM0kwqWFuQmgd4o+uHGU7T+2z3T+WQp8UBjADfEv2n4FEMffzBmCKNP0IGzOEEfYjvtcC62xaSKeQDrQ==}

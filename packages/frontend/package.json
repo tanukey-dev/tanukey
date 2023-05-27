@@ -46,7 +46,6 @@
 		"is-file-animated": "1.0.2",
 		"json5": "2.2.3",
 		"matter-js": "0.19.0",
-		"tfm-js": "0.24.2",
 		"misskey-js": "workspace:*",
 		"photoswipe": "5.3.7",
 		"prismjs": "1.29.0",
@@ -61,6 +60,7 @@
 		"strict-event-emitter-types": "2.0.0",
 		"syuilo-password-strength": "0.0.1",
 		"textarea-caret": "3.1.0",
+		"tfm-js": "0.24.2",
 		"three": "0.151.3",
 		"throttle-debounce": "5.0.0",
 		"tinycolor2": "1.6.0",
@@ -74,6 +74,7 @@
 		"vue": "3.3.4",
 		"vue-plyr": "7.0.0",
 		"vue-prism-editor": "2.0.0-alpha.2",
+		"vue3-touch-events": "^4.1.2",
 		"vuedraggable": "next"
 	},
 	"devDependencies": {

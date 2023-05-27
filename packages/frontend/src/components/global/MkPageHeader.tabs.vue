@@ -99,6 +99,8 @@ function renderTab() {
 		tabHighlightEl.value.style.width = rect.width + 'px';
 		tabHighlightEl.value.style.left = (rect.left - parentRect.left + tabHighlightEl.value.parentElement.scrollLeft) + 'px';
 	}
+	//スワイプで切り替えした際に隠れないようにスクロールする
+	tabEl?.scrollIntoView();
 }
 
 function onTabWheel(ev: WheelEvent) {

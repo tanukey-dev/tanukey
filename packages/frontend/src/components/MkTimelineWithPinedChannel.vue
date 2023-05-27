@@ -3,7 +3,12 @@
 	<template #header>
 		<MkPageHeader v-if="tabs.length > 1" v-model:tab="tab" :actions="headerActions" :tabs="tabs"/>
 	</template>
-	<MkSpacer :contentMax="800" style="padding: 0;">
+	<MkSpacer
+		v-touch:swipe.left="onSwipeLeft"
+		v-touch:swipe.right="onSwipeRight"
+		:contentMax="800" 
+		style="padding: 0;"
+	>
 		<MkTimelineWithScroll
 			:key="srckey"
 			:src="srcCh"
@@ -21,6 +26,7 @@ import { instance } from '@/instance';
 import * as os from '@/os';
 import MkTimelineWithScroll from '@/components/MkTimelineWithScroll.vue';
 import { defaultStore } from '@/store';
+import { deviceKind } from '@/scripts/device-kind';
 
 const props = defineProps<{
 	src: string;
@@ -82,6 +88,26 @@ onMounted(async () => {
 
 	tabs.value.push(...t);
 });
+
+const onSwipeLeft = (): void => {
+	if (deviceKind === 'desktop') {
+		return;
+	}
+	const index = tabs.value.findIndex(x => x.key === tab.value);
+	if (index < tabs.value.length - 1) {
+		tab.value = tabs.value[index + 1].key;
+	}
+};
+
+const onSwipeRight = (): void => {
+	if (deviceKind === 'desktop') {
+		return;
+	}
+	const index = tabs.value.findIndex(x => x.key === tab.value);
+	if (index !== 0) {
+		tab.value = tabs.value[index - 1].key;
+	}
+};
 
 </script>
 

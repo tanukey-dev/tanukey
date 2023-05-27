@@ -13,15 +13,21 @@ import { miLocalStorage } from '@/local-storage';
 import { claimAchievement, claimedAchievements } from '@/scripts/achievements';
 import { mainRouter } from '@/router';
 import { initializeSw } from '@/scripts/initialize-sw';
+import Vue3TouchEvents from "vue3-touch-events";
 
 export async function mainBoot() {
-	const { isClientUpdated } = await common(() => createApp(
-		new URLSearchParams(window.location.search).has('zen') || (ui === 'deck' && location.pathname !== '/') ? defineAsyncComponent(() => import('@/ui/zen.vue')) :
-		!$i ? defineAsyncComponent(() => import('@/ui/visitor.vue')) :
-		ui === 'deck' ? defineAsyncComponent(() => import('@/ui/deck.vue')) :
-		ui === 'classic' ? defineAsyncComponent(() => import('@/ui/classic.vue')) :
-		defineAsyncComponent(() => import('@/ui/universal.vue')),
-	));
+	const { isClientUpdated } = await common(() => {
+		const app = createApp(
+			new URLSearchParams(window.location.search).has('zen') || (ui === 'deck' && location.pathname !== '/') ? defineAsyncComponent(() => import('@/ui/zen.vue')) :
+			!$i ? defineAsyncComponent(() => import('@/ui/visitor.vue')) :
+			ui === 'deck' ? defineAsyncComponent(() => import('@/ui/deck.vue')) :
+			ui === 'classic' ? defineAsyncComponent(() => import('@/ui/classic.vue')) :
+			defineAsyncComponent(() => import('@/ui/universal.vue')));
+
+		app.use(Vue3TouchEvents);
+
+		return app;
+	});
 
 	reactionPicker.init();
 
