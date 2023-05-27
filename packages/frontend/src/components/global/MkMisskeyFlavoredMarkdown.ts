@@ -244,7 +244,7 @@ export default function(props: {
 				return [h(MkAsciiArt, {
 					text: token.props.text
 						.replace(/(\r\n|\n|\r)/g, '\n')
-						.replace(/&#x([a-zA-Z0-9]{4})[;]{0,1}/g, (match, c1) => String.fromCharCode.apply(c1.toLowerCase())),
+						.replace(/&#x([a-zA-Z0-9]{4})[;]{0,1}/g, (match, c1) => String.fromCharCode(parseInt(c1, 16))),
 				})];
 			}
 
