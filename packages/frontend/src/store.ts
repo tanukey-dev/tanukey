@@ -297,6 +297,10 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'device',
 		default: '',
 	},
+	postFormWithAsciiArt: {
+		where: 'device',
+		default: false,
+	},
 	postChannel: {
 		where: 'device',
 		default: null as misskey.entities.Channel|null,

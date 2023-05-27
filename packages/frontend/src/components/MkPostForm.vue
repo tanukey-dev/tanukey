@@ -254,10 +254,10 @@ const canPost = $computed((): boolean => {
 
 const withHashtags = $computed(defaultStore.makeGetterSetter('postFormWithHashtags'));
 const hashtags = $computed(defaultStore.makeGetterSetter('postFormHashtags'));
-const withAsciiArt = ref(false);
+const withAsciiArt = computed(defaultStore.makeGetterSetter('postFormWithAsciiArt'));
 const asciiartText = ref('');
 
-let aaTextareaHeight = ref("auto");
+let aaTextareaHeight = ref("300px");
 
 let aaTextAreaStyles = computed(() => {
 	return { 'height': aaTextareaHeight.value };
