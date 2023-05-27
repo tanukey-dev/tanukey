@@ -179,9 +179,6 @@ function save() {
 		showTimelineReplies: !!profile.showTimelineReplies,
 	});
 	claimAchievement('profileFilled');
-	if (profile.name === 'syuilo' || profile.name === 'しゅいろ') {
-		claimAchievement('setNameToSyuilo');
-	}
 	if (profile.isCat) {
 		claimAchievement('markedAsCat');
 	}

@@ -77,8 +77,6 @@ export const ACHIEVEMENT_TYPES = [
 	'reactWithoutRead',
 	'clickedClickHere',
 	'justPlainLucky',
-	'setNameToSyuilo',
-	'brainDiver',
 ] as const;
 
 @Injectable()

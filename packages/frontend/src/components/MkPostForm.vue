@@ -798,16 +798,6 @@ async function post(ev?: MouseEvent) {
 			if ((text.includes('love') || text.includes('❤')) && text.includes('tanukey')) {
 				claimAchievement('iLoveTanukey');
 			}
-			if (
-				text.includes('https://youtu.be/Efrlqw8ytg4'.toLowerCase()) ||
-				text.includes('https://www.youtube.com/watch?v=Efrlqw8ytg4'.toLowerCase()) ||
-				text.includes('https://m.youtube.com/watch?v=Efrlqw8ytg4'.toLowerCase()) ||
-				text.includes('https://youtu.be/XVCwzwxdHuA'.toLowerCase()) ||
-				text.includes('https://www.youtube.com/watch?v=XVCwzwxdHuA'.toLowerCase()) ||
-				text.includes('https://m.youtube.com/watch?v=XVCwzwxdHuA'.toLowerCase())
-			) {
-				claimAchievement('brainDiver');
-			}
 
 			if (props.renote && (props.renote.userId === $i.id) && text.length > 0) {
 				claimAchievement('selfQuote');
