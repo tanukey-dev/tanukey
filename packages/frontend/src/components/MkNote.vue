@@ -212,8 +212,7 @@ const urls = appearNote.text ? extractUrlFromMfm(mfm.parse(appearNote.text)) : n
 const isLong = (appearNote.cw == null && appearNote.text != null && (
 	(appearNote.text.includes('$[x3')) ||
 	(appearNote.text.includes('$[x4')) ||
-	(appearNote.text.split('\n').length > 9) ||
-	(appearNote.text.length > 500) ||
+	(appearNote.text.split('\n').length > 30) ||
 	(appearNote.files.length >= 5) ||
 	(urls && urls.length >= 4)
 ));
