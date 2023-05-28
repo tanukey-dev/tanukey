@@ -1,6 +1,6 @@
 {
 	"name": "misskey",
-	"version": "13.13.0-beta.3-tanu-1.19.3",
+	"version": "13.13.0-beta.3-tanu-1.20.0",
 	"codename": "nasubi",
 	"repository": {
 		"type": "git",
