@@ -1,8 +1,10 @@
 <template>
 <div v-if="vcEnable" :class="$style.root">
 	<div :class="$style.header">
+		<div ref="rootEl"></div>
 		<div :class="$style.headerLeft">
 			<div>Voice Chat β ({{ channel }})</div>
+			<div>Speaker: {{ speakers.map(s => s.username).join(',') }}</div>
 		</div>
 		<div v-if="joinStatus" :class="$style.headerRight">
 			<div v-for="user in users" :key="user.id">
@@ -23,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, ref } from 'vue';
+import { watch, ref, shallowRef } from 'vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 import { instance } from '@/instance';
@@ -51,6 +53,7 @@ const connecting = ref(false);
 const vcEnable = ref(instance.enableVoiceChat);
 const participants = ref<Participant[]>([]);
 const users = ref([]);
+const speakers = ref<string[]>([]);
 
 watch(participants, async () => {
 	users.value = await Promise.all(participants.value.map(async p => {
@@ -59,6 +62,8 @@ watch(participants, async () => {
 });
 
 const room = new Room({
+	adaptiveStream: true,
+	dynacast: true,
 	audioCaptureDefaults: {
 		autoGainControl: true,
 		deviceId: '',
@@ -88,8 +93,29 @@ const room = new Room({
 	},
 });
 
+const rootEl = shallowRef<HTMLDivElement>();
+
+room
+	.on(RoomEvent.TrackSubscribed, handleTrackSubscribed)
+	.on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
+
+function handleTrackSubscribed( track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) {
+	console.log('subscribe');
+	if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
+		// attach it to a new HTMLVideoElement or HTMLAudioElement
+		const element = track.attach();
+		rootEl.value?.appendChild(element);
+	}
+}
+
+function handleTrackUnsubscribed( track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) {
+	// remove tracks from all attached elements
+	track.detach();
+}
+
 room.on(RoomEvent.ActiveSpeakersChanged, (activeSpeakers: Participant[]) => {
 	// speakers contain all of the current active speakers
+	speakers.value = activeSpeakers.map(s => users.value.find(u => u.id === s.identity));
 });
 
 room.on(RoomEvent.ParticipantConnected, (participant: Participant) => {
@@ -156,7 +182,8 @@ async function join() {
 		connecting.value = false;
 		joinStatus.value = true;
 
-		console.log(room);
+		await room.startAudio();
+
 		addParticipant(room.localParticipant);
 		for (const participant of room.participants.values()) {
 			addParticipant(participant);
