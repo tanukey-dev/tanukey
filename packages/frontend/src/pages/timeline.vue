@@ -3,7 +3,7 @@
 	<template #header>
 		<MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin" :display-my-avatar="true"/>
 	</template>
-	<MkSpacer>
+	<MkSpacer :contentMax="800">
 		<div ref="rootEl">
 			<XCommonTimeline
 				v-if="!isNeedPinnedChannels()"
