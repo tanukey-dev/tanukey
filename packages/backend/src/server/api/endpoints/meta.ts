@@ -198,6 +198,14 @@ export const meta = {
 					optional: false, nullable: false,
 				},
 			},
+			enableVoiceChat: {
+				type: 'boolean',
+				optional: false, nullable: false,
+			},
+			liveKitServerURL: {
+				type: 'string',
+				optional: false, nullable: true,
+			},
 			features: {
 				type: 'object',
 				optional: true, nullable: false,
@@ -326,6 +334,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 				mediaProxy: this.config.mediaProxy,
 				pinnedLtlChannelIds: instance.pinnedLtlChannelIds,
+				enableVoiceChat: instance.enableVoiceChat,
+				liveKitServerURL: instance.liveKitServerURL,
 
 				...(ps.detail ? {
 					cacheRemoteFiles: instance.cacheRemoteFiles,

@@ -9,6 +9,7 @@
 		:contentMax="800" 
 		style="padding: 0;"
 	>
+		<MkLiveKit :channel="tab"/>
 		<MkTimelineWithScroll
 			:key="srckey"
 			:src="srcCh"
@@ -25,6 +26,7 @@ import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import * as os from '@/os';
 import MkTimelineWithScroll from '@/components/MkTimelineWithScroll.vue';
+import MkLiveKit from '@/components/MkLiveKit.vue';
 import { defaultStore } from '@/store';
 import { deviceKind } from '@/scripts/device-kind';
 

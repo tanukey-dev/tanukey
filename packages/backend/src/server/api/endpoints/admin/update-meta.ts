@@ -71,6 +71,22 @@ export const paramDef = {
 		smtpPort: { type: 'integer', nullable: true },
 		smtpUser: { type: 'string', nullable: true },
 		smtpPass: { type: 'string', nullable: true },
+		enableVoiceChat: {
+			type: 'boolean',
+			nullable: false,
+		},
+		liveKitServerURL: {
+			type: 'string',
+			nullable: true,
+		},
+		liveKitApiKey: {
+			type: 'string',
+			nullable: true,
+		},
+		liveKitApiSecretKey: {
+			type: 'string',
+			nullable: true,
+		},
 		enableServiceWorker: { type: 'boolean' },
 		swPublicKey: { type: 'string', nullable: true },
 		swPrivateKey: { type: 'string', nullable: true },
@@ -284,6 +300,22 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (ps.errorImageUrl !== undefined) {
 				set.errorImageUrl = ps.errorImageUrl;
+			}
+
+			if (ps.enableVoiceChat !== undefined) {
+				set.enableVoiceChat = ps.enableVoiceChat;
+			}
+
+			if (ps.liveKitServerURL !== undefined) {
+				set.liveKitServerURL = ps.liveKitServerURL;
+			}
+
+			if (ps.liveKitApiKey !== undefined) {
+				set.liveKitApiKey = ps.liveKitApiKey;
+			}
+
+			if (ps.liveKitApiSecretKey !== undefined) {
+				set.liveKitApiSecretKey = ps.liveKitApiSecretKey;
 			}
 
 			if (ps.enableServiceWorker !== undefined) {

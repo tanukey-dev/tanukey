@@ -320,6 +320,8 @@ export type LiteInstanceMetadata = {
 	translatorAvailable: boolean;
 	serverRules: string[];
 	pinnedLtlChannelIds: string[];
+	enableVoiceChat: boolean;
+	liveKitServerURL: string | null;
 };
 
 export type DetailedInstanceMetadata = LiteInstanceMetadata & {
