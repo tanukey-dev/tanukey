@@ -13,7 +13,8 @@
 		<MkTimelineWithScroll
 			:key="srckey"
 			:src="srcCh"
-			:channel="channel"
+			:channelId="channelId"
+			:channel="postChannel"
 			:sound="true"
 		/>
 	</MkSpacer>
@@ -40,7 +41,7 @@ const srcCh = computed(() => tab.value === 'public' ? src.value : 'channel');
 const srckey = computed(() => tab.value === 'public' ? src.value : tab.value);
 const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 const tab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
-const channel = computed(() => tab.value === 'public' ? null : tab.value);
+const channelId = computed(() => tab.value === 'public' ? null : tab.value);
 const headerActions = computed(() => []);
 const disableSwipe = computed(defaultStore.makeGetterSetter('disableSwipe'));
 
