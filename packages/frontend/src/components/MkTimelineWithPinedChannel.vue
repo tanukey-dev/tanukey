@@ -9,12 +9,11 @@
 		:contentMax="800" 
 		style="padding: 0;"
 	>
-		<MkLiveKit v-if="postChannel?.isVoiceChatEnabled" :channel="postChannel"/>
 		<MkTimelineWithScroll
 			:key="srckey"
 			:src="srcCh"
 			:channelId="channelId"
-			:channel="postChannel"
+			:channel="channel"
 			:sound="true"
 		/>
 	</MkSpacer>
@@ -27,7 +26,6 @@ import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import * as os from '@/os';
 import MkTimelineWithScroll from '@/components/MkTimelineWithScroll.vue';
-import MkLiveKit from '@/components/MkLiveKit.vue';
 import { defaultStore } from '@/store';
 import { deviceKind } from '@/scripts/device-kind';
 
@@ -39,6 +37,7 @@ const tabs = ref<Tab[]>([{ key: 'public', title: i18n.ts.public, icon: 'ti ti-wo
 const src = ref(props.src);
 const srcCh = computed(() => tab.value === 'public' ? src.value : 'channel');
 const srckey = computed(() => tab.value === 'public' ? src.value : tab.value);
+const channel = ref<any>(null);
 const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 const tab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
 const channelId = computed(() => tab.value === 'public' ? null : tab.value);
@@ -54,8 +53,10 @@ watch(tab, async () => {
 		let ch = await os.api('channels/show', {
 			channelId: tab.value,
 		});
+		channel.value = ch;
 		postChannel.value = ch;
 	} else {
+		channel.value = null;
 		postChannel.value = null;
 	}
 });
@@ -72,7 +73,11 @@ onMounted(async () => {
 			channelId: id,
 		});
 		if (ch != null) {
-			t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv-old' });
+			if (ch.isVoiceChatEnabled) {
+				t.push({ key: ch.id, title: ch.name, icon: 'ti ti-microphone' });
+			} else {
+				t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv-old' });
+			}
 			s.add(ch.id);
 		}
 	}
@@ -85,7 +90,11 @@ onMounted(async () => {
 				channelId: id.value,
 			});
 			if (ch != null) {
-				t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv' });
+				if (ch.isVoiceChatEnabled) {
+					t.push({ key: ch.id, title: ch.name, icon: 'ti ti-microphone' });
+				} else {
+					t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv' });
+				}
 			}
 		}
 	}

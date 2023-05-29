@@ -4,12 +4,7 @@
 		<div ref="rootEl"></div>
 		<div :class="$style.headerLeft">
 			<div>Voice Chat β ({{ channel?.name }})</div>
-			<div>Speaker: {{ speakers.map(s => s.username).join(',') }}</div>
-		</div>
-		<div v-if="joinStatus" :class="$style.headerRight">
-			<div v-for="user in users" :key="user.id">
-				<MkAvatar :user="user" :class="$style.avatar" :preview="true"/>
-			</div>
+			<div>※現在iPhone/Safariでは動作しません</div>
 		</div>
 		<div :class="$style.headerRight">
 			<MkButton v-if="connecting" :disabled="true" class="_button">connecting...</MkButton>
@@ -19,6 +14,14 @@
 				<MkButton v-if="!voice" @click="onVoiceOn"><i class="ti ti-microphone-off" style="color: red;"></i></MkButton>
 				<MkButton v-else @click="onVoiceOff"><i class="ti ti-microphone"></i></MkButton>
 			</div>
+		</div>
+	</div>
+	<div v-if="joinStatus" :class="$style.speakers">
+		<div>Speaker: {{ speakers.map(s => s.username).join(',') }}</div>
+	</div>
+	<div v-if="joinStatus" :class="$style.avatars">
+		<div v-for="user in users" :key="user.id">
+			<MkAvatar :user="user" :class="[$style.avatar, speakers.find(s => s.id === user.id) ? $style.speaking : '']" :preview="true"/>
 		</div>
 	</div>
 </div>
@@ -53,7 +56,7 @@ const connecting = ref(false);
 const vcEnableGlobal = ref(instance.enableVoiceChat);
 const participants = ref<Participant[]>([]);
 const users = ref<any[]>([]);
-const speakers = ref<string[]>([]);
+const speakers = ref<any[]>([]);
 const usersCache = new Map<string, any>();
 
 watch(participants, async () => {
@@ -217,8 +220,8 @@ async function join() {
 
 <style lang="scss" module>
 .root {
-	position: relative;
-	container-type: inline-size;
+	display: flex;
+	flex-direction: column;
 	padding: 12px;
 	text-align: left;
 	background: var(--panel);
@@ -231,15 +234,28 @@ async function join() {
 }
 
 .header {
+	width: 100%;
 	z-index: 1000;
 	min-height: 50px;
 	display: flex;
 	flex-wrap: nowrap;
 	gap: 4px;
 }
+.speakers {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+}
+
+.avatars {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+}
 
 .headerLeft {
-	display: block;
+	display: flex;
+	flex-direction: column;
 }
 
 .headerRight {
@@ -258,6 +274,11 @@ async function join() {
 	width: 28px;
 	height: 28px;
 	margin: 5px;
+}
+
+.speaking {
+	box-shadow:
+		0 0 0 4px rgba(9, 133, 164, 0.653)
 }
 
 </style>
