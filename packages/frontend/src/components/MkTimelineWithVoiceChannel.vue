@@ -1,7 +1,7 @@
 <template>
 <MkStickyContainer>
 	<template #header>
-		<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="tabs"/>
+		<MkPageHeader v-if="tabs.length > 1" v-model:tab="tab" :actions="headerActions" :tabs="tabs"/>
 	</template>
 	<MkSpacer
 		v-if="tab"
@@ -12,7 +12,7 @@
 	>
 		<MkTimelineWithScroll
 			:key="srckey"
-			:src="srcCh"
+			src="channel"
 			:channelId="channelId"
 			:channel="channel"
 			:sound="true"
@@ -24,89 +24,49 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { Tab } from './global/MkPageHeader.tabs.vue';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
 import * as os from '@/os';
 import MkTimelineWithScroll from '@/components/MkTimelineWithScroll.vue';
 import { defaultStore } from '@/store';
 import { deviceKind } from '@/scripts/device-kind';
 import { scrollToTop } from '@/scripts/scroll';
 
-const props = defineProps<{
-	src: string;
-}>();
-
-const tabs = ref<Tab[]>([{ key: 'public', title: i18n.ts.public, icon: 'ti ti-world-www' }]);
-const src = ref(props.src);
-const srcCh = computed(() => tab.value === 'public' ? src.value : 'channel');
-const srckey = computed(() => tab.value === 'public' ? src.value : tab.value);
+const tabs = ref<Tab[]>([]);
+const srckey = computed(() => tab.value);
 const channel = ref<any>(null);
 const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 const tab = ref<string|null>(null);
-const selectedTab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
-const channelId = computed(() => tab.value === 'public' ? null : tab.value);
+const selectedTab = computed(defaultStore.makeGetterSetter('selectedVoiceChannelTab'));
+const channelId = computed(() => tab.value);
 const headerActions = computed(() => []);
 const disableSwipe = computed(defaultStore.makeGetterSetter('disableSwipe'));
 
 watch(tab, async () => {
+	let ch = await os.api('channels/show', {
+		channelId: tab.value,
+	});
+	channel.value = ch;
+	postChannel.value = ch;
 	selectedTab.value = tab.value;
-
-	if (tab.value == null) {
-		tab.value = 'public';
-	}
-
-	if (tab.value !== null && tab.value !== 'public') {
-		let ch = await os.api('channels/show', {
-			channelId: tab.value,
-		});
-		channel.value = ch;
-		postChannel.value = ch;
-	} else {
-		channel.value = null;
-		postChannel.value = null;
-	}
 
 	scrollToTop(null);
 });
 
 onMounted(async () => {
 	let t: any[] = [];
-	let s: Set<string> = new Set<string>();
-	for (let id of instance.pinnedLtlChannelIds) {
-		let ch = await os.api('channels/show', {
-			channelId: id,
-		});
-		if (ch != null) {
-			if (ch.isVoiceChatEnabled) {
-				t.push({ key: ch.id, title: ch.name, icon: 'ti ti-microphone' });
-			} else {
-				t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv-old' });
-			}
-			s.add(ch.id);
-		}
+
+	let chs = await os.api('channels/voice-channels');
+	if (!chs) {
+		return;
 	}
 
-	let userPinnedLtlChannelIds = defaultStore.makeGetterSetter('userPinnedLtlChannelIds');
-	let userIds = userPinnedLtlChannelIds.get();
-	for (let id of userIds) {
-		if (!s.has(id.value)) {
-			let ch = await os.api('channels/show', {
-				channelId: id.value,
-			});
-			if (ch != null) {
-				if (ch.isVoiceChatEnabled) {
-					t.push({ key: ch.id, title: ch.name, icon: 'ti ti-microphone' });
-				} else {
-					t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv' });
-				}
-			}
-		}
+	for (let ch of chs) {
+		t.push({ key: ch.id, title: ch.name, icon: 'ti ti-microphone' });
 	}
 
-	tabs.value.push(...t);
+	tabs.value = t;
 
 	if (selectedTab.value == null) {
-		tab.value = 'public';
+		tab.value = null;
 	} else {
 		tab.value = selectedTab.value;
 	}

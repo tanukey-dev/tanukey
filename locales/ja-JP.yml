@@ -1893,6 +1893,7 @@ _timelines:
   media: "メディア"
   social: "ソーシャル"
   global: "グローバル"
+  voiceChat: "ボイスチャット"
 
 _play:
   new: "Playの作成"

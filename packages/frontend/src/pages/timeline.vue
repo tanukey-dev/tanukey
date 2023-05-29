@@ -3,31 +3,35 @@
 	<template #header>
 		<MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin" :display-my-avatar="true"/>
 	</template>
-	<MkSpacer>
-		<div ref="rootEl">
-			<MkSpacer :contentMax="800" style="padding: 0;">
-				<XCommonTimeline
-					v-if="!isNeedPinnedChannels()"
-					ref="tlComponent"
-					:key="src"
-					:src="src"
-					:sound="true"
-				/>
-			</MkSpacer>
-			<MkTimelineWithPinedChannel
-				v-if="isNeedPinnedChannels()"
+	<div ref="rootEl">
+		<MkTimelineWithPinedChannel
+			v-if="isNeedPinnedChannels()"
+			ref="tlComponent"
+			:key="src"
+			:src="src"
+			:sound="true"
+		/>
+		<MkTimelineWithVoiceChannel
+			v-else-if="src === 'voiceChat'"
+			ref="tlComponent"
+			:key="src"
+			:src="src"
+			:sound="true"
+		/>
+		<MkSpacer v-else :contentMax="800" style="padding: 0;">
+			<XCommonTimeline
 				ref="tlComponent"
 				:key="src"
 				:src="src"
 				:sound="true"
 			/>
-		</div>
-	</MkSpacer>
+		</MkSpacer>
+	</div>
 </MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, provide } from 'vue';
+import { defineAsyncComponent, computed, provide, ref } from 'vue';
 import type { Tab } from '@/components/global/MkPageHeader.tabs.vue';
 import * as os from '@/os';
 import { defaultStore } from '@/store';
@@ -40,6 +44,7 @@ provide('shouldOmitHeaderTitle', true);
 
 const XCommonTimeline = defineAsyncComponent(() => import('@/components/MkTimelineWithScroll.vue'));
 const MkTimelineWithPinedChannel = defineAsyncComponent(() => import('@/components/MkTimelineWithPinedChannel.vue'));
+const MkTimelineWithVoiceChannel = defineAsyncComponent(() => import('@/components/MkTimelineWithVoiceChannel.vue'));
 
 function isNeedPinnedChannels(): boolean {
 	return src === 'local' || src === 'social';
@@ -47,6 +52,7 @@ function isNeedPinnedChannels(): boolean {
 
 const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable);
 const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
+const isVoiceChatAvailable = ref(instance.enableVoiceChat);
 
 let srcWhenNotSignin = $ref(isLocalTimelineAvailable ? 'local' : 'global');
 const src = $computed({ get: () => ($i ? defaultStore.reactiveState.tl.value.src : srcWhenNotSignin), set: (x) => saveSrc(x) });
@@ -119,6 +125,11 @@ const headerTabs = $computed(() => [{
 	key: 'global',
 	title: i18n.ts._timelines.global,
 	icon: 'ti ti-whirl',
+	iconOnly: true,
+}] : []), ...(isVoiceChatAvailable.value ? [{
+	key: 'voiceChat',
+	title: i18n.ts._timelines.voiceChat,
+	icon: 'ti ti-microphone',
 	iconOnly: true,
 }] : []), {
 	icon: 'ti ti-list',

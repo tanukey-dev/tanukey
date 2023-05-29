@@ -3,12 +3,16 @@
 <XTutorial v-if="$i && defaultStore.reactiveState.timelineTutorial.value != -1" class="_panel" style="margin-bottom: var(--margin);"/>
 <MkPostForm v-if="defaultStore.reactiveState.showFixedPostForm.value" :class="$style.postForm" class="post-form _panel" fixed style="margin-bottom: var(--margin);"/>
 <MkLiveKit v-if="channel?.isVoiceChatEnabled" :channel="channel"/>
-<MkFoldableSection v-if="channel && channel.pinnedNotes.length > 0">
+<MkFoldableSection v-if="channel && channel.pinnedNotes?.length > 0">
 	<template #header><i class="ti ti-pin ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.pinnedNotes }}</template>
 	<div v-if="channel.pinnedNotes.length > 0" class="_gaps">
 		<MkNote v-for="note in channel.pinnedNotes" :key="note.id" class="_panel" :note="note"/>
 	</div>
 </MkFoldableSection>
+<div v-if="channel && channel.pinnedNotes?.length > 0" :class="$style.header">
+	<div :class="$style.title"><div><i class="ti ti-timeline" style="margin-right: 0.5em;"></i>{{ i18n.ts.timeline }}</div></div>
+	<div :class="$style.divider"></div>
+</div>
 <div :class="$style.tl">
 	<MkTimeline
 		ref="tlComponent"
@@ -86,5 +90,27 @@ function top(): void {
 	background: var(--bg);
 	border-radius: var(--radius);
 	overflow: clip;
+}
+
+.header {
+	display: flex;
+	position: relative;
+	z-index: 10;
+	position: sticky;
+	top: var(--stickyTop, 0px);
+	-webkit-backdrop-filter: var(--blur, blur(8px));
+	backdrop-filter: var(--blur, blur(20px));
+}
+.divider {
+	flex: 1;
+	margin: auto;
+	height: 1px;
+	background: var(--divider);
+}
+.title {
+	display: grid;
+	place-content: center;
+	margin: 0;
+	padding: 12px 16px 12px 0;
 }
 </style>

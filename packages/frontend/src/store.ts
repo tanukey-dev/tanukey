@@ -309,6 +309,10 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'device',
 		default: null as string|null,
 	},
+	selectedVoiceChannelTab: {
+		where: 'device',
+		default: null as string|null,
+	},
 	themeInitial: {
 		where: 'device',
 		default: true,
