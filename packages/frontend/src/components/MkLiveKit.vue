@@ -1,9 +1,9 @@
 <template>
-<div v-if="vcEnableGlobal" :class="$style.root">
+<div v-if="vcEnableGlobal && channel?.isVoiceChatEnabled" :class="$style.root">
 	<div :class="$style.header">
 		<div ref="rootEl"></div>
 		<div :class="$style.headerLeft">
-			<div>Voice Chat β ({{ channel }})</div>
+			<div>Voice Chat β ({{ channel?.name }})</div>
 			<div>Speaker: {{ speakers.map(s => s.username).join(',') }}</div>
 		</div>
 		<div v-if="joinStatus" :class="$style.headerRight">
@@ -44,7 +44,7 @@ import {
 } from 'livekit-client';
 
 const props = defineProps<{
-	channel: string;
+	channel: any;
 }>();
 
 const voice = ref(false);
@@ -175,7 +175,7 @@ async function join() {
 	connecting.value = true;
 
 	const token = await os.api('i/vc-token', {
-		roomName: props.channel,
+		roomName: props.channel.name,
 		userName: $i.id,
 	});
 

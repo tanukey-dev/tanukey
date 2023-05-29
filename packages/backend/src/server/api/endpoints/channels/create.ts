@@ -47,6 +47,7 @@ export const paramDef = {
 		federation: { type: 'boolean', nullable: true },
 		searchable: { type: 'boolean', nullable: true },
 		isNoteCollapsed: { type: 'boolean', nullable: true },
+		isVoiceChatEnabled: { type: 'boolean', nullable: true },
 	},
 	required: ['name'],
 } as const;
@@ -87,6 +88,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				federation: ps.federation ?? false,
 				searchable: ps.searchable ?? true,
 				isNoteCollapsed: ps.isNoteCollapsed ?? true,
+				isVoiceChatEnabled: ps.isVoiceChatEnabled ?? false,
 				...(ps.color !== undefined ? { color: ps.color } : {}),
 			} as Channel).then(x => this.channelsRepository.findOneByOrFail(x.identifiers[0]));
 

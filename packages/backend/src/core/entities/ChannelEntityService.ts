@@ -79,6 +79,7 @@ export class ChannelEntityService {
 			federation: channel.federation,
 			searchable: channel.searchable,
 			isNoteCollapsed: channel.isNoteCollapsed,
+			isVoiceChatEnabled: channel.isVoiceChatEnabled,
 			usersCount: channel.usersCount,
 			notesCount: channel.notesCount,
 

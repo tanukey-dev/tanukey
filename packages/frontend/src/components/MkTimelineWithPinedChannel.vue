@@ -9,7 +9,7 @@
 		:contentMax="800" 
 		style="padding: 0;"
 	>
-		<MkLiveKit :channel="tab"/>
+		<MkLiveKit v-if="postChannel?.isVoiceChatEnabled" :channel="postChannel"/>
 		<MkTimelineWithScroll
 			:key="srckey"
 			:src="srcCh"

@@ -46,6 +46,10 @@ export const packedChannelSchema = {
 			type: 'boolean',
 			optional: false, nullable: false,
 		},
+		isVoiceChatEnabled: {
+			type: 'boolean',
+			optional: false, nullable: false,
+		},
 		notesCount: {
 			type: 'number',
 			nullable: false, optional: false,

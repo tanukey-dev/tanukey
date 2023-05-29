@@ -92,6 +92,11 @@ export class Channel {
 	})
 	public isNoteCollapsed: boolean;
 
+	@Column('boolean', {
+		default: false,
+	})
+	public isVoiceChatEnabled: boolean;
+
 	@Index()
 	@Column('integer', {
 		default: 0,

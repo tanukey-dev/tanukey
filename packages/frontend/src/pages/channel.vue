@@ -30,6 +30,8 @@
 			<div v-if="channel && tab === 'timeline'" class="_gaps">
 				<MkInfo v-if="channel.isArchived" warn>{{ i18n.ts.thisChannelArchived }}</MkInfo>
 
+				<MkLiveKit v-if="channel.isVoiceChatEnabled" :channel="channel"/>
+
 				<!-- スマホ・タブレットの場合、キーボードが表示されると投稿が見づらくなるので、デスクトップ場合のみ自動でフォーカスを当てる -->
 				<MkPostForm v-if="$i && defaultStore.reactiveState.showFixedPostFormInChannel.value" :channel="channel" class="post-form _panel" fixed :autofocus="deviceKind === 'desktop'"/>
 
@@ -77,6 +79,7 @@ import { defaultStore } from '@/store';
 import MkNote from '@/components/MkNote.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
+import MkLiveKit from '@/components/MkLiveKit.vue';
 
 const router = useRouter();
 
