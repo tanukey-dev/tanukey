@@ -3,15 +3,17 @@
 	<template #header>
 		<MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin" :display-my-avatar="true"/>
 	</template>
-	<MkSpacer :contentMax="800">
+	<MkSpacer>
 		<div ref="rootEl">
-			<XCommonTimeline
-				v-if="!isNeedPinnedChannels()"
-				ref="tlComponent"
-				:key="src"
-				:src="src"
-				:sound="true"
-			/>
+			<MkSpacer :contentMax="800" style="padding: 0;">
+				<XCommonTimeline
+					v-if="!isNeedPinnedChannels()"
+					ref="tlComponent"
+					:key="src"
+					:src="src"
+					:sound="true"
+				/>
+			</MkSpacer>
 			<MkTimelineWithPinedChannel
 				v-if="isNeedPinnedChannels()"
 				ref="tlComponent"
