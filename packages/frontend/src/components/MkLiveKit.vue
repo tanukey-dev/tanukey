@@ -1,5 +1,5 @@
 <template>
-<div v-if="vcEnable" :class="$style.root">
+<div v-if="vcEnableGlobal" :class="$style.root">
 	<div :class="$style.header">
 		<div ref="rootEl"></div>
 		<div :class="$style.headerLeft">
@@ -50,14 +50,22 @@ const props = defineProps<{
 const voice = ref(false);
 const joinStatus = ref(false);
 const connecting = ref(false);
-const vcEnable = ref(instance.enableVoiceChat);
+const vcEnableGlobal = ref(instance.enableVoiceChat);
 const participants = ref<Participant[]>([]);
-const users = ref([]);
+const users = ref<any[]>([]);
 const speakers = ref<string[]>([]);
+const usersCache = new Map<string, any>();
 
 watch(participants, async () => {
 	users.value = await Promise.all(participants.value.map(async p => {
-		return await os.api('users/show', { userId: p.identity });
+		const userCache = usersCache.get(p.identity);
+		if (userCache) {
+			return userCache;
+		} else {
+			const user = await os.api('users/show', { userId: p.identity });
+			usersCache.set(p.identity, user);
+			return user;
+		}
 	}));
 });
 
@@ -139,6 +147,7 @@ const onConnect = (): void => {
 const onDisconnect = (): void => {
 	room.disconnect();
 	users.value = [];
+	participants.value = [];
 	joinStatus.value = false;
 };
 
@@ -184,10 +193,12 @@ async function join() {
 
 		await room.startAudio();
 
+		usersCache.set($i.id, $i);
 		addParticipant(room.localParticipant);
 		for (const participant of room.participants.values()) {
 			addParticipant(participant);
 		}
+
 		console.log(
 			`successfully connected to ${room.name} in ${Math.round(elapsed)}ms` +
 			await room.engine.getConnectedServerAddress(),
