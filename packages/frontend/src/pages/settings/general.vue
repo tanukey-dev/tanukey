@@ -58,6 +58,7 @@
 				<MkSwitch v-model="showGapBetweenNotesInTimeline">{{ i18n.ts.showGapBetweenNotesInTimeline }}</MkSwitch>
 				<MkSwitch v-model="loadRawImages">{{ i18n.ts.loadRawImages }}</MkSwitch>
 				<MkSwitch v-model="useReactionPickerForContextMenu">{{ i18n.ts.useReactionPickerForContextMenu }}</MkSwitch>
+				<MkSwitch v-model="asciiArtDarkMode">{{ i18n.ts.asciiArtDarkMode }}</MkSwitch>
 			</div>
 
 			<MkSelect v-model="instanceTicker">
@@ -230,6 +231,7 @@ const numberOfPageCache = computed(defaultStore.makeGetterSetter('numberOfPageCa
 const instanceTicker = computed(defaultStore.makeGetterSetter('instanceTicker'));
 const enableInfiniteScroll = computed(defaultStore.makeGetterSetter('enableInfiniteScroll'));
 const useReactionPickerForContextMenu = computed(defaultStore.makeGetterSetter('useReactionPickerForContextMenu'));
+const asciiArtDarkMode = computed(defaultStore.makeGetterSetter('asciiArtDarkMode'));
 const squareAvatars = computed(defaultStore.makeGetterSetter('squareAvatars'));
 const mediaListWithOneImageAppearance = computed(defaultStore.makeGetterSetter('mediaListWithOneImageAppearance'));
 const notificationPosition = computed(defaultStore.makeGetterSetter('notificationPosition'));

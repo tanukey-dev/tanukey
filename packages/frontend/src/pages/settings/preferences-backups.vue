@@ -76,6 +76,7 @@ const defaultStoreSaveKeys: (keyof typeof defaultStore['state'])[] = [
 	'showFixedPostFormInChannel',
 	'enableInfiniteScroll',
 	'useReactionPickerForContextMenu',
+	'asciiArtDarkMode',
 	'showGapBetweenNotesInTimeline',
 	'instanceTicker',
 	'reactionPickerSize',
