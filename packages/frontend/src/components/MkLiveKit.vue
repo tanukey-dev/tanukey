@@ -64,7 +64,7 @@ const users = ref<any[]>([]);
 const speakers = ref<any[]>([]);
 const usersCache = new Map<string, any>();
 const mutedSpeakers = new Set<string>();
-const audioCaches: any[] = [];
+let audioCaches: any[] = [];
 let muteTimerId;
 
 onMounted(() => {
@@ -181,8 +181,8 @@ const onAudioStart = async (): Promise<void> => {
 	}
 	addParticipant(room.localParticipant);
 	for (const audio of audioCaches) {
-		audio.attach();
-		rootEl.value?.appendChild(audio);
+		const element = audio.attach();
+		rootEl.value?.appendChild(element);
 	}
 	await room.startAudio();
 	audioJoinStatus.value = true;
@@ -195,6 +195,7 @@ const onDisconnect = (): void => {
 	participants.value = [];
 	audioJoinStatus.value = false;
 	roomJoinStatus.value = false;
+	audioCaches = [];
 };
 
 const onVoiceOn = (): void => {
