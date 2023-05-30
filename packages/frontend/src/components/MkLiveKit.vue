@@ -75,6 +75,7 @@ onMounted(() => {
 
 onUnmounted(() => {
 	clearInterval(muteTimerId);
+	onDisconnect();
 });
 
 watch(participants, async () => {
@@ -138,6 +139,8 @@ function handleTrackSubscribed(
 		if (audioJoinStatus.value) {
 			const element = track.attach();
 			rootEl.value?.appendChild(element);
+		} else {
+			audioCaches.push(track);
 		}
 	}
 }
@@ -177,6 +180,10 @@ const onAudioStart = async (): Promise<void> => {
 		roomJoinStatus.value = true;
 	}
 	addParticipant(room.localParticipant);
+	for (const audio of audioCaches) {
+		audio.attach();
+		rootEl.value?.appendChild(audio);
+	}
 	await room.startAudio();
 	audioJoinStatus.value = true;
 };
