@@ -25,8 +25,9 @@
 </div>
 </template>
 <script lang="ts" setup>
-import { defineAsyncComponent, watch, computed } from 'vue';
+import { defineAsyncComponent, watch, ref, onMounted, onBeforeMount } from 'vue';
 import { i18n } from '@/i18n';
+import * as os from '@/os';
 import MkTimeline from '@/components/MkTimeline.vue';
 import MkPostForm from '@/components/MkPostForm.vue';
 import { defaultStore } from '@/store';
@@ -41,18 +42,27 @@ const props = defineProps<{
 	list?: string;
 	antenna?: string;
 	channelId?: string|null;
-	channel?: any;
 	role?: string;
 	sound?: boolean;
 }>();
 
 const XTutorial = defineAsyncComponent(() => import('@/pages/timeline.tutorial.vue'));
 const tlComponent = $shallowRef<InstanceType<typeof MkTimeline>>();
+const channel = ref<any>(null);
 
 let queue = $ref(0);
 let src = $ref(props.src);
 
 watch ($$(src), () => queue = 0);
+
+onBeforeMount(async () => {
+	if (props.channelId) {
+		let ch = await os.api('channels/show', {
+			channelId: props.channelId,
+		});
+		channel.value = ch;
+	}
+});
 
 function queueUpdated(q: number): void {
 	queue = q;

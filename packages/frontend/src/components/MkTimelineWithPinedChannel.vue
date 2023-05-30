@@ -11,10 +11,8 @@
 		style="padding: 0;"
 	>
 		<MkTimelineWithScroll
-			:key="srckey"
 			:src="srcCh"
 			:channelId="channelId"
-			:channel="channel"
 			:sound="true"
 		/>
 	</MkSpacer>
@@ -39,7 +37,6 @@ const props = defineProps<{
 const tabs = ref<Tab[]>([{ key: 'public', title: i18n.ts.public, icon: 'ti ti-world-www' }]);
 const src = ref(props.src);
 const srcCh = computed(() => tab.value === 'public' ? src.value : 'channel');
-const srckey = computed(() => tab.value === 'public' ? src.value : tab.value);
 const channel = ref<any>(null);
 const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 const tab = ref<string|null>(null);

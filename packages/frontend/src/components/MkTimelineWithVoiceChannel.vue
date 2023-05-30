@@ -8,8 +8,7 @@
 			<MkTimelineWithScroll
 				v-if="tTab.key === tab"
 				src="channel"
-				:channelId="channelId"
-				:channel="channel"
+				:channelId="tTab.key"
 				:sound="true"
 			/>
 		</template>
@@ -25,19 +24,15 @@ import { defaultStore } from '@/store';
 import { scrollToTop } from '@/scripts/scroll';
 
 const tabs = ref<Tab[]>([]);
-const srckey = computed(() => tab.value);
-const channel = ref<any>(null);
 const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 const tab = ref<string|null>(null);
 const selectedTab = computed(defaultStore.makeGetterSetter('selectedVoiceChannelTab'));
-const channelId = computed(() => tab.value);
 const headerActions = computed(() => []);
 
 watch(tab, async () => {
 	let ch = await os.api('channels/show', {
 		channelId: tab.value,
 	});
-	channel.value = ch;
 	postChannel.value = ch;
 	selectedTab.value = tab.value;
 
