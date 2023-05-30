@@ -3,20 +3,17 @@
 	<template #header>
 		<MkPageHeader v-if="tabs.length > 1" v-model:tab="tab" :actions="headerActions" :tabs="tabs"/>
 	</template>
-	<MkSpacer
-		v-if="tab"
-		:contentMax="800" 
-		style="padding: 0;"
-	>
-		<MkTimelineWithScroll
-			:key="srckey"
-			src="channel"
-			:channelId="channelId"
-			:channel="channel"
-			:sound="true"
-		/>
+	<MkSpacer :contentMax="800" style="padding: 0;">
+		<template v-for="tTab in tabs" :key="tTab.key">
+			<MkTimelineWithScroll
+				v-if="tTab.key === tab"
+				src="channel"
+				:channelId="channelId"
+				:channel="channel"
+				:sound="true"
+			/>
+		</template>
 	</MkSpacer>
-	<MkLoading v-else/>
 </MkStickyContainer>
 </template>
 <script lang="ts" setup>

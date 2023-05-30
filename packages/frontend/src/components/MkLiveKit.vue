@@ -64,6 +64,7 @@ const users = ref<any[]>([]);
 const speakers = ref<any[]>([]);
 const usersCache = new Map<string, any>();
 const mutedSpeakers = new Set<string>();
+const audioCaches: any[] = [];
 let muteTimerId;
 
 onMounted(() => {
@@ -135,7 +136,11 @@ function handleTrackSubscribed(
 	if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
 		// attach it to a new HTMLVideoElement or HTMLAudioElement
 		const element = track.attach();
-		rootEl.value?.appendChild(element);
+		if (audioJoinStatus.value) {
+			rootEl.value?.appendChild(element);
+		} else {
+			audioCaches.push(element);
+		}
 	}
 }
 
@@ -174,6 +179,9 @@ const onAudioStart = async (): Promise<void> => {
 		roomJoinStatus.value = true;
 	}
 	addParticipant(room.localParticipant);
+	for (const audio of audioCaches) {
+		rootEl.value?.appendChild(audio);
+	}
 	await room.startAudio();
 	audioJoinStatus.value = true;
 };
