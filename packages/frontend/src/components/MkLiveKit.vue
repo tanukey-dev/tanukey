@@ -4,35 +4,34 @@
 		<div ref="rootEl"></div>
 		<div :class="$style.headerLeft">
 			<div>Voice Chat β ({{ channel?.name }})</div>
-			<div>※現在iPhone/Safariでは動作しません</div>
+			<div>{{ i18n.ts._livekit.message }}</div>
 		</div>
 		<div :class="$style.headerRight">
-			<MkButton v-if="connecting" :disabled="true" class="_button">connecting...</MkButton>
-			<MkButton v-else-if="!joinStatus" class="_button" @click="onConnect">Join</MkButton>
-			<MkButton v-else class="_button" @click="onDisconnect">Leave</MkButton>
-			<div v-if="joinStatus">
-				<MkButton v-if="!voice" @click="onVoiceOn"><i class="ti ti-microphone-off" style="color: red;"></i></MkButton>
+			<MkButton v-if="connecting" :disabled="true" class="_button">{{ i18n.ts._livekit.connecting }}</MkButton>
+			<MkButton v-else-if="!audioJoinStatus" class="_button" @click="onAudioStart">{{ i18n.ts._livekit.join }}</MkButton>
+			<MkButton v-else class="_button" @click="onDisconnect">{{ i18n.ts._livekit.leave }}</MkButton>
+			<div v-if="audioJoinStatus">
+				<MkButton v-if="!voice" @click="onVoiceOn"><i class="ti ti-microphone-off" style="color: rgb(232, 76, 76);"></i></MkButton>
 				<MkButton v-else @click="onVoiceOff"><i class="ti ti-microphone"></i></MkButton>
 			</div>
 		</div>
 	</div>
-	<div v-if="joinStatus" :class="$style.speakers">
+	<div v-if="audioJoinStatus" :class="$style.speakers">
 		<div>Speaker: {{ speakers.map(s => s.username).join(',') }}</div>
 	</div>
-	<div v-if="joinStatus" :class="$style.avatars">
+	<div v-if="roomJoinStatus" :class="$style.avatars">
 		<div v-for="user in users" :key="user.id">
-			<MkAvatar :user="user" :class="[$style.avatar, speakers.find(s => s.id === user.id) ? $style.speaking : '']" :preview="true"/>
+			<div :class="$style.avaterContent">
+				<MkAvatar :user="user" :class="[$style.avatar, speakers.find(s => s.id === user.id) ? $style.speaking : '']" :preview="true"/>
+				<div v-if="mutedSpeakers.has(user.id)" :class="$style.mute"><i class="ti ti-microphone-off" style="color: rgb(232, 76, 76);"></i></div>
+			</div>
 		</div>
 	</div>
 </div>
 </template>
 
 <script lang="ts" setup>
-import { watch, ref, shallowRef } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { instance } from '@/instance';
-import { $i } from '@/account';
+import { watch, ref, shallowRef, onMounted, onUnmounted } from 'vue';
 import {
 	Track,
 	Participant,
@@ -45,19 +44,37 @@ import {
 	RoomEvent,
 	RoomConnectOptions,
 } from 'livekit-client';
+import MkButton from '@/components/MkButton.vue';
+import * as os from '@/os';
+import { instance } from '@/instance';
+import { $i } from '@/account';
+import { i18n } from '@/i18n';
 
 const props = defineProps<{
 	channel: any;
 }>();
 
 const voice = ref(false);
-const joinStatus = ref(false);
+const roomJoinStatus = ref(false);
+const audioJoinStatus = ref(false);
 const connecting = ref(false);
 const vcEnableGlobal = ref(instance.enableVoiceChat);
 const participants = ref<Participant[]>([]);
 const users = ref<any[]>([]);
 const speakers = ref<any[]>([]);
 const usersCache = new Map<string, any>();
+const mutedSpeakers = new Set<string>();
+let muteTimerId;
+
+onMounted(() => {
+	roomJoin();
+	roomJoinStatus.value = true;
+	muteTimerId = setInterval(refreshRemoteMuteStatus, 1000);
+});
+
+onUnmounted(() => {
+	clearInterval(muteTimerId);
+});
 
 watch(participants, async () => {
 	users.value = await Promise.all(participants.value.map(async p => {
@@ -110,8 +127,11 @@ room
 	.on(RoomEvent.TrackSubscribed, handleTrackSubscribed)
 	.on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
 
-function handleTrackSubscribed( track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) {
-	console.log('subscribe');
+function handleTrackSubscribed(
+	track: RemoteTrack,
+	publication: RemoteTrackPublication,
+	participant: RemoteParticipant
+): void {
 	if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
 		// attach it to a new HTMLVideoElement or HTMLAudioElement
 		const element = track.attach();
@@ -119,7 +139,11 @@ function handleTrackSubscribed( track: RemoteTrack, publication: RemoteTrackPubl
 	}
 }
 
-function handleTrackUnsubscribed( track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) {
+function handleTrackUnsubscribed(
+	track: RemoteTrack,
+	publication: RemoteTrackPublication,
+	participant: RemoteParticipant
+): void {
 	// remove tracks from all attached elements
 	track.detach();
 }
@@ -137,34 +161,45 @@ const addParticipant = (participant): void => {
 	const update = [...participants.value];
 	update.push(participant);
 	participants.value = update;
+	mutedSpeakers.add(participant.identity);
 };
 
 room.on(RoomEvent.ParticipantDisconnected, (participant: Participant) => {
 	participants.value = participants.value.filter(p => p.identity !== participant.identity);
 });
 
-const onConnect = (): void => {
-	join();
+const onAudioStart = async (): Promise<void> => {
+	if (!roomJoinStatus.value) {
+		roomJoin();
+		roomJoinStatus.value = true;
+	}
+	addParticipant(room.localParticipant);
+	await room.startAudio();
+	audioJoinStatus.value = true;
 };
 
 const onDisconnect = (): void => {
+	onVoiceOff();
 	room.disconnect();
 	users.value = [];
 	participants.value = [];
-	joinStatus.value = false;
+	audioJoinStatus.value = false;
+	roomJoinStatus.value = false;
 };
 
 const onVoiceOn = (): void => {
 	room.localParticipant.setMicrophoneEnabled(true);
 	voice.value = true;
+	mutedSpeakers.delete($i.id);
 };
 
 const onVoiceOff = (): void => {
 	room.localParticipant.setMicrophoneEnabled(false);
 	voice.value = false;
+	mutedSpeakers.add($i.id);
 };
 
-async function join() {
+async function roomJoin(): Promise<void> {
 	const wsURL = instance.liveKitServerURL;
 	if (!wsURL) {
 		console.log('wsURL is not set.');
@@ -192,12 +227,8 @@ async function join() {
 		await room.connect(wsURL, token.token);
 		const elapsed = Date.now() - startTime;
 		connecting.value = false;
-		joinStatus.value = true;
-
-		await room.startAudio();
 
 		usersCache.set($i.id, $i);
-		addParticipant(room.localParticipant);
 		for (const participant of room.participants.values()) {
 			addParticipant(participant);
 		}
@@ -215,6 +246,17 @@ async function join() {
 		return;
 	}
 }
+
+const refreshRemoteMuteStatus = (): void => {
+	for (const participant of room.participants.values()) {
+		const track = participant.getTrack(Track.Source.Microphone);
+		if (track?.isMuted === false) {
+			mutedSpeakers.delete(participant.identity);
+		} else {
+			mutedSpeakers.add(participant.identity);
+		}
+	}
+};
 
 </script>
 
@@ -262,7 +304,8 @@ async function join() {
 	display: flex;
 	min-height: 48px;
 	font-size: 0.9em;
-	flex-wrap: nowrap;
+	flex-wrap: wrap;
+	justify-content: flex-end;
 	align-items: center;
 	margin-left: auto;
 	gap: 4px;
@@ -270,10 +313,26 @@ async function join() {
 	padding-left: 4px;
 }
 
+.avatarContent {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .avatar {
+	position: relative;
 	width: 28px;
 	height: 28px;
 	margin: 5px;
+}
+
+.mute {
+	position: relative;
+	z-index: 1000;
+	opacity: 0.9;
+	margin-left: 20px;
+	margin-top: -20px;
+	min-width: 10px;
 }
 
 .speaking {

@@ -1963,6 +1963,12 @@ _pages:
       idDescription: "ノートURLをペーストして設定することもできます。"
       detailed: "詳細な表示"
 
+_livekit:
+  join: "参加"
+  leave: "退席"
+  connecting: "接続中..."
+  message: "※現在iPhone/Safariでは動作しません"
+
 _relayStatus:
   requesting: "承認待ち"
   accepted: "承認済み"
