@@ -135,11 +135,9 @@ function handleTrackSubscribed(
 ): void {
 	if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
 		// attach it to a new HTMLVideoElement or HTMLAudioElement
-		const element = track.attach();
 		if (audioJoinStatus.value) {
+			const element = track.attach();
 			rootEl.value?.appendChild(element);
-		} else {
-			audioCaches.push(element);
 		}
 	}
 }
@@ -179,9 +177,6 @@ const onAudioStart = async (): Promise<void> => {
 		roomJoinStatus.value = true;
 	}
 	addParticipant(room.localParticipant);
-	for (const audio of audioCaches) {
-		rootEl.value?.appendChild(audio);
-	}
 	await room.startAudio();
 	audioJoinStatus.value = true;
 };
