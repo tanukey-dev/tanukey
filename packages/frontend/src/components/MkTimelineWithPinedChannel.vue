@@ -10,11 +10,14 @@
 		:contentMax="800" 
 		style="padding: 0;"
 	>
-		<MkTimelineWithScroll
-			:src="srcCh"
-			:channelId="channelId"
-			:sound="true"
-		/>
+		<template v-for="tTab in tabs" :key="tTab.key">
+			<MkTimelineWithScroll
+				v-if="tTab.key === tab"
+				:src="srcCh"
+				:channelId="channelId"
+				:sound="true"
+			/>
+		</template>
 	</MkSpacer>
 	<MkLoading v-else/>
 </MkStickyContainer>
@@ -37,7 +40,6 @@ const props = defineProps<{
 const tabs = ref<Tab[]>([{ key: 'public', title: i18n.ts.public, icon: 'ti ti-world-www' }]);
 const src = ref(props.src);
 const srcCh = computed(() => tab.value === 'public' ? src.value : 'channel');
-const channel = ref<any>(null);
 const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 const tab = ref<string|null>(null);
 const selectedTab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
@@ -56,10 +58,8 @@ watch(tab, async () => {
 		let ch = await os.api('channels/show', {
 			channelId: tab.value,
 		});
-		channel.value = ch;
 		postChannel.value = ch;
 	} else {
-		channel.value = null;
 		postChannel.value = null;
 	}
 
