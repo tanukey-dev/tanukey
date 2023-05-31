@@ -23,7 +23,7 @@
 				</div>
 			</div>
 
-			<MkSwitch v-model="isPrivate">
+			<MkSwitch v-model="isPrivate" :disabled="!$i.policies.canCreatePrivateChannel">
 				{{ i18n.ts._channel.isPrivate }}
 			</MkSwitch>
 
@@ -57,8 +57,8 @@
 				{{ i18n.ts.isNoteCollapsed }}
 			</MkSwitch>
 
-			<MkSwitch v-model="isVoiceChatEnabled">
-				{{ i18n.ts.isVoiceChatEnabled }}
+			<MkSwitch v-model="isVoiceChatEnabled" :disabled="!$i.policies.canCreateVoiceChannel">
+				{{ i18n.ts._channel.isVoiceChatEnabled }}
 			</MkSwitch>
 
 			<MkFolder :defaultOpen="true">
@@ -107,6 +107,7 @@ import { useRouter } from '@/router';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { i18n } from '@/i18n';
 import MkFolder from '@/components/MkFolder.vue';
+import { $i } from '@/account';
 
 const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
 

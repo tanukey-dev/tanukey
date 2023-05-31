@@ -148,6 +148,22 @@
 							</MkInput>
 						</MkFolder>
 
+						<MkFolder v-if="matchQuery([i18n.ts._role._options.canCreatePrivateChannel, 'canCreatePrivateChannel'])">
+							<template #label>{{ i18n.ts._role._options.canCreatePrivateChannel }}</template>
+							<template #suffix>{{ policies.canCreatePrivateChannel ? i18n.ts.yes : i18n.ts.no }}</template>
+							<MkSwitch v-model="policies.canCreatePrivateChannel">
+								<template #label>{{ i18n.ts.enable }}</template>
+							</MkSwitch>
+						</MkFolder>
+
+						<MkFolder v-if="matchQuery([i18n.ts._role._options.canCreateVoiceChannel, 'canCreateVoiceChannel'])">
+							<template #label>{{ i18n.ts._role._options.canCreateVoiceChannel }}</template>
+							<template #suffix>{{ policies.canCreateVoiceChannel ? i18n.ts.yes : i18n.ts.no }}</template>
+							<MkSwitch v-model="policies.canCreateVoiceChannel">
+								<template #label>{{ i18n.ts.enable }}</template>
+							</MkSwitch>
+						</MkFolder>
+
 						<MkFolder v-if="matchQuery([i18n.ts._role._options.canHideAds, 'canHideAds'])">
 							<template #label>{{ i18n.ts._role._options.canHideAds }}</template>
 							<template #suffix>{{ policies.canHideAds ? i18n.ts.yes : i18n.ts.no }}</template>
