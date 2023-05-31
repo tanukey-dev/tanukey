@@ -110,9 +110,11 @@ onMounted(async () => {
 });
 
 const onSwipeLeft = (): void => {
+	//モバイル環境のみ
 	if (deviceKind === 'desktop') {
 		return;
 	}
+	//AAなどスクロールが必要な場合は無効化
 	if (disableSwipe.value) {
 		disableSwipe.value = false;
 		return;
@@ -120,20 +122,28 @@ const onSwipeLeft = (): void => {
 	const index = tabs.value.findIndex(x => x.key === tab.value);
 	if (index < tabs.value.length - 1) {
 		tab.value = tabs.value[index + 1].key;
+	} else {
+		tab.value = tabs.value[0].key;
 	}
 };
 
 const onSwipeRight = (): void => {
+	//モバイル環境のみ
 	if (deviceKind === 'desktop') {
 		return;
 	}
+	//AAなどスクロールが必要な場合は無効化
 	if (disableSwipe.value) {
 		disableSwipe.value = false;
 		return;
 	}
+	//右スワイプで左のタブに移動
+	//左端までいったら最終ページに移動
 	const index = tabs.value.findIndex(x => x.key === tab.value);
 	if (index !== 0) {
 		tab.value = tabs.value[index - 1].key;
+	} else {
+		tab.value = tabs.value[tabs.value.length - 1].key;
 	}
 };
 
