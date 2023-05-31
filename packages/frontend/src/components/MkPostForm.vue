@@ -77,7 +77,7 @@
 			<button v-tooltip="i18n.ts.useCw" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]" @click="useCw = !useCw"><i class="ti ti-eye-off"></i></button>
 			<button v-tooltip="i18n.ts.mention" class="_button" :class="$style.footerButton" @click="insertMention"><i class="ti ti-at"></i></button>
 			<button v-tooltip="i18n.ts.hashtags" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: withHashtags }]" @click="withHashtags = !withHashtags"><i class="ti ti-hash"></i></button>
-			<button v-tooltip="i18n.ts.asciiart" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: withAsciiArt }]" @click="withAsciiArt = !withAsciiArt"><i class="ti ti-letter-a"></i></button>
+			<button v-tooltip="i18n.ts.asciiart" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: withAsciiArt }]" @click="withAsciiArt = !withAsciiArt"><div style="display: flex; justify-content: center; align-items: center;"><i class="ti ti-letter-a" style="transform: scaleX(0.8) translate(5px, -1px);"></i><i class="ti ti-letter-a" style="transform: scaleX(0.8) translate(-5px, -1px);"></i></div></button>
 			<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugin" class="_button" :class="$style.footerButton" @click="showActions"><i class="ti ti-plug"></i></button>
 			<button v-tooltip="i18n.ts.emoji" :class="['_button', $style.footerButton]" @click="insertEmoji"><i class="ti ti-mood-happy"></i></button>
 		</div>
