@@ -58,6 +58,13 @@ export const paramDef = {
 				type: 'string', format: 'misskey:id',
 			},
 		},
+		isPrivate: { type: 'boolean', nullable: true },
+		privateUserIds: {
+			type: 'array',
+			items: {
+				type: 'string', format: 'misskey:id',
+			},
+		},
 		color: { type: 'string', minLength: 1, maxLength: 16 },
 	},
 	required: ['channelId'],
@@ -116,6 +123,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				...(typeof ps.searchable === 'boolean' ? { searchable: ps.searchable } : {}),
 				...(typeof ps.isNoteCollapsed === 'boolean' ? { isNoteCollapsed: ps.isNoteCollapsed } : {}),
 				...(typeof ps.isVoiceChatEnabled === 'boolean' ? { isVoiceChatEnabled: ps.isVoiceChatEnabled } : {}),
+				...(typeof ps.isPrivate === 'boolean' ? { isPrivate: ps.isPrivate } : {}),
+				...(ps.privateUserIds !== undefined ? { privateUserIds: ps.privateUserIds } : {}),
 				...(banner ? { bannerId: banner.id } : {}),
 			});
 

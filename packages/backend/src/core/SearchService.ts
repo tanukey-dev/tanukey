@@ -176,6 +176,16 @@ export class SearchService {
 					.andWhere(new Brackets(qb => {
 						qb.orWhere('channel.searchable IS NULL');
 						qb.orWhere('channel.searchable = true');
+					}))
+					.andWhere(new Brackets(qb => { qb
+						.where('channel.isPrivate = FALSE')
+						.orWhere(new Brackets(qb2 => { qb2
+							.where('channel.isPrivate = TRUE')
+							.andWhere(new Brackets(qb3 => { qb3
+								.where(':id = ANY(channel.privateUserIds)', { id: me?.id })
+								.orWhere('channel.userId = :id', { id: me?.id });
+							}));
+						}));
 					}));
 			}
 

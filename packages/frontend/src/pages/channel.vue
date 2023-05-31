@@ -117,7 +117,9 @@ watch(() => props.channelId, async () => {
 	channel = await os.api('channels/show', {
 		channelId: props.channelId,
 	});
-	favorited = channel.isFavorited;
+	if (channel) {
+		favorited = channel.isFavorited;
+	}
 }, { immediate: true });
 
 function edit() {

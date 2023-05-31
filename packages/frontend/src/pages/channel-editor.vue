@@ -23,11 +23,33 @@
 				</div>
 			</div>
 
-			<MkSwitch v-model="federation">
+			<MkSwitch v-model="isPrivate">
+				{{ i18n.ts._channel.isPrivate }}
+			</MkSwitch>
+
+			<MkFolder v-if="isPrivate" :defaultOpen="true">
+				<template #label>{{ i18n.ts._channel.privateUserIds }}</template>
+				
+				<div class="_gaps">
+					<Multiselect
+						v-model="privateUserIds"
+						mode="tags"
+						:options="userAsyncFind"
+						:closeOnSelect="false"
+						:searchable="true"
+						:object="true"
+						:resolveOnLoad="true"
+						:delay="0"
+						:minChars="1"
+					/>
+				</div>
+			</MkFolder>
+
+			<MkSwitch v-model="federation" :disabled="isPrivate">
 				{{ i18n.ts.channelFederation }}
 			</MkSwitch>
 
-			<MkSwitch v-model="searchable" :disabled="federation">
+			<MkSwitch v-model="searchable" :disabled="federation || isPrivate">
 				{{ i18n.ts.channelSearchable }}
 			</MkSwitch>
 
@@ -73,6 +95,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch, defineAsyncComponent } from 'vue';
+import Multiselect from '@vueform/multiselect';
 import MkTextarea from '@/components/MkTextarea.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -103,6 +126,8 @@ let federation = ref(false);
 let searchable = ref(true);
 let isNoteCollapsed = ref(true);
 let isVoiceChatEnabled = ref(false);
+let isPrivate = ref(false);
+const privateUserIds = ref<{ value: string, label: string}[]>([]);
 const pinnedNotes = ref([]);
 
 watch(() => bannerId, async () => {
@@ -121,6 +146,13 @@ watch(federation, () => {
 	}
 });
 
+watch(isPrivate, () => {
+	if (isPrivate.value) {
+		searchable.value = false;
+		federation.value = false;
+	}
+});
+
 async function fetchChannel() {
 	if (props.channelId == null) return;
 
@@ -136,6 +168,21 @@ async function fetchChannel() {
 	searchable.value = channel.federation ? true : channel.searchable;
 	isNoteCollapsed.value = channel.isNoteCollapsed;
 	isVoiceChatEnabled.value = channel.isVoiceChatEnabled;
+	isPrivate.value = channel.isPrivate;
+
+	const pusers = await os.api('users/show', {
+		userIds: channel.privateUserIds,
+	});
+	if (pusers) {
+		let tmp: any[] = [];
+		for (let puser of pusers) {
+			if (puser) {
+				tmp.push({ value: puser.id, label: puser.username });
+			}
+		}
+		privateUserIds.value = tmp;
+	}
+
 	pinnedNotes.value = channel.pinnedNoteIds.map(id => ({
 		id,
 	}));
@@ -171,6 +218,8 @@ function save() {
 		searchable: federation.value ? true : searchable.value,
 		isNoteCollapsed: isNoteCollapsed.value,
 		isVoiceChatEnabled: isVoiceChatEnabled.value,
+		isPrivate: isPrivate.value,
+		privateUserIds: privateUserIds.value.map(v => v.value),
 		color: color,
 	};
 
@@ -225,6 +274,16 @@ definePageMetadata(computed(() => props.channelId ? {
 	title: i18n.ts._channel.create,
 	icon: 'ti ti-device-tv',
 }));
+
+async function userAsyncFind(query) {
+	let chs = await os.api('users/search', {
+		query: query === null ? '' : query.trim(),
+		origin: 'local',
+		detail: false,
+	});
+	return chs?.map(c => { return { value: c.id, label: c.username };});
+}
+
 </script>
 
 <style lang="scss" module>
@@ -256,3 +315,5 @@ definePageMetadata(computed(() => props.channelId ? {
 	opacity: 0.5;
 }
 </style>
+
+<style src="@vueform/multiselect/themes/default.css"></style>

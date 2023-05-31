@@ -48,6 +48,13 @@ export const paramDef = {
 		searchable: { type: 'boolean', nullable: true },
 		isNoteCollapsed: { type: 'boolean', nullable: true },
 		isVoiceChatEnabled: { type: 'boolean', nullable: true },
+		isPrivate: { type: 'boolean', nullable: true },
+		privateUserIds: {
+			type: 'array',
+			items: {
+				type: 'string', format: 'misskey:id',
+			},
+		},
 	},
 	required: ['name'],
 } as const;
@@ -89,6 +96,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				searchable: ps.searchable ?? true,
 				isNoteCollapsed: ps.isNoteCollapsed ?? true,
 				isVoiceChatEnabled: ps.isVoiceChatEnabled ?? false,
+				isPrivate: ps.isPrivate ?? false,
+				privateUserIds: ps.privateUserIds ?? [],
 				...(ps.color !== undefined ? { color: ps.color } : {}),
 			} as Channel).then(x => this.channelsRepository.findOneByOrFail(x.identifiers[0]));
 

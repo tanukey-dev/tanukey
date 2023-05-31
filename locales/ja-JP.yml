@@ -1530,6 +1530,8 @@ _channel:
   notesCount: "{n}投稿があります"
   nameAndDescription: "名前と説明"
   nameOnly: "名前のみ"
+  isPrivate: "プライベート"
+  privateUserIds: "チャンネルにアクセス可能なユーザー"
 
 _menuDisplay:
   sideFull: "横"

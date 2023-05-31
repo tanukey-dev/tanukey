@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Brackets } from 'typeorm';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import type { ChannelFollowingsRepository } from '@/models/index.js';
 import { QueryService } from '@/core/QueryService.js';
@@ -44,8 +45,19 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const query = this.queryService.makePaginationQuery(this.channelFollowingsRepository.createQueryBuilder(), ps.sinceId, ps.untilId)
-				.andWhere({ followerId: me.id });
+			const query = this.queryService.makePaginationQuery(this.channelFollowingsRepository.createQueryBuilder('following'), ps.sinceId, ps.untilId)
+				.andWhere('following.followerId = :meId', { meId: me.id })
+				.andWhere(new Brackets(qb => { qb
+					.where('channel.isPrivate = FALSE')
+					.orWhere(new Brackets(qb2 => { qb2
+						.where('channel.isPrivate = TRUE')
+						.andWhere(new Brackets(qb3 => { qb3
+							.where(':id = ANY(channel.privateUserIds)', { id: me?.id })
+							.orWhere('channel.userId = :id', { id: me?.id });
+						}));
+					}));
+				}))
+				.leftJoinAndSelect('following.followee', 'channel');
 
 			const followings = await query
 				.take(ps.limit)

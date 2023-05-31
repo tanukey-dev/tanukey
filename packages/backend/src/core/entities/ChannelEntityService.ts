@@ -80,6 +80,8 @@ export class ChannelEntityService {
 			searchable: channel.searchable,
 			isNoteCollapsed: channel.isNoteCollapsed,
 			isVoiceChatEnabled: channel.isVoiceChatEnabled,
+			isPrivate: channel.isPrivate,
+			privateUserIds: channel.privateUserIds,
 			usersCount: channel.usersCount,
 			notesCount: channel.notesCount,
 
