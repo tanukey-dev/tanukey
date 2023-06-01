@@ -171,8 +171,7 @@ export function loadConfig() {
 	const externalMediaProxy = config.mediaProxy ?
 		config.mediaProxy.endsWith('/') ? config.mediaProxy.substring(0, config.mediaProxy.length - 1) : config.mediaProxy
 		: null;
-	//開発環境でエラーになるので相対パスで返す
-	const internalMediaProxy = mixin.host.indexOf('localhost') ? '/proxy' : `${mixin.scheme}://${mixin.host}/proxy`;
+	const internalMediaProxy = `${mixin.scheme}://${mixin.host}/proxy`;
 	mixin.mediaProxy = externalMediaProxy ?? internalMediaProxy;
 	mixin.externalMediaProxyEnabled = externalMediaProxy !== null && externalMediaProxy !== internalMediaProxy;
 
