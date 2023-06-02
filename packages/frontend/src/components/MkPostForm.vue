@@ -14,27 +14,29 @@
 			</button>
 		</div>
 		<div :class="$style.headerRight">
-			<button v-if="postChannel == null" ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
-				<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
-				<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
-				<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
-				<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
-				<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
-			</button>
-			<button v-else :class="['_button', $style.headerRightItem, $style.visibility]" disabled>
-				<span><i class="ti ti-device-tv"></i></span>
-				<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
-			</button>
-			<button v-click-anime v-tooltip="i18n.ts._visibility.disableFederation" :class="['_button', $style.headerRightItem, $style.localOnly, { [$style.danger]: localOnly }]" :disabled="(postChannel != null && !postChannel.federation) || visibility === 'specified'" @click="toggleLocalOnly">
+			<template v-if="!(postChannel != null && fixed)">
+				<button v-if="postChannel == null" ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
+					<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
+					<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
+					<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
+					<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
+					<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
+				</button>
+				<button v-else class="_button" :class="[$style.headerRightItem, $style.visibility]" disabled>
+					<span><i class="ti ti-device-tv"></i></span>
+					<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
+				</button>
+			</template>
+			<button v-click-anime v-tooltip="i18n.ts._visibility.disableFederation" class="_button" :class="[$style.headerRightItem, { [$style.danger]: localOnly }]" :disabled="channel != null || visibility === 'specified'" @click="toggleLocalOnly">
 				<span v-if="!localOnly"><i class="ti ti-rocket"></i></span>
 				<span v-else><i class="ti ti-rocket-off"></i></span>
 			</button>
-			<button v-click-anime v-tooltip="i18n.ts.reactionAcceptance" :class="['_button', $style.headerRightItem, $style.reactionAcceptance, { [$style.danger]: reactionAcceptance === 'likeOnly' }]" @click="toggleReactionAcceptance">
+			<button v-click-anime v-tooltip="i18n.ts.reactionAcceptance" class="_button" :class="[$style.headerRightItem, { [$style.danger]: reactionAcceptance === 'likeOnly' }]" @click="toggleReactionAcceptance">
 				<span v-if="reactionAcceptance === 'likeOnly'"><i class="ti ti-heart"></i></span>
 				<span v-else-if="reactionAcceptance === 'likeOnlyForRemote'"><i class="ti ti-heart-plus"></i></span>
 				<span v-else><i class="ti ti-icons"></i></span>
 			</button>
-			<button v-click-anime class="_button" :class="[$style.submit, { [$style.submitPosting]: posting }]" :disabled="!canPost" data-cy-open-post-form-submit @click="post">
+			<button v-click-anime class="_button" :class="$style.submit" :disabled="!canPost" data-cy-open-post-form-submit @click="post">
 				<div :class="$style.submitInner">
 					<template v-if="posted"></template>
 					<template v-else-if="posting"><MkEllipsis/></template>
@@ -64,9 +66,6 @@
 		<div v-if="maxTextLength - textLength < 100" :class="['_acrylic', $style.textCount, { [$style.textOver]: textLength > maxTextLength }]">{{ maxTextLength - textLength }}</div>
 	</div>
 	<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
-	<textarea v-show="withAsciiArt" ref="asciiArtTextareaEl" v-model="asciiartText" :style="aaTextAreaStyles" :class="$style.asciiart" class="asciiart" :placeholder="i18n.ts.asciiart" spellcheck="false" ></textarea>
-	<XPostFormAttaches v-model="files" :class="$style.attaches" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName"/>
-	<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
 	<MkNotePreview v-if="showPreview" :class="$style.preview" :text="text"/>
 	<div v-if="showingOptions" style="padding: 8px 16px;">
 	</div>

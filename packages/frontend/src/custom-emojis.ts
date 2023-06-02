@@ -1,4 +1,4 @@
-import { shallowRef, computed, markRaw, triggerRef } from 'vue';
+import { shallowRef, computed, markRaw, watch, triggerRef } from 'vue';
 import * as Misskey from 'misskey-js';
 import { api, apiGet } from './os';
 import { useStream } from '@/stream';
@@ -6,7 +6,6 @@ import { get, set } from '@/scripts/idb-proxy';
 
 const storageCache = await get('emojis');
 export const customEmojis = shallowRef<Misskey.entities.CustomEmoji[]>(Array.isArray(storageCache) ? storageCache : []);
-export const customEmojisNameMap = computed(() => new Map(customEmojis.value.map(item => [item.name, item])));
 export const customEmojiCategories = computed<[ ...string[], null ]>(() => {
 	const categories = new Set<string>();
 	for (const emoji of customEmojis.value) {
@@ -16,6 +15,14 @@ export const customEmojiCategories = computed<[ ...string[], null ]>(() => {
 	}
 	return markRaw([...Array.from(categories), null]);
 });
+
+export const customEmojisMap = new Map<string, Misskey.entities.CustomEmoji>();
+watch(customEmojis, emojis => {
+	customEmojisMap.clear();
+	for (const emoji of emojis) {
+		customEmojisMap.set(emoji.name, emoji);
+	}
+}, { immediate: true });
 
 // TODO: ここら辺副作用なのでいい感じにする
 const stream = useStream();

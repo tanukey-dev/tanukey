@@ -3,10 +3,7 @@
 	<template #item="{element}">
 		<div :class="$style.item">
 			<!-- divが無いとエラーになる https://github.com/SortableJS/vue.draggable.next/issues/189 -->
-			<XText v-if="element.type === 'text'" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
-			<XSection v-if="element.type === 'section'" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
-			<XImage v-if="element.type === 'image'" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
-			<XNote v-if="element.type === 'note'" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
+			<component :is="getComponent(element.type)" :modelValue="element" @update:modelValue="updateItem" @remove="() => removeItem(element)"/>
 		</div>
 	</template>
 </Sortable>
@@ -18,6 +15,16 @@ import XText from './els/page-editor.el.text.vue';
 import XSection from './els/page-editor.el.section.vue';
 import XImage from './els/page-editor.el.image.vue';
 import XNote from './els/page-editor.el.note.vue';
+
+function getComponent(type: string) {
+	switch (type) {
+		case 'section': return XSection;
+		case 'text': return XText;
+		case 'image': return XImage;
+		case 'note': return XNote;
+		default: return null;
+	}
+}
 
 const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
 
