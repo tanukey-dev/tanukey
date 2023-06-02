@@ -13,7 +13,7 @@
 	<div :class="$style.title"><div><i class="ti ti-timeline" style="margin-right: 0.5em;"></i>{{ i18n.ts.timeline }}</div></div>
 	<div :class="$style.divider"></div>
 </div>
-<div :class="$style.tl">
+<div ref="el" :class="$style.tl">
 	<MkTimeline
 		ref="tlComponent"
 		:key="src"
@@ -49,6 +49,7 @@ const props = defineProps<{
 const XTutorial = defineAsyncComponent(() => import('@/pages/timeline.tutorial.vue'));
 const tlComponent = $shallowRef<InstanceType<typeof MkTimeline>>();
 const channel = ref<any>(null);
+let el = $shallowRef<HTMLElement | undefined>(undefined);
 
 let queue = $ref(0);
 let src = $ref(props.src);
@@ -68,9 +69,12 @@ function queueUpdated(q: number): void {
 	queue = q;
 }
 
-function top(): void {
-	scrollToTop(null);
-}
+const top = () => {
+	if (el) {
+		scrollToTop(el as HTMLElement, { behavior: 'smooth' });
+	}
+};
+
 </script>
 
 <style lang="scss" module>
