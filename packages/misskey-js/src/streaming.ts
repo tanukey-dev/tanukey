@@ -155,16 +155,15 @@ export default class Stream extends EventEmitter<StreamEvents> {
 	 * Callback of when received a message from connection
 	 */
 	private onMessage(message: { data: string; }): void {
-		console.log('ws: onMessage');
-		const { type, body } = JSON.parse(message.data);
-	
 		if (message.data === 'pong') {
 			console.log('ws: get pong');
 			if (this.pingPongTimer) {
 				clearTimeout(this.pingPongTimer);
 			}
+			return;
 		}
 
+		const { type, body } = JSON.parse(message.data);
 		if (type === 'channel') {
 			const id = body.id;
 
