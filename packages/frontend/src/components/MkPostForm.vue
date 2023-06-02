@@ -676,6 +676,28 @@ function deleteDraft() {
 	miLocalStorage.setItem('drafts', JSON.stringify(draftData));
 }
 
+const diceRoll = (text: string, bold: boolean): string => {
+	return text.replace(/!(\d{1,3})?[dD](\d{1,3})(([-+])(\d+))?/g, (match, c1, c2, c3, c4, c5) => {
+		const dice: number = parseInt(c1 ?? 1);
+		const rolls: number[] = [];
+		let plus: number = parseInt(c3 ?? 0);
+		if (c3 === '-') {
+			plus = -c4;
+		}
+		for (let i = 0; i < dice; i++) {
+			rolls.push(Math.ceil(Math.random() * c2));
+		}
+
+		const replacedText = match + ' => ' + rolls.map(r => r + plus).reduce((sum, ele) => sum + ele) + ' [' + rolls.map(r => r + (c3 ? '(' + (r + plus) + ')' : '')).join(',') + ']';
+
+		if (bold) {
+			return '**' + replacedText + '**';
+		} else {
+			return replacedText;
+		}
+	});
+};
+
 async function post(ev?: MouseEvent) {
 	if (ev) {
 		const el = ev.currentTarget ?? ev.target;
@@ -716,19 +738,7 @@ async function post(ev?: MouseEvent) {
 		}
 	}
 
-	//ダイスロール
-	text = text.replace(/!(\d{1,3})?[dD](\d{1,3})(([-+])(\d+))?/g, (match, c1, c2, c3, c4, c5) => {
-		const dice: number = parseInt(c1 ?? 1);
-		const rolls: number[] = [];
-		let plus: number = parseInt(c3 ?? 0);
-		if (c3 === '-') {
-			plus = -c4;
-		}
-		for (let i = 0; i < dice; i++) {
-			rolls.push(Math.ceil(Math.random() * c2));
-		}
-		return '**' + match + ' => ' + rolls.map(r => r + plus).reduce((sum, ele) => sum + ele) + ' [' + rolls.map(r => r + (c3 ? '(' + (r + plus) + ')' : '')).join(',') + ']**';
-	});
+	text = diceRoll(text, true);
 
 	let postData = {
 		text: text,
@@ -750,7 +760,7 @@ async function post(ev?: MouseEvent) {
 	}
 
 	if (withAsciiArt.value && asciiartText.value && asciiartText.value.trim() !== '') {
-		postData.text = postData.text + '\n<asciiart>' + asciiartText.value + '\n</asciiart>\n';
+		postData.text = postData.text + '\n<asciiart>' + diceRoll(asciiartText.value, false) + '\n</asciiart>\n';
 	}
 
 	// plugin
