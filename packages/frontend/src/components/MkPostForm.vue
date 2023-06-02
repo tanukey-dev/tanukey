@@ -14,7 +14,7 @@
 			</button>
 		</div>
 		<div :class="$style.headerRight">
-			<template v-if="!(postChannel != null && fixed)">
+			<template v-if="postChannel != null">
 				<button v-if="postChannel == null" ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
 					<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
 					<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
