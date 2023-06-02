@@ -30,6 +30,7 @@ export default class Stream extends EventEmitter<StreamEvents> {
 	private sharedConnections: SharedConnection[] = [];
 	private nonSharedConnections: NonSharedConnection[] = [];
 	private idCounter = 0;
+	private pingPongTimer: any = null;
 
 	constructor(origin: string, user: { token: string; } | null, options?: {
 		WebSocket?: any;
@@ -132,9 +133,21 @@ export default class Stream extends EventEmitter<StreamEvents> {
 	 * Callback of when close connection
 	 */
 	private onClose(): void {
+		this.stream.send('ws: onClose');
+
 		if (this.state === 'connected') {
-			this.state = 'reconnecting';
-			this.emit('_disconnected_');
+			console.log('ws: try reconnecting');
+			//再接続
+			this.stream.reconnect();
+
+			//再接続チェック
+			this.pingPongTimer = null;
+			console.log('ws: send ping');
+			this.stream.send('ping');
+			this.pingPongTimer = setTimeout(() => {
+				this.state = 'reconnecting';
+				this.emit('_disconnected_');
+			}, 1000);
 		}
 	}
 
@@ -142,7 +155,15 @@ export default class Stream extends EventEmitter<StreamEvents> {
 	 * Callback of when received a message from connection
 	 */
 	private onMessage(message: { data: string; }): void {
+		console.log('ws: onMessage');
 		const { type, body } = JSON.parse(message.data);
+	
+		if (message.data === 'pong') {
+			console.log('ws: get pong');
+			if (this.pingPongTimer) {
+				clearTimeout(this.pingPongTimer);
+			}
+		}
 
 		if (type === 'channel') {
 			const id = body.id;
