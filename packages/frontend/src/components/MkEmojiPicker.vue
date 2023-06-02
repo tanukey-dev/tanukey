@@ -234,9 +234,9 @@ watch(q, () => {
 			}
 			if (matches.size >= max) return matches;
 
-			// 名前にキーワードが含まれている
+			// 名前またはエイリアスにキーワードが含まれている
 			for (const emoji of emojis) {
-				if (keywords.every(keyword => emoji.name.includes(keyword))) {
+				if (keywords.every(keyword => emoji.name.includes(keyword) || emoji.keywords.some(alias => alias.includes(keyword)))) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
@@ -251,12 +251,27 @@ watch(q, () => {
 			if (matches.size >= max) return matches;
 
 			for (const emoji of emojis) {
+				if (emoji.keywords.some(keyword => keyword.startsWith(newQ))) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
+				}
+			}
+			if (matches.size >= max) return matches;
+
+			for (const emoji of emojis) {
 				if (emoji.name.includes(newQ)) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
 			}
 			if (matches.size >= max) return matches;
+
+			for (const emoji of emojis) {
+				if (emoji.keywords.some(keyword => keyword.includes(newQ))) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
+				}
+			}
 		}
 
 		return matches;
