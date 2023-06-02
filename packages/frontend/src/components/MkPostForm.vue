@@ -22,7 +22,7 @@
 					<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
 					<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
 				</button>
-				<button v-else class="_button" :class="[$style.headerRightItem, $style.visibility]" disabled>
+				<button v-else v-tooltip="postChannel.name" class="_button" :class="[$style.headerRightItem, $style.visibility]">
 					<span><i class="ti ti-device-tv"></i></span>
 					<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
 				</button>
