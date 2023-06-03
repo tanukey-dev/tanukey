@@ -22,11 +22,11 @@
 					<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
 					<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
 				</button>
-				<button class="_button" :class="[$style.headerRightItem, $style.visibility]">
+				<button ref="changeChannelButtonAtPublicEl" class="_button" :class="[$style.headerRightItem, $style.visibility]" @click="setChannel">
 					<span><i class="ti ti-device-tv-off"></i></span>
 				</button>
 			</template>
-			<button v-else v-tooltip="postChannel.name" class="_button" :class="[$style.headerRightItem, $style.visibility]">
+			<button v-else ref="changeChannelButtonAtChannelEl" v-tooltip="postChannel.name" class="_button" :class="[$style.headerRightItem, $style.visibility]" @click="setChannel">
 				<span><i class="ti ti-device-tv"></i></span>
 				<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
 			</button>
@@ -160,6 +160,8 @@ const cwInputEl = $shallowRef<HTMLInputElement | null>(null);
 const hashtagsInputEl = $shallowRef<HTMLInputElement | null>(null);
 const asciiArtTextareaEl = $shallowRef<HTMLTextAreaElement | null>(null);
 const visibilityButton = $shallowRef<HTMLElement | null>(null);
+const changeChannelButtonAtPublicEl = $shallowRef<HTMLElement | null>(null);
+const changeChannelButtonAtChannelEl = $shallowRef<HTMLElement | null>(null);
 
 let posting = $ref(false);
 let posted = $ref(false);
@@ -445,6 +447,17 @@ function upload(file: File, name?: string) {
 	uploadFile(file, defaultStore.state.uploadFolder, name).then(res => {
 		files.push(res);
 	});
+}
+
+function setChannel(): void {
+	os.popup(defineAsyncComponent(() => import('@/components/MkChannelPicker.vue')), {
+		currentChannel: postChannel.value,
+		src: postChannel.value == null ? changeChannelButtonAtPublicEl : changeChannelButtonAtChannelEl,
+	}, {
+		changeChannel: ch => {
+			postChannel.value = ch;
+		},
+	}, 'closed');
 }
 
 function setVisibility() {
