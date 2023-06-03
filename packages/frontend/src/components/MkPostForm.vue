@@ -14,13 +14,18 @@
 			</button>
 		</div>
 		<div :class="$style.headerRight">
-			<button v-if="postChannel == null" ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
-				<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
-				<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
-				<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
-				<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
-				<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
-			</button>
+			<template v-if="postChannel == null">
+				<button ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
+					<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
+					<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
+					<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
+					<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
+					<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
+				</button>
+				<button class="_button" :class="[$style.headerRightItem, $style.visibility]">
+					<span><i class="ti ti-device-tv-off"></i></span>
+				</button>
+			</template>
 			<button v-else v-tooltip="postChannel.name" class="_button" :class="[$style.headerRightItem, $style.visibility]">
 				<span><i class="ti ti-device-tv"></i></span>
 				<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
@@ -65,6 +70,8 @@
 	</div>
 	<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
 	<textarea v-show="withAsciiArt" ref="asciiArtTextareaEl" v-model="asciiartText" :style="aaTextAreaStyles" :class="$style.asciiart" class="asciiart" :placeholder="i18n.ts.asciiart" spellcheck="false" ></textarea>
+	<XPostFormAttaches v-model="files" :class="$style.attaches" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName"/>
+	<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
 	<div v-if="showingOptions" style="padding: 8px 16px;">
 	</div>
 	<footer :class="$style.footer">
