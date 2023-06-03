@@ -456,6 +456,7 @@ function setChannel(): void {
 	}, {
 		changeChannel: ch => {
 			postChannel.value = ch;
+			visibility = 'public';
 		},
 	}, 'closed');
 }
