@@ -12,6 +12,10 @@
 
 -->
 
+## 13.13.0-beta.7-tanu-1.26.3
+### General
+- Websocketの通信が安定しないためtheturtle32/WebSocket-Nodeにrevert
+
 ## 13.13.0-beta.7-tanu-1.26.2
 ### General
 - fix: お気に入りチャンネルがボイスチャンネルアイコンになっていたのを修正
