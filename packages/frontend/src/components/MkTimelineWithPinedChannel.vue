@@ -68,33 +68,38 @@ watch(tab, async () => {
 
 onMounted(async () => {
 	let t: any[] = [];
+	let ids: string[] = [];
 	let s: Set<string> = new Set<string>();
+
 	for (let id of instance.pinnedLtlChannelIds) {
-		let ch = await os.api('channels/show', {
-			channelId: id,
-		});
-		if (ch != null) {
-			if (ch.isVoiceChatEnabled) {
-				t.push({ key: ch.id, title: ch.name, icon: 'ti ti-microphone' });
-			} else {
-				t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv-old' });
-			}
-			s.add(ch.id);
-		}
+		ids.push(id);
+		s.add(id);
 	}
 
 	let userPinnedLtlChannelIds = defaultStore.makeGetterSetter('userPinnedLtlChannelIds');
-	let userIds = userPinnedLtlChannelIds.get();
-	for (let id of userIds) {
+	let userPinnedChIds = userPinnedLtlChannelIds.get();
+	for (let id of userPinnedChIds) {
 		if (!s.has(id.value)) {
-			let ch = await os.api('channels/show', {
-				channelId: id.value,
-			});
+			ids.push(id.value);
+			s.add(id.value);
+		}
+	}
+
+	let pinnedChs = await os.api('channels/show', {
+		channelIds: ids,
+	});
+
+	if (pinnedChs) {
+		for (let ch of pinnedChs) {
 			if (ch != null) {
 				if (ch.isVoiceChatEnabled) {
 					t.push({ key: ch.id, title: ch.name, icon: 'ti ti-microphone' });
 				} else {
-					t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv' });
+					if (instance.pinnedLtlChannelIds.includes(ch.id)) {
+						t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv-old' });
+					} else {
+						t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv' });
+					}
 				}
 			}
 		}
