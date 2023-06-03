@@ -77,7 +77,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				.leftJoinAndSelect('note.reply', 'reply')
 				.leftJoinAndSelect('note.renote', 'renote')
 				.leftJoinAndSelect('reply.user', 'replyUser')
-				.leftJoinAndSelect('renote.user', 'renoteUser');
+				.leftJoinAndSelect('renote.user', 'renoteUser')
+				.leftJoinAndSelect('note.channel', 'channel')
+				.andWhere(new Brackets(qb => {
+					qb.orWhere('channel.searchable IS NULL');
+					qb.orWhere('channel.searchable = true');
+				}));
 
 			this.queryService.generateVisibilityQuery(query, me);
 			if (me) {
