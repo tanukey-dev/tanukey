@@ -139,6 +139,8 @@ export default class Stream extends EventEmitter<StreamEvents> {
 			console.log('ws: try reconnecting');
 			//再接続
 			this.stream.reconnect();
+			for (const p of this.sharedConnectionPools) p.connect();
+			for (const c of this.nonSharedConnections) c.connect();
 
 			//再接続チェック
 			this.pingPongTimer = null;
