@@ -760,7 +760,7 @@ async function post(ev?: MouseEvent) {
 	text = diceRoll(text, true);
 
 	let postData = {
-		text: text,
+		text: (text === null || text === '') ? undefined : text,
 		fileIds: files.length > 0 ? files.map(f => f.id) : undefined,
 		replyId: props.reply ? props.reply.id : undefined,
 		renoteId: props.renote ? props.renote.id : quoteId ? quoteId : undefined,
