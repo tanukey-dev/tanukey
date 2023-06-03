@@ -12,6 +12,10 @@
 
 -->
 
+## 13.13.0-beta.7-tanu-1.26.4
+### General
+- fix: 検索避け、プライベートチャンネルがユーザーのホームで見える不具合の修正
+
 ## 13.13.0-beta.7-tanu-1.26.3
 ### General
 - Websocketの通信が安定しないためtheturtle32/WebSocket-Nodeにrevert
