@@ -1,4 +1,3 @@
-import * as WebSocket from 'ws';
 import type { User } from '@/models/entities/User.js';
 import type { AccessToken } from '@/models/entities/AccessToken.js';
 import type { Packed } from '@/misc/json-schema.js';
@@ -8,6 +7,7 @@ import { bindThis } from '@/decorators.js';
 import { CacheService } from '@/core/CacheService.js';
 import { UserProfile } from '@/models/index.js';
 import type { ChannelsService } from './ChannelsService.js';
+import type * as websocket from 'websocket';
 import type { EventEmitter } from 'events';
 import type Channel from './channel.js';
 import type { StreamEventEmitter, StreamMessages } from './types.js';
@@ -18,7 +18,7 @@ import type { StreamEventEmitter, StreamMessages } from './types.js';
 export default class Connection {
 	public user?: User;
 	public token?: AccessToken;
-	private wsConnection: WebSocket.WebSocket;
+	private wsConnection: websocket.connection;
 	public subscriber: StreamEventEmitter;
 	private channels: Channel[] = [];
 	private subscribingNotes: any = {};
@@ -37,9 +37,11 @@ export default class Connection {
 		private notificationService: NotificationService,
 		private cacheService: CacheService,
 
+		subscriber: EventEmitter,
 		user: User | null | undefined,
 		token: AccessToken | null | undefined,
 	) {
+		this.subscriber = subscriber;
 		if (user) this.user = user;
 		if (token) this.token = token;
 	}
@@ -68,16 +70,12 @@ export default class Connection {
 		if (this.user != null) {
 			await this.fetch();
 
-			if (!this.fetchIntervalId) {
-				this.fetchIntervalId = setInterval(this.fetch, 1000 * 10);
-			}
+			this.fetchIntervalId = setInterval(this.fetch, 1000 * 10);
 		}
 	}
 
 	@bindThis
-	public async listen(subscriber: EventEmitter, wsConnection: WebSocket.WebSocket) {
-		this.subscriber = subscriber;
-
+	public async init2(wsConnection: websocket.connection) {
 		this.wsConnection = wsConnection;
 		this.wsConnection.on('message', this.onWsConnectionMessage);
 
@@ -90,11 +88,14 @@ export default class Connection {
 	 * クライアントからメッセージ受信時
 	 */
 	@bindThis
-	private async onWsConnectionMessage(data: WebSocket.RawData) {
+	private async onWsConnectionMessage(data: websocket.Message) {
+		if (data.type !== 'utf8') return;
+		if (data.utf8Data == null) return;
+
 		let obj: Record<string, any>;
 
 		try {
-			obj = JSON.parse(data.toString());
+			obj = JSON.parse(data.utf8Data);
 		} catch (e) {
 			return;
 		}
