@@ -12,6 +12,10 @@
 
 -->
 
+## 13.13.0-beta.7-tanu-1.26.6
+### General
+- style: 未選択のステータスバーは表示に反映しないように修正
+
 ## 13.13.0-beta.7-tanu-1.26.5
 ### General
 - fix: pull to refreshが効かない不具合の修正
