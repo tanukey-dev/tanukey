@@ -359,7 +359,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	enableCondensedLineForAcct: {
 		where: 'device',
-		default: true,
+		default: false,
 	},
 	disableSwipe: {
 		where: 'device',

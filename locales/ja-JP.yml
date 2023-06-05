@@ -1074,6 +1074,7 @@ cancelReactionConfirm: "リアクションを取り消しますか？"
 changeReactionConfirm: "リアクションを変更しますか？"
 later: "あとで"
 goToMisskey: "Misskeyへ"
+installed: "インストール済み"
 
 _initialAccountSetting:
   accountCreated: "アカウントの作成が完了しました！"

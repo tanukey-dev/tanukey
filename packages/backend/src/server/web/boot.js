@@ -111,9 +111,9 @@
 			}
 		}
 	}
-	const colorSchema = localStorage.getItem('colorSchema');
-	if (colorSchema) {
-		document.documentElement.style.setProperty('color-schema', colorSchema);
+	const colorScheme = localStorage.getItem('colorScheme');
+	if (colorScheme) {
+		document.documentElement.style.setProperty('color-scheme', colorScheme);
 	}
 	//#endregion
 
