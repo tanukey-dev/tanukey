@@ -12,6 +12,18 @@
 
 -->
 
+## 13.13.0-beta.7-tanu-1.28.0
+### General
+- Misskeyの13.13.1をマージ
+
+## 13.13.1
+
+### Client
+- Fix: タブがアクティブな間はstreamが切断されないように
+
+### Server
+- Fix: api/metaで`TypeError: JSON5.parse is not a function`エラーが発生する問題を修正
+
 ## 13.13.0-beta.7-tanu-1.27.0
 ### General
 - Misskeyの13.13.0をマージ
