@@ -25,7 +25,7 @@
 		</template>
 		<div v-if="(!thin_ && narrow && !hideTitle) || (actions && actions.length > 0)" :class="$style.buttonsRight">
 			<template v-for="action in actions">
-				<button v-tooltip.noDelay="action.text" class="_button" :class="[$style.button, { [$style.highlighted]: action.highlighted }]" @click.stop="action.handler" @touchstart="preventDrag"><i :class="action.icon"></i></button>
+				<button v-tooltip.noDelay="action.text" :ref="(el) => action.refHandler ? action.refHandler(el) : null" class="_button" :class="[$style.button, { [$style.highlighted]: action.highlighted }]" @click.stop="action.handler" @touchstart="preventDrag"><i :class="action.icon"></i></button>
 			</template>
 		</div>
 	</div>
@@ -51,7 +51,9 @@ const props = withDefaults(defineProps<{
 		text: string;
 		icon: string;
 		highlighted?: boolean;
+		ref?: string;
 		handler: (ev: MouseEvent) => void;
+		refHandler?: (ref: any) => void;
 	}[];
 	thin?: boolean;
 	displayMyAvatar?: boolean;

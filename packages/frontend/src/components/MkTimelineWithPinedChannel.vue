@@ -23,7 +23,7 @@
 </MkStickyContainer>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch, defineAsyncComponent } from 'vue';
 import { Tab } from './global/MkPageHeader.tabs.vue';
 import { i18n } from '@/i18n';
 import { instance } from '@/instance';
@@ -44,7 +44,6 @@ const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 const tab = ref<string|null>(null);
 const selectedTab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
 const channelId = computed(() => tab.value === 'public' ? null : tab.value);
-const headerActions = computed(() => []);
 const disableSwipe = computed(defaultStore.makeGetterSetter('disableSwipe'));
 
 watch(tab, async () => {
@@ -151,6 +150,31 @@ const onSwipeRight = (): void => {
 		tab.value = tabs.value[tabs.value.length - 1].key;
 	}
 };
+
+const headerActions = computed(() => [{
+	icon: 'ti ti-caret-down',
+	text: i18n.ts.menu,
+	handler: dropDownMenu,
+	refHandler: getRef,
+}]);
+
+let el: any = null;
+
+const getRef = (ref) => {
+	el = ref;
+}
+
+const dropDownMenu = (ev) => {
+	os.popup(defineAsyncComponent(() => import('@/components/MkChannelTabPicker.vue')), {
+		currentKey: tab.value,
+		tabs: tabs,
+		src: el,
+	}, {
+		changeKey: key => {
+			tab.value = key;
+		},
+	}, 'closed');
+}
 
 </script>
 
