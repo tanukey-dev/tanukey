@@ -779,7 +779,7 @@ async function post(ev?: MouseEvent) {
 	}
 
 	if (withAsciiArt.value && asciiartText.value && asciiartText.value.trim() !== '') {
-		postData.text = postData.text + '\n<asciiart>' + diceRoll(asciiartText.value, false) + '\n</asciiart>\n';
+		postData.text = (postData.text === undefined ? '' : postData.text + '\n') + '<asciiart>' + diceRoll(asciiartText.value, false) + '\n</asciiart>\n';
 	}
 
 	// plugin
