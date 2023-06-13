@@ -270,7 +270,9 @@ export class FileServerService {
 
 			let image: IImageStreamable | null = null;
 			if ('emoji' in request.query || 'avatar' in request.query) {
-				if (!isAnimationConvertibleImage && !('static' in request.query)) {
+				// Safari 環境で アルファチャンネル付き Animated WebP が
+				// 正しくレンダリングできない不具合があるため gif はそのまま表示させる
+				if ((!isAnimationConvertibleImage || file.mime === 'image/gif') && !('static' in request.query)) {
 					image = {
 						data: fs.createReadStream(file.path),
 						ext: file.ext,
