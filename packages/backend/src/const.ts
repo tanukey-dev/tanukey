@@ -41,7 +41,6 @@ export const FILE_TYPE_BROWSERSAFE = [
 	'application/ogg',
 
 	// ISO/IEC base media file format
-	'video/quicktime',
 	'video/mp4',
 	'audio/mp4',
 	'video/x-m4v',

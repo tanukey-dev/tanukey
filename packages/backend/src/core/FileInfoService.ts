@@ -310,6 +310,9 @@ export class FileInfoService {
 		if (mime === "audio/vnd.wave") {
 			return "audio/wav";
 		}
+		if (mime === "video/quicktime") {
+			return "video/mp4";
+		}
 
 		return mime;
 	}
