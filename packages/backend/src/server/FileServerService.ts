@@ -272,7 +272,13 @@ export class FileServerService {
 			if ('emoji' in request.query || 'avatar' in request.query) {
 				// Safari 環境で アルファチャンネル付き Animated WebP が
 				// 正しくレンダリングできない不具合があるため gif はそのまま表示させる
-				if ((!isAnimationConvertibleImage || file.mime === 'image/gif') && !('static' in request.query)) {
+				if (!isAnimationConvertibleImage && !('static' in request.query)) {
+					image = {
+						data: fs.createReadStream(file.path),
+						ext: file.ext,
+						type: file.mime,
+					};
+				} else if (file.ext === 'gif') {
 					image = {
 						data: fs.createReadStream(file.path),
 						ext: file.ext,
@@ -280,11 +286,11 @@ export class FileServerService {
 					};
 				} else {
 					const data = (await sharpBmp(file.path, file.mime, { animated: !('static' in request.query) }))
-							.resize({
-								height: 'emoji' in request.query ? 128 : 320,
-								withoutEnlargement: true,
-							})
-							.webp(webpDefault);
+						.resize({
+							height: 'emoji' in request.query ? 128 : 320,
+							withoutEnlargement: true,
+						})
+						.webp(webpDefault);
 
 					image = {
 						data,
