@@ -12,6 +12,10 @@
 
 -->
 
+## 13.13.1-tanu-1.29.2
+### General
+- Safari 環境で アルファチャンネル付き Animated WebP が正しくレンダリングできない不具合対応
+
 ## 13.13.1-tanu-1.29.1
 ### General
 - Misskey13.13.2をマージ
