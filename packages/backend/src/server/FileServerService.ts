@@ -270,33 +270,35 @@ export class FileServerService {
 
 			let image: IImageStreamable | null = null;
 			if ('emoji' in request.query || 'avatar' in request.query) {
-				// Safari 環境で アルファチャンネル付き Animated WebP が
-				// 正しくレンダリングできない不具合があるため gif はそのまま表示させる
 				if (!isAnimationConvertibleImage && !('static' in request.query)) {
 					image = {
 						data: fs.createReadStream(file.path),
 						ext: file.ext,
 						type: file.mime,
 					};
-				} else if (file.ext === 'gif') {
-					image = {
-						data: fs.createReadStream(file.path),
-						ext: file.ext,
-						type: file.mime,
-					};
 				} else {
-					const data = (await sharpBmp(file.path, file.mime, { animated: !('static' in request.query) }))
-						.resize({
-							height: 'emoji' in request.query ? 128 : 320,
-							withoutEnlargement: true,
-						})
-						.webp(webpDefault);
+					// Safari 環境で アルファチャンネル付き Animated WebP が
+					// 正しくレンダリングできない不具合があるため gif はそのまま表示させる
+					if (file.ext === 'gif' || file.mime === 'image/gif') {
+						image = {
+							data: fs.createReadStream(file.path),
+							ext: file.ext,
+							type: file.mime,
+						};
+					} else {
+						const data = (await sharpBmp(file.path, file.mime, { animated: !('static' in request.query) }))
+							.resize({
+								height: 'emoji' in request.query ? 128 : 320,
+								withoutEnlargement: true,
+							})
+							.webp(webpDefault);
 
-					image = {
-						data,
-						ext: 'webp',
-						type: 'image/webp',
-					};
+						image = {
+							data,
+							ext: 'webp',
+							type: 'image/webp',
+						};
+					}
 				}
 			} else if ('static' in request.query) {
 				image = this.imageProcessingService.convertSharpToWebpStream(await sharpBmp(file.path, file.mime), 498, 422);
