@@ -117,8 +117,22 @@ export class QueryService {
 			q.andWhere(new Brackets(qb => { qb
 				// チャンネルのノートではない
 				.where('note.channelId IS NULL')
-				// または自分がフォローしているチャンネルのノート
-				.orWhere(`note.channelId IN (${ channelFollowingQuery.getQuery() })`);
+				.orWhere(new Brackets(qb2 => { qb2
+					// または自分がフォローしているチャンネルのノート
+					.where(`note.channelId IN (${ channelFollowingQuery.getQuery() })`)
+					.andWhere(new Brackets(qb3 => { qb3
+						//かつプライベートチャンネルではない、またはプライベートチャンネルであるが見る権限がある
+						.orWhere('channel.isPrivate = FALSE')
+						.orWhere(new Brackets(qb2 => { qb2
+							.where('channel.isPrivate = TRUE')
+							.andWhere(new Brackets(qb3 => { qb3
+								.where(':id = ANY(channel.privateUserIds)', { id: me.id })
+								.orWhere(':id = ANY(channel.moderatorUserIds)', { id: me.id })
+								.orWhere('channel.userId = :id', { id: me.id });
+							}));
+						}));
+					}));
+				}));
 			}));
 	
 			q.setParameters(channelFollowingQuery.getParameters());
