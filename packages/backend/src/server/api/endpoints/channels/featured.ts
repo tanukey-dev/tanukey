@@ -45,6 +45,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 						.where('channel.isPrivate = TRUE')
 						.andWhere(new Brackets(qb3 => { qb3
 							.where(':id = ANY(channel.privateUserIds)', { id: me?.id })
+							.orWhere(':id = ANY(channel.moderatorUserIds)', { id: me?.id })
 							.orWhere('channel.userId = :id', { id: me?.id });
 						}));
 					}));

@@ -62,6 +62,14 @@ export const packedChannelSchema = {
 				format: 'id',
 			},
 		},
+		moderatorUserIds: {
+			type: 'array',
+			nullable: false, optional: false,
+			items: {
+				type: 'string',
+				format: 'id',
+			},
+		},
 		notesCount: {
 			type: 'number',
 			nullable: false, optional: false,

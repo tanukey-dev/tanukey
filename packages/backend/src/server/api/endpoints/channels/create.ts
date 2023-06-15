@@ -55,6 +55,12 @@ export const paramDef = {
 				type: 'string', format: 'misskey:id',
 			},
 		},
+		moderatorUserIds: {
+			type: 'array',
+			items: {
+				type: 'string', format: 'misskey:id',
+			},
+		},
 	},
 	required: ['name'],
 } as const;
@@ -98,6 +104,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				isVoiceChatEnabled: ps.isVoiceChatEnabled ?? false,
 				isPrivate: ps.isPrivate ?? false,
 				privateUserIds: ps.privateUserIds ?? [],
+				moderatorUserIds: ps.moderatorUserIds ?? [],
 				...(ps.color !== undefined ? { color: ps.color } : {}),
 			} as Channel).then(x => this.channelsRepository.findOneByOrFail(x.identifiers[0]));
 

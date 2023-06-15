@@ -82,6 +82,7 @@ export class ChannelEntityService {
 			isVoiceChatEnabled: channel.isVoiceChatEnabled,
 			isPrivate: channel.isPrivate,
 			privateUserIds: channel.privateUserIds,
+			moderatorUserIds: channel.moderatorUserIds,
 			usersCount: channel.usersCount,
 			notesCount: channel.notesCount,
 

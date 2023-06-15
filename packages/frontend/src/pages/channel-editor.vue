@@ -84,6 +84,24 @@
 				</div>
 			</MkFolder>
 
+			<MkFolder :defaultOpen="true">
+				<template #label>{{ i18n.ts._channel.moderatorUserIds }}</template>
+				
+				<div class="_gaps">
+					<Multiselect
+						v-model="moderatorUserIds"
+						mode="tags"
+						:options="userAsyncFind"
+						:closeOnSelect="false"
+						:searchable="true"
+						:object="true"
+						:resolveOnLoad="true"
+						:delay="0"
+						:minChars="1"
+					/>
+				</div>
+			</MkFolder>
+
 			<div class="_buttons">
 				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ channelId ? i18n.ts.save : i18n.ts.create }}</MkButton>
 				<MkButton v-if="channelId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
@@ -129,6 +147,7 @@ let isNoteCollapsed = ref(true);
 let isVoiceChatEnabled = ref(false);
 let isPrivate = ref(false);
 const privateUserIds = ref<{ value: string, label: string}[]>([]);
+const moderatorUserIds = ref<{ value: string, label: string}[]>([]);
 const pinnedNotes = ref([]);
 
 watch(() => bannerId, async () => {
@@ -184,6 +203,19 @@ async function fetchChannel() {
 		privateUserIds.value = tmp;
 	}
 
+	const musers = await os.api('users/show', {
+		userIds: channel.moderatorUserIds,
+	});
+	if (musers) {
+		let tmp: any[] = [];
+		for (let puser of musers) {
+			if (puser) {
+				tmp.push({ value: puser.id, label: puser.username });
+			}
+		}
+		moderatorUserIds.value = tmp;
+	}
+
 	pinnedNotes.value = channel.pinnedNoteIds.map(id => ({
 		id,
 	}));
@@ -221,6 +253,7 @@ function save() {
 		isVoiceChatEnabled: isVoiceChatEnabled.value,
 		isPrivate: isPrivate.value,
 		privateUserIds: privateUserIds.value.map(v => v.value),
+		moderatorUserIds: moderatorUserIds.value.map(v => v.value),
 		color: color,
 	};
 

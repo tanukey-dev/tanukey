@@ -107,6 +107,11 @@ export class Channel {
 	})
 	public privateUserIds: User['id'][];
 
+	@Column('varchar', {
+		array: true, length: 128, default: '{}',
+	})
+	public moderatorUserIds: User['id'][];
+
 	@Index()
 	@Column('integer', {
 		default: 0,

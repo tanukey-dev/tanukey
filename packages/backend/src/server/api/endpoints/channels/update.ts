@@ -65,6 +65,12 @@ export const paramDef = {
 				type: 'string', format: 'misskey:id',
 			},
 		},
+		moderatorUserIds: {
+			type: 'array',
+			items: {
+				type: 'string', format: 'misskey:id',
+			},
+		},
 		color: { type: 'string', minLength: 1, maxLength: 16 },
 	},
 	required: ['channelId'],
@@ -94,7 +100,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 
 			const iAmModerator = await this.roleService.isModerator(me);
-			if (channel.userId !== me.id && !iAmModerator) {
+			if ((channel.userId !== me.id && !channel.moderatorUserIds.includes(me.id)) && !iAmModerator) {
 				throw new ApiError(meta.errors.accessDenied);
 			}
 
@@ -125,6 +131,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				...(typeof ps.isVoiceChatEnabled === 'boolean' ? { isVoiceChatEnabled: ps.isVoiceChatEnabled } : {}),
 				...(typeof ps.isPrivate === 'boolean' ? { isPrivate: ps.isPrivate } : {}),
 				...(ps.privateUserIds !== undefined ? { privateUserIds: ps.privateUserIds } : {}),
+				...(ps.moderatorUserIds !== undefined ? { moderatorUserIds: ps.moderatorUserIds } : {}),
 				...(banner ? { bannerId: banner.id } : {}),
 			});
 

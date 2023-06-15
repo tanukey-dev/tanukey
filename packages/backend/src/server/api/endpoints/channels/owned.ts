@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Brackets } from 'typeorm';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import type { ChannelsRepository } from '@/models/index.js';
 import { QueryService } from '@/core/QueryService.js';
@@ -46,7 +47,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		super(meta, paramDef, async (ps, me) => {
 			const query = this.queryService.makePaginationQuery(this.channelsRepository.createQueryBuilder('channel'), ps.sinceId, ps.untilId)
 				.andWhere('channel.isArchived = FALSE')
-				.andWhere({ userId: me.id });
+				.andWhere(new Brackets(qb => qb
+					.where({ userId: me.id })
+					.orWhere(':id = ANY(channel.moderatorUserIds)', { id: me.id }),
+				));
 
 			const channels = await query
 				.take(ps.limit)

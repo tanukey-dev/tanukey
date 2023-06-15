@@ -61,10 +61,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, watch, onActivated, onDeactivated } from 'vue';
+import { computed, watch, onActivated, onDeactivated } from 'vue';
 import MkPostForm from '@/components/MkPostForm.vue';
 import MkTimeline from '@/components/MkTimeline.vue';
 import XChannelFollowButton from '@/components/MkChannelFollowButton.vue';
+import * as misskey from 'misskey-js';
 import * as os from '@/os';
 import { useRouter } from '@/router';
 import { $i, iAmModerator } from '@/account';
@@ -88,7 +89,7 @@ const props = defineProps<{
 }>();
 
 let tab = $ref('timeline');
-let channel = $ref(null);
+let channel = $ref<null | misskey.entities.Channel>(null);
 let favorited = $ref(false);
 let searchQuery = $ref('');
 let searchPagination = $ref();
@@ -179,7 +180,7 @@ const headerActions = $computed(() => {
 			},
 		};
 
-		const canEdit = ($i && $i.id === channel.userId) || iAmModerator;
+		const canEdit = ($i && ($i.id === channel.userId || channel.moderatorUserIds.includes($i.id))) || iAmModerator;
 		return canEdit ? [share, {
 			icon: 'ti ti-settings',
 			text: i18n.ts.edit,

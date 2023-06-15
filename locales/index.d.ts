@@ -1618,6 +1618,7 @@ export interface Locale {
         "nameOnly": string;
         "isPrivate": string;
         "privateUserIds": string;
+        "moderatorUserIds": string;
         "isVoiceChatEnabled": string;
     };
     "_menuDisplay": {

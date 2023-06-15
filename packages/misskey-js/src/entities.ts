@@ -476,7 +476,20 @@ export type FollowRequest = {
 
 export type Channel = {
 	id: ID;
-	// TODO
+	createdAt: Date;
+	lastNotedAt: Date | null;
+	userId: User['id'] | null;
+	name: string;
+	description: string;
+	bannerId: string;
+	color: string;
+	federation: boolean;
+	searchable: boolean;
+	isNoteCollapsed: boolean;
+	isVoiceChatEnabled: boolean;
+	isPrivate: boolean;
+	privateUserIds: User['id'][];
+	moderatorUserIds: User['id'][];
 };
 
 export type Following = {

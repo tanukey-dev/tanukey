@@ -70,6 +70,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 							.where('channel.isPrivate = TRUE')
 							.andWhere(new Brackets(qb3 => { qb3
 								.where(':id = ANY(channel.privateUserIds)', { id: me?.id })
+								.orWhere(':id = ANY(channel.moderatorUserIds)', { id: me?.id })
 								.orWhere('channel.userId = :id', { id: me?.id });
 							}));
 						}));
@@ -89,7 +90,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					id: ps.channelId,
 				});
 
-				if (channel == null || (me && channel.isPrivate && !((channel.userId === me.id) || channel.privateUserIds.includes(me.id)))) {
+				if (channel == null || (me && channel.isPrivate && !(channel.userId === me.id || channel.moderatorUserIds.includes(me.id) || channel.privateUserIds.includes(me.id)))) {
 					throw new ApiError(meta.errors.noSuchChannel);
 				}
 
