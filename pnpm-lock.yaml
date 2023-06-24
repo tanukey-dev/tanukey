@@ -220,6 +220,9 @@ importers:
       ip-cidr:
         specifier: 3.1.0
         version: 3.1.0
+      ipaddr.js:
+        specifier: 2.1.0
+        version: 2.1.0
       is-svg:
         specifier: 4.3.2
         version: 4.3.2
@@ -10422,8 +10425,8 @@ packages:
     engines: {node: '>= 0.10'}
     dev: false
 
-  /ipaddr.js@2.0.1:
-    resolution: {integrity: sha512-1qTgH9NG+IIJ4yfKs2e6Pp1bZg8wbDbKHT21HrLIeYBTRLgMYKnMTPAuI3Lcs61nfx5h1xlXnbJtH1kX5/d/ng==}
+  /ipaddr.js@2.1.0:
+    resolution: {integrity: sha512-LlbxQ7xKzfBusov6UMi4MFpEg0m+mAm9xyNGEduwXMEDuf4WfzB/RZwMVYEd7IKGvh4IUkEXYxtAVu9T3OelJQ==}
     engines: {node: '>= 10'}
 
   /irregular-plurals@3.5.0:
@@ -14187,7 +14190,7 @@ packages:
     resolution: {integrity: sha512-5zyFfekIVUOTVbL92hc8LJOtE/gyGHeREHkJ2yTyByP8Q2YZVoBqLg3EfYLeF0oVvGqtaEX2t2Qovja0/gStXw==}
     dependencies:
       ip-regex: 4.3.0
-      ipaddr.js: 2.0.1
+      ipaddr.js: 2.1.0
       is-ip: 3.1.0
       netmask: 2.0.2
 
