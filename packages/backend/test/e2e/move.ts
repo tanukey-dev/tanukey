@@ -1,10 +1,10 @@
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
-import rndstr from 'rndstr';
 import { loadConfig } from '@/config.js';
 import { User, UsersRepository } from '@/models/index.js';
 import { jobQueue } from '@/boot/common.js';
+import { secureRndstr } from '@/misc/secure-rndstr.js';
 import { uploadFile, signup, startServer, initTestDb, api, sleep, successfulApiCall } from '../utils.js';
 import type { INestApplicationContext } from '@nestjs/common';
 
@@ -162,7 +162,7 @@ describe('Account Move', () => {
 				alsoKnownAs: [`@alice@${url.hostname}`],
 			}, root);
 			const listRoot = await api('/users/lists/create', {
-				name: rndstr('0-9a-z', 8),
+				name: secureRndstr(8),
 			}, root);
 			await api('/users/lists/push', {
 				listId: listRoot.body.id,
@@ -176,9 +176,9 @@ describe('Account Move', () => {
 				userId: eve.id,
 			}, alice);
 			const antenna = await api('/antennas/create', {
-				name: rndstr('0-9a-z', 8),
+				name: secureRndstr(8),
 				src: 'home',
-				keywords: [rndstr('0-9a-z', 8)],
+				keywords: [secureRndstr(8)],
 				excludeKeywords: [],
 				users: [],
 				caseSensitive: false,
@@ -210,7 +210,7 @@ describe('Account Move', () => {
 				userId: dave.id,
 			}, eve);
 			const listEve = await api('/users/lists/create', {
-				name: rndstr('0-9a-z', 8),
+				name: secureRndstr(8),
 			}, eve);
 			await api('/users/lists/push', {
 				listId: listEve.body.id,
@@ -419,9 +419,9 @@ describe('Account Move', () => {
 		test('Prohibit access after moving: /antennas/update', async () => {
 			const res = await api('/antennas/update', {
 				antennaId,
-				name: rndstr('0-9a-z', 8),
+				name: secureRndstr(8),
 				src: 'users',
-				keywords: [rndstr('0-9a-z', 8)],
+				keywords: [secureRndstr(8)],
 				excludeKeywords: [],
 				users: [eve.id],
 				caseSensitive: false,

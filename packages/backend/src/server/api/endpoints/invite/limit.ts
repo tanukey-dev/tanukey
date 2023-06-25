@@ -1,10 +1,10 @@
-import rndstr from 'rndstr';
 import { Inject, Injectable } from '@nestjs/common';
 import { MoreThan } from 'typeorm';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import type { RegistrationTicketsRepository } from '@/models/index.js';
 import { RoleService } from '@/core/RoleService.js';
 import { DI } from '@/di-symbols.js';
+import { secureRndstr } from '@/misc/secure-rndstr.js';
 
 export const meta = {
 	tags: ['meta'],
