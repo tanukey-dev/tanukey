@@ -12,6 +12,10 @@
 
 -->
 
+## 13.13.2-tanu-1.31.1
+### General
+- style: 長い投稿を畳む表示を9emにもどす
+
 ## 13.13.2-tanu-1.31.0
 ### General
 - revert: bullmq から bull に revert
