@@ -213,9 +213,10 @@ const isLong = (appearNote.cw == null && appearNote.text != null && (
 	(appearNote.text.includes('$[x2')) ||
 	(appearNote.text.includes('$[x3')) ||
 	(appearNote.text.includes('$[x4')) ||
-	(appearNote.text.split('\n').length > 35) ||
 	(appearNote.text.includes('$[scale')) ||
 	(appearNote.text.includes('$[position')) ||
+	(appearNote.text.split('\n').length > 9) ||
+	(appearNote.text.length > 500) ||
 	(appearNote.files.length >= 5) ||
 	(urls && urls.length >= 4)
 ));
@@ -710,7 +711,7 @@ function showReactions(): void {
 
 .contentCollapsed {
 	position: relative;
-	max-height: 35em;
+	max-height: 9em;
 	overflow: clip;
 }
 
