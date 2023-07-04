@@ -53,6 +53,12 @@ export const meta = {
 			code: 'BLOCKED',
 			id: 'c4ab57cc-4e41-45e9-bfd9-584f61e35ce0',
 		},
+
+		limit: {
+			message: 'You have reached the follow limit',
+			code: 'LIMIT',
+			id: 'c4ab57cc-4e41-45e9-bfd9-584f61e35ce1',
+		},
 	},
 
 	res: {
@@ -90,6 +96,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			// 自分自身
 			if (me.id === ps.userId) {
 				throw new ApiError(meta.errors.followeeIsYourself);
+			}
+
+			// フォロー上限を設定
+			const user = await this.getterService.getUser(me.id).catch(err => {
+				if (err.id === '15348ddd-432d-49c2-8a5a-8069753becff') throw new ApiError(meta.errors.noSuchUser);
+				throw err;
+			});
+			if (user.followingCount > 1500) {
+				throw new ApiError(meta.errors.limit);
 			}
 
 			// Get followee

@@ -1079,6 +1079,7 @@ export interface Locale {
     "goToMisskey": string;
     "installed": string;
     "branding": string;
+    "followingLimit": string;
     "_initialAccountSetting": {
         "accountCreated": string;
         "letsStartAccountSetup": string;

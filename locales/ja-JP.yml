@@ -1076,6 +1076,7 @@ later: "あとで"
 goToMisskey: "Misskeyへ"
 installed: "インストール済み"
 branding: "ブランディング"
+followingLimit: "フォロー上限に達しました。"
 
 _initialAccountSetting:
   accountCreated: "アカウントの作成が完了しました！"

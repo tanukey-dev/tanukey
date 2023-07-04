@@ -88,9 +88,18 @@ async function onClick() {
 				});
 				hasPendingFollowRequestFromYou = false;
 			} else {
-				await os.api('following/create', {
-					userId: props.user.id,
-				});
+				try {
+					await os.api('following/create', {
+						userId: props.user.id,
+					});
+				} catch (err) {
+					if (err.code === 'LIMIT') {
+						os.alert({
+							type: 'error',
+							text: i18n.ts.followingLimit,
+						});
+					}
+				}
 				hasPendingFollowRequestFromYou = true;
 
 				claimAchievement('following1');
