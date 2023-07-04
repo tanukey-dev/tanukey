@@ -38,18 +38,6 @@ const prepend = note => {
 	}
 };
 
-const prependFilterdMedia = note => {
-	if (note.files !== null && note.files.length > 0) {
-		tlComponent.pagingComponent?.prepend(note);
-	}
-
-	emit('note');
-
-	if (props.sound) {
-		sound.play($i && (note.userId === $i.id) ? 'noteMy' : 'note');
-	}
-};
-
 const onUserAdded = () => {
 	tlComponent.pagingComponent?.reload();
 };
@@ -96,8 +84,10 @@ if (props.src === 'antenna') {
 	connection.on('note', prepend);
 } else if (props.src === 'media') {
 	endpoint = 'notes/media-timeline';
-	connection = stream.useChannel('mediaTimeline');
-	connection.on('note', prependFilterdMedia);
+	connection = stream.useChannel('mediaTimeline', {
+		withReplies: defaultStore.state.showTimelineReplies,
+	});
+	connection.on('note', prepend);
 } else if (props.src === 'social') {
 	endpoint = 'notes/hybrid-timeline';
 	query = {

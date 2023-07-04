@@ -36,7 +36,6 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		withFiles: { type: 'boolean', default: false },
 		withReplies: { type: 'boolean', default: false },
 		fileType: { type: 'array', items: {
 			type: 'string',
@@ -90,10 +89,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			if (me) this.queryService.generateMutedNoteQuery(query, me);
 			if (me) this.queryService.generateBlockedUserQuery(query, me);
 			if (me) this.queryService.generateMutedUserRenotesQueryForNotes(query, me);
-
-			if (ps.withFiles) {
-				query.andWhere('note.fileIds != \'{}\'');
-			}
 
 			if (ps.fileType != null) {
 				query.andWhere('note.fileIds != \'{}\'');
