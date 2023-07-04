@@ -56,6 +56,9 @@ class MediaTimelineChannel extends Channel {
 			});
 		}
 
+		// ファイルを含まない投稿は除外
+		if (note.files === undefined || note.files.length === 0) return;
+
 		// 関係ない返信は除外
 		if (note.reply && this.user && !this.withReplies) {
 			const reply = note.reply;
