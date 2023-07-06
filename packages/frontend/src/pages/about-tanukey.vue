@@ -96,6 +96,7 @@ const patronsWithIcon = [];
 
 const patrons = [
 	{ name: '峰岸', url: 'https://novelskey.tarbin.net/@minegishi_0' },
+	{ name: '倭', url: 'https://novelskey.tarbin.net/@toyama_waon' },
 ];
 
 let thereIsTreasure = $ref($i && !claimedAchievements.includes('foundTreasure'));
