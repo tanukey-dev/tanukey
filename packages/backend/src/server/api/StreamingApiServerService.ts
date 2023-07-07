@@ -76,9 +76,12 @@ export class StreamingApiServerService {
 
 			const ev = new EventEmitter();
 
-			function onRedisMessage(data: any): void {
-				ev.emit(data.channel, data.message);
+			async function onRedisMessage(_: string, data: string): Promise<void> {
+				const parsed = JSON.parse(data);
+				ev.emit(parsed.channel, parsed.message);
 			}
+
+			this.redisForSub.on('message', onRedisMessage);
 
 			const main = new MainStreamConnection(
 				this.channelsService,
