@@ -1148,12 +1148,13 @@ defineExpose({
 	padding: 0 24px;
 	margin: 0;
 	width: 100%;
-	font-size: 16px;
+	font-size: 14px;
 	border: none;
 	border-radius: 0;
 	background: transparent;
 	color: var(--fg);
 	font-family: inherit;
+	line-height: 1.5em;
 
 	&:focus {
 		outline: none;
