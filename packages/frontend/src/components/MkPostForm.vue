@@ -70,7 +70,7 @@
 	</div>
 	<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
 	<textarea v-show="withAsciiArt" ref="asciiArtTextareaEl" v-model="asciiartText" :style="aaTextAreaStyles" :class="$style.asciiart" class="asciiart" :placeholder="i18n.ts.asciiart" spellcheck="false" ></textarea>
-	<XPostFormAttaches v-model="files" :class="$style.attaches" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName"/>
+	<XPostFormAttaches v-model="files" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName" @replaceFile="replaceFile"/>
 	<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
 	<div v-if="showingOptions" style="padding: 8px 16px;">
 	</div>
@@ -443,7 +443,11 @@ function updateFileName(file, name) {
 	files[files.findIndex(x => x.id === file.id)].name = name;
 }
 
-function upload(file: File, name?: string) {
+function replaceFile(file: misskey.entities.DriveFile, newFile: misskey.entities.DriveFile): void {
+	files[files.findIndex(x => x.id === file.id)] = newFile;
+}
+
+function upload(file: File, name?: string): void {
 	uploadFile(file, defaultStore.state.uploadFolder, name).then(res => {
 		files.push(res);
 	});

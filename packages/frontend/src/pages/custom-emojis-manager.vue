@@ -156,7 +156,7 @@ const edit = (emoji) => {
 				}));
 				emojisPaginationComponent.value.reload();
 			} else if (result.deleted) {
-				emojisPaginationComponent.value.removeItem((item) => item.id === emoji.id);
+				emojisPaginationComponent.value.removeItem(emoji.id);
 			}
 		},
 	}, 'closed');
