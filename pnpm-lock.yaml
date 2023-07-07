@@ -230,8 +230,8 @@ importers:
         specifier: 10.8.6
         version: 10.8.6
       livekit-server-sdk:
-        specifier: ^1.2.1
-        version: 1.2.1
+        specifier: ^1.2.3
+        version: 1.2.3
       meilisearch:
         specifier: 0.32.5
         version: 0.32.5
@@ -736,8 +736,8 @@ importers:
         specifier: 2.2.3
         version: 2.2.3
       livekit-client:
-        specifier: ^1.9.7
-        version: 1.9.7
+        specifier: ^1.12.0
+        version: 1.12.0
       matter-js:
         specifier: 0.19.0
         version: 0.19.0
@@ -11568,20 +11568,19 @@ packages:
       wrap-ansi: 7.0.0
     dev: true
 
-  /livekit-client@1.9.7:
-    resolution: {integrity: sha512-w0WjLat0qF76l71esjTXam5JE+7vCpBF6WW+oloHFNBIVtEzEnBZa2JUo/e2oWN2YypEO5MjCIDPo7Tuvo9clA==}
+  /livekit-client@1.12.0:
+    resolution: {integrity: sha512-G1KHNMSaEMXtPIKxTQt+WH/uRvhkQ0tQaZ5Kkem2CvB/5I4KPrV4DSmhBKP1P+8reHcaBBiye8V9bfpD69aHyQ==}
     dependencies:
-      events: 3.3.0
+      eventemitter3: 5.0.1
       loglevel: 1.8.1
       protobufjs: 7.2.3
       sdp-transform: 2.14.1
       ts-debounce: 4.0.0
-      typed-emitter: 2.1.0
       webrtc-adapter: 8.2.2
     dev: false
 
-  /livekit-server-sdk@1.2.1:
-    resolution: {integrity: sha512-XLXRZlEF49u02cIMjXJB67yNmeAI4jjR5qHrkF6SGtdZDmHigTWHM+R5dgTCAYrr8ErEoIB5f/dCFIMvtKBEzg==}
+  /livekit-server-sdk@1.2.3:
+    resolution: {integrity: sha512-asyuNuqV1spetkG6WZ67DTBhoN4P0v8CEri9Y0DREtwm+TO70wnO4SWux18G8YojvKNClKRd4O1jHJmI//RuMQ==}
     dependencies:
       axios: 1.4.0
       camelcase-keys: 7.0.2
@@ -16078,12 +16077,6 @@ packages:
       for-each: 0.3.3
       is-typed-array: 1.1.10
     dev: true
-
-  /typed-emitter@2.1.0:
-    resolution: {integrity: sha512-g/KzbYKbH5C2vPkaXGu8DJlHrGKHLsM25Zg9WuC9pMGfuvT+X25tZQWo5fK1BjBm8+UrVE9LDCvaY0CQk+fXDA==}
-    optionalDependencies:
-      rxjs: 7.8.1
-    dev: false
 
   /typedarray-to-buffer@3.1.5:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
