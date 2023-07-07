@@ -61,6 +61,11 @@ export class Ad {
 	})
 	public forceShowAds: boolean;
 
+	@Column('integer', {
+		default: 0, nullable: false,
+	})
+	public dayOfWeek: number;
+
 	constructor(data: Partial<Ad>) {
 		if (data == null) return;
 

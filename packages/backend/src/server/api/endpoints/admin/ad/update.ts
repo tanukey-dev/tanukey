@@ -32,8 +32,9 @@ export const paramDef = {
 		expiresAt: { type: 'integer' },
 		startsAt: { type: 'integer' },
 		forceShowAds: { type: 'boolean', nullable: false },
+		dayOfWeek: { type: 'integer' },
 	},
-	required: ['id', 'memo', 'url', 'imageUrl', 'place', 'priority', 'ratio', 'expiresAt', 'startsAt'],
+	required: ['id', 'memo', 'url', 'imageUrl', 'place', 'priority', 'ratio', 'expiresAt', 'startsAt', 'dayOfWeek'],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -58,6 +59,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				expiresAt: new Date(ps.expiresAt),
 				startsAt: new Date(ps.startsAt),
 				forceShowAds: ps.forceShowAds,
+				dayOfWeek: ps.dayOfWeek,
 			});
 		});
 	}
