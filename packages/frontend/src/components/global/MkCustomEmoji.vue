@@ -55,12 +55,12 @@ let errored = $ref(url.value == null);
 
 <style lang="scss" module>
 .root {
-	height: 2em;
+	height: 1.5em;
 	vertical-align: middle;
 	transition: transform 0.2s ease;
 
 	&:hover {
-		transform: scale(1.2);
+		transform: scale(2.0);
 	}
 }
 
