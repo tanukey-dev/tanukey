@@ -184,6 +184,7 @@ useTooltip(reactionRef, (showing) => {
 	font-size: 11px;
 	text-align: center;
 	color: #fff;
+	line-height: 1.5em;
 
 	&:empty {
 		display: none;
