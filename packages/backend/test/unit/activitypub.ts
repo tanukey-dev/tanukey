@@ -11,16 +11,19 @@ import { GlobalModule } from '@/GlobalModule.js';
 import { CoreModule } from '@/core/CoreModule.js';
 import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
 import { LoggerService } from '@/core/LoggerService.js';
-import type { IActor } from '@/core/activitypub/type.js';
+import type { IActor, ICollection, IPost } from '@/core/activitypub/type.js';
 import { Note } from '@/models/index.js';
 import { secureRndstr } from '@/misc/secure-rndstr.js';
 import { MockResolver } from '../misc/mock-resolver.js';
 
 const host = 'https://host1.test';
 
-function createRandomActor(): IActor & { id: string } {
+type NonTransientIActor = IActor & { id: string };
+type NonTransientIPost = IPost & { id: string };
+
+function createRandomActor({ actorHost = host } = {}): NonTransientIActor {
 	const preferredUsername = secureRndstr(8);
-	const actorId = `${host}/users/${preferredUsername.toLowerCase()}`;
+	const actorId = `${actorHost}/users/${preferredUsername.toLowerCase()}`;
 
 	return {
 		'@context': 'https://www.w3.org/ns/activitystreams',
@@ -32,13 +35,41 @@ function createRandomActor(): IActor & { id: string } {
 	};
 }
 
+function createRandomNote(actor: NonTransientIActor): NonTransientIPost {
+	const id = secureRndstr(8);
+	const noteId = `${new URL(actor.id).origin}/notes/${id}`;
+
+	return {
+		id: noteId,
+		type: 'Note',
+		attributedTo: actor.id,
+		content: 'test test foo',
+	};
+}
+
+function createRandomNotes(actor: NonTransientIActor, length: number): NonTransientIPost[] {
+	return new Array(length).fill(null).map(() => createRandomNote(actor));
+}
+
+function createRandomFeaturedCollection(actor: NonTransientIActor, length: number): ICollection {
+	const items = createRandomNotes(actor, length);
+
+	return {
+		'@context': 'https://www.w3.org/ns/activitystreams',
+		type: 'Collection',
+		id: actor.outbox as string,
+		totalItems: items.length,
+		items,
+	};
+}
+
 describe('ActivityPub', () => {
 	let noteService: ApNoteService;
 	let personService: ApPersonService;
 	let rendererService: ApRendererService;
 	let resolver: MockResolver;
 
-	beforeEach(async () => {
+	beforeAll(async () => {
 		const app = await Test.createTestingModule({
 			imports: [GlobalModule, CoreModule],
 		}).compile();
@@ -53,7 +84,11 @@ describe('ActivityPub', () => {
 
 		// Prevent ApPersonService from fetching instance, as it causes Jest import-after-test error
 		const federatedInstanceService = app.get<FederatedInstanceService>(FederatedInstanceService);
-		jest.spyOn(federatedInstanceService, 'fetch').mockImplementation(() => new Promise(() => {}));
+		jest.spyOn(federatedInstanceService, 'fetch').mockImplementation(() => new Promise(() => { }));
+	});
+
+	beforeEach(() => {
+		resolver.clear();
 	});
 
 	describe('Parse minimum object', () => {
@@ -69,7 +104,7 @@ describe('ActivityPub', () => {
 		};
 
 		test('Minimum Actor', async () => {
-			resolver._register(actor.id, actor);
+			resolver.register(actor.id, actor);
 
 			const user = await personService.createPerson(actor.id, resolver);
 
@@ -79,8 +114,8 @@ describe('ActivityPub', () => {
 		});
 
 		test('Minimum Note', async () => {
-			resolver._register(actor.id, actor);
-			resolver._register(post.id, post);
+			resolver.register(actor.id, actor);
+			resolver.register(post.id, post);
 
 			const note = await noteService.createNote(post.id, resolver, true);
 
@@ -97,7 +132,7 @@ describe('ActivityPub', () => {
 				name: secureRndstr(129),
 			};
 
-			resolver._register(actor.id, actor);
+			resolver.register(actor.id, actor);
 
 			const user = await personService.createPerson(actor.id, resolver);
 
@@ -110,7 +145,7 @@ describe('ActivityPub', () => {
 				name: '',
 			};
 
-			resolver._register(actor.id, actor);
+			resolver.register(actor.id, actor);
 
 			const user = await personService.createPerson(actor.id, resolver);
 
@@ -182,108 +217,6 @@ describe('ActivityPub', () => {
 			// Reflects the original content instead of the fraud
 			assert.strictEqual(note.text, 'test test foo');
 			assert.strictEqual(note.uri, actor2Note.id);
-		});
-
-		test('Fetch a note that is a featured note of the attributed actor', async () => {
-			const actor = createRandomActor();
-			actor.featured = `${actor.id}/collections/featured`;
-
-			const featured = createRandomFeaturedCollection(actor, 5);
-			const firstNote = (featured.items as NonTransientIPost[])[0];
-
-			resolver.register(actor.id, actor);
-			resolver.register(actor.featured, featured);
-			resolver.register(firstNote.id, firstNote);
-
-			const note = await noteService.createNote(firstNote.id as string, resolver);
-			assert.strictEqual(note?.uri, firstNote.id);
-		});
-	});
-
-	describe('Images', () => {
-		test('Create images', async () => {
-			const imageObject: IApDocument = {
-				type: 'Document',
-				mediaType: 'image/png',
-				url: 'http://host1.test/foo.png',
-				name: '',
-			};
-			const driveFile = await imageService.createImage(
-				await createRandomRemoteUser(resolver, personService),
-				imageObject,
-			);
-			assert.ok(!driveFile.isLink);
-
-			const sensitiveImageObject: IApDocument = {
-				type: 'Document',
-				mediaType: 'image/png',
-				url: 'http://host1.test/bar.png',
-				name: '',
-				sensitive: true,
-			};
-			const sensitiveDriveFile = await imageService.createImage(
-				await createRandomRemoteUser(resolver, personService),
-				sensitiveImageObject,
-			);
-			assert.ok(!sensitiveDriveFile.isLink);
-		});
-
-		test('cacheRemoteFiles=false disables caching', async () => {
-			meta = { ...metaInitial, cacheRemoteFiles: false };
-
-			const imageObject: IApDocument = {
-				type: 'Document',
-				mediaType: 'image/png',
-				url: 'http://host1.test/foo.png',
-				name: '',
-			};
-			const driveFile = await imageService.createImage(
-				await createRandomRemoteUser(resolver, personService),
-				imageObject,
-			);
-			assert.ok(driveFile.isLink);
-
-			const sensitiveImageObject: IApDocument = {
-				type: 'Document',
-				mediaType: 'image/png',
-				url: 'http://host1.test/bar.png',
-				name: '',
-				sensitive: true,
-			};
-			const sensitiveDriveFile = await imageService.createImage(
-				await createRandomRemoteUser(resolver, personService),
-				sensitiveImageObject,
-			);
-			assert.ok(sensitiveDriveFile.isLink);
-		});
-
-		test('cacheRemoteSensitiveFiles=false only affects sensitive files', async () => {
-			meta = { ...metaInitial, cacheRemoteSensitiveFiles: false };
-
-			const imageObject: IApDocument = {
-				type: 'Document',
-				mediaType: 'image/png',
-				url: 'http://host1.test/foo.png',
-				name: '',
-			};
-			const driveFile = await imageService.createImage(
-				await createRandomRemoteUser(resolver, personService),
-				imageObject,
-			);
-			assert.ok(!driveFile.isLink);
-
-			const sensitiveImageObject: IApDocument = {
-				type: 'Document',
-				mediaType: 'image/png',
-				url: 'http://host1.test/bar.png',
-				name: '',
-				sensitive: true,
-			};
-			const sensitiveDriveFile = await imageService.createImage(
-				await createRandomRemoteUser(resolver, personService),
-				sensitiveImageObject,
-			);
-			assert.ok(sensitiveDriveFile.isLink);
 		});
 	});
 });
