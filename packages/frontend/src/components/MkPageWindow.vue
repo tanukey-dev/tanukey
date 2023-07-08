@@ -17,25 +17,26 @@
 		</template>
 	</template>
 
-	<div :class="$style.root" style="container-type: inline-size;">
+	<div ref="contents" :class="$style.root" style="container-type: inline-size;">
 		<RouterView :key="reloadCount" :router="router"/>
 	</div>
 </MkWindow>
 </template>
 
 <script lang="ts" setup>
-import { ComputedRef, onMounted, onUnmounted, provide } from 'vue';
+import { ComputedRef, onMounted, onUnmounted, provide, shallowRef } from 'vue';
 import RouterView from '@/components/global/RouterView.vue';
 import MkWindow from '@/components/MkWindow.vue';
 import { popout as _popout } from '@/scripts/popout';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
 import { url } from '@/config';
 import { mainRouter, routes } from '@/router';
-import { Router } from '@/nirax';
+import { Router, useScrollPositionManager } from '@/nirax';
 import { i18n } from '@/i18n';
 import { PageMetadata, provideMetadataReceiver } from '@/scripts/page-metadata';
 import { openingWindowsCount } from '@/os';
 import { claimAchievement } from '@/scripts/achievements';
+import { getScrollContainer } from '@/scripts/scroll';
 
 const props = defineProps<{
 	initialPath: string;
@@ -47,6 +48,7 @@ defineEmits<{
 
 const router = new Router(routes, props.initialPath);
 
+const contents = shallowRef<HTMLElement>();
 let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
 let windowEl = $shallowRef<InstanceType<typeof MkWindow>>();
 const history = $ref<{ path: string; key: any; }[]>([{
@@ -137,6 +139,8 @@ function popout() {
 	_popout(router.getCurrentPath(), windowEl.$el);
 	windowEl.close();
 }
+
+useScrollPositionManager(() => getScrollContainer(contents.value), router);
 
 onMounted(() => {
 	openingWindowsCount.value++;
