@@ -88,7 +88,7 @@ const props = defineProps<{
 	channelId: string;
 }>();
 
-let tab = $ref('timeline');
+let tab = $ref('overview');
 let channel = $ref<null | misskey.entities.Channel>(null);
 let favorited = $ref(false);
 let searchQuery = $ref('');
@@ -118,8 +118,9 @@ watch(() => props.channelId, async () => {
 	channel = await os.api('channels/show', {
 		channelId: props.channelId,
 	});
-	if (channel) {
-		favorited = channel.isFavorited;
+	favorited = channel.isFavorited;
+	if (favorited || channel.isFollowing) {
+		tab = 'timeline';
 	}
 }, { immediate: true });
 
