@@ -348,7 +348,7 @@ importers:
         version: 2.1.0
       summaly:
         specifier: github:misskey-dev/summaly
-        version: github.com/misskey-dev/summaly/77dd5654bb82280b38c1f50e51a771c33f3df503
+        version: github.com/misskey-dev/summaly/089a0ad8e8c780e5c088b1c528aa95c5827cbdcc
       systeminformation:
         specifier: 5.17.16
         version: 5.17.16
@@ -382,9 +382,6 @@ importers:
       unzipper:
         specifier: 0.10.14
         version: 0.10.14
-      uuid:
-        specifier: 9.0.0
-        version: 9.0.0
       vary:
         specifier: 1.1.2
         version: 1.1.2
@@ -585,9 +582,6 @@ importers:
       '@types/unzipper':
         specifier: 0.10.6
         version: 0.10.6
-      '@types/uuid':
-        specifier: 9.0.1
-        version: 9.0.1
       '@types/vary':
         specifier: 1.1.0
         version: 1.1.0
@@ -942,7 +936,7 @@ importers:
         version: 2.0.0
       summaly:
         specifier: github:misskey-dev/summaly
-        version: github.com/misskey-dev/summaly/77dd5654bb82280b38c1f50e51a771c33f3df503
+        version: github.com/misskey-dev/summaly/089a0ad8e8c780e5c088b1c528aa95c5827cbdcc
       vite-plugin-turbosnap:
         specifier: 1.0.2
         version: 1.0.2
@@ -17191,8 +17185,8 @@ packages:
       sharp: 0.31.3
     dev: false
 
-  github.com/misskey-dev/summaly/77dd5654bb82280b38c1f50e51a771c33f3df503:
-    resolution: {tarball: https://codeload.github.com/misskey-dev/summaly/tar.gz/77dd5654bb82280b38c1f50e51a771c33f3df503}
+  github.com/misskey-dev/summaly/089a0ad8e8c780e5c088b1c528aa95c5827cbdcc:
+    resolution: {tarball: https://codeload.github.com/misskey-dev/summaly/tar.gz/089a0ad8e8c780e5c088b1c528aa95c5827cbdcc}
     name: summaly
     version: 4.0.2
     dependencies:
