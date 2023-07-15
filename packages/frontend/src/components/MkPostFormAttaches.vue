@@ -16,6 +16,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent } from 'vue';
+import * as misskey from 'misskey-js';
 import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
@@ -32,9 +33,9 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(ev: 'update:modelValue', value: any[]): void;
 	(ev: 'detach', id: string): void;
-	(ev: 'changeSensitive'): void;
-	(ev: 'changeName'): void;
-	(ev: 'replaceMedia', id: string, file: misskey.entities.DriveFile): void;
+	(ev: 'changeSensitive', file: misskey.entities.DriveFile, isSensitive: boolean): void;
+	(ev: 'changeName', file: misskey.entities.DriveFile, newName: string): void;
+	(ev: 'replaceFile', file: misskey.entities.DriveFile, newFile: misskey.entities.DriveFile): void;
 }>();
 
 let menuShowing = false;
@@ -72,18 +73,6 @@ async function rename(file) {
 	});
 }
 
-async function crop(file) {
-	const croppedFile = await os.cropImage(file, {
-		aspectRatio: NaN,
-	});
-
-	if (props.replaceMediaFn) {
-		props.replaceMediaFn(file.id, croppedFile);
-	} else {
-		emit('replaceMedia', file.id, croppedFile);
-	}
-}
-
 async function describe(file) {
 	os.popup(defineAsyncComponent(() => import('@/components/MkFileCaptionEditWindow.vue')), {
 		default: file.comment !== null ? file.comment : '',
@@ -101,8 +90,15 @@ async function describe(file) {
 	}, 'closed');
 }
 
-function showFileMenu(file, ev: MouseEvent) {
+async function crop(file: misskey.entities.DriveFile): Promise<void> {
+	const newFile = await os.cropImage(file, { aspectRatio: NaN });
+	emit('replaceFile', file, newFile);
+}
+
+function showFileMenu(file: misskey.entities.DriveFile, ev: MouseEvent): void {
 	if (menuShowing) return;
+
+	const isImage = file.type.startsWith('image/');
 	os.popupMenu([{
 		text: i18n.ts.cropImage,
 		icon: 'ti ti-cut',
@@ -119,7 +115,11 @@ function showFileMenu(file, ev: MouseEvent) {
 		text: i18n.ts.describeFile,
 		icon: 'ti ti-text-caption',
 		action: () => { describe(file); },
-	}, {
+	}, ...isImage ? [{
+		text: i18n.ts.cropImage,
+		icon: 'ti ti-crop',
+		action: () : void => { crop(file); },
+	}] : [], {
 		text: i18n.ts.attachCancel,
 		icon: 'ti ti-circle-x',
 		action: () => { detachMedia(file.id); },
