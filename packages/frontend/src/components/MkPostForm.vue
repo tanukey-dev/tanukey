@@ -399,10 +399,6 @@ function chooseFileFrom(ev) {
 	});
 }
 
-function replaceFile(id, file) {
-	files.splice(files.findIndex(x => x.id === id), 1, file);
-}
-
 function detachFile(id) {
 	files = files.filter(x => x.id !== id);
 }
