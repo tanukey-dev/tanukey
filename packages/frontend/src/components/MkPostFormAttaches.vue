@@ -20,7 +20,6 @@ import * as misskey from 'misskey-js';
 import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
-import * as misskey from "misskey-js";
 
 const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
 
