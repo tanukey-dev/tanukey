@@ -56,6 +56,21 @@ export type Source = {
 		index: string;
 		scope?: 'local' | 'global' | string[];
 	};
+	s3?: {
+		baseUrl: string;
+		bucket: string;
+		prefix: string;
+		endpoint: string;
+		region?: string;
+		useSSL: boolean;
+		accessKey: string;
+		secretKey: string;
+		options?: {
+			setPublicRead?: boolean;
+			forcePathStyle?: boolean;
+			useProxy?: boolean;
+		}
+	};
 
 	proxy?: string;
 	proxySmtp?: string;

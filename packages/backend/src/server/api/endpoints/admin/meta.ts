@@ -201,54 +201,6 @@ export const meta = {
 				type: 'string',
 				optional: true, nullable: true,
 			},
-			useObjectStorage: {
-				type: 'boolean',
-				optional: true, nullable: false,
-			},
-			objectStorageBaseUrl: {
-				type: 'string',
-				optional: true, nullable: true,
-			},
-			objectStorageBucket: {
-				type: 'string',
-				optional: true, nullable: true,
-			},
-			objectStoragePrefix: {
-				type: 'string',
-				optional: true, nullable: true,
-			},
-			objectStorageEndpoint: {
-				type: 'string',
-				optional: true, nullable: true,
-			},
-			objectStorageRegion: {
-				type: 'string',
-				optional: true, nullable: true,
-			},
-			objectStoragePort: {
-				type: 'number',
-				optional: true, nullable: true,
-			},
-			objectStorageAccessKey: {
-				type: 'string',
-				optional: true, nullable: true,
-			},
-			objectStorageSecretKey: {
-				type: 'string',
-				optional: true, nullable: true,
-			},
-			objectStorageUseSSL: {
-				type: 'boolean',
-				optional: true, nullable: false,
-			},
-			objectStorageUseProxy: {
-				type: 'boolean',
-				optional: true, nullable: false,
-			},
-			objectStorageSetPublicRead: {
-				type: 'boolean',
-				optional: true, nullable: false,
-			},
 			enableIpLogging: {
 				type: 'boolean',
 				optional: true, nullable: false,
@@ -357,19 +309,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				smtpUser: instance.smtpUser,
 				smtpPass: instance.smtpPass,
 				swPrivateKey: instance.swPrivateKey,
-				useObjectStorage: instance.useObjectStorage,
-				objectStorageBaseUrl: instance.objectStorageBaseUrl,
-				objectStorageBucket: instance.objectStorageBucket,
-				objectStoragePrefix: instance.objectStoragePrefix,
-				objectStorageEndpoint: instance.objectStorageEndpoint,
-				objectStorageRegion: instance.objectStorageRegion,
-				objectStoragePort: instance.objectStoragePort,
-				objectStorageAccessKey: instance.objectStorageAccessKey,
-				objectStorageSecretKey: instance.objectStorageSecretKey,
-				objectStorageUseSSL: instance.objectStorageUseSSL,
-				objectStorageUseProxy: instance.objectStorageUseProxy,
-				objectStorageSetPublicRead: instance.objectStorageSetPublicRead,
-				objectStorageS3ForcePathStyle: instance.objectStorageS3ForcePathStyle,
 				deeplAuthKey: instance.deeplAuthKey,
 				deeplIsPro: instance.deeplIsPro,
 				enableIpLogging: instance.enableIpLogging,
