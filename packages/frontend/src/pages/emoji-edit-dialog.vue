@@ -28,7 +28,7 @@
 					</div>
 				</div>
 				<MkButton rounded style="margin: 0 auto;" @click="changeImage">{{ i18n.ts.selectFile }}</MkButton>
-				<MkInput v-model="name">
+				<MkInput v-model="name" pattern="[a-z0-9_]">
 					<template #label>{{ i18n.ts.name }}</template>
 					<template #caption>{{ i18n.ts.emojiNameValidation }}</template>
 				</MkInput>
@@ -79,6 +79,7 @@
 
 <script lang="ts" setup>
 import { computed, watch } from 'vue';
+import * as misskey from 'misskey-js';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
@@ -105,7 +106,7 @@ let isSensitive = $ref(props.emoji ? props.emoji.isSensitive : false);
 let localOnly = $ref(props.emoji ? props.emoji.localOnly : false);
 let roleIdsThatCanBeUsedThisEmojiAsReaction = $ref(props.emoji ? props.emoji.roleIdsThatCanBeUsedThisEmojiAsReaction : []);
 let rolesThatCanBeUsedThisEmojiAsReaction = $ref([]);
-let file = $ref();
+let file = $ref<misskey.entities.DriveFile>();
 let draft = $ref(props.emoji ? props.emoji.draft : false);
 let isRequest = $ref(props.isRequest);
 
@@ -125,6 +126,10 @@ const emit = defineEmits<{
 
 async function changeImage(ev) {
 	file = await selectFile(ev.currentTarget ?? ev.target, null);
+	const candidate = file.name.replace(/\.(.+)$/, '');
+	if (candidate.match(/^[a-z0-9_]+$/)) {
+		name = candidate;
+	}
 }
 
 async function addRole() {
