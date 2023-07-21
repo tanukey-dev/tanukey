@@ -332,8 +332,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				mediaProxy: this.config.mediaProxy,
 
 				...(ps.detail ? {
-					cacheRemoteFiles: instance.cacheRemoteFiles,
-					cacheRemoteSensitiveFiles: instance.cacheRemoteSensitiveFiles,
+					cacheRemoteFiles: false,
+					cacheRemoteSensitiveFiles: false,
 					requireSetup: (await this.usersRepository.countBy({
 						host: IsNull(),
 					})) === 0,

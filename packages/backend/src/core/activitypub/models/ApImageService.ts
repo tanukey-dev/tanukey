@@ -3,7 +3,6 @@ import { DI } from '@/di-symbols.js';
 import type { DriveFilesRepository } from '@/models/index.js';
 import type { RemoteUser } from '@/models/entities/User.js';
 import type { DriveFile } from '@/models/entities/DriveFile.js';
-import { MetaService } from '@/core/MetaService.js';
 import { truncate } from '@/misc/truncate.js';
 import { DB_MAX_IMAGE_COMMENT_LENGTH } from '@/const.js';
 import { DriveService } from '@/core/DriveService.js';
@@ -22,7 +21,6 @@ export class ApImageService {
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
 
-		private metaService: MetaService,
 		private apResolverService: ApResolverService,
 		private driveService: DriveService,
 		private apLoggerService: ApLoggerService,
@@ -56,19 +54,12 @@ export class ApImageService {
 
 		this.logger.info(`Creating the Image: ${image.url}`);
 
-		const instance = await this.metaService.fetch();
-
-		// Cache if remote file cache is on AND either
-		// 1. remote sensitive file is also on
-		// 2. or the image is not sensitive
-		const shouldBeCached = instance.cacheRemoteFiles && (instance.cacheRemoteSensitiveFiles || !image.sensitive);
-
 		const file = await this.driveService.uploadFromUrl({
 			url: image.url,
 			user: actor,
 			uri: image.url,
 			sensitive: image.sensitive,
-			isLink: !shouldBeCached,
+			isLink: true,
 			comment: truncate(image.name ?? undefined, DB_MAX_IMAGE_COMMENT_LENGTH),
 		});
 		if (!file.isLink || file.url === image.url) return file;
