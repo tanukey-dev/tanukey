@@ -332,8 +332,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				mediaProxy: this.config.mediaProxy,
 
 				...(ps.detail ? {
-					cacheRemoteFiles: instance.cacheRemoteFiles,
-					cacheRemoteSensitiveFiles: instance.cacheRemoteSensitiveFiles,
+					cacheRemoteFiles: false,
+					cacheRemoteSensitiveFiles: false,
 					requireSetup: (await this.usersRepository.countBy({
 						host: IsNull(),
 					})) === 0,
@@ -350,7 +350,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					hcaptcha: instance.enableHcaptcha,
 					recaptcha: instance.enableRecaptcha,
 					turnstile: instance.enableTurnstile,
-					objectStorage: instance.useObjectStorage,
+					objectStorage: !!config.s3,
 					serviceWorker: instance.enableServiceWorker,
 					miauth: true,
 				};

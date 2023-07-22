@@ -164,11 +164,6 @@ const menuDef = $computed(() => [{
 		to: '/admin/email-settings',
 		active: currentPage?.route.name === 'email-settings',
 	}, {
-		icon: 'ti ti-cloud',
-		text: i18n.ts.objectStorage,
-		to: '/admin/object-storage',
-		active: currentPage?.route.name === 'object-storage',
-	}, {
 		icon: 'ti ti-lock',
 		text: i18n.ts.security,
 		to: '/admin/security',

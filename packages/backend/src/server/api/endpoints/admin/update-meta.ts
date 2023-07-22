@@ -42,8 +42,6 @@ export const paramDef = {
 		description: { type: 'string', nullable: true },
 		defaultLightTheme: { type: 'string', nullable: true },
 		defaultDarkTheme: { type: 'string', nullable: true },
-		cacheRemoteFiles: { type: 'boolean' },
-		cacheRemoteSensitiveFiles: { type: 'boolean' },
 		emailRequiredForSignup: { type: 'boolean' },
 		enableHcaptcha: { type: 'boolean' },
 		hcaptchaSiteKey: { type: 'string', nullable: true },
@@ -80,19 +78,6 @@ export const paramDef = {
 		tosUrl: { type: 'string', nullable: true },
 		repositoryUrl: { type: 'string' },
 		feedbackUrl: { type: 'string' },
-		useObjectStorage: { type: 'boolean' },
-		objectStorageBaseUrl: { type: 'string', nullable: true },
-		objectStorageBucket: { type: 'string', nullable: true },
-		objectStoragePrefix: { type: 'string', nullable: true },
-		objectStorageEndpoint: { type: 'string', nullable: true },
-		objectStorageRegion: { type: 'string', nullable: true },
-		objectStoragePort: { type: 'integer', nullable: true },
-		objectStorageAccessKey: { type: 'string', nullable: true },
-		objectStorageSecretKey: { type: 'string', nullable: true },
-		objectStorageUseSSL: { type: 'boolean' },
-		objectStorageUseProxy: { type: 'boolean' },
-		objectStorageSetPublicRead: { type: 'boolean' },
-		objectStorageS3ForcePathStyle: { type: 'boolean' },
 		enableIpLogging: { type: 'boolean' },
 		enableActiveEmailValidation: { type: 'boolean' },
 		enableChartsForRemoteUser: { type: 'boolean' },
@@ -188,14 +173,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (ps.defaultDarkTheme !== undefined) {
 				set.defaultDarkTheme = ps.defaultDarkTheme;
-			}
-
-			if (ps.cacheRemoteFiles !== undefined) {
-				set.cacheRemoteFiles = ps.cacheRemoteFiles;
-			}
-
-			if (ps.cacheRemoteSensitiveFiles !== undefined) {
-				set.cacheRemoteSensitiveFiles = ps.cacheRemoteSensitiveFiles;
 			}
 
 			if (ps.emailRequiredForSignup !== undefined) {
@@ -324,58 +301,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (ps.feedbackUrl !== undefined) {
 				set.feedbackUrl = ps.feedbackUrl;
-			}
-
-			if (ps.useObjectStorage !== undefined) {
-				set.useObjectStorage = ps.useObjectStorage;
-			}
-
-			if (ps.objectStorageBaseUrl !== undefined) {
-				set.objectStorageBaseUrl = ps.objectStorageBaseUrl;
-			}
-
-			if (ps.objectStorageBucket !== undefined) {
-				set.objectStorageBucket = ps.objectStorageBucket;
-			}
-
-			if (ps.objectStoragePrefix !== undefined) {
-				set.objectStoragePrefix = ps.objectStoragePrefix;
-			}
-
-			if (ps.objectStorageEndpoint !== undefined) {
-				set.objectStorageEndpoint = ps.objectStorageEndpoint;
-			}
-
-			if (ps.objectStorageRegion !== undefined) {
-				set.objectStorageRegion = ps.objectStorageRegion;
-			}
-
-			if (ps.objectStoragePort !== undefined) {
-				set.objectStoragePort = ps.objectStoragePort;
-			}
-
-			if (ps.objectStorageAccessKey !== undefined) {
-				set.objectStorageAccessKey = ps.objectStorageAccessKey;
-			}
-
-			if (ps.objectStorageSecretKey !== undefined) {
-				set.objectStorageSecretKey = ps.objectStorageSecretKey;
-			}
-
-			if (ps.objectStorageUseSSL !== undefined) {
-				set.objectStorageUseSSL = ps.objectStorageUseSSL;
-			}
-
-			if (ps.objectStorageUseProxy !== undefined) {
-				set.objectStorageUseProxy = ps.objectStorageUseProxy;
-			}
-
-			if (ps.objectStorageSetPublicRead !== undefined) {
-				set.objectStorageSetPublicRead = ps.objectStorageSetPublicRead;
-			}
-
-			if (ps.objectStorageS3ForcePathStyle !== undefined) {
-				set.objectStorageS3ForcePathStyle = ps.objectStorageS3ForcePathStyle;
 			}
 
 			if (ps.deeplAuthKey !== undefined) {
