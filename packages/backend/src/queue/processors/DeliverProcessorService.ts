@@ -129,6 +129,7 @@ export class DeliverProcessorService {
 				}
 
 				// 5xx etc.
+				// eslint-disable-next-line no-throw-literal
 				throw `${res.statusCode} ${res.statusMessage}`;
 			} else {
 				// DNS error, socket error, timeout ...
