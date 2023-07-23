@@ -132,7 +132,7 @@
 					</template>
 				</MkFolder>
 
-				<MkFolder :default-open="true">
+				<MkFolder :defaultOpen="true">
 					<template #icon><i class="ti ti-cloud"></i></template>
 					<template #label>{{ i18n.ts.files }}</template>
 					<MkFileListForAdmin :pagination="filesPagination" viewMode="grid"/>

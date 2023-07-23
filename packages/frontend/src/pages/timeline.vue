@@ -1,7 +1,7 @@
 <template>
 <MkStickyContainer>
 	<template #header>
-		<MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin" :display-my-avatar="true"/>
+		<MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin" :displayMyAvatar="true"/>
 	</template>
 	<div ref="rootEl">
 		<MkTimelineWithPinedChannel

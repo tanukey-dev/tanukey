@@ -71,7 +71,7 @@ let el: any = null;
 
 const getRef = (ref) => {
 	el = ref;
-}
+};
 
 const dropDownMenu = (ev) => {
 	os.popup(defineAsyncComponent(() => import('@/components/MkChannelTabPicker.vue')), {
@@ -83,7 +83,7 @@ const dropDownMenu = (ev) => {
 			tab.value = key;
 		},
 	}, 'closed');
-}
+};
 </script>
 
 <style lang="scss" module>

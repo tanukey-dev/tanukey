@@ -70,7 +70,6 @@
 			<XSection
 				v-for="category in customEmojiCategories"
 				:key="`custom:${category}`"
-				:initial-shown="false"
 				:initialShown="false"
 				:emojis="computed(() => customEmojis.filter(emoji => !emoji.draft).filter(e => category === null ? (e.category === 'null' || !e.category) : e.category === category).filter(filterAvailable).map(e => `:${e.name}:`))"
 				@chosen="chosen"

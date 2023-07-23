@@ -88,7 +88,7 @@ import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { customEmojiCategories } from '@/custom-emojis';
 import MkSwitch from '@/components/MkSwitch.vue';
-import { selectFile, selectFiles } from '@/scripts/select-file';
+import { selectFile } from '@/scripts/select-file';
 import MkRolePreview from '@/components/MkRolePreview.vue';
 
 const props = defineProps<{
@@ -116,7 +116,7 @@ watch($$(roleIdsThatCanBeUsedThisEmojiAsReaction), async () => {
 const imgUrl = computed(() => file ? file.url : props.emoji ? props.emoji.url : null);
 const validation = computed(() => {
 	return name.match(/^[a-zA-Z0-9_]+$/) && imgUrl.value != null;
-})
+});
 
 const emit = defineEmits<{
 	(ev: 'done', v: { deleted?: boolean; updated?: any; created?: any }): void,
@@ -180,8 +180,8 @@ async function done() {
 		dialog.close();
 	} else {
 		const created = isRequest
-		 ? await os.apiWithDialog('admin/emoji/add-draft', params)
-		 : await os.apiWithDialog('admin/emoji/add', params);
+			? await os.apiWithDialog('admin/emoji/add-draft', params)
+			: await os.apiWithDialog('admin/emoji/add', params);
 
 		emit('done', {
 			created: created,
@@ -189,13 +189,6 @@ async function done() {
 
 		dialog.close();
 	}
-}
-
-function chooseFileFrom(ev) {
-	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(files_ => {
-		chooseFile = files_[0];
-		url = chooseFile.url;
-	});
 }
 
 async function del() {
