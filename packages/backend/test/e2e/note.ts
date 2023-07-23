@@ -4,6 +4,7 @@ import * as assert from 'assert';
 import { Note } from '@/models/entities/Note.js';
 import { signup, post, uploadUrl, startServer, initTestDb, api, uploadFile } from '../utils.js';
 import type { INestApplicationContext } from '@nestjs/common';
+import { MAX_NOTE_TEXT_LENGTH } from '@/const.js';
 
 describe('Note', () => {
 	let app: INestApplicationContext;
@@ -163,7 +164,7 @@ describe('Note', () => {
 
 	test('文字数ぎりぎりで怒られない', async () => {
 		const post = {
-			text: '!'.repeat(3000),
+			text: '!'.repeat(MAX_NOTE_TEXT_LENGTH),
 		};
 		const res = await api('/notes/create', post, alice);
 		assert.strictEqual(res.status, 200);
@@ -171,7 +172,7 @@ describe('Note', () => {
 
 	test('文字数オーバーで怒られる', async () => {
 		const post = {
-			text: '!'.repeat(3001),
+			text: '!'.repeat(MAX_NOTE_TEXT_LENGTH + 1),
 		};
 		const res = await api('/notes/create', post, alice);
 		assert.strictEqual(res.status, 400);
