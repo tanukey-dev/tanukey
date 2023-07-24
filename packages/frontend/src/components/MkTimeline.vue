@@ -88,7 +88,7 @@ if (props.src === 'antenna') {
 		withFiles: true,
 		withReplies: defaultStore.state.showTimelineReplies,
 	};
-	connection = stream.useChannel('hybridTimeline', {
+	connection = stream.useChannel('localTimeline', {
 		withFiles: true,
 		withReplies: defaultStore.state.showTimelineReplies,
 	});
