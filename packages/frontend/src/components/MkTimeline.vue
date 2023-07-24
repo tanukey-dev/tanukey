@@ -83,8 +83,13 @@ if (props.src === 'antenna') {
 	});
 	connection.on('note', prepend);
 } else if (props.src === 'media') {
-	endpoint = 'notes/media-timeline';
-	connection = stream.useChannel('mediaTimeline', {
+	endpoint = 'notes/local-timeline';
+	query = {
+		withFiles: true,
+		withReplies: defaultStore.state.showTimelineReplies,
+	};
+	connection = stream.useChannel('hybridTimeline', {
+		withFiles: true,
 		withReplies: defaultStore.state.showTimelineReplies,
 	});
 	connection.on('note', prepend);
