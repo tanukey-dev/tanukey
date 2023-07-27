@@ -47,12 +47,12 @@
 								v-model="pinnedLtlChannelIds"
 								mode="tags"
 								:options="channnelAsyncFind"
-								:close-on-select="false"
+								:closeOnSelect="false"
 								:searchable="true"
 								:object="true"
-								:resolve-on-load="true"
+								:resolveOnLoad="true"
 								:delay="0"
-								:min-chars="1"
+								:minChars="1"
 							/>
 						</div>
 					</FormSection>

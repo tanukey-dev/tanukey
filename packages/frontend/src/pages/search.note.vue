@@ -20,7 +20,7 @@
 				</div>
 			</MkFolder>
 		</MkFolder>
-		<MkRadios v-model="searchOrigin" @update:model-value="search()">
+		<MkRadios v-model="searchOrigin" @update:modelValue="search()">
 			<option value="combined">{{ i18n.ts.all }}</option>
 			<option value="local">{{ i18n.ts.local }}</option>
 			<option value="remote">{{ i18n.ts.remote }}</option>
