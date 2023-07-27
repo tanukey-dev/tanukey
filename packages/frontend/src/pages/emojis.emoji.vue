@@ -65,6 +65,7 @@ function menu(ev) {
 	text-align: left;
 	background: var(--panel);
 	border-radius: 8px;
+	flex-wrap: wrap;
 
 	&:hover {
 		border-color: var(--accent);
@@ -72,12 +73,13 @@ function menu(ev) {
 }
 
 .img {
-	width: 42px;
+	width: 100%;
 	height: 42px;
 	object-fit: contain;
 }
 
 .body {
+	margin-top: 8px;
 	padding: 0 0 0 8px;
 	white-space: nowrap;
 	overflow: hidden;
