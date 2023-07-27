@@ -55,7 +55,7 @@ let errored = $ref(url.value == null);
 
 <style lang="scss" module>
 .root {
-	height: 1.5em;
+	height: 2em;
 	vertical-align: middle;
 	transition: transform 0.2s ease;
 
