@@ -93,11 +93,12 @@ export class InboxProcessorService {
 			try {
 				authUser = await this.apDbResolverService.getAuthUserFromApId(getApId(activity.actor));
 			} catch (err) {
-			// 対象が4xxならスキップ
+				// 対象が4xxならスキップ
 				if (err instanceof StatusError) {
 					if (err.isClientError) {
 						return `skip: Ignored deleted actors on both ends ${activity.actor} - ${err.statusCode}`;
 					}
+					// eslint-disable-next-line no-throw-literal
 					throw `Error in actor ${activity.actor} - ${err.statusCode ?? err}`;
 				}
 			}
@@ -118,7 +119,7 @@ export class InboxProcessorService {
 
 		// また、signatureのsignerは、activity.actorと一致する必要がある
 		if (!httpSignatureValidated || authUser.user.uri !== activity.actor) {
-		// 一致しなくても、でもLD-Signatureがありそうならそっちも見る
+			// 一致しなくても、でもLD-Signatureがありそうならそっちも見る
 			if (activity.signature) {
 				if (activity.signature.type !== 'RsaSignature2017') {
 					return `skip: unsupported LD-signature type ${activity.signature.type}`;

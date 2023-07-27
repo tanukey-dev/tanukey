@@ -85,6 +85,7 @@ export class ImportBlockingProcessorService {
 			}
 
 			if (target == null) {
+				// eslint-disable-next-line no-throw-literal
 				throw `Unable to resolve user: @${username}@${host}`;
 			}
 

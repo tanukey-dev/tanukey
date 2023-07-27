@@ -83,6 +83,7 @@ export class ImportMutingProcessorService {
 				}
 
 				if (target == null) {
+					// eslint-disable-next-line no-throw-literal
 					throw `cannot resolve user: @${username}@${host}`;
 				}
 

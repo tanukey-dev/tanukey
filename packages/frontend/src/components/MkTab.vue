@@ -12,6 +12,7 @@ const props = defineProps<{
 	tabs: Array<{ value: string, label: string }>,
 }>();
 
+// eslint-disable-next-line id-denylist
 const emits = defineEmits<{(e: 'update:modelValue', text: string): void}>();
 
 const isActive = (tab: any): boolean => {
