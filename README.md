@@ -15,8 +15,11 @@
 - Add search filters to tag searches.
 - Add "日本語 (お嬢様)" to the display language. (Special Thanks to [緋色なつめ](https://nijimiss.moe/@Nattsume_hi_iro))
 - Add media timeline. (It was imported from [this fork](https://github.com/tanukey-dev/tanukey). Further improved by [u1-liquid](https://github.com/u1-liquid).)
-- Add user-specified notification function. (It was imported from [this fork](https://github.com/MisskeyIO/misskey/tree/io).)
 
+**These changes were incorporated from a fork of [MisskeyIO](https://github.com/MisskeyIO/misskey/tree/io).**
+
+- Add user-specified announcement function.
+- Add a display order setting for announcements.
 
 
 <div align="center">
