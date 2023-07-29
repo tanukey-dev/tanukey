@@ -19,6 +19,8 @@
 					</div>
 				</div>
 			</MkFolder>
+
+			<MkSwitch v-model="localOnly" style="margin-top: 16px;">{{ i18n.ts.localOnly }}</MkSwitch>
 		</MkFolder>
 		<div>
 			<MkButton large primary gradate rounded style="margin: 0 auto;" @click="search">{{ i18n.ts.search }}</MkButton>
@@ -37,6 +39,7 @@ import { computed, onMounted } from 'vue';
 import MkNotes from '@/components/MkNotes.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkRadios from '@/components/MkRadios.vue';
+import MkSwitch from '@/components/MkSwitch.vue';
 import MkButton from '@/components/MkButton.vue';
 import { i18n } from '@/i18n';
 import * as os from '@/os';
@@ -54,6 +57,7 @@ let searchQuery = $ref('');
 let searchOrigin = $ref('combined');
 let notePagination = $ref();
 let user = $ref(null);
+let localOnly = $ref(false);
 
 function selectUser() {
 	os.selectUser().then(_user => {
@@ -90,6 +94,7 @@ async function search() {
 		params: {
 			query: searchQuery,
 			userId: user ? user.id : null,
+			host: localOnly ? '.' : null,
 		},
 	};
 
