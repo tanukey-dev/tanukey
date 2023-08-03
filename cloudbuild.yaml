@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'asia-northeast1-docker.pkg.dev/nijimissproject/misskey/misskey-nj', '.' ]
+  env: [ 'DOCKER_BUILDKIT=1' ]
+images: ['asia-northeast1-docker.pkg.dev/nijimissproject/misskey/misskey-nj']
