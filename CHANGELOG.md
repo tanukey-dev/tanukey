@@ -30,6 +30,10 @@
 ## 13.13.2-tanu-1.32.0
 ### General
 - feat: LiveKitのバージョンアップ対応
+### Server
+- cacheRemoteFilesの初期値はfalseになりました
+
+## 13.14.2
 
 ## 13.13.2-tanu-1.31.2
 ### General

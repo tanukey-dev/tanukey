@@ -157,6 +157,9 @@ export interface Locale {
     "settingGuide": string;
     "cacheRemoteFiles": string;
     "cacheRemoteFilesDescription": string;
+    "youCanCleanRemoteFilesCache": string;
+    "cacheRemoteSensitiveFiles": string;
+    "cacheRemoteSensitiveFilesDescription": string;
     "flagAsBot": string;
     "flagAsBotDescription": string;
     "flagAsCat": string;
