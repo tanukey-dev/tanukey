@@ -151,7 +151,7 @@ watch(q, () => {
 	const newQ = q.value.replace(/:/g, '').toLowerCase();
 
 	const searchCustom = () => {
-		const max = 8;
+		const max = 100;
 		const emojis = customEmojis.value.filter(emoji => !emoji.draft);
 		const matches = new Set<Misskey.entities.CustomEmoji>();
 
@@ -214,7 +214,7 @@ watch(q, () => {
 	};
 
 	const searchUnicode = () => {
-		const max = 8;
+		const max = 100;
 		const emojis = emojilist;
 		const matches = new Set<UnicodeEmojiDef>();
 
