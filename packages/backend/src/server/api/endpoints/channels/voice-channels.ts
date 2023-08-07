@@ -38,7 +38,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const query = this.channelsRepository.createQueryBuilder('channel')
-				.andWhere('channel.isVoiceChatEnabled = TRUE')
 				.andWhere(new Brackets(qb => { qb
 					.where('channel.isPrivate = FALSE')
 					.orWhere(new Brackets(qb2 => { qb2

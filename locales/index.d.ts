@@ -1651,7 +1651,6 @@ export interface Locale {
         "isPrivate": string;
         "privateUserIds": string;
         "moderatorUserIds": string;
-        "isVoiceChatEnabled": string;
     };
     "_menuDisplay": {
         "sideFull": string;

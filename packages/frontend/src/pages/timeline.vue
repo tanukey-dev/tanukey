@@ -52,7 +52,6 @@ function isNeedPinnedChannels(): boolean {
 
 const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable);
 const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
-const isVoiceChatAvailable = ref(instance.enableVoiceChat);
 
 let srcWhenNotSignin = $ref(isLocalTimelineAvailable ? 'local' : 'global');
 const src = $computed({ get: () => ($i ? defaultStore.reactiveState.tl.value.src : srcWhenNotSignin), set: (x) => saveSrc(x) });
@@ -125,11 +124,6 @@ const headerTabs = $computed(() => [{
 	key: 'global',
 	title: i18n.ts._timelines.global,
 	icon: 'ti ti-whirl',
-	iconOnly: true,
-}] : []), ...(isVoiceChatAvailable.value ? [{
-	key: 'voiceChat',
-	title: i18n.ts._timelines.voiceChat,
-	icon: 'ti ti-microphone',
 	iconOnly: true,
 }] : []), {
 	icon: 'ti ti-list',

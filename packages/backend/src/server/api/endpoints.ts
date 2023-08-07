@@ -223,7 +223,6 @@ import * as ep___i_registry_remove from './endpoints/i/registry/remove.js';
 import * as ep___i_registry_scopes from './endpoints/i/registry/scopes.js';
 import * as ep___i_registry_set from './endpoints/i/registry/set.js';
 import * as ep___i_revokeToken from './endpoints/i/revoke-token.js';
-import * as ep___i_vcToken from './endpoints/i/vc-token.js';
 import * as ep___i_signinHistory from './endpoints/i/signin-history.js';
 import * as ep___i_unpin from './endpoints/i/unpin.js';
 import * as ep___i_updateEmail from './endpoints/i/update-email.js';
@@ -571,7 +570,6 @@ const eps = [
 	['i/registry/scopes', ep___i_registry_scopes],
 	['i/registry/set', ep___i_registry_set],
 	['i/revoke-token', ep___i_revokeToken],
-	['i/vc-token', ep___i_vcToken],
 	['i/signin-history', ep___i_signinHistory],
 	['i/unpin', ep___i_unpin],
 	['i/update-email', ep___i_updateEmail],

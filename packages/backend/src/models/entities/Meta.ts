@@ -265,29 +265,6 @@ export class Meta {
 	@Column('boolean', {
 		default: false,
 	})
-	public enableVoiceChat: boolean;
-
-	@Column('varchar', {
-		length: 1024,
-		nullable: true,
-	})
-	public liveKitServerURL: string|null;
-
-	@Column('varchar', {
-		length: 1024,
-		nullable: true,
-	})
-	public liveKitApiKey: string|null;
-
-	@Column('varchar', {
-		length: 1024,
-		nullable: true,
-	})
-	public liveKitApiSecretKey: string|null;
-
-	@Column('boolean', {
-		default: false,
-	})
 	public enableServiceWorker: boolean;
 
 	@Column('varchar', {

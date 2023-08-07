@@ -57,10 +57,6 @@
 				{{ i18n.ts.isNoteCollapsed }}
 			</MkSwitch>
 
-			<MkSwitch v-model="isVoiceChatEnabled" :disabled="!$i.policies.canCreateVoiceChannel">
-				{{ i18n.ts._channel.isVoiceChatEnabled }}
-			</MkSwitch>
-
 			<MkFolder :defaultOpen="true">
 				<template #label>{{ i18n.ts.pinnedNotes }}</template>
 				
@@ -144,7 +140,6 @@ let color = $ref('#000');
 let federation = ref(false);
 let searchable = ref(true);
 let isNoteCollapsed = ref(true);
-let isVoiceChatEnabled = ref(false);
 let isPrivate = ref(false);
 const privateUserIds = ref<{ value: string, label: string}[]>([]);
 const moderatorUserIds = ref<{ value: string, label: string}[]>([]);
@@ -187,7 +182,6 @@ async function fetchChannel() {
 	federation.value = channel.federation;
 	searchable.value = channel.federation ? true : channel.searchable;
 	isNoteCollapsed.value = channel.isNoteCollapsed;
-	isVoiceChatEnabled.value = channel.isVoiceChatEnabled;
 	isPrivate.value = channel.isPrivate;
 
 	const pusers = await os.api('users/show', {
@@ -250,7 +244,6 @@ function save() {
 		federation: federation.value,
 		searchable: federation.value ? true : searchable.value,
 		isNoteCollapsed: isNoteCollapsed.value,
-		isVoiceChatEnabled: isVoiceChatEnabled.value,
 		isPrivate: isPrivate.value,
 		privateUserIds: privateUserIds.value.map(v => v.value),
 		moderatorUserIds: moderatorUserIds.value.map(v => v.value),

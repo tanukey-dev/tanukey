@@ -392,7 +392,6 @@ export type Endpoints = {
 	'i/registry/scopes': { req: NoParams; res: string[][]; };
 	'i/registry/set': { req: { key: string; value: any; scope?: string[]; }; res: null; };
 	'i/revoke-token': { req: TODO; res: TODO; };
-	'i/vc-token': { req: { roomName: string, userName: string }; res: { token: string }; };
 	'i/signin-history': { req: { limit?: number; sinceId?: Signin['id']; untilId?: Signin['id']; }; res: Signin[]; };
 	'i/unpin': { req: { noteId: Note['id']; }; res: MeDetailed; };
 	'i/update-email': { req: {

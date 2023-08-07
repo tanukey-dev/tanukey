@@ -58,24 +58,6 @@
 					</FormSection>
 
 					<FormSection>
-						<template #label>Voice Chat (Livekit)</template>
-						<div class="_gaps_m">
-							<MkSwitch v-model="enableVoiceChat">
-								<template #label>Enable Voice Chat</template>
-							</MkSwitch>
-							<MkInput v-model="liveKitServerURL">
-								<template #label>Livekit ServerURL</template>
-							</MkInput>
-							<MkInput v-model="liveKitApiKey">
-								<template #label>Livekit Api key</template>
-							</MkInput>
-							<MkInput v-model="liveKitApiSecretKey">
-								<template #label>Livekit Api Secret key</template>
-							</MkInput>
-						</div>
-					</FormSection>
-
-					<FormSection>
 						<template #label>ServiceWorker</template>
 
 						<div class="_gaps_m">
@@ -149,10 +131,6 @@ let maintainerEmail: string | null = $ref(null);
 let pinnedUsers: string = $ref('');
 let cacheRemoteFiles: boolean = $ref(false);
 let enableServiceWorker: boolean = $ref(false);
-let enableVoiceChat: boolean = $ref(false);
-let liveKitServerURL: string = $ref('');
-let liveKitApiKey: string = $ref('');
-let liveKitApiSecretKey: string = $ref('');
 let swPublicKey: any = $ref(null);
 let swPrivateKey: any = $ref(null);
 let deeplAuthKey: string = $ref('');
@@ -167,10 +145,6 @@ async function init() {
 	maintainerEmail = meta.maintainerEmail;
 	pinnedUsers = meta.pinnedUsers.join('\n');
 	cacheRemoteFiles = meta.cacheRemoteFiles;
-	enableVoiceChat = meta.enableVoiceChat;
-	liveKitServerURL = meta.liveKitServerURL;
-	liveKitApiKey = meta.liveKitApiKey;
-	liveKitApiSecretKey = meta.liveKitApiSecretKey;
 	enableServiceWorker = meta.enableServiceWorker;
 	swPublicKey = meta.swPublickey;
 	swPrivateKey = meta.swPrivateKey;
@@ -198,10 +172,6 @@ function save() {
 		pinnedUsers: pinnedUsers.split('\n'),
 		pinnedLtlChannelIds: pinnedLtlChannelIds.map(c => c.value),
 		cacheRemoteFiles,
-		enableVoiceChat,
-		liveKitServerURL,
-		liveKitApiKey,
-		liveKitApiSecretKey,
 		enableServiceWorker,
 		swPublicKey,
 		swPrivateKey,

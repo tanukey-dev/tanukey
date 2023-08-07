@@ -223,7 +223,6 @@ import * as ep___i_registry_remove from './endpoints/i/registry/remove.js';
 import * as ep___i_registry_scopes from './endpoints/i/registry/scopes.js';
 import * as ep___i_registry_set from './endpoints/i/registry/set.js';
 import * as ep___i_revokeToken from './endpoints/i/revoke-token.js';
-import * as ep___i_vcToken from './endpoints/i/vc-token.js';
 import * as ep___i_signinHistory from './endpoints/i/signin-history.js';
 import * as ep___i_unpin from './endpoints/i/unpin.js';
 import * as ep___i_updateEmail from './endpoints/i/update-email.js';
@@ -573,7 +572,6 @@ const $i_registry_remove: Provider = { provide: 'ep:i/registry/remove', useClass
 const $i_registry_scopes: Provider = { provide: 'ep:i/registry/scopes', useClass: ep___i_registry_scopes.default };
 const $i_registry_set: Provider = { provide: 'ep:i/registry/set', useClass: ep___i_registry_set.default };
 const $i_revokeToken: Provider = { provide: 'ep:i/revoke-token', useClass: ep___i_revokeToken.default };
-const $i_vcToken: Provider = { provide: 'ep:i/vc-token', useClass: ep___i_vcToken.default };
 const $i_signinHistory: Provider = { provide: 'ep:i/signin-history', useClass: ep___i_signinHistory.default };
 const $i_unpin: Provider = { provide: 'ep:i/unpin', useClass: ep___i_unpin.default };
 const $i_updateEmail: Provider = { provide: 'ep:i/update-email', useClass: ep___i_updateEmail.default };
@@ -927,7 +925,6 @@ const $retention: Provider = { provide: 'ep:retention', useClass: ep___retention
 		$i_registry_scopes,
 		$i_registry_set,
 		$i_revokeToken,
-		$i_vcToken,
 		$i_signinHistory,
 		$i_unpin,
 		$i_updateEmail,
@@ -1275,7 +1272,6 @@ const $retention: Provider = { provide: 'ep:retention', useClass: ep___retention
 		$i_registry_scopes,
 		$i_registry_set,
 		$i_revokeToken,
-		$i_vcToken,
 		$i_signinHistory,
 		$i_unpin,
 		$i_updateEmail,

@@ -1572,7 +1572,6 @@ _channel:
   isPrivate: "プライベートチャンネルにする (権限が必要)"
   privateUserIds: "チャンネルにアクセス可能なユーザー"
   moderatorUserIds: "チャンネルのモデレーター(設定されたユーザーはチャンネル設定の編集が可能)"
-  isVoiceChatEnabled: "チャンネルでボイスチャットを有効にする (権限が必要)"
 
 _menuDisplay:
   sideFull: "横"

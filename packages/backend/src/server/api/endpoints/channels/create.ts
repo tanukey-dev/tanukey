@@ -47,7 +47,6 @@ export const paramDef = {
 		federation: { type: 'boolean', nullable: true },
 		searchable: { type: 'boolean', nullable: true },
 		isNoteCollapsed: { type: 'boolean', nullable: true },
-		isVoiceChatEnabled: { type: 'boolean', nullable: true },
 		isPrivate: { type: 'boolean', nullable: true },
 		privateUserIds: {
 			type: 'array',
@@ -101,7 +100,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				federation: ps.federation ?? false,
 				searchable: ps.searchable ?? true,
 				isNoteCollapsed: ps.isNoteCollapsed ?? true,
-				isVoiceChatEnabled: ps.isVoiceChatEnabled ?? false,
 				isPrivate: ps.isPrivate ?? false,
 				privateUserIds: ps.privateUserIds ?? [],
 				moderatorUserIds: ps.moderatorUserIds ?? [],

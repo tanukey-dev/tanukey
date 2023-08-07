@@ -81,22 +81,6 @@ export const meta = {
 				type: 'boolean',
 				optional: false, nullable: false,
 			},
-			enableVoiceChat: {
-				type: 'boolean',
-				optional: false, nullable: false,
-			},
-			liveKitServerURL: {
-				type: 'string',
-				optional: false, nullable: true,
-			},
-			liveKitApiKey: {
-				type: 'string',
-				optional: false, nullable: true,
-			},
-			liveKitApiSecretKey: {
-				type: 'string',
-				optional: false, nullable: true,
-			},
 			enableServiceWorker: {
 				type: 'boolean',
 				optional: false, nullable: false,
@@ -345,10 +329,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				defaultLightTheme: instance.defaultLightTheme,
 				defaultDarkTheme: instance.defaultDarkTheme,
 				enableEmail: instance.enableEmail,
-				enableVoiceChat: instance.enableVoiceChat,
-				liveKitServerURL: instance.liveKitServerURL,
-				liveKitApiKey: instance.liveKitApiKey,
-				liveKitApiSecretKey: instance.liveKitApiSecretKey,
 				enableServiceWorker: instance.enableServiceWorker,
 				translatorAvailable: instance.deeplAuthKey != null,
 				cacheRemoteFiles: instance.cacheRemoteFiles,

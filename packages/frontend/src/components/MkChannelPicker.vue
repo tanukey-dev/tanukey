@@ -70,14 +70,10 @@ onMounted(async () => {
 	if (pinnedChs) {
 		for (let ch of pinnedChs) {
 			if (ch != null) {
-				if (ch.isVoiceChatEnabled) {
-					t.push({ id: ch.id, name: ch.name, icon: 'ti ti-microphone', data: ch });
+				if (instance.pinnedLtlChannelIds.includes(ch.id)) {
+					t.push({ id: ch.id, name: ch.name, icon: 'ti ti-device-tv-old', data: ch });
 				} else {
-					if (instance.pinnedLtlChannelIds.includes(ch.id)) {
-						t.push({ id: ch.id, name: ch.name, icon: 'ti ti-device-tv-old', data: ch });
-					} else {
-						t.push({ id: ch.id, name: ch.name, icon: 'ti ti-device-tv', data: ch });
-					}
+					t.push({ id: ch.id, name: ch.name, icon: 'ti ti-device-tv', data: ch });
 				}
 			}
 		}
@@ -86,11 +82,7 @@ onMounted(async () => {
 	let favorites = await os.api('channels/my-favorites', {});
 	for (let ch of favorites) {
 		if (!s.has(ch.id)) {
-			if (ch.isVoiceChatEnabled) {
-				t.push({ id: ch.id, name: ch.name, icon: 'ti ti-microphone', data: ch });
-			} else {
-				t.push({ id: ch.id, name: ch.name, icon: 'ti ti-device-tv', data: ch });
-			}
+			t.push({ id: ch.id, name: ch.name, icon: 'ti ti-device-tv', data: ch });
 			s.add(ch.id);
 		}
 	}

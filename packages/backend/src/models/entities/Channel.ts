@@ -95,11 +95,6 @@ export class Channel {
 	@Column('boolean', {
 		default: false,
 	})
-	public isVoiceChatEnabled: boolean;
-
-	@Column('boolean', {
-		default: false,
-	})
 	public isPrivate: boolean;
 
 	@Column('varchar', {

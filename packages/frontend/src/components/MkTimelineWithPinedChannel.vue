@@ -91,14 +91,10 @@ onMounted(async () => {
 	if (pinnedChs) {
 		for (let ch of pinnedChs) {
 			if (ch != null) {
-				if (ch.isVoiceChatEnabled) {
-					t.push({ key: ch.id, title: ch.name, icon: 'ti ti-microphone' });
+				if (instance.pinnedLtlChannelIds.includes(ch.id)) {
+					t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv-old' });
 				} else {
-					if (instance.pinnedLtlChannelIds.includes(ch.id)) {
-						t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv-old' });
-					} else {
-						t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv' });
-					}
+					t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv' });
 				}
 			}
 		}
