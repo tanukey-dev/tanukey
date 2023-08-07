@@ -146,10 +146,6 @@ useTooltip(buttonEl, async (showing) => {
 		> .count {
 			color: var(--accent);
 		}
-
-		> .icon {
-			filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
-		}
 	}
 }
 
