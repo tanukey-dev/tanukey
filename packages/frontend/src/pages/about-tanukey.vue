@@ -42,16 +42,6 @@
 					</div>
 				</FormSection>
 				<FormSection>
-					<template #label>{{ i18n.ts._aboutTanukey.contributors }}</template>
-					<div :class="$style.contributors">
-						<a href="https://github.com/tar-bin" target="_blank" :class="$style.contributor">
-							<img src="https://avatars.githubusercontent.com/u/23691696?v=4" :class="$style.contributorAvatar">
-							<span :class="$style.contributorUsername">@tar-bin</span>
-						</a>
-					</div>
-					<template #caption><MkLink url="https://github.com/misskey-dev/misskey/graphs/contributors">{{ i18n.ts._aboutTanukey.allContributors }}</MkLink></template>
-				</FormSection>
-				<FormSection>
 					<template #label><Mfm text="$[jelly ❤]"/> {{ i18n.ts._aboutTanukey.patrons }}</template>
 					<div :class="$style.patronsWithIcon">
 						<div v-for="patron in patronsWithIcon" :class="$style.patronWithIcon">
@@ -97,6 +87,20 @@ const patronsWithIcon = [];
 const patrons = [
 	{ name: '峰岸', url: 'https://novelskey.tarbin.net/@minegishi_0' },
 	{ name: '倭', url: 'https://novelskey.tarbin.net/@toyama_waon' },
+	{ name: '虚影庵', url: 'http://kyoeian.vis.ne.jp' },
+	{ name: '=Hatze=', url: 'https://cobbitria.net/' },
+	{ name: 'にいさ', url: 'https://novelskey.tarbin.net/@0323_0323' },
+	{ name: '熊楠', url: '#' },
+	{ name: 'のーら', url: '#' },
+	{ name: '鹿', url: '#' },
+	{ name: 'あまがっぱ', url: 'https://novelskey.tarbin.net/@amagappa1220' },
+	{ name: 'のーら', url: '#' },
+	{ name: '萩オス', url: 'https://hagios0.net' },
+	{ name: 'カリウム', url: 'https://twitter.com/contents_conten' },
+	{ name: '鈍兵夢芽', url: 'https://novelskey.tarbin.net/@yume_dombay' },
+	{ name: 'にゃりつぃん', url: 'https://novelskey.tarbin.net/@nyaritsin' },
+	{ name: 'キサラギ職員', url: 'https://twitter.com/DSnohito' },
+	{ name: '沼崎', url: '#' },
 ];
 
 let thereIsTreasure = $ref($i && !claimedAchievements.includes('foundTreasure'));
