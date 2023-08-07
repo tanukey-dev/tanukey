@@ -2013,11 +2013,12 @@ export interface Locale {
     };
     "_timelines": {
         "home": string;
+        "feed": string;
         "local": string;
         "media": string;
         "social": string;
         "global": string;
-        "voiceChat": string;
+        "channel": string;
     };
     "_play": {
         "new": string;

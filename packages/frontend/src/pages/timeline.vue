@@ -11,10 +11,9 @@
 			:src="src"
 			:sound="true"
 		/>
-		<MkTimelineWithVoiceChannel
-			v-else-if="src === 'voiceChat'"
+		<MkTimelineWithUserPinedChannel
+			v-else-if="isNeedUserPinnedChannels()"
 			ref="tlComponent"
-			:key="src"
 			:src="src"
 			:sound="true"
 		/>
@@ -44,14 +43,19 @@ provide('shouldOmitHeaderTitle', true);
 
 const XCommonTimeline = defineAsyncComponent(() => import('@/components/MkTimelineWithScroll.vue'));
 const MkTimelineWithPinedChannel = defineAsyncComponent(() => import('@/components/MkTimelineWithPinedChannel.vue'));
-const MkTimelineWithVoiceChannel = defineAsyncComponent(() => import('@/components/MkTimelineWithVoiceChannel.vue'));
+const MkTimelineWithUserPinedChannel = defineAsyncComponent(() => import('@/components/MkTimelineWithUserPinedChannel.vue'));
 
 function isNeedPinnedChannels(): boolean {
-	return src === 'local' || src === 'social';
+	return src === 'feed';
+}
+
+function isNeedUserPinnedChannels(): boolean {
+	return src === 'channel';
 }
 
 const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable);
 const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
+const userPinnedLtlChannelIds = defaultStore.makeGetterSetter('userPinnedLtlChannelIds');
 
 let srcWhenNotSignin = $ref(isLocalTimelineAvailable ? 'local' : 'global');
 const src = $computed({ get: () => ($i ? defaultStore.reactiveState.tl.value.src : srcWhenNotSignin), set: (x) => saveSrc(x) });
@@ -106,16 +110,16 @@ const headerTabs = $computed(() => [{
 	icon: 'ti ti-home',
 	iconOnly: true,
 }, ...(isLocalTimelineAvailable ? [{
-	key: 'local',
-	title: i18n.ts._timelines.local,
-	icon: 'ti ti-planet',
+	key: 'feed',
+	title: i18n.ts._timelines.feed,
+	icon: 'ti ti-timeline',
 	iconOnly: true,
-}, {
-	key: 'social',
-	title: i18n.ts._timelines.social,
-	icon: 'ti ti-rocket',
+}, ...(userPinnedLtlChannelIds.get().length > 0 ? [{
+	key: 'channel',
+	title: i18n.ts._timelines.channel,
+	icon: 'ti ti-device-tv-old',
 	iconOnly: true,
-}, {
+}] : []), {
 	key: 'media',
 	title: i18n.ts._timelines.media,
 	icon: 'ti ti-photo',

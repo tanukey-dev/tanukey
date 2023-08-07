@@ -1932,11 +1932,12 @@ _instanceCharts:
 
 _timelines:
   home: "ホーム"
+  feed: "フィード"
   local: "ローカル"
   media: "メディア"
   social: "ソーシャル"
   global: "グローバル"
-  voiceChat: "ボイスチャット"
+  channel: "チャンネル"
 
 _play:
   new: "Playの作成"
