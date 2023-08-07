@@ -149,6 +149,11 @@ const menuDef = $computed(() => [{
 		to: '/admin/settings',
 		active: currentPage?.route.name === 'settings',
 	}, {
+		icon: 'ti ti-device-tv',
+		text: i18n.ts.pinnedChannel,
+		to: '/admin/pinnedChannel',
+		active: currentPage?.route.name === 'pinnedChannel',
+	}, {
 		icon: 'ti ti-paint',
 		text: i18n.ts.branding,
 		to: '/admin/branding',

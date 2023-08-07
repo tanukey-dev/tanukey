@@ -41,23 +41,6 @@
 					</FormSection>
 
 					<FormSection>
-						<template #label>{{ i18n.ts.pinnedChannel }}</template>
-						<div class="_gaps_m">
-							<Multiselect
-								v-model="pinnedLtlChannelIds"
-								mode="tags"
-								:options="channnelAsyncFind"
-								:closeOnSelect="false"
-								:searchable="true"
-								:object="true"
-								:resolveOnLoad="true"
-								:delay="0"
-								:minChars="1"
-							/>
-						</div>
-					</FormSection>
-
-					<FormSection>
 						<template #label>ServiceWorker</template>
 
 						<div class="_gaps_m">
@@ -108,7 +91,6 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
 import XHeader from './_header_.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
 import MkInput from '@/components/MkInput.vue';
@@ -121,8 +103,6 @@ import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import MkButton from '@/components/MkButton.vue';
-import MkColorInput from '@/components/MkColorInput.vue';
-import Multiselect from '@vueform/multiselect';
 
 let name: string | null = $ref(null);
 let description: string | null = $ref(null);
@@ -135,7 +115,6 @@ let swPublicKey: any = $ref(null);
 let swPrivateKey: any = $ref(null);
 let deeplAuthKey: string = $ref('');
 let deeplIsPro: boolean = $ref(false);
-let pinnedLtlChannelIds = $ref([]);
 
 async function init() {
 	const meta = await os.api('admin/meta');
@@ -150,17 +129,6 @@ async function init() {
 	swPrivateKey = meta.swPrivateKey;
 	deeplAuthKey = meta.deeplAuthKey;
 	deeplIsPro = meta.deeplIsPro;
-
-	let chs: { value: string, label: string }[] = [];
-	for (let id of meta.pinnedLtlChannelIds) {
-		let ch = await os.api('channels/show', {
-			channelId: id,
-		});
-		if (ch != null) {
-			chs.push({ value: ch.id, label: ch.name });
-		}
-	}
-	pinnedLtlChannelIds = chs;
 }
 
 function save() {
@@ -170,7 +138,6 @@ function save() {
 		maintainerName,
 		maintainerEmail,
 		pinnedUsers: pinnedUsers.split('\n'),
-		pinnedLtlChannelIds: pinnedLtlChannelIds.map(c => c.value),
 		cacheRemoteFiles,
 		enableServiceWorker,
 		swPublicKey,
@@ -180,14 +147,6 @@ function save() {
 	}).then(() => {
 		fetchInstance();
 	});
-}
-
-async function channnelAsyncFind(query) {
-	let chs = await os.api('channels/search', {
-		query: query === null ? '' : query.trim(),
-		type: 'nameOnly',
-	});
-	return chs.map(c => { return { value: c.id, label: c.name };});
 }
 
 const headerTabs = $computed(() => []);

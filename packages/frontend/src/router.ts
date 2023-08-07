@@ -90,6 +90,10 @@ export const routes = [{
 		name: 'general',
 		component: page(() => import('./pages/settings/general.vue')),
 	}, {
+		path: '/pinnedChannel',
+		name: 'pinnedChannel',
+		component: page(() => import('./pages/settings/pinnedChannel.vue')),
+	}, {
 		path: '/theme/install',
 		name: 'theme',
 		component: page(() => import('./pages/settings/theme.install.vue')),
@@ -415,6 +419,10 @@ export const routes = [{
 		path: '/settings',
 		name: 'settings',
 		component: page(() => import('./pages/admin/settings.vue')),
+	}, {
+		path: '/pinnedChannel',
+		name: 'pinnedChannel',
+		component: page(() => import('./pages/admin/pinnedChannel.vue')),
 	}, {
 		path: '/branding',
 		name: 'branding',

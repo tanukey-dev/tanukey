@@ -29,23 +29,6 @@
 	</FormSection>
 
 	<FormSection>
-		<template #label>{{ i18n.ts.pinnedChannel }}</template>
-		<div class="_gaps_m">
-			<Multiselect
-				v-model="pinnedLtlChannelIds"
-				mode="tags"
-				:options="channnelAsyncFind"
-				:closeOnSelect="false"
-				:searchable="true"
-				:object="true"
-				:resolveOnLoad="true"
-				:delay="0"
-				:minChars="1"
-			/>
-		</div>
-	</FormSection>
-
-	<FormSection>
 		<template #label>{{ i18n.ts.displayOfNote }}</template>
 
 		<div class="_gaps_m">
@@ -176,7 +159,6 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
-import Multiselect from '@vueform/multiselect';
 import MkSwitch from '@/components/MkSwitch.vue';
 import MkSelect from '@/components/MkSelect.vue';
 import MkRadios from '@/components/MkRadios.vue';
@@ -238,7 +220,6 @@ const mediaListWithOneImageAppearance = computed(defaultStore.makeGetterSetter('
 const notificationPosition = computed(defaultStore.makeGetterSetter('notificationPosition'));
 const notificationStackAxis = computed(defaultStore.makeGetterSetter('notificationStackAxis'));
 const showTimelineReplies = computed(defaultStore.makeGetterSetter('showTimelineReplies'));
-const pinnedLtlChannelIds = computed(defaultStore.makeGetterSetter('userPinnedLtlChannelIds'));
 
 watch(lang, () => {
 	miLocalStorage.setItem('lang', lang.value as string);
@@ -283,14 +264,6 @@ definePageMetadata({
 	title: i18n.ts.general,
 	icon: 'ti ti-adjustments',
 });
-
-async function channnelAsyncFind(query) {
-	let chs = await os.api('channels/search', {
-		query: query === null ? '' : query.trim(),
-		type: 'nameOnly',
-	});
-	return chs.map(c => { return { value: c.id, label: c.name };});
-}
 
 </script>
 

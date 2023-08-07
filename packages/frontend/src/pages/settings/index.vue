@@ -100,6 +100,11 @@ const menuDef = computed(() => [{
 		to: '/settings/general',
 		active: currentPage?.route.name === 'general',
 	}, {
+		icon: 'ti ti-device-tv',
+		text: i18n.ts.pinnedChannel,
+		to: '/settings/pinnedChannel',
+		active: currentPage?.route.name === 'pinnedChannel',
+	}, {
 		icon: 'ti ti-palette',
 		text: i18n.ts.theme,
 		to: '/settings/theme',
