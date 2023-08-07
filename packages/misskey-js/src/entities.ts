@@ -107,6 +107,20 @@ export type MeDetailed = UserDetailed & {
 	[other: string]: any;
 };
 
+export type MeDetailedWithSecret = MeDetailed & {
+	email: string;
+	emailVerified: boolean;
+	securityKeysList: {
+		id: string;
+		name: string;
+		lastUsed: string;
+	}[];
+};
+
+export type MeSignup = MeDetailedWithSecret & {
+	token: string;
+};
+
 export type DriveFile = {
 	id: ID;
 	createdAt: DateString;
@@ -330,6 +344,7 @@ export type DetailedInstanceMetadata = LiteInstanceMetadata & {
 	pinnedPages: string[];
 	pinnedClipId: string | null;
 	cacheRemoteFiles: boolean;
+	cacheRemoteSensitiveFiles: boolean;
 	requireSetup: boolean;
 	proxyAccountName: string | null;
 	features: Record<string, any>;
