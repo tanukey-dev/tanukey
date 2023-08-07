@@ -72,6 +72,7 @@ function deleteField(index: number) {
 
 function saveFields() {
 	pinnedLtlChannelIds.value = fields.value.map(ch => ({ value: ch.value, label: ch.name })) ?? [];
+	os.success();
 }
 
 </script>
