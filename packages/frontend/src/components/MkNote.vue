@@ -715,6 +715,7 @@ function showReactions(): void {
 	position: relative;
 	max-height: 9em;
 	overflow: clip;
+	min-height: 64px;
 }
 
 .collapsed {

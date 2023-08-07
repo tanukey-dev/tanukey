@@ -508,6 +508,10 @@ hr {
 	--mfm-zoom-size: 600%;
 }
 
+.mfm-x2, .mfm-x3, .mfm-x4{
+	line-height:1;
+}
+
 .mfm-x2, .mfm-x3, .mfm-x4 {
 	font-size: var(--mfm-zoom-size);
 	vertical-align: middle;
