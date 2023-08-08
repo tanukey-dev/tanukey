@@ -27,22 +27,22 @@ function greet() {
 	if (!envOption.quiet) {
 		//#region Misskey logo
 		const v = `v${meta.version}`;
-		console.log(themeColor('  _____ _         _           '));
-		console.log(themeColor(' |     |_|___ ___| |_ ___ _ _ '));
-		console.log(themeColor(' | | | | |_ -|_ -| \'_| -_| | |'));
-		console.log(themeColor(' |_|_|_|_|___|___|_,_|___|_  |'));
-		console.log(' ' + chalk.gray(v) + themeColor('                        |___|\n'.substr(v.length)));
+
+		console.log(themeColor('  _____             _           '));
+		console.log(themeColor(' |_   _|___ ___ _ _| |_ ___ _ _ '));
+		console.log(themeColor('   | | | .\'|   | | | \'_| -_| | |'));
+		console.log(themeColor('   |_| |__,|_|_|___|_,_|___|_  |'));
+		console.log(' ' + chalk.gray(v) + themeColor('                          |___|\n').substr(v.length));
 		//#endregion
 
-		console.log(' Misskey is an open-source decentralized microblogging platform.');
-		console.log(chalk.rgb(255, 136, 0)(' If you like Misskey, please donate to support development. https://www.patreon.com/syuilo'));
+		console.log(' Tanukey is an open-source decentralized microblogging platform.');
 
 		console.log('');
 		console.log(chalkTemplate`--- ${os.hostname()} {gray (PID: ${process.pid.toString()})} ---`);
 	}
 
-	bootLogger.info('Welcome to Misskey!');
-	bootLogger.info(`Misskey v${meta.version}`, null, true);
+	bootLogger.info('Welcome to Tanukey!');
+	bootLogger.info(`Tanukey v${meta.version}`, null, true);
 }
 
 /**
