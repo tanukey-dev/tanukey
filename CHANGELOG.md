@@ -48,6 +48,7 @@
 - feat: LiveKitのバージョンアップ対応
 ### Server
 - cacheRemoteFilesの初期値はfalseになりました
+- fix: muteがapiからのuser list timeline取得で機能しない問題を修正
 
 ## 13.14.2
 
