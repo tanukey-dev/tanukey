@@ -126,4 +126,164 @@ describe('ActivityPub', () => {
 			} as Note);
 		});
 	});
+
+	describe('Featured', () => {
+		test('Fetch featured notes from IActor', async () => {
+			const actor = createRandomActor();
+			actor.featured = `${actor.id}/collections/featured`;
+
+			const featured = createRandomFeaturedCollection(actor, 5);
+
+			resolver.register(actor.id, actor);
+			resolver.register(actor.featured, featured);
+
+			await personService.createPerson(actor.id, resolver);
+
+			// All notes in `featured` are same-origin, no need to fetch notes again
+			assert.deepStrictEqual(resolver.remoteGetTrials(), [actor.id, actor.featured]);
+
+			// Created notes without resolving anything
+			for (const item of featured.items as IPost[]) {
+				const note = await noteService.fetchNote(item);
+				assert.ok(note);
+				assert.strictEqual(note.text, 'test test foo');
+				assert.strictEqual(note.uri, item.id);
+			}
+		});
+
+		test('Fetch featured notes from IActor pointing to another remote server', async () => {
+			const actor1 = createRandomActor();
+			actor1.featured = `${actor1.id}/collections/featured`;
+			const actor2 = createRandomActor({ actorHost: 'https://host2.test' });
+
+			const actor2Note = createRandomNote(actor2);
+			const featured = createRandomFeaturedCollection(actor1, 0);
+			(featured.items as IPost[]).push({
+				...actor2Note,
+				content: 'test test bar', // fraud!
+			});
+
+			resolver.register(actor1.id, actor1);
+			resolver.register(actor1.featured, featured);
+			resolver.register(actor2.id, actor2);
+			resolver.register(actor2Note.id, actor2Note);
+
+			await personService.createPerson(actor1.id, resolver);
+
+			// actor2Note is from a different server and needs to be fetched again
+			assert.deepStrictEqual(
+				resolver.remoteGetTrials(),
+				[actor1.id, actor1.featured, actor2Note.id, actor2.id],
+			);
+
+			const note = await noteService.fetchNote(actor2Note.id);
+			assert.ok(note);
+
+			// Reflects the original content instead of the fraud
+			assert.strictEqual(note.text, 'test test foo');
+			assert.strictEqual(note.uri, actor2Note.id);
+		});
+
+		test('Fetch a note that is a featured note of the attributed actor', async () => {
+			const actor = createRandomActor();
+			actor.featured = `${actor.id}/collections/featured`;
+
+			const featured = createRandomFeaturedCollection(actor, 5);
+			const firstNote = (featured.items as NonTransientIPost[])[0];
+
+			resolver.register(actor.id, actor);
+			resolver.register(actor.featured, featured);
+			resolver.register(firstNote.id, firstNote);
+
+			const note = await noteService.createNote(firstNote.id as string, resolver);
+			assert.strictEqual(note?.uri, firstNote.id);
+		});
+	});
+
+	describe('Images', () => {
+		test('Create images', async () => {
+			const imageObject: IApDocument = {
+				type: 'Document',
+				mediaType: 'image/png',
+				url: 'http://host1.test/foo.png',
+				name: '',
+			};
+			const driveFile = await imageService.createImage(
+				await createRandomRemoteUser(resolver, personService),
+				imageObject,
+			);
+			assert.ok(!driveFile.isLink);
+
+			const sensitiveImageObject: IApDocument = {
+				type: 'Document',
+				mediaType: 'image/png',
+				url: 'http://host1.test/bar.png',
+				name: '',
+				sensitive: true,
+			};
+			const sensitiveDriveFile = await imageService.createImage(
+				await createRandomRemoteUser(resolver, personService),
+				sensitiveImageObject,
+			);
+			assert.ok(!sensitiveDriveFile.isLink);
+		});
+
+		test('cacheRemoteFiles=false disables caching', async () => {
+			meta = { ...metaInitial, cacheRemoteFiles: false };
+
+			const imageObject: IApDocument = {
+				type: 'Document',
+				mediaType: 'image/png',
+				url: 'http://host1.test/foo.png',
+				name: '',
+			};
+			const driveFile = await imageService.createImage(
+				await createRandomRemoteUser(resolver, personService),
+				imageObject,
+			);
+			assert.ok(driveFile.isLink);
+
+			const sensitiveImageObject: IApDocument = {
+				type: 'Document',
+				mediaType: 'image/png',
+				url: 'http://host1.test/bar.png',
+				name: '',
+				sensitive: true,
+			};
+			const sensitiveDriveFile = await imageService.createImage(
+				await createRandomRemoteUser(resolver, personService),
+				sensitiveImageObject,
+			);
+			assert.ok(sensitiveDriveFile.isLink);
+		});
+
+		test('cacheRemoteSensitiveFiles=false only affects sensitive files', async () => {
+			meta = { ...metaInitial, cacheRemoteSensitiveFiles: false };
+
+			const imageObject: IApDocument = {
+				type: 'Document',
+				mediaType: 'image/png',
+				url: 'http://host1.test/foo.png',
+				name: '',
+			};
+			const driveFile = await imageService.createImage(
+				await createRandomRemoteUser(resolver, personService),
+				imageObject,
+			);
+			assert.ok(!driveFile.isLink);
+
+			const sensitiveImageObject: IApDocument = {
+				type: 'Document',
+				mediaType: 'image/png',
+				url: 'http://host1.test/bar.png',
+				name: '',
+				sensitive: true,
+			};
+			const sensitiveDriveFile = await imageService.createImage(
+				await createRandomRemoteUser(resolver, personService),
+				sensitiveImageObject,
+			);
+			assert.ok(sensitiveDriveFile.isLink);
+		});
+	});
 });
