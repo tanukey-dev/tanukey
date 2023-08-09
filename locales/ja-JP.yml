@@ -1424,7 +1424,6 @@ _role:
     userListMax: "ユーザーリストの作成可能数"
     userEachUserListsMax: "ユーザーリスト内のユーザーの最大数"
     canCreatePrivateChannel: "プライベートチャンネルを作成可能"
-    canCreateVoiceChannel: "ボイスチャンネルを作成可能"
     rateLimitFactor: "レートリミット"
     descriptionOfRateLimitFactor: "小さいほど制限が緩和され、大きいほど制限が強化されます。"
     canHideAds: "広告の非表示"
