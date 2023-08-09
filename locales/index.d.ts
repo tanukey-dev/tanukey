@@ -1499,7 +1499,6 @@ export interface Locale {
             "userListMax": string;
             "userEachUserListsMax": string;
             "canCreatePrivateChannel": string;
-            "canCreateVoiceChannel": string;
             "rateLimitFactor": string;
             "descriptionOfRateLimitFactor": string;
             "canHideAds": string;

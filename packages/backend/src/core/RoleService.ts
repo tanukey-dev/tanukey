@@ -28,7 +28,6 @@ export type RolePolicies = {
 	canRequestCustomEmojis: boolean;
 	canSearchNotes: boolean;
 	canCreatePrivateChannel: boolean;
-	canCreateVoiceChannel: boolean;
 	canHideAds: boolean;
 	driveCapacityMb: number;
 	alwaysMarkNsfw: boolean;
@@ -55,7 +54,6 @@ export const DEFAULT_POLICIES: RolePolicies = {
 	canRequestCustomEmojis: false,
 	canSearchNotes: false,
 	canCreatePrivateChannel: false,
-	canCreateVoiceChannel: false,
 	canHideAds: false,
 	driveCapacityMb: 100,
 	alwaysMarkNsfw: false,
@@ -296,7 +294,6 @@ export class RoleService implements OnApplicationShutdown {
 			canRequestCustomEmojis: calc('canRequestCustomEmojis', vs => vs.some(v => v === true)),
 			canSearchNotes: calc('canSearchNotes', vs => vs.some(v => v === true)),
 			canCreatePrivateChannel: calc('canCreatePrivateChannel', vs => vs.some(v => v === true)),
-			canCreateVoiceChannel: calc('canCreateVoiceChannel', vs => vs.some(v => v === true)),
 			canHideAds: calc('canHideAds', vs => vs.some(v => v === true)),
 			driveCapacityMb: calc('driveCapacityMb', vs => Math.max(...vs)),
 			alwaysMarkNsfw: calc('alwaysMarkNsfw', vs => vs.some(v => v === true)),

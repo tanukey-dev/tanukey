@@ -63,7 +63,6 @@ export const ROLE_POLICIES = [
 	'canRequestCustomEmojis',
 	'canSearchNotes',
 	'canCreatePrivateChannel',
-	'canCreateVoiceChannel',
 	'canHideAds',
 	'driveCapacityMb',
 	'alwaysMarkNsfw',
