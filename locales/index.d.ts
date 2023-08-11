@@ -261,6 +261,7 @@ export interface Locale {
     "removed": string;
     "removeAreYouSure": string;
     "deleteAreYouSure": string;
+    "undraftAreYouSure": string;
     "resetAreYouSure": string;
     "saved": string;
     "messaging": string;
@@ -1026,6 +1027,7 @@ export interface Locale {
     "notesSearchNotAvailable": string;
     "license": string;
     "draft": string;
+    "undrafted": string;
     "unfavoriteConfirm": string;
     "myClips": string;
     "drivecleaner": string;

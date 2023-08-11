@@ -59,6 +59,7 @@ export const paramDef = {
 	type: 'object',
 	properties: {
 		query: { type: 'string', nullable: true, default: null },
+		draft: { type: 'boolean', nullable: true, default: null },
 		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
 		sinceId: { type: 'string', format: 'misskey:id' },
 		untilId: { type: 'string', format: 'misskey:id' },
@@ -81,6 +82,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				.andWhere('emoji.host IS NULL');
 
 			let emojis: Emoji[];
+
+			if (ps.draft !== null) {
+				if (ps.draft) {
+					q.andWhere('emoji.draft = TRUE');
+				} else {
+					q.andWhere('emoji.draft = FALSE');
+				}
+			}
 
 			if (ps.query) {
 				//q.andWhere('emoji.name ILIKE :q', { q: `%${ sqlLikeEscape(ps.query) }%` });
