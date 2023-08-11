@@ -58,9 +58,11 @@ let errored = $ref(url.value == null);
 	height: 2em;
 	vertical-align: middle;
 	transition: transform 0.2s ease;
+	max-width: 100%;
+	object-fit: contain;
 
 	&:hover {
-		transform: scale(2.0);
+		transform: scale(1.5);
 	}
 }
 
