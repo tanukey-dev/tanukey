@@ -30,6 +30,7 @@ export type RolePolicies = {
 	canCreatePrivateChannel: boolean;
 	canHideAds: boolean;
 	driveCapacityMb: number;
+	additionalDriveCapacityMb: number;
 	alwaysMarkNsfw: boolean;
 	pinLimit: number;
 	antennaLimit: number;
@@ -56,6 +57,7 @@ export const DEFAULT_POLICIES: RolePolicies = {
 	canCreatePrivateChannel: false,
 	canHideAds: false,
 	driveCapacityMb: 100,
+	additionalDriveCapacityMb: 0,
 	alwaysMarkNsfw: false,
 	pinLimit: 5,
 	antennaLimit: 5,
@@ -296,6 +298,7 @@ export class RoleService implements OnApplicationShutdown {
 			canCreatePrivateChannel: calc('canCreatePrivateChannel', vs => vs.some(v => v === true)),
 			canHideAds: calc('canHideAds', vs => vs.some(v => v === true)),
 			driveCapacityMb: calc('driveCapacityMb', vs => Math.max(...vs)),
+			additionalDriveCapacityMb: calc('additionalDriveCapacityMb', vs => vs.reduce((sum, el) => sum + el, 0)),
 			alwaysMarkNsfw: calc('alwaysMarkNsfw', vs => vs.some(v => v === true)),
 			pinLimit: calc('pinLimit', vs => Math.max(...vs)),
 			antennaLimit: calc('antennaLimit', vs => Math.max(...vs)),

@@ -65,6 +65,7 @@ export const ROLE_POLICIES = [
 	'canCreatePrivateChannel',
 	'canHideAds',
 	'driveCapacityMb',
+	'additionalDriveCapacityMb',
 	'alwaysMarkNsfw',
 	'pinLimit',
 	'antennaLimit',

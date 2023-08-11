@@ -106,6 +106,14 @@
 							</MkInput>
 						</MkFolder>
 
+						<MkFolder v-if="matchQuery([i18n.ts._role._options.additionalDriveCapacity, 'additionalDriveCapacityMb'])">
+							<template #label>{{ i18n.ts._role._options.additionalDriveCapacity }}</template>
+							<template #suffix>{{ policies.additionalDriveCapacityMb }}MB</template>
+							<MkInput v-model="policies.additionalDriveCapacityMb" type="number">
+								<template #suffix>MB</template>
+							</MkInput>
+						</MkFolder>
+
 						<MkFolder v-if="matchQuery([i18n.ts._role._options.alwaysMarkNsfw, 'alwaysMarkNsfw'])">
 							<template #label>{{ i18n.ts._role._options.alwaysMarkNsfw }}</template>
 							<template #suffix>{{ policies.alwaysMarkNsfw ? i18n.ts.yes : i18n.ts.no }}</template>

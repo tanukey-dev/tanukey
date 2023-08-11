@@ -310,6 +310,23 @@
 				</div>
 			</MkFolder>
 
+			<MkFolder v-if="matchQuery([i18n.ts._role._options.additionalDriveCapacity, 'additionalDriveCapacityMb'])">
+				<template #label>{{ i18n.ts._role._options.additionalDriveCapacity }}</template>
+				<template #suffix>
+					<span v-if="role.policies.additionalDriveCapacityMb.useDefault" :class="$style.useDefaultLabel">{{ i18n.ts._role.useBaseValue }}</span>
+					<span v-else>{{ role.policies.additionalDriveCapacityMb.value + 'MB' }}</span>
+					<span :class="$style.priorityIndicator"><i :class="getPriorityIcon(role.policies.additionalDriveCapacityMb)"></i></span>
+				</template>
+				<div class="_gaps">
+					<MkSwitch v-model="role.policies.additionalDriveCapacityMb.useDefault" :readonly="readonly">
+						<template #label>{{ i18n.ts._role.useBaseValue }}</template>
+					</MkSwitch>
+					<MkInput v-model="role.policies.additionalDriveCapacityMb.value" :disabled="role.policies.additionalDriveCapacityMb.useDefault" type="number" :readonly="readonly">
+						<template #suffix>MB</template>
+					</MkInput>
+				</div>
+			</MkFolder>
+
 			<MkFolder v-if="matchQuery([i18n.ts._role._options.alwaysMarkNsfw, 'alwaysMarkNsfw'])">
 				<template #label>{{ i18n.ts._role._options.alwaysMarkNsfw }}</template>
 				<template #suffix>
