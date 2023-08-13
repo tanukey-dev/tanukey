@@ -81,7 +81,7 @@ const tagUsersPagination = $computed(() => ({
 	endpoint: 'hashtags/users' as const,
 	limit: 30,
 	params: {
-		tag: this.tag,
+		tag: props.tag,
 		origin: 'combined',
 		sort: '+follower',
 	},

@@ -7,10 +7,15 @@
 		:class="$style.input"
 		@keydown.enter="toggle"
 	>
-	<XButton :checked="checked" :disabled="disabled" @toggle="toggle" />
+	<XButton :checked="checked" :disabled="disabled" @toggle="toggle"/>
 	<span :class="$style.body">
 		<!-- TODO: 無名slotの方は廃止 -->
-		<span :class="$style.label" @click="toggle"><slot name="label"></slot><slot></slot></span>
+		<span :class="$style.label">
+			<span @click="toggle">
+				<slot name="label"></slot><slot></slot>
+			</span>
+			<span v-if="helpText" v-tooltip:dialog="helpText" class="_button _help" :class="$style.help"><i class="ti ti-help-circle"></i></span>
+		</span>
 		<p :class="$style.caption"><slot name="caption"></slot></p>
 	</span>
 </div>
@@ -23,6 +28,7 @@ import XButton from '@/components/MkSwitch.button.vue';
 const props = defineProps<{
 	modelValue: boolean | Ref<boolean>;
 	disabled?: boolean;
+	helpText?: string;
 }>();
 
 const emit = defineEmits<{
@@ -33,10 +39,6 @@ const checked = toRefs(props).modelValue;
 const toggle = () => {
 	if (props.disabled) return;
 	emit('update:modelValue', !checked.value);
-
-	if (!checked.value) {
-
-	}
 };
 </script>
 
@@ -92,5 +94,11 @@ const toggle = () => {
 	&:empty {
 		display: none;
 	}
+}
+
+.help {
+	margin-left: 0.5em;
+	font-size: 85%;
+	vertical-align: top;
 }
 </style>

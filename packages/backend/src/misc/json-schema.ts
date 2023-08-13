@@ -33,6 +33,7 @@ import { packedFlashSchema } from '@/models/json-schema/flash.js';
 import { packedCircleSchema } from '@/models/json-schema/circle.js';
 import { packedEventSchema } from '@/models/json-schema/event.js';
 import { packedEventCircleSchema } from '@/models/json-schema/event-circle.js';
+import { packedAnnouncementSchema } from '@/models/json-schema/announcement.js';
 
 export const refs = {
 	UserLite: packedUserLiteSchema,
@@ -44,6 +45,7 @@ export const refs = {
 	User: packedUserSchema,
 
 	UserList: packedUserListSchema,
+	Announcement: packedAnnouncementSchema,
 	App: packedAppSchema,
 	Note: packedNoteSchema,
 	NoteReaction: packedNoteReactionSchema,

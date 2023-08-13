@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { In, Not } from 'typeorm';
 import * as Redis from 'ioredis';
 import Ajv from 'ajv';
 import { ModuleRef } from '@nestjs/core';
@@ -11,13 +10,13 @@ import { awaitAll } from '@/misc/prelude/await-all.js';
 import { USER_ACTIVE_THRESHOLD, USER_ONLINE_THRESHOLD } from '@/const.js';
 import type { LocalUser, PartialLocalUser, PartialRemoteUser, RemoteUser, User } from '@/models/entities/User.js';
 import { birthdaySchema, descriptionSchema, localUsernameSchema, locationSchema, nameSchema, passwordSchema } from '@/models/entities/User.js';
-import type { UsersRepository, UserSecurityKeysRepository, FollowingsRepository, FollowRequestsRepository, BlockingsRepository, MutingsRepository, DriveFilesRepository, NoteUnreadsRepository, ChannelFollowingsRepository, UserNotePiningsRepository, UserProfilesRepository, InstancesRepository, AnnouncementReadsRepository, AnnouncementsRepository, PagesRepository, UserProfile, RenoteMutingsRepository, UserMemoRepository, CirclesRepository, EventsRepository, EventCirclesRepository } from '@/models/index.js';
+import type { UsersRepository, UserSecurityKeysRepository, FollowingsRepository, FollowRequestsRepository, BlockingsRepository, MutingsRepository, DriveFilesRepository, NoteUnreadsRepository, ChannelFollowingsRepository, UserNotePiningsRepository, UserProfilesRepository, InstancesRepository, AnnouncementReadsRepository, AnnouncementsRepository, PagesRepository, UserProfile, RenoteMutingsRepository, UserMemoRepository, CirclesRepository, EventsRepository, EventCirclesRepository, Announcement } from '@/models/index.js';
 import { bindThis } from '@/decorators.js';
 import { RoleService } from '@/core/RoleService.js';
 import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
 import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
 import type { OnModuleInit } from '@nestjs/common';
-import type { AntennaService } from '../AntennaService.js';
+import type { AnnouncementService } from '../AnnouncementService.js';
 import type { CustomEmojiService } from '../CustomEmojiService.js';
 import type { NoteEntityService } from './NoteEntityService.js';
 import type { DriveFileEntityService } from './DriveFileEntityService.js';
@@ -52,7 +51,7 @@ export class UserEntityService implements OnModuleInit {
 	private driveFileEntityService: DriveFileEntityService;
 	private pageEntityService: PageEntityService;
 	private customEmojiService: CustomEmojiService;
-	private antennaService: AntennaService;
+	private announcementService: AnnouncementService;
 	private roleService: RoleService;
 	private federatedInstanceService: FederatedInstanceService;
 
@@ -131,7 +130,7 @@ export class UserEntityService implements OnModuleInit {
 		this.driveFileEntityService = this.moduleRef.get('DriveFileEntityService');
 		this.pageEntityService = this.moduleRef.get('PageEntityService');
 		this.customEmojiService = this.moduleRef.get('CustomEmojiService');
-		this.antennaService = this.moduleRef.get('AntennaService');
+		this.announcementService = this.moduleRef.get('AnnouncementService');
 		this.roleService = this.moduleRef.get('RoleService');
 		this.federatedInstanceService = this.moduleRef.get('FederatedInstanceService');
 	}
@@ -209,19 +208,6 @@ export class UserEntityService implements OnModuleInit {
 				take: 1,
 			}).then(n => n > 0),
 		});
-	}
-
-	@bindThis
-	public async getHasUnreadAnnouncement(userId: User['id']): Promise<boolean> {
-		const reads = await this.announcementReadsRepository.findBy({
-			userId: userId,
-		});
-
-		const count = await this.announcementsRepository.countBy(reads.length > 0 ? {
-			id: Not(In(reads.map(read => read.announcementId))),
-		} : {});
-
-		return count > 0;
 	}
 
 	@bindThis
@@ -348,6 +334,7 @@ export class UserEntityService implements OnModuleInit {
 
 		const isModerator = isMe && opts.detail ? this.roleService.isModerator(user) : null;
 		const isAdmin = isMe && opts.detail ? this.roleService.isAdministrator(user) : null;
+		const unreadAnnouncements = isMe && opts.detail ? await this.announcementService.getUnreadAnnouncements(user) : null;
 
 		const falsy = opts.detail ? false : undefined;
 
@@ -457,7 +444,8 @@ export class UserEntityService implements OnModuleInit {
 					where: { userId: user.id, isMentioned: true },
 					take: 1,
 				}).then(count => count > 0),
-				hasUnreadAnnouncement: this.getHasUnreadAnnouncement(user.id),
+				hasUnreadAnnouncement: unreadAnnouncements!.length > 0,
+				unreadAnnouncements,
 				hasUnreadAntenna: this.getHasUnreadAntenna(user.id),
 				hasUnreadChannel: false, // 後方互換性のため
 				hasUnreadNotification: this.getHasUnreadNotification(user.id),

@@ -59,6 +59,9 @@ export interface BroadcastTypes {
 			[other: string]: any;
 		}[];
 	};
+	announcementCreated: {
+		announcement: Packed<'Announcement'>;
+	};
 }
 
 export interface MainStreamTypes {
@@ -100,6 +103,9 @@ export interface MainStreamTypes {
 	driveFileCreated: Packed<'DriveFile'>;
 	readAntenna: Antenna;
 	receiveFollowRequest: Packed<'User'>;
+	announcementCreated: {
+		announcement: Packed<'Announcement'>;
+	};
 }
 
 export interface DriveStreamTypes {

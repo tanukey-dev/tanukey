@@ -26,7 +26,6 @@ import { $i } from '@/account';
 
 const props = defineProps<{
 	note: misskey.entities.Note;
-	pinned?: boolean;
 }>();
 
 const showContent = $ref(false);

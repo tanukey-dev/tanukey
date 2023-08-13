@@ -64,6 +64,7 @@
 				<MkSwitch v-if="!isRequest" v-model="draft" :disabled="isRequest">
 					{{ i18n.ts.draft }}
 				</MkSwitch>
+				<MkButton v-if="emoji" danger @click="del()"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
 			</div>
 		</MkSpacer>
 		<div :class="$style.footer">
