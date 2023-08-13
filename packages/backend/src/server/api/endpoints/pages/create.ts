@@ -116,7 +116,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				font: ps.font,
 			})).then(x => this.pagesRepository.findOneByOrFail(x.identifiers[0]));
 
-			return await this.pageEntityService.pack(page);
+			return await this.pageEntityService.pack(page, me);
 		});
 	}
 }
