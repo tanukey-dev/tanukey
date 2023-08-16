@@ -1107,6 +1107,8 @@ usedAt: "使用日時"
 unused: "未使用"
 used: "使用済み"
 expired: "期限切れ"
+event: "イベント"
+circle: "サークル"
 
 _initialAccountSetting:
   accountCreated: "アカウントの作成が完了しました！"
@@ -1575,6 +1577,28 @@ _channel:
   isPrivate: "プライベートチャンネルにする (権限が必要)"
   privateUserIds: "チャンネルにアクセス可能なユーザー"
   moderatorUserIds: "チャンネルのモデレーター(設定されたユーザーはチャンネル設定の編集が可能)"
+
+_event:
+  create: "イベントを作成"
+  edit: "イベントを編集"
+  setBanner: "バナーを設定"
+  removeBanner: "バナーを削除"
+  owned: "管理中"
+  nameAndDescription: "名前と説明"
+  nameOnly: "名前のみ"
+
+_eventCircle:
+  create: "イベント用サークル設定を作成"
+  edit: "イベント用サークル設定を編集"
+  setBanner: "サークルアイコンを設定"
+  removeBanner: "サークルアイコンを削除"
+
+_circle:
+  create: "サークルを作成"
+  edit: "サークルを編集"
+  setBanner: "バナーを設定"
+  removeBanner: "バナーを削除"
+  owned: "管理中"
 
 _menuDisplay:
   sideFull: "横"

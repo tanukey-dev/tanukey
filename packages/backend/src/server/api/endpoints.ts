@@ -345,6 +345,18 @@ import * as ep___users_achievements from './endpoints/users/achievements.js';
 import * as ep___users_updateMemo from './endpoints/users/update-memo.js';
 import * as ep___fetchRss from './endpoints/fetch-rss.js';
 import * as ep___retention from './endpoints/retention.js';
+import * as ep___circles_create from './endpoints/circles/create.js';
+import * as ep___circles_owned from './endpoints/circles/owned.js';
+import * as ep___circles_show from './endpoints/circles/show.js';
+import * as ep___circles_update from './endpoints/circles/update.js';
+import * as ep___eventCircles_create from './endpoints/event-circles/create.js';
+import * as ep___eventCircles_show from './endpoints/event-circles/show.js';
+import * as ep___eventCircles_update from './endpoints/event-circles/update.js';
+import * as ep___events_create from './endpoints/events/create.js';
+import * as ep___events_owned from './endpoints/events/owned.js';
+import * as ep___events_search from './endpoints/events/search.js';
+import * as ep___events_show from './endpoints/events/show.js';
+import * as ep___events_update from './endpoints/events/update.js';
 
 const eps = [
 	['admin/meta', ep___admin_meta],
@@ -691,6 +703,18 @@ const eps = [
 	['users/update-memo', ep___users_updateMemo],
 	['fetch-rss', ep___fetchRss],
 	['retention', ep___retention],
+	['circles/create', ep___circles_create],
+	['circles/owned', ep___circles_owned],
+	['circles/show', ep___circles_show],
+	['circles/update', ep___circles_update],
+	['eventCircles/create', ep___eventCircles_create],
+	['eventCircles/show', ep___eventCircles_show],
+	['eventCircles/update', ep___eventCircles_update],
+	['events/create', ep___events_create],
+	['events/owned', ep___events_owned],
+	['events/search', ep___events_search],
+	['events/show', ep___events_show],
+	['events/update', ep___events_update],
 ];
 
 export interface IEndpointMeta {

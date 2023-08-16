@@ -72,6 +72,9 @@ import { RoleAssignment } from '@/models/entities/RoleAssignment.js';
 import { Flash } from '@/models/entities/Flash.js';
 import { FlashLike } from '@/models/entities/FlashLike.js';
 import { UserMemo } from '@/models/entities/UserMemo.js';
+import { Circle } from '@/models/entities/Circle.js';
+import { Event } from '@/models/entities/Event.js';
+import { EventCircle } from '@/models/entities/EventCircle.js';
 
 import { Config } from '@/config.js';
 import MisskeyLogger from '@/logger.js';
@@ -187,6 +190,9 @@ export const entities = [
 	Flash,
 	FlashLike,
 	UserMemo,
+	Circle,
+	Event,
+	EventCircle,
 	...charts,
 ];
 

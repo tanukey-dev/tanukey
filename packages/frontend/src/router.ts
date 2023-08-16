@@ -336,6 +336,50 @@ export const routes = [{
 	component: page(() => import('./pages/channels.vue')),
 	loginRequired: true,
 }, {
+	path: '/events/:eventId/edit',
+	component: page(() => import('./pages/event-editor.vue')),
+	loginRequired: true,
+}, {
+	path: '/events/new',
+	component: page(() => import('./pages/event-editor.vue')),
+	loginRequired: true,
+}, {
+	path: '/events/:eventId/join',
+	component: page(() => import('./pages/event-circle-editor.vue')),
+	loginRequired: true,
+}, {
+	path: '/events/:eventId/:eventCircleId/edit',
+	component: page(() => import('./pages/event-circle-editor.vue')),
+	loginRequired: true,
+}, {
+	path: '/events/:eventId/:eventCircleId',
+	component: page(() => import('./pages/event-circle.vue')),
+	loginRequired: true,
+}, {
+	path: '/events/:eventId',
+	component: page(() => import('./pages/event.vue')),
+	loginRequired: true,
+}, {
+	path: '/events',
+	component: page(() => import('./pages/events.vue')),
+	loginRequired: true,
+}, {
+	path: '/circles/:circleId/edit',
+	component: page(() => import('./pages/circle-editor.vue')),
+	loginRequired: true,
+}, {
+	path: '/circles/new',
+	component: page(() => import('./pages/circle-editor.vue')),
+	loginRequired: true,
+}, {
+	path: '/circles/:circleId',
+	component: page(() => import('./pages/circle.vue')),
+	loginRequired: true,
+}, {
+	path: '/circles',
+	component: page(() => import('./pages/circles.vue')),
+	loginRequired: true,
+}, {
 	path: '/custom-emojis-manager',
 	component: page(() => import('./pages/custom-emojis-manager.vue')),
 	loginRequired: true,

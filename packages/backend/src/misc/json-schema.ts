@@ -30,6 +30,9 @@ import { packedQueueCountSchema } from '@/models/json-schema/queue.js';
 import { packedGalleryPostSchema } from '@/models/json-schema/gallery-post.js';
 import { packedEmojiDetailedSchema, packedEmojiSimpleSchema } from '@/models/json-schema/emoji.js';
 import { packedFlashSchema } from '@/models/json-schema/flash.js';
+import { packedCircleSchema } from '@/models/json-schema/circle.js';
+import { packedEventSchema } from '@/models/json-schema/event.js';
+import { packedEventCircleSchema } from '@/models/json-schema/event-circle.js';
 
 export const refs = {
 	UserLite: packedUserLiteSchema,
@@ -64,6 +67,9 @@ export const refs = {
 	EmojiSimple: packedEmojiSimpleSchema,
 	EmojiDetailed: packedEmojiDetailedSchema,
 	Flash: packedFlashSchema,
+	Circle: packedCircleSchema,
+	Event: packedEventSchema,
+	EventCircle: packedEventCircleSchema,
 };
 
 export type Packed<x extends keyof typeof refs> = SchemaType<typeof refs[x]>;

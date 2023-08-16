@@ -1,0 +1,181 @@
+<template>
+<KeepAlive>
+	<MkStickyContainer>
+		<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
+		<MkSpacer :contentMax="700" :class="$style.main">
+			<div v-if="event && tab === 'overview'" class="_gaps">
+				<div class="_panel" :class="$style.bannerContainer">
+					<div :style="{ backgroundImage: event.bannerUrl ? `url(${event.bannerUrl})` : null }" :class="$style.banner">
+						<!-- <div :class="$style.bannerStatus"></div> -->
+						<div :class="$style.bannerFade"></div>
+					</div>
+					<div v-if="event.description" :class="$style.description">
+						<Mfm :text="event.description" :isNote="false" :i="$i"/>
+					</div>
+				</div>
+			</div>
+			<div v-if="tab === 'eventCircles'">
+				<MkButton class="new" @click="joinEvent()"><i class="ti ti-plus"></i></MkButton>
+				<MkEventCirclePreview v-for="item in circles" :key="item.id" class="_margin" :eventCircle="item"/>
+			</div>
+		</MkSpacer>
+		<!-- <template #footer>
+			<div :class="$style.footer">
+			</div>
+		</template> -->
+	</MkStickyContainer>
+</KeepAlive>
+</template>
+
+<script lang="ts" setup>
+import { computed, watch } from 'vue';
+import * as misskey from 'misskey-js';
+import * as os from '@/os';
+import { useRouter } from '@/router';
+import { $i, iAmModerator } from '@/account';
+import { i18n } from '@/i18n';
+import { definePageMetadata } from '@/scripts/page-metadata';
+import { url } from '@/config';
+import MkButton from '@/components/MkButton.vue';
+import MkEventCirclePreview from '@/components/MkEventCirclePreview.vue';
+import MkPagination from '@/components/MkPagination.vue';
+import { infoImageUrl } from '@/instance';
+
+const router = useRouter();
+
+const props = defineProps<{
+	eventId: string;
+}>();
+
+let tab = $ref('overview');
+let event = $ref<null | misskey.entities.Channel>(null);
+let circles = $ref([]);
+
+watch(() => props.eventId, async () => {
+	event = await os.api('events/show', {
+		eventId: props.eventId,
+	});
+
+	circles = await os.api('eventCircles/show', {
+		eventId: props.eventId,
+	});
+}, { immediate: true });
+
+function edit() {
+	router.push(`/events/${event.id}/edit`);
+}
+
+const eventCirclePagination = {
+	endpoint: 'eventCircles/show' as const,
+	params: {
+		eventId: props.eventId,
+	},
+	limit: 10,
+};
+
+function joinEvent() {
+	router.push(`/events/${event.id}/join`);
+}
+
+const headerActions = $computed(() => {
+	if (event && event.userId) {
+		const share = {
+			icon: 'ti ti-share',
+			text: i18n.ts.share,
+			handler: async (): Promise<void> => {
+				navigator.share({
+					title: event.name,
+					text: event.description,
+					url: `${url}/events/${event.id}`,
+				});
+			},
+		};
+
+		const canEdit = $i && $i.id === event.userId || iAmModerator;
+		return canEdit ? [share, {
+			icon: 'ti ti-settings',
+			text: i18n.ts.edit,
+			handler: edit,
+		}] : [share];
+	} else {
+		return null;
+	}
+});
+
+const headerTabs = $computed(() => [{
+	key: 'overview',
+	title: i18n.ts.overview,
+	icon: 'ti ti-info-circle',
+}, {
+	key: 'eventCircles',
+	title: i18n.ts.circle,
+	icon: 'ti ti-circles-relation',
+}]);
+
+definePageMetadata(computed(() => event ? {
+	title: event.name,
+	icon: 'ti ti-calendar-event',
+} : null));
+</script>
+
+<style lang="scss" module>
+.main {
+	min-height: calc(100cqh - (var(--stickyTop, 0px) + var(--stickyBottom, 0px)));
+}
+
+.footer {
+	-webkit-backdrop-filter: var(--blur, blur(15px));
+	backdrop-filter: var(--blur, blur(15px));
+	border-top: solid 0.5px var(--divider);
+}
+
+.bannerContainer {
+	position: relative;
+}
+
+.subscribe {
+	position: absolute;
+	z-index: 1;
+	top: 16px;
+	left: 16px;
+}
+
+.favorite {
+	position: absolute;
+	z-index: 1;
+	top: 16px;
+	right: 16px;
+}
+
+.banner {
+	position: relative;
+	height: 200px;
+	background-position: center;
+	background-size: cover;
+}
+
+.bannerFade {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 64px;
+	background: linear-gradient(0deg, var(--panel), var(--X15));
+}
+
+.bannerStatus {
+	position: absolute;
+	z-index: 1;
+	bottom: 16px;
+	right: 16px;
+	padding: 8px 12px;
+	font-size: 80%;
+	background: rgba(0, 0, 0, 0.7);
+	border-radius: 6px;
+	color: #fff;
+}
+
+.description {
+	padding: 16px;
+}
+</style>

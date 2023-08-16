@@ -1110,6 +1110,8 @@ export interface Locale {
     "unused": string;
     "used": string;
     "expired": string;
+    "event": string;
+    "circle": string;
     "_initialAccountSetting": {
         "accountCreated": string;
         "letsStartAccountSetup": string;
@@ -1654,6 +1656,28 @@ export interface Locale {
         "isPrivate": string;
         "privateUserIds": string;
         "moderatorUserIds": string;
+    };
+    "_event": {
+        "create": string;
+        "edit": string;
+        "setBanner": string;
+        "removeBanner": string;
+        "owned": string;
+        "nameAndDescription": string;
+        "nameOnly": string;
+    };
+    "_eventCircle": {
+        "create": string;
+        "edit": string;
+        "setBanner": string;
+        "removeBanner": string;
+    };
+    "_circle": {
+        "create": string;
+        "edit": string;
+        "setBanner": string;
+        "removeBanner": string;
+        "owned": string;
     };
     "_menuDisplay": {
         "sideFull": string;
