@@ -16,7 +16,7 @@
 			</div>
 			<div v-if="tab === 'eventCircles'">
 				<MkButton class="new" @click="joinEvent()"><i class="ti ti-plus"></i></MkButton>
-				<MkEventCirclePreview v-for="item in circles" :key="item.id" class="_margin" :eventCircle="item"/>
+				<MkEventCircleList :pagination="eventCirclePagination"/>
 			</div>
 		</MkSpacer>
 		<!-- <template #footer>
@@ -37,9 +37,7 @@ import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { url } from '@/config';
 import MkButton from '@/components/MkButton.vue';
-import MkEventCirclePreview from '@/components/MkEventCirclePreview.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import { infoImageUrl } from '@/instance';
+import MkEventCircleList from '@/components/MkEventCircleList.vue';
 
 const router = useRouter();
 

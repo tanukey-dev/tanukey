@@ -44,6 +44,9 @@ export const paramDef = {
 		eventCircleId: { type: 'string', format: 'misskey:id', nullable: true },
 		eventId: { type: 'string', format: 'misskey:id', nullable: true },
 		circleId: { type: 'string', format: 'misskey:id', nullable: true },
+		sinceId: { type: 'string', format: 'misskey:id' },
+		untilId: { type: 'string', format: 'misskey:id' },
+		limit: { type: 'integer', minimum: 1, maximum: 100, default: 5 },
 	},
 	anyOf: [
 		{ required: ['eventCircleId'] },
@@ -64,7 +67,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			if (ps.eventId) {
-				const query = this.eventCirclesRepository.createQueryBuilder('eventCircle')
+				const query = this.queryService.makePaginationQuery(this.eventCirclesRepository.createQueryBuilder('eventCircle'), ps.sinceId, ps.untilId)
 					.where({ eventId: ps.eventId });
 
 				const eventCircles = await query
@@ -72,7 +75,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 				return await Promise.all(eventCircles.map(x => this.eventCircleEntityService.pack(x, me)));
 			} else if (ps.circleId) {
-				const query = this.eventCirclesRepository.createQueryBuilder('eventCircle')
+				const query = this.queryService.makePaginationQuery(this.eventCirclesRepository.createQueryBuilder('eventCircle'), ps.sinceId, ps.untilId)
 					.where({ circleId: ps.circleId });
 
 				const eventCircles = await query
