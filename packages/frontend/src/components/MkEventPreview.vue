@@ -8,8 +8,6 @@
 	<article v-if="event.description">
 		<p :title="event.description">{{ event.description.length > 85 ? event.description.slice(0, 85) + '…' : event.description }}</p>
 	</article>
-	<footer>
-	</footer>
 </MkA>
 </template>
 

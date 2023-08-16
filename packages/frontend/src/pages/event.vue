@@ -19,10 +19,6 @@
 				<MkEventCircleList :pagination="eventCirclePagination"/>
 			</div>
 		</MkSpacer>
-		<!-- <template #footer>
-			<div :class="$style.footer">
-			</div>
-		</template> -->
 	</MkStickyContainer>
 </KeepAlive>
 </template>

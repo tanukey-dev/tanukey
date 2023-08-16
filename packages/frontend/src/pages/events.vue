@@ -21,9 +21,7 @@
 		</div>
 		<div v-else-if="tab === 'owned'">
 			<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
-			<MkPagination v-slot="{items}" :pagination="ownedPagination">
-				<MkEventPreview v-for="event in items" :key="event.id" class="_margin" :event="event"/>
-			</MkPagination>
+			<MkEventList :key="key" :pagination="ownedPagination"/>
 		</div>
 	</MkSpacer>
 </MkStickyContainer>
@@ -31,9 +29,7 @@
 
 <script lang="ts" setup>
 import { computed, onMounted } from 'vue';
-import MkEventPreview from '@/components/MkEventPreview.vue';
 import MkEventList from '@/components/MkEventList.vue';
-import MkPagination from '@/components/MkPagination.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkRadios from '@/components/MkRadios.vue';
 import MkButton from '@/components/MkButton.vue';
