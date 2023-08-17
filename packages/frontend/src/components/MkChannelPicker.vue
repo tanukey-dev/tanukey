@@ -87,16 +87,6 @@ onMounted(async () => {
 		}
 	}
 
-	let vchs = await os.api('channels/voice-channels', {});
-	if (vchs) {
-		for (let ch of vchs) {
-			if (!s.has(ch.id)) {
-				t.push({ id: ch.id, name: ch.name, icon: 'ti ti-microphone', data: ch });
-				s.add(ch.id);
-			}
-		}
-	}
-
 	channels.value = t;
 
 	loading.value = false;

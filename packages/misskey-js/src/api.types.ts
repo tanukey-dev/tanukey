@@ -111,7 +111,6 @@ export type Endpoints = {
 	// channels
 	'channels/create': { req: TODO; res: TODO; };
 	'channels/featured': { req: TODO; res: TODO; };
-	'channels/voice-channels': { req: TODO; res: TODO; };
 	'channels/follow': { req: TODO; res: TODO; };
 	'channels/followed': { req: TODO; res: TODO; };
 	'channels/owned': { req: TODO; res: TODO; };
