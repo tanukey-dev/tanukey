@@ -1112,6 +1112,7 @@ export interface Locale {
     "expired": string;
     "event": string;
     "circle": string;
+    "participatingCircles": string;
     "doYouAgree": string;
     "beSureToReadThisAsItIsImportant": string;
     "iHaveReadXCarefullyAndAgree": string;

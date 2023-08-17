@@ -6,8 +6,9 @@
 			<div v-if="event && tab === 'overview'" class="_gaps">
 				<div class="_panel" :class="$style.bannerContainer">
 					<div :style="{ backgroundImage: event.bannerUrl ? `url(${event.bannerUrl})` : null }" :class="$style.banner">
-						<!-- <div :class="$style.bannerStatus"></div> -->
 						<div :class="$style.bannerFade"></div>
+						<div :class="$style.bannerName"><i class="ti ti-calendar-event"></i> {{ event.name }}</div>
+						<!-- <div :class="$style.bannerStatus"></div> -->
 					</div>
 					<div v-if="event.description" :class="$style.description">
 						<Mfm :text="event.description" :isNote="false" :i="$i"/>
@@ -102,7 +103,7 @@ const headerTabs = $computed(() => [{
 	icon: 'ti ti-info-circle',
 }, {
 	key: 'eventCircles',
-	title: i18n.ts.circle,
+	title: i18n.ts.participatingCircles,
 	icon: 'ti ti-circles-relation',
 }]);
 
@@ -146,6 +147,15 @@ definePageMetadata(computed(() => event ? {
 	height: 200px;
 	background-position: center;
 	background-size: cover;
+}
+.bannerName {
+	position: absolute;
+	top: 16px;
+	left: 16px;
+	padding: 12px 16px;
+	background: rgba(0, 0, 0, 0.7);
+	color: #fff;
+	font-size: 1.2em;
 }
 
 .bannerFade {
