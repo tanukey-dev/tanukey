@@ -4,20 +4,14 @@
 		<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
 		<MkSpacer :contentMax="700" :class="$style.main">
 			<div v-if="event && circle && eventCircle && tab === 'overview'" class="_gaps">
-				<div v-if="event.name" :class="$style.name">
-					<Mfm :text="event.name" :isNote="false" :i="$i"/>
+				<div v-if="event.name" :class="$style.name"><a :href="`/events/${event.id}`"><i class="ti ti-calendar-event"></i> {{ event.name }}</a></div>
+				<div v-if="circle.name" :class="$style.name"><a :href="`/circles/${circle.id}`"><i class="ti ti-circles-relation"></i> {{ circle.name }}</a></div>
+				<div :class="$style.banner">
+					<img :src="eventCircle.circleImageUrl ?? 'https://ostanukey.tanukey.chat/assets/noImage.png'" :class="$style.bannerImage">
+					<img :src="circle?.profileImageUrl ?? 'https://ostanukey.tanukey.chat/assets/noImage.png'" :class="$style.bannerImage">
 				</div>
-				<div v-if="circle.name" :class="$style.name">
-					<Mfm :text="circle.name" :isNote="false" :i="$i"/>
-				</div>
-				<div class="_panel" :class="$style.bannerContainer">
-					<div :style="{ backgroundImage: eventCircle.circleImageUrl ? `url(${eventCircle.circleImageUrl})` : null }" :class="$style.banner">
-						<!-- <div :class="$style.bannerStatus"></div> -->
-						<div :class="$style.bannerFade"></div>
-					</div>
-					<div v-if="eventCircle.description" :class="$style.description">
-						<Mfm :text="eventCircle.description" :isNote="false" :i="$i"/>
-					</div>
+				<div v-if="eventCircle.description" :class="$style.description">
+					<Mfm :text="eventCircle.description" :isNote="false" :i="$i"/>
 				</div>
 			</div>
 		</MkSpacer>
@@ -38,9 +32,6 @@ import { $i, iAmModerator } from '@/account';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { url } from '@/config';
-import MkButton from '@/components/MkButton.vue';
-import MkEventCirclePreview from '@/components/MkEventCirclePreview.vue';
-import MkPagination from '@/components/MkPagination.vue';
 
 const router = useRouter();
 
@@ -139,21 +130,19 @@ definePageMetadata(computed(() => event ? {
 	top: 16px;
 	right: 16px;
 }
-
-.banner {
-	position: relative;
-	height: 200px;
-	background-position: center;
-	background-size: cover;
+.name {
+	font-size: 1.2em;
 }
 
-.bannerFade {
-	position: absolute;
-	bottom: 0;
-	left: 0;
+.banner {
+	display: flex;
+	justify-content: center;
+	height: 300px;
+}
+
+.bannerImage {
 	width: 100%;
-	height: 64px;
-	background: linear-gradient(0deg, var(--panel), var(--X15));
+	object-fit: contain;
 }
 
 .bannerStatus {

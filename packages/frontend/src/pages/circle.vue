@@ -4,14 +4,12 @@
 		<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
 		<MkSpacer :contentMax="700" :class="$style.main">
 			<div v-if="circle && tab === 'overview'" class="_gaps">
-				<div class="_panel" :class="$style.bannerContainer">
-					<div :style="{ backgroundImage: circle.profileImageUrl ? `url(${circle.profileImageUrl})` : null }" :class="$style.banner">
-						<!-- <div :class="$style.bannerStatus"></div> -->
-						<div :class="$style.bannerFade"></div>
-					</div>
-					<div v-if="circle.description" :class="$style.description">
-						<Mfm :text="circle.description" :isNote="false" :i="$i"/>
-					</div>
+				<div :class="$style.bannerName"><i class="ti ti-calendar-event"></i> {{ circle.name }}</div>
+				<div :class="$style.banner">
+					<img :src="circle.profileImageUrl ?? 'https://ostanukey.tanukey.chat/assets/noImage.png'" :class="$style.bannerImage">
+				</div>
+				<div v-if="circle.description" :class="$style.description">
+					<Mfm :text="circle.description" :isNote="false" :i="$i"/>
 				</div>
 			</div>
 		</MkSpacer>
@@ -119,10 +117,18 @@ definePageMetadata(computed(() => circle ? {
 }
 
 .banner {
-	position: relative;
-	height: 200px;
-	background-position: center;
-	background-size: cover;
+	display: flex;
+	justify-content: center;
+	height: 300px;
+}
+
+.bannerImage {
+	width: 100%;
+	object-fit: contain;
+}
+
+.bannerName {
+	font-size: 1.2em;
 }
 
 .bannerFade {

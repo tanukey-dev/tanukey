@@ -1,9 +1,8 @@
 <template>
 <MkA :to="`/events/${event.id}`" class="eftoefju _panel" tabindex="-1">
-	<div class="banner" :style="bannerStyle">
-		<div class="fade"></div>
-		<div class="name"><i class="ti ti-calendar-event"></i> {{ event.name }}</div>
-		<!-- <div class="status"></div> -->
+	<div class="name"><i class="ti ti-calendar-event"></i> {{ event.name }}</div>
+	<div class="banner">
+		<img :src="props.event.bannerUrl ?? 'https://ostanukey.tanukey.chat/assets/noImage.png'" class="bannerImage">
 	</div>
 	<article v-if="event.description">
 		<p :title="event.description">{{ event.description.length > 85 ? event.description.slice(0, 85) + '…' : event.description }}</p>
@@ -18,14 +17,6 @@ import { i18n } from '@/i18n';
 const props = defineProps<{
 	event: Record<string, any>;
 }>();
-
-const bannerStyle = computed(() => {
-	if (props.event.bannerUrl) {
-		return { backgroundImage: `url(${props.event.bannerUrl})` };
-	} else {
-		return { backgroundColor: '#4c5e6d' };
-	}
-});
 </script>
 
 <style lang="scss" scoped>
@@ -38,42 +29,19 @@ const bannerStyle = computed(() => {
 		text-decoration: none;
 	}
 
+	> .name {
+		padding: 12px 16px;
+		font-size: 1.2em;
+	}
+
 	> .banner {
-		position: relative;
-		width: 100%;
-		height: 200px;
-		background-position: center;
-		background-size: cover;
+		display: flex;
+		justify-content: center;
+		height: 300px;
 
-		> .fade {
-			position: absolute;
-			bottom: 0;
-			left: 0;
+		> .bannerImage {
 			width: 100%;
-			height: 64px;
-			background: linear-gradient(0deg, var(--panel), var(--X15));
-		}
-
-		> .name {
-			position: absolute;
-			top: 16px;
-			left: 16px;
-			padding: 12px 16px;
-			background: rgba(0, 0, 0, 0.7);
-			color: #fff;
-			font-size: 1.2em;
-		}
-
-		> .status {
-			position: absolute;
-			z-index: 1;
-			bottom: 16px;
-			right: 16px;
-			padding: 8px 12px;
-			font-size: 80%;
-			background: rgba(0, 0, 0, 0.7);
-			border-radius: 6px;
-			color: #fff;
+			object-fit: contain;
 		}
 	}
 
