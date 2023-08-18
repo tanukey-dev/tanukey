@@ -5,13 +5,13 @@
 		<MkSpacer :contentMax="900">
 			<div class="ogwlenmc">
 				<div v-if="tab === 'local'" class="local">
-					<MkCustomEmojiEditLocal/>
+					<MkCustomEmojiManagerLocal/>
 				</div>
 				<div v-if="tab === 'draft'" class="draft">
-					<MkCustomEmojiEditDraft/>
+					<MkCustomEmojiManagerDraft/>
 				</div>
 				<div v-else-if="tab === 'remote'" class="remote">
-					<MkCustomEmojiEditRemote/>
+					<MkCustomEmojiManagerRemote/>
 				</div>
 			</div>
 		</MkSpacer>
@@ -21,9 +21,9 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref } from 'vue';
-import MkCustomEmojiEditDraft from '@/components/MkCustomEmojiEditDraft.vue';
-import MkCustomEmojiEditLocal from '@/components/MkCustomEmojiEditLocal.vue';
-import MkCustomEmojiEditRemote from '@/components/MkCustomEmojiEditRemote.vue';
+import MkCustomEmojiManagerDraft from '@/components/MkCustomEmojiManagerDraft.vue';
+import MkCustomEmojiManagerLocal from '@/components/MkCustomEmojiManagerLocal.vue';
+import MkCustomEmojiManagerRemote from '@/components/MkCustomEmojiManagerRemote.vue';
 import { selectFile } from '@/scripts/select-file';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
