@@ -10,7 +10,7 @@ Tanukey is one of the [Misskey](https://github.com/misskey-dev/misskey) forks in
 <a href="./CONTRIBUTING.md">
 		<img src="https://custom-icon-badges.herokuapp.com/badge/become_a-contributor-A371F7?logoColor=A371F7&style=for-the-badge&logo=git-merge&labelColor=363B40" alt="become a contributor"/></a>
 
-<a href="https://discord.gg/385Ndp2qSF">
+<a href="https://discord.gg/9cjeaaud">
 		<img src="https://custom-icon-badges.herokuapp.com/badge/join_the-community-5865F2?logoColor=5865F2&style=for-the-badge&logo=discord&labelColor=363B40" alt="join the community"/></a>
 
 <a href="https://tar-bin.fanbox.cc/">
