@@ -12,7 +12,7 @@
 import { computed } from 'vue';
 import { defaultStore } from '@/store';
 
-const disableSwap = computed(defaultStore.makeGetterSetter('disableSwipe'));
+const disableSwipe = computed(defaultStore.makeGetterSetter('disableSwipe'));
 const asciiArtDarkMode = computed(defaultStore.makeGetterSetter('asciiArtDarkMode'));
 
 defineProps<{
@@ -20,7 +20,7 @@ defineProps<{
 }>();
 
 const onTouchTap = (): void => {
-	disableSwap.value = true;
+	disableSwipe.value = true;
 };
 
 </script>
