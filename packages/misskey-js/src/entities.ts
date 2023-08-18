@@ -412,6 +412,8 @@ export type Announcement = {
 	display: 'normal' | 'banner' | 'dialog';
 	icon: 'info' | 'warning' | 'error' | 'success';
 	needConfirmationToRead: boolean;
+	closeDuration: number;
+	displayOrder: number;
 	forYou: boolean;
 	isRead?: boolean;
 };
