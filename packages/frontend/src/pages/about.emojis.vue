@@ -128,7 +128,7 @@ function toggleTag(tag) {
 }
 
 const edit = () => {
-	os.popup(defineAsyncComponent(() => import('./emoji-edit-dialog.vue')), {
+	os.popup(defineAsyncComponent(() => import('@/components/MkEmojiEditDialog.vue')), {
 		isRequest: true,
 	}, {
 		done: result => {
