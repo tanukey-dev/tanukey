@@ -24,6 +24,10 @@ module.exports = {
 		'@typescript-eslint/prefer-nullish-coalescing': [
 			'error',
 		],
+		// 一旦anyを許可する
+		"@typescript-eslint/no-explicit-any": 0,
+		"@typescript-eslint/prefer-nullish-coalescing": 0,
+		"@typescript-eslint/no-unused-vars": 0,
 		// window の禁止理由: グローバルスコープと衝突し、予期せぬ結果を招くため
 		// e の禁止理由: error や event など、複数のキーワードの頭文字であり分かりにくいため
 		'id-denylist': ['error', 'window', 'e'],

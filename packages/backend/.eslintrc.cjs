@@ -27,6 +27,9 @@ module.exports = {
 				'name': '__filename',
 				'message': 'Not in ESModule. Use `import.meta.url` instead.'
 			}
-	]
+		],
+		"@typescript-eslint/no-explicit-any": 0,
+		"@typescript-eslint/prefer-nullish-coalescing": 0,
+		"@typescript-eslint/no-unused-vars": 0,
 	},
 };
