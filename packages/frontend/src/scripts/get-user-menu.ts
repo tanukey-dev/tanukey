@@ -1,5 +1,5 @@
 import { toUnicode } from 'punycode';
-import { defineAsyncComponent, ref, watch } from 'vue';
+import { defineAsyncComponent, ref, watch, computed } from 'vue';
 import * as misskey from 'misskey-js';
 import { i18n } from '@/i18n';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
@@ -10,6 +10,8 @@ import { $i, iAmModerator } from '@/account';
 import { mainRouter } from '@/router';
 import { Router } from '@/nirax';
 import { antennasCache, rolesCache, userListsCache } from '@/cache';
+
+let postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 
 export function getUserMenu(user: misskey.entities.UserDetailed, router: Router = mainRouter) {
 	const meId = $i ? $i.id : null;
@@ -151,7 +153,9 @@ export function getUserMenu(user: misskey.entities.UserDetailed, router: Router 
 		icon: 'ti ti-mail',
 		text: i18n.ts.sendMessage,
 		action: () => {
-			os.post({ specified: user, initialText: `@${user.username} ` });
+			const canonical = user.host === null ? `@${user.username}` : `@${user.username}@${toUnicode(user.host)}`
+			postChannel.value = null;
+			os.post({ specified: user, initialText: canonical, channel: null });
 		},
 	}, null, {
 		icon: 'ti ti-pencil',
