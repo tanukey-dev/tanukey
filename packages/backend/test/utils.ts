@@ -79,7 +79,7 @@ const request = async (path: string, params: any, me?: any): Promise<{ body: any
 	};
 };
 
-export const relativeFetch = async (path: string, init?: RequestInit | undefined) => {
+const relativeFetch = async (path: string, init?: RequestInit | undefined) => {
 	return await fetch(new URL(path, `http://127.0.0.1:${port}/`).toString(), init);
 };
 
