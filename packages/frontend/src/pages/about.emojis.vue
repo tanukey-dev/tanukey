@@ -5,7 +5,7 @@
 		<MkButton v-if="$i && ($i.isModerator || $i.policies.canManageCustomEmojis)" primary link to="/custom-emojis-manager">{{ i18n.ts.manageCustomEmojis }}</MkButton>
 		<MkButton v-if="$i && (!$i.isModerator && !$i.policies.canManageCustomEmojis && $i.policies.canRequestCustomEmojis)" primary @click="edit">{{ i18n.ts.requestCustomEmojis }}</MkButton>
 
-		<div class="query" style="margin-top: 10px;">
+		<div style="margin-top: 10px;">
 			<MkInput v-model="q" class="" :placeholder="i18n.ts.search">
 				<template #prefix><i class="ti ti-search"></i></template>
 			</MkInput>
@@ -73,14 +73,6 @@ const headerTabs = $computed(() => [{
 
 definePageMetadata(ref({}));
 
-const pagination = {
-	endpoint: 'admin/emoji/list' as const,
-	limit: 30,
-	params: computed(() => ({
-		query: (query.value && query.value !== '') ? query.value : null,
-	})),
-};
-
 let q = $ref('');
 let searchEmojis = $ref<Misskey.entities.CustomEmoji[]>(null);
 let selectedTags = $ref(new Set());
@@ -116,14 +108,6 @@ function search() {
 		}
 	} else {
 		searchEmojis = customEmojis.value.filter(emoji => (emoji.name.includes(q) || emoji.aliases.includes(q)) && [...selectedTags].every(t => emoji.aliases.includes(t)));
-	}
-}
-
-function toggleTag(tag) {
-	if (selectedTags.has(tag)) {
-		selectedTags.delete(tag);
-	} else {
-		selectedTags.add(tag);
 	}
 }
 

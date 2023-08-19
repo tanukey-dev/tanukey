@@ -11,7 +11,7 @@ import { mainRouter } from '@/router';
 import { Router } from '@/nirax';
 import { antennasCache, rolesCache, userListsCache } from '@/cache';
 
-let postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
+const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 
 export function getUserMenu(user: misskey.entities.UserDetailed, router: Router = mainRouter) {
 	const meId = $i ? $i.id : null;
@@ -146,14 +146,14 @@ export function getUserMenu(user: misskey.entities.UserDetailed, router: Router 
 		icon: 'ti ti-share',
 		text: i18n.ts.copyProfileUrl,
 		action: () => {
-			const canonical = user.host === null ? `@${user.username}` : `@${user.username}@${toUnicode(user.host)}`
+			const canonical = user.host === null ? `@${user.username}` : `@${user.username}@${toUnicode(user.host)}`;
 			copyToClipboard(`${url}/${canonical}`);
 		},
 	}, {
 		icon: 'ti ti-mail',
 		text: i18n.ts.sendMessage,
 		action: () => {
-			const canonical = user.host === null ? `@${user.username}` : `@${user.username}@${toUnicode(user.host)}`
+			const canonical = user.host === null ? `@${user.username}` : `@${user.username}@${toUnicode(user.host)}`;
 			postChannel.value = null;
 			os.post({ specified: user, initialText: canonical, channel: null });
 		},
