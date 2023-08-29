@@ -50,14 +50,6 @@ export const packedAnnouncementSchema = {
 			type: 'boolean',
 			optional: false, nullable: false,
 		},
-		closeDuration: {
-			type: 'number',
-			optional: false, nullable: false,
-		},
-		displayOrder: {
-			type: 'number',
-			optional: false, nullable: false,
-		},
 		isRead: {
 			type: 'boolean',
 			optional: true, nullable: false,

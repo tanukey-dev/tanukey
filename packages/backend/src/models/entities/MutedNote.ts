@@ -6,6 +6,7 @@
 import { Entity, Index, JoinColumn, Column, ManyToOne, PrimaryColumn } from 'typeorm';
 import { mutedNoteReasons } from '@/types.js';
 import { id } from '../id.js';
+import { mutedNoteReasons } from '../../types.js';
 import { MiNote } from './Note.js';
 import { MiUser } from './User.js';
 

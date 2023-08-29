@@ -4,9 +4,9 @@
  */
 
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { DataSource, In } from 'typeorm';
+import { In } from 'typeorm';
 import { DI } from '@/di-symbols.js';
-import type { DriveFilesRepository, NotesRepository } from '@/models/index.js';
+import type { DriveFilesRepository } from '@/models/index.js';
 import type { Config } from '@/config.js';
 import type { Packed } from '@/misc/json-schema.js';
 import { awaitAll } from '@/misc/prelude/await-all.js';
@@ -33,12 +33,6 @@ export class DriveFileEntityService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-
-		@Inject(DI.db)
-		private db: DataSource,
-
-		@Inject(DI.notesRepository)
-		private notesRepository: NotesRepository,
 
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
@@ -191,7 +185,6 @@ export class DriveFileEntityService {
 	@bindThis
 	public async pack(
 		src: MiDriveFile['id'] | MiDriveFile,
-		me: { id: MiUser['id'] } | null | undefined,
 		options?: PackOptions,
 	): Promise<Packed<'DriveFile'>> {
 		const opts = Object.assign({
@@ -226,7 +219,6 @@ export class DriveFileEntityService {
 	@bindThis
 	public async packNullable(
 		src: MiDriveFile['id'] | MiDriveFile,
-		me: { id: MiUser['id'] } | null | undefined,
 		options?: PackOptions,
 	): Promise<Packed<'DriveFile'> | null> {
 		const opts = Object.assign({
@@ -262,7 +254,6 @@ export class DriveFileEntityService {
 	@bindThis
 	public async packMany(
 		files: MiDriveFile[],
-		me: { id: MiUser['id'] } | null | undefined,
 		options?: PackOptions,
 	): Promise<Packed<'DriveFile'>[]> {
 		return (await Promise.allSettled(files.map(f => this.packNullable(f, me, options))))
@@ -273,7 +264,6 @@ export class DriveFileEntityService {
 	@bindThis
 	public async packManyByIdsMap(
 		fileIds: MiDriveFile['id'][],
-		me: { id: MiUser['id'] } | null | undefined,
 		options?: PackOptions,
 	): Promise<Map<Packed<'DriveFile'>['id'], Packed<'DriveFile'> | null>> {
 		if (fileIds.length === 0) return new Map();
@@ -289,7 +279,6 @@ export class DriveFileEntityService {
 	@bindThis
 	public async packManyByIds(
 		fileIds: MiDriveFile['id'][],
-		me: { id: MiUser['id'] } | null | undefined,
 		options?: PackOptions,
 	): Promise<Packed<'DriveFile'>[]> {
 		if (fileIds.length === 0) return [];

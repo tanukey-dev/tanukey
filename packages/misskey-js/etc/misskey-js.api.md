@@ -18,6 +18,11 @@ export type Acct = {
 type Ad = TODO_2;
 
 // @public (undocumented)
+type AdminInstanceMetadata = DetailedInstanceMetadata & {
+    blockedHosts: string[];
+};
+
+// @public (undocumented)
 type Announcement = {
     id: ID;
     createdAt: DateString;
@@ -335,8 +340,8 @@ export type Endpoints = {
         res: TODO;
     };
     'admin/meta': {
-        req: TODO;
-        res: TODO;
+        req: NoParams;
+        res: AdminInstanceMetadata;
     };
     'admin/reset-password': {
         req: TODO;
@@ -2168,6 +2173,10 @@ export type Endpoints = {
         req: TODO;
         res: TODO;
     };
+    'users/flashs': {
+        req: TODO;
+        res: TODO;
+    };
     'users/recommendation': {
         req: TODO;
         res: TODO;
@@ -2231,6 +2240,7 @@ declare namespace entities {
         LiteInstanceMetadata,
         DetailedInstanceMetadata,
         InstanceMetadata,
+        AdminInstanceMetadata,
         ServerInfo,
         Stats,
         Page,
@@ -2322,7 +2332,7 @@ type ID = string;
 // @public (undocumented)
 type Instance = {
     id: ID;
-    caughtAt: DateString;
+    firstRetrievedAt: DateString;
     host: string;
     usersCount: number;
     notesCount: number;
@@ -2336,6 +2346,7 @@ type Instance = {
     lastCommunicatedAt: DateString;
     isNotResponding: boolean;
     isSuspended: boolean;
+    isBlocked: boolean;
     softwareName: string | null;
     softwareVersion: string | null;
     openRegistrations: boolean | null;
@@ -2452,6 +2463,7 @@ type MeDetailed = UserDetailed & {
     receiveAnnouncementEmail: boolean;
     usePasswordLessLogin: boolean;
     unreadAnnouncements: Announcement[];
+    twoFactorBackupCodesStock: 'full' | 'partial' | 'none';
     [other: string]: any;
 };
 
@@ -2816,7 +2828,7 @@ type UserSorting = '+follower' | '-follower' | '+createdAt' | '-createdAt' | '+u
 //
 // src/api.types.ts:16:32 - (ae-forgotten-export) The symbol "TODO" needs to be exported by the entry point index.d.ts
 // src/api.types.ts:18:25 - (ae-forgotten-export) The symbol "NoParams" needs to be exported by the entry point index.d.ts
-// src/api.types.ts:629:18 - (ae-forgotten-export) The symbol "ShowUserReq" needs to be exported by the entry point index.d.ts
+// src/api.types.ts:630:18 - (ae-forgotten-export) The symbol "ShowUserReq" needs to be exported by the entry point index.d.ts
 // src/streaming.types.ts:33:4 - (ae-forgotten-export) The symbol "FIXME" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)

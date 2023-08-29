@@ -9,7 +9,6 @@ import bcrypt from 'bcryptjs';
 import { DataSource, IsNull } from 'typeorm';
 import { DI } from '@/di-symbols.js';
 import type { UsedUsernamesRepository, UsersRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
 import { MiUser } from '@/models/entities/User.js';
 import { MiUserProfile } from '@/models/entities/UserProfile.js';
 import { IdService } from '@/core/IdService.js';
@@ -27,9 +26,6 @@ export class SignupService {
 	constructor(
 		@Inject(DI.db)
 		private db: DataSource,
-
-		@Inject(DI.config)
-		private config: Config,
 
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,

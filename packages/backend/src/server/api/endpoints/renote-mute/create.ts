@@ -9,7 +9,6 @@ import { Endpoint } from '@/server/api/endpoint-base.js';
 import { IdService } from '@/core/IdService.js';
 import type { RenoteMutingsRepository } from '@/models/index.js';
 import type { MiRenoteMuting } from '@/models/entities/RenoteMuting.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
 import { DI } from '@/di-symbols.js';
 import { GetterService } from '@/server/api/GetterService.js';
 import { ApiError } from '../../error.js';
@@ -56,14 +55,12 @@ export const paramDef = {
 	required: ['userId'],
 } as const;
 
-// eslint-disable-next-line import/no-default-export
 @Injectable()
-export default class extends Endpoint<typeof meta, typeof paramDef> {
+export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-disable-line import/no-default-export
 	constructor(
 		@Inject(DI.renoteMutingsRepository)
 		private renoteMutingsRepository: RenoteMutingsRepository,
 
-		private globalEventService: GlobalEventService,
 		private getterService: GetterService,
 		private idService: IdService,
 	) {

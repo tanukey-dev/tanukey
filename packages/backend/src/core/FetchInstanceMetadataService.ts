@@ -108,7 +108,7 @@ export class FetchInstanceMetadataService {
 
 			if (name) updates.name = name;
 			if (description) updates.description = description;
-			if (icon || favicon) updates.iconUrl = (icon && !icon.includes('data:image/png;base64')) ? icon : favicon;
+			if (icon ?? favicon) updates.iconUrl = (icon && !icon.includes('data:image/png;base64')) ? icon : favicon;
 			if (favicon) updates.faviconUrl = favicon;
 			if (themeColor) updates.themeColor = themeColor;
 
@@ -142,10 +142,10 @@ export class FetchInstanceMetadataService {
 
 			const links = wellknown.links as any[];
 
-			const lnik1_0 = links.find(link => link.rel === 'http://nodeinfo.diaspora.software/ns/schema/1.0');
-			const lnik2_0 = links.find(link => link.rel === 'http://nodeinfo.diaspora.software/ns/schema/2.0');
-			const lnik2_1 = links.find(link => link.rel === 'http://nodeinfo.diaspora.software/ns/schema/2.1');
-			const link = lnik2_1 ?? lnik2_0 ?? lnik1_0;
+			const link1_0 = links.find(link => link.rel === 'http://nodeinfo.diaspora.software/ns/schema/1.0');
+			const link2_0 = links.find(link => link.rel === 'http://nodeinfo.diaspora.software/ns/schema/2.0');
+			const link2_1 = links.find(link => link.rel === 'http://nodeinfo.diaspora.software/ns/schema/2.1');
+			const link = link2_1 ?? link2_0 ?? link1_0;
 
 			if (link == null) {
 				throw new Error('No nodeinfo link provided');

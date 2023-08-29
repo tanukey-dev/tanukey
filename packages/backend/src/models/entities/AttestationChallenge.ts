@@ -7,8 +7,8 @@ import { PrimaryColumn, Entity, JoinColumn, Column, ManyToOne, Index } from 'typ
 import { id } from '../id.js';
 import { MiUser } from './User.js';
 
-@Entity()
-export class AttestationChallenge {
+@Entity('attestation_challenge')
+export class MiAttestationChallenge {
 	@PrimaryColumn(id())
 	public id: string;
 
@@ -41,7 +41,7 @@ export class AttestationChallenge {
 	})
 	public registrationChallenge: boolean;
 
-	constructor(data: Partial<AttestationChallenge>) {
+	constructor(data: Partial<MiAttestationChallenge>) {
 		if (data == null) return;
 
 		for (const [k, v] of Object.entries(data)) {

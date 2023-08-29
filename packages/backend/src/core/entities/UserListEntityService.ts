@@ -9,7 +9,6 @@ import type { UserListJoiningsRepository, UserListsRepository } from '@/models/i
 import type { Packed } from '@/misc/json-schema.js';
 import type { MiUserList } from '@/models/entities/UserList.js';
 import { bindThis } from '@/decorators.js';
-import { UserEntityService } from './UserEntityService.js';
 
 @Injectable()
 export class UserListEntityService {
@@ -19,8 +18,6 @@ export class UserListEntityService {
 
 		@Inject(DI.userListJoiningsRepository)
 		private userListJoiningsRepository: UserListJoiningsRepository,
-
-		private userEntityService: UserEntityService,
 	) {
 	}
 
