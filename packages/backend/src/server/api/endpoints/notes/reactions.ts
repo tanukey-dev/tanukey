@@ -82,7 +82,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				relations: ['user', 'note'],
 			});
 
-			return await Promise.all(reactions.map(reaction => this.noteReactionEntityService.pack(reaction, me)));
+			return await this.noteReactionEntityService.packMany(reactions, me);
 		});
 	}
 }

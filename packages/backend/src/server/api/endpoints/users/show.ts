@@ -112,12 +112,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				// リクエストされた通りに並べ替え
 				const _users: MiUser[] = [];
 				for (const id of ps.userIds) {
-					_users.push(users.find(x => x.id === id)!);
+					const user = users.find((u) => u.id === id);
+					if (user) _users.push(user);
 				}
 
-				return await Promise.all(_users.map(u => this.userEntityService.pack(u, me, {
+				return await this.userEntityService.packMany(_users, me, {
 					detail: true,
-				})));
+				});
 			} else {
 				// Lookup user
 				if (typeof ps.host === 'string' && typeof ps.username === 'string') {
