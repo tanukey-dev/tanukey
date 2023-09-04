@@ -20,6 +20,8 @@
 
 - Add user-specified announcement function.
 - Add a display order setting for announcements.
+- Do not display posts of frozen users.
+- Change memory allocator to jemalloc
 
 
 <div align="center">
