@@ -48,6 +48,7 @@ export interface Locale {
     "unpin": string;
     "copyContent": string;
     "copyLink": string;
+    "copyLinkRenote": string;
     "delete": string;
     "deleteAndEdit": string;
     "deleteAndEditConfirm": string;
@@ -659,6 +660,7 @@ export interface Locale {
     "sample": string;
     "abuseReports": string;
     "reportAbuse": string;
+    "reportAbuseRenote": string;
     "reportAbuseOf": string;
     "fillAbuseReportDescription": string;
     "abuseReported": string;
@@ -2171,6 +2173,8 @@ export interface Locale {
         "introduction2": string;
         "widgetsIntroduction": string;
         "useSimpleUiForNonRootPages": string;
+        "usedAsMinWidthWhenFlexible": string;
+        "flexible": string;
         "_columns": {
             "main": string;
             "widgets": string;

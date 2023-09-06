@@ -204,7 +204,7 @@ describe('RoleService', () => {
 				createdAt: new Date(Date.now() - (1000 * 60 * 60 * 24 * 365)),
 				followersCount: 10,
 			});
-			const role = await createRole({
+			await createRole({
 				name: 'a',
 				policies: {
 					canManageCustomEmojis: {

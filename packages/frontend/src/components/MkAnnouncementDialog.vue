@@ -31,7 +31,7 @@ import { i18n } from '@/i18n';
 import { $i, updateAccount } from '@/account';
 
 const props = withDefaults(defineProps<{
-	announcement: misskey.entities.Announcement;
+	announcement: Misskey.entities.Announcement;
 }>(), {
 });
 

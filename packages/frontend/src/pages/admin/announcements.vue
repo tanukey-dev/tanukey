@@ -89,7 +89,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import * as misskey from 'misskey-js';
+import * as Misskey from 'misskey-js';
 import XHeader from './_header_.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
@@ -103,7 +103,7 @@ import MkTextarea from '@/components/MkTextarea.vue';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
 
 const announceTitleEl = $shallowRef<HTMLInputElement | null>(null);
-const user = ref<misskey.entities.UserLite | null>(null);
+const user = ref<Misskey.entities.UserLite | null>(null);
 const offset = ref(0);
 const hasMore = ref(false);
 
