@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 process.env.NODE_ENV = 'test';
 
 import * as assert from 'assert';
@@ -186,7 +191,7 @@ describe('2要素認証', () => {
 		const doneResponse = await api('/i/2fa/done', {
 			token: otpToken(registerResponse.body.secret),
 		}, alice);
-		assert.strictEqual(doneResponse.status, 204);
+		assert.strictEqual(doneResponse.status, 200);
 
 		const usersShowResponse = await api('/users/show', {
 			username,
@@ -211,7 +216,7 @@ describe('2要素認証', () => {
 		const doneResponse = await api('/i/2fa/done', {
 			token: otpToken(registerResponse.body.secret),
 		}, alice);
-		assert.strictEqual(doneResponse.status, 204);
+		assert.strictEqual(doneResponse.status, 200);
 
 		const registerKeyResponse = await api('/i/2fa/register-key', {
 			password,
@@ -267,7 +272,7 @@ describe('2要素認証', () => {
 		const doneResponse = await api('/i/2fa/done', {
 			token: otpToken(registerResponse.body.secret),
 		}, alice);
-		assert.strictEqual(doneResponse.status, 204);
+		assert.strictEqual(doneResponse.status, 200);
 
 		const registerKeyResponse = await api('/i/2fa/register-key', {
 			password,
@@ -324,7 +329,7 @@ describe('2要素認証', () => {
 		const doneResponse = await api('/i/2fa/done', {
 			token: otpToken(registerResponse.body.secret),
 		}, alice);
-		assert.strictEqual(doneResponse.status, 204);
+		assert.strictEqual(doneResponse.status, 200);
 
 		const registerKeyResponse = await api('/i/2fa/register-key', {
 			password,
@@ -366,7 +371,7 @@ describe('2要素認証', () => {
 		const doneResponse = await api('/i/2fa/done', {
 			token: otpToken(registerResponse.body.secret),
 		}, alice);
-		assert.strictEqual(doneResponse.status, 204);
+		assert.strictEqual(doneResponse.status, 200);
 
 		const registerKeyResponse = await api('/i/2fa/register-key', {
 			password,
@@ -418,7 +423,7 @@ describe('2要素認証', () => {
 		const doneResponse = await api('/i/2fa/done', {
 			token: otpToken(registerResponse.body.secret),
 		}, alice);
-		assert.strictEqual(doneResponse.status, 204);
+		assert.strictEqual(doneResponse.status, 200);
 
 		const usersShowResponse = await api('/users/show', {
 			username,

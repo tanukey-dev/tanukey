@@ -1,10 +1,15 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
 import type { RegistrationTicketsRepository } from '@/models/index.js';
 import { awaitAll } from '@/misc/prelude/await-all.js';
 import type { Packed } from '@/misc/json-schema.js';
-import type { User } from '@/models/entities/User.js';
-import type { RegistrationTicket } from '@/models/entities/RegistrationTicket.js';
+import type { MiUser } from '@/models/entities/User.js';
+import type { MiRegistrationTicket } from '@/models/entities/RegistrationTicket.js';
 import { bindThis } from '@/decorators.js';
 import { UserEntityService } from './UserEntityService.js';
 
@@ -20,8 +25,8 @@ export class InviteCodeEntityService {
 
 	@bindThis
 	public async pack(
-		src: RegistrationTicket['id'] | RegistrationTicket,
-		me?: { id: User['id'] } | null | undefined,
+		src: MiRegistrationTicket['id'] | MiRegistrationTicket,
+		me: { id: MiUser['id'] } | null | undefined,
 	): Promise<Packed<'InviteCode'>> {
 		const target = typeof src === 'object' ? src : await this.registrationTicketsRepository.findOneOrFail({
 			where: {
@@ -43,10 +48,12 @@ export class InviteCodeEntityService {
 	}
 
 	@bindThis
-	public packMany(
-		targets: any[],
-		me: { id: User['id'] },
-	) {
-		return Promise.all(targets.map(x => this.pack(x, me)));
+	public async packMany(
+		targets: (MiRegistrationTicket['id'] | MiRegistrationTicket)[],
+		me: { id: MiUser['id'] } | null | undefined,
+	) : Promise<Packed<'InviteCode'>[]> {
+		return (await Promise.allSettled(targets.map(x => this.pack(x, me))))
+			.filter(result => result.status === 'fulfilled')
+			.map(result => (result as PromiseFulfilledResult<Packed<'InviteCode'>>).value);
 	}
 }

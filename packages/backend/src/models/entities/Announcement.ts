@@ -1,8 +1,14 @@
-import { Entity, Index, Column, PrimaryColumn } from 'typeorm';
-import { id } from '../id.js';
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 
-@Entity()
-export class Announcement {
+import { Entity, Index, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { id } from '../id.js';
+import { MiUser } from './User.js';
+
+@Entity('announcement')
+export class MiAnnouncement {
 	@PrimaryColumn(id())
 	public id: string;
 
@@ -33,19 +39,26 @@ export class Announcement {
 	})
 	public imageUrl: string | null;
 
-	// UIに表示する際の並び順用(大きいほど先頭)
-	@Index()
-	@Column('integer', {
-		default: 0,
-	})
-	public displayOrder: number;
-
-	@Index()
+	// info, warning, error, success
 	@Column('varchar', {
-		...id(),
-		nullable: true,
+		length: 256, nullable: false,
+		default: 'info',
 	})
-	public userId: string | null;
+	public icon: string;
+
+	// normal ... お知らせページ掲載
+	// banner ... お知らせページ掲載 + バナー表示
+	// dialog ... お知らせページ掲載 + ダイアログ表示
+	@Column('varchar', {
+		length: 256, nullable: false,
+		default: 'normal',
+	})
+	public display: string;
+
+	@Column('boolean', {
+		default: false,
+	})
+	public needConfirmationToRead: boolean;
 
 	@Column('integer', {
 		nullable: false,
@@ -53,7 +66,40 @@ export class Announcement {
 	})
 	public closeDuration: number;
 
-	constructor(data: Partial<Announcement>) {
+	@Index()
+	@Column('boolean', {
+		default: true,
+	})
+	public isActive: boolean;
+
+	// UIに表示する際の並び順用(大きいほど先頭)
+	@Index()
+	@Column('integer', {
+		nullable: false,
+		default: 0,
+	})
+	public displayOrder: number;
+
+	@Index()
+	@Column('boolean', {
+		default: false,
+	})
+	public forExistingUsers: boolean;
+
+	@Index()
+	@Column({
+		...id(),
+		nullable: true,
+	})
+	public userId: MiUser['id'] | null;
+
+	@ManyToOne(type => MiUser, {
+		onDelete: 'CASCADE',
+	})
+	@JoinColumn()
+	public user: MiUser | null;
+
+	constructor(data: Partial<MiAnnouncement>) {
 		if (data == null) return;
 
 		for (const [k, v] of Object.entries(data)) {

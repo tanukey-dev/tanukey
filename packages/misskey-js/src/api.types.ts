@@ -2,7 +2,7 @@ import type {
 	Ad, Announcement, Antenna, App, AuthSession, Blocking, Channel, Clip, DateString, DetailedInstanceMetadata, DriveFile, DriveFolder, Following, FollowingFolloweePopulated, FollowingFollowerPopulated, FollowRequest, GalleryPost, Instance,
 	LiteInstanceMetadata,
 	MeDetailed,
-	Note, NoteFavorite, OriginType, Page, ServerInfo, Stats, User, UserDetailed, MeSignup, UserGroup, UserList, UserSorting, Notification, NoteReaction, Signin, MessagingMessage, Invite, InviteLimit,
+	Note, NoteFavorite, OriginType, Page, ServerInfo, Stats, User, UserDetailed, MeSignup, UserGroup, UserList, UserSorting, Notification, NoteReaction, Signin, MessagingMessage, Invite, InviteLimit, AdminInstanceMetadata,
 } from './entities.js';
 
 type TODO = Record<string, any> | null;
@@ -20,7 +20,7 @@ export type Endpoints = {
 	'admin/get-table-stats': { req: TODO; res: TODO; };
 	'admin/invite': { req: TODO; res: TODO; };
 	'admin/logs': { req: TODO; res: TODO; };
-	'admin/meta': { req: TODO; res: TODO; };
+	'admin/meta': { req: NoParams; res: AdminInstanceMetadata; };
 	'admin/reset-password': { req: TODO; res: TODO; };
 	'admin/resolve-abuse-user-report': { req: TODO; res: TODO; };
 	'admin/resync-chart': { req: TODO; res: TODO; };
@@ -73,7 +73,7 @@ export type Endpoints = {
 	'admin/relays/remove': { req: TODO; res: TODO; };
 
 	// announcements
-	'announcements': { req: { limit?: number; withUnreads?: boolean; sinceId?: Announcement['id']; untilId?: Announcement['id']; privateOnly?: boolean; }; res: Announcement[]; };
+	'announcements': { req: { isActive?: boolean; limit?: number; offset?: number; }; res: Announcement[]; };
 
 	// antennas
 	'antennas/create': { req: TODO; res: Antenna; };
@@ -621,6 +621,7 @@ export type Endpoints = {
 	'users/lists/update': { req: { listId: UserList['id']; name: string; }; res: UserList; };
 	'users/notes': { req: { userId: User['id']; limit?: number; sinceId?: Note['id']; untilId?: Note['id']; sinceDate?: number; untilDate?: number; }; res: Note[]; };
 	'users/pages': { req: TODO; res: TODO; };
+	'users/flashs': { req: TODO; res: TODO; };
 	'users/recommendation': { req: TODO; res: TODO; };
 	'users/relation': { req: TODO; res: TODO; };
 	'users/report-abuse': { req: TODO; res: TODO; };

@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { randomBytes } from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
@@ -7,7 +12,7 @@ import { DI } from '@/di-symbols.js';
 import type { UserSecurityKeysRepository, SigninsRepository, UserProfilesRepository, AttestationChallengesRepository, UsersRepository } from '@/models/index.js';
 import type { Config } from '@/config.js';
 import { getIpHash } from '@/misc/get-ip-hash.js';
-import type { LocalUser } from '@/models/entities/User.js';
+import type { MiLocalUser } from '@/models/entities/User.js';
 import { IdService } from '@/core/IdService.js';
 import { TwoFactorAuthenticationService } from '@/core/TwoFactorAuthenticationService.js';
 import { bindThis } from '@/decorators.js';
@@ -105,7 +110,7 @@ export class SigninApiService {
 		const user = await this.usersRepository.findOneBy({
 			usernameLower: username.toLowerCase(),
 			host: IsNull(),
-		}) as LocalUser;
+		}) as MiLocalUser;
 
 		if (user == null) {
 			return error(404, {
@@ -153,6 +158,13 @@ export class SigninApiService {
 				return await fail(403, {
 					id: '932c904e-9460-45b7-9ce6-7ed33be7eb2c',
 				});
+			}
+
+			if (profile.twoFactorBackupSecret?.includes(token)) {
+				await this.userProfilesRepository.update({ userId: profile.userId }, {
+					twoFactorBackupSecret: profile.twoFactorBackupSecret.filter((secret) => secret !== token),
+				});
+				return this.signinService.signin(request, reply, user);
 			}
 
 			const delta = OTPAuth.TOTP.validate({

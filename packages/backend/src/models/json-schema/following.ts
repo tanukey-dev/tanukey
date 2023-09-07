@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 export const packedFollowingSchema = {
 	type: 'object',
 	properties: {
@@ -31,6 +36,28 @@ export const packedFollowingSchema = {
 			type: 'object',
 			optional: true, nullable: false,
 			ref: 'UserDetailed',
+		},
+	},
+} as const;
+
+export const packedFollowRequestSchema = {
+	type: 'object',
+	properties: {
+		id: {
+			type: 'string',
+			optional: false, nullable: false,
+			format: 'id',
+			example: 'xxxxxxxxxx',
+		},
+		follower: {
+			type: 'object',
+			optional: false, nullable: false,
+			ref: 'UserLite',
+		},
+		followee: {
+			type: 'object',
+			optional: false, nullable: false,
+			ref: 'UserLite',
 		},
 	},
 } as const;

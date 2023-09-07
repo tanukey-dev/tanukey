@@ -12,10 +12,24 @@ export type Acct = {
     host: string | null;
 };
 
+declare namespace acct {
+    export {
+        parse,
+        toString_2 as toString,
+        Acct
+    }
+}
+export { acct }
+
 // Warning: (ae-forgotten-export) The symbol "TODO_2" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 type Ad = TODO_2;
+
+// @public (undocumented)
+type AdminInstanceMetadata = DetailedInstanceMetadata & {
+    blockedHosts: string[];
+};
 
 // @public (undocumented)
 type Announcement = {
@@ -25,9 +39,13 @@ type Announcement = {
     text: string;
     title: string;
     imageUrl: string | null;
-    isRead?: boolean;
-    isPrivate: boolean;
+    display: 'normal' | 'banner' | 'dialog';
+    icon: 'info' | 'warning' | 'error' | 'success';
+    needConfirmationToRead: boolean;
     closeDuration: number;
+    displayOrder: number;
+    forYou: boolean;
+    isRead?: boolean;
 };
 
 // @public (undocumented)
@@ -331,8 +349,8 @@ export type Endpoints = {
         res: TODO;
     };
     'admin/meta': {
-        req: TODO;
-        res: TODO;
+        req: NoParams;
+        res: AdminInstanceMetadata;
     };
     'admin/reset-password': {
         req: TODO;
@@ -542,11 +560,9 @@ export type Endpoints = {
     };
     'announcements': {
         req: {
+            isActive?: boolean;
             limit?: number;
-            withUnreads?: boolean;
-            sinceId?: Announcement['id'];
-            untilId?: Announcement['id'];
-            privateOnly?: boolean;
+            offset?: number;
         };
         res: Announcement[];
     };
@@ -2166,6 +2182,10 @@ export type Endpoints = {
         req: TODO;
         res: TODO;
     };
+    'users/flashs': {
+        req: TODO;
+        res: TODO;
+    };
     'users/recommendation': {
         req: TODO;
         res: TODO;
@@ -2229,6 +2249,7 @@ declare namespace entities {
         LiteInstanceMetadata,
         DetailedInstanceMetadata,
         InstanceMetadata,
+        AdminInstanceMetadata,
         ServerInfo,
         Stats,
         Page,
@@ -2320,7 +2341,7 @@ type ID = string;
 // @public (undocumented)
 type Instance = {
     id: ID;
-    caughtAt: DateString;
+    firstRetrievedAt: DateString;
     host: string;
     usersCount: number;
     notesCount: number;
@@ -2334,6 +2355,7 @@ type Instance = {
     lastCommunicatedAt: DateString;
     isNotResponding: boolean;
     isSuspended: boolean;
+    isBlocked: boolean;
     softwareName: string | null;
     softwareVersion: string | null;
     openRegistrations: boolean | null;
@@ -2449,6 +2471,8 @@ type MeDetailed = UserDetailed & {
     noCrawle: boolean;
     receiveAnnouncementEmail: boolean;
     usePasswordLessLogin: boolean;
+    unreadAnnouncements: Announcement[];
+    twoFactorBackupCodesStock: 'full' | 'partial' | 'none';
     [other: string]: any;
 };
 
@@ -2645,6 +2669,9 @@ type PageEvent = {
 };
 
 // @public (undocumented)
+function parse(acct: string): Acct;
+
+// @public (undocumented)
 export const permissions: string[];
 
 // @public (undocumented)
@@ -2721,6 +2748,9 @@ export class Stream extends EventEmitter<StreamEvents> {
     // (undocumented)
     useChannel<C extends keyof Channels>(channel: C, params?: Channels[C]['params'], name?: string): ChannelConnection<Channels[C]>;
 }
+
+// @public (undocumented)
+function toString_2(acct: Acct): string;
 
 // @public (undocumented)
 type User = UserLite | UserDetailed;
@@ -2813,7 +2843,7 @@ type UserSorting = '+follower' | '-follower' | '+createdAt' | '-createdAt' | '+u
 //
 // src/api.types.ts:16:32 - (ae-forgotten-export) The symbol "TODO" needs to be exported by the entry point index.d.ts
 // src/api.types.ts:18:25 - (ae-forgotten-export) The symbol "NoParams" needs to be exported by the entry point index.d.ts
-// src/api.types.ts:629:18 - (ae-forgotten-export) The symbol "ShowUserReq" needs to be exported by the entry point index.d.ts
+// src/api.types.ts:630:18 - (ae-forgotten-export) The symbol "ShowUserReq" needs to be exported by the entry point index.d.ts
 // src/streaming.types.ts:33:4 - (ae-forgotten-export) The symbol "FIXME" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)

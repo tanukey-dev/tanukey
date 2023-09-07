@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 export const packedGalleryPostSchema = {
 	type: 'object',
 	properties: {
@@ -63,6 +68,23 @@ export const packedGalleryPostSchema = {
 		},
 		isSensitive: {
 			type: 'boolean',
+			optional: false, nullable: false,
+		},
+	},
+} as const;
+
+export const packedGalleryLikeSchema = {
+	type: 'object',
+	properties: {
+		id: {
+			type: 'string',
+			optional: false, nullable: false,
+			format: 'id',
+			example: 'xxxxxxxxxx',
+		},
+		post: {
+			type: 'object',
+			ref: 'GalleryPost',
 			optional: false, nullable: false,
 		},
 	},

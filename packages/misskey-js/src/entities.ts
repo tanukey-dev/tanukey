@@ -104,6 +104,8 @@ export type MeDetailed = UserDetailed & {
 	noCrawle: boolean;
 	receiveAnnouncementEmail: boolean;
 	usePasswordLessLogin: boolean;
+	unreadAnnouncements: Announcement[];
+	twoFactorBackupCodesStock: 'full' | 'partial' | 'none';
 	[other: string]: any;
 };
 
@@ -346,6 +348,11 @@ export type DetailedInstanceMetadata = LiteInstanceMetadata & {
 
 export type InstanceMetadata = LiteInstanceMetadata | DetailedInstanceMetadata;
 
+export type AdminInstanceMetadata = DetailedInstanceMetadata & {
+	// TODO: There are more fields.
+	blockedHosts: string[];
+};
+
 export type ServerInfo = {
 	machine: string;
 	cpu: {
@@ -408,9 +415,13 @@ export type Announcement = {
 	text: string;
 	title: string;
 	imageUrl: string | null;
+	display: 'normal' | 'banner' | 'dialog';
+	icon: 'info' | 'warning' | 'error' | 'success';
+	needConfirmationToRead: boolean;
+	closeDuration: number;
+	displayOrder: number;
+	forYou: boolean;
 	isRead?: boolean;
-	isPrivate: boolean;
-	closeDuration: number; 
 };
 
 export type Antenna = {
@@ -484,7 +495,7 @@ export type Blocking = {
 
 export type Instance = {
 	id: ID;
-	caughtAt: DateString;
+	firstRetrievedAt: DateString;
 	host: string;
 	usersCount: number;
 	notesCount: number;
@@ -498,6 +509,7 @@ export type Instance = {
 	lastCommunicatedAt: DateString;
 	isNotResponding: boolean;
 	isSuspended: boolean;
+	isBlocked: boolean;
 	softwareName: string | null;
 	softwareVersion: string | null;
 	openRegistrations: boolean | null;

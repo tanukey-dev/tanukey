@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 export const packedPageSchema = {
 	type: 'object',
 	properties: {
@@ -45,6 +50,23 @@ export const packedPageSchema = {
 		user: {
 			type: 'object',
 			ref: 'UserLite',
+			optional: false, nullable: false,
+		},
+	},
+} as const;
+
+export const packedPageLikeSchema = {
+	type: 'object',
+	properties: {
+		id: {
+			type: 'string',
+			optional: false, nullable: false,
+			format: 'id',
+			example: 'xxxxxxxxxx',
+		},
+		page: {
+			type: 'object',
+			ref: 'Page',
 			optional: false, nullable: false,
 		},
 	},

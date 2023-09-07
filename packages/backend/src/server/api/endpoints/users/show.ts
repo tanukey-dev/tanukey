@@ -1,7 +1,12 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { In, IsNull } from 'typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import type { UsersRepository } from '@/models/index.js';
-import type { User } from '@/models/entities/User.js';
+import type { MiUser } from '@/models/entities/User.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
 import { RemoteUserResolveService } from '@/core/RemoteUserResolveService.js';
@@ -74,9 +79,8 @@ export const paramDef = {
 	],
 } as const;
 
-// eslint-disable-next-line import/no-default-export
 @Injectable()
-export default class extends Endpoint<typeof meta, typeof paramDef> {
+export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-disable-line import/no-default-export
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
@@ -106,14 +110,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				});
 
 				// リクエストされた通りに並べ替え
-				const _users: User[] = [];
+				const _users: MiUser[] = [];
 				for (const id of ps.userIds) {
-					_users.push(users.find(x => x.id === id)!);
+					const user = users.find((u) => u.id === id);
+					if (user) _users.push(user);
 				}
 
-				return await Promise.all(_users.map(u => this.userEntityService.pack(u, me, {
+				return await this.userEntityService.packMany(_users, me, {
 					detail: true,
-				})));
+				});
 			} else {
 				// Lookup user
 				if (typeof ps.host === 'string' && typeof ps.username === 'string') {
@@ -122,7 +127,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 						throw new ApiError(meta.errors.failedToResolveRemoteUser);
 					});
 				} else {
-					const q: FindOptionsWhere<User> = ps.userId != null
+					const q: FindOptionsWhere<MiUser> = ps.userId != null
 						? { id: ps.userId }
 						: { usernameLower: ps.username!.toLowerCase(), host: IsNull() };
 

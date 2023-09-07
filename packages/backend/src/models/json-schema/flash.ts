@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 export const packedFlashSchema = {
 	type: 'object',
 	properties: {
@@ -46,6 +51,23 @@ export const packedFlashSchema = {
 		isLiked: {
 			type: 'boolean',
 			optional: true, nullable: false,
+		},
+	},
+} as const;
+
+export const packedFlashLikeSchema = {
+	type: 'object',
+	properties: {
+		id: {
+			type: 'string',
+			optional: false, nullable: false,
+			format: 'id',
+			example: 'xxxxxxxxxx',
+		},
+		flash: {
+			type: 'object',
+			ref: 'Flash',
+			optional: false, nullable: false,
 		},
 	},
 } as const;
