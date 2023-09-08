@@ -43,7 +43,7 @@ import { RelayService } from './RelayService.js';
 import { RoleService } from './RoleService.js';
 import { S3Service } from './S3Service.js';
 import { SignupService } from './SignupService.js';
-import { TwoFactorAuthenticationService } from './TwoFactorAuthenticationService.js';
+import { WebAuthnService } from './WebAuthnService.js';
 import { UserBlockingService } from './UserBlockingService.js';
 import { CacheService } from './CacheService.js';
 import { UserFollowingService } from './UserFollowingService.js';
@@ -169,7 +169,7 @@ const $RelayService: Provider = { provide: 'RelayService', useExisting: RelaySer
 const $RoleService: Provider = { provide: 'RoleService', useExisting: RoleService };
 const $S3Service: Provider = { provide: 'S3Service', useExisting: S3Service };
 const $SignupService: Provider = { provide: 'SignupService', useExisting: SignupService };
-const $TwoFactorAuthenticationService: Provider = { provide: 'TwoFactorAuthenticationService', useExisting: TwoFactorAuthenticationService };
+const $WebAuthnService: Provider = { provide: 'WebAuthnService', useExisting: WebAuthnService };
 const $UserBlockingService: Provider = { provide: 'UserBlockingService', useExisting: UserBlockingService };
 const $CacheService: Provider = { provide: 'CacheService', useExisting: CacheService };
 const $UserFollowingService: Provider = { provide: 'UserFollowingService', useExisting: UserFollowingService };
@@ -298,7 +298,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		RoleService,
 		S3Service,
 		SignupService,
-		TwoFactorAuthenticationService,
+		WebAuthnService,
 		UserBlockingService,
 		CacheService,
 		UserFollowingService,
@@ -420,7 +420,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$RoleService,
 		$S3Service,
 		$SignupService,
-		$TwoFactorAuthenticationService,
+		$WebAuthnService,
 		$UserBlockingService,
 		$CacheService,
 		$UserFollowingService,
@@ -543,7 +543,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		RoleService,
 		S3Service,
 		SignupService,
-		TwoFactorAuthenticationService,
+		WebAuthnService,
 		UserBlockingService,
 		CacheService,
 		UserFollowingService,
@@ -664,7 +664,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$RoleService,
 		$S3Service,
 		$SignupService,
-		$TwoFactorAuthenticationService,
+		$WebAuthnService,
 		$UserBlockingService,
 		$CacheService,
 		$UserFollowingService,
