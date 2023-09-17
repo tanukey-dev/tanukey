@@ -8,7 +8,7 @@ process.env.NODE_ENV = 'test';
 import { ModuleMocker } from 'jest-mock';
 import { Test } from '@nestjs/testing';
 import { jest } from '@jest/globals';
-import type { MiAnnouncement, AnnouncementsRepository, AnnouncementReadsRepository, UsersRepository, MiUser } from '@/models/index.js';
+import type { MiAnnouncement, AnnouncementsRepository, AnnouncementReadsRepository, UsersRepository, MiUser } from '@/models/_.js';
 import { secureRndstr } from '@/misc/secure-rndstr.js';
 import { GlobalModule } from '@/GlobalModule.js';
 import { AnnouncementEntityService } from '@/core/entities/AnnouncementEntityService.js';

@@ -7,7 +7,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { ApiError } from '@/server/api/error.js';
 import { DI } from '@/di-symbols.js';
-import type { AnnouncementsRepository } from '@/models/index.js';
+import type { AnnouncementsRepository } from '@/models/_.js';
 import { AnnouncementService } from '@/core/AnnouncementService.js';
 
 export const meta = {

@@ -5,7 +5,7 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
-import type { FlashLikesRepository, FlashsRepository } from '@/models/index.js';
+import type { FlashsRepository, FlashLikesRepository } from '@/models/_.js';
 import { awaitAll } from '@/misc/prelude/await-all.js';
 import type { Packed } from '@/misc/json-schema.js';
 import type { MiUser } from '@/models/entities/User.js';
