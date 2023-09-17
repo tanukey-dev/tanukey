@@ -5,7 +5,7 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
-import type { UserListJoiningsRepository, UserListsRepository } from '@/models/index.js';
+import type { UserListJoiningsRepository, UserListsRepository } from '@/models/_.js';
 import type { Packed } from '@/misc/json-schema.js';
 import type { MiUserList } from '@/models/entities/UserList.js';
 import { bindThis } from '@/decorators.js';

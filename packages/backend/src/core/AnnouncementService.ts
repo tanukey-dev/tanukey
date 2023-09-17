@@ -5,9 +5,9 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { Brackets, In } from 'typeorm';
-import type { AnnouncementReadsRepository, AnnouncementsRepository, UsersRepository } from '@/models/index.js';
+import type { AnnouncementReadsRepository, AnnouncementsRepository, UsersRepository } from '@/models/_.js';
 import type { MiUser } from '@/models/entities/User.js';
-import { MiAnnouncement, MiAnnouncementRead } from '@/models/index.js';
+import { MiAnnouncement, MiAnnouncementRead } from '@/models/_.js';
 import { AnnouncementEntityService } from '@/core/entities/AnnouncementEntityService.js';
 import { bindThis } from '@/decorators.js';
 import { DI } from '@/di-symbols.js';

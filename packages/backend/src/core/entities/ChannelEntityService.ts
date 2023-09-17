@@ -6,14 +6,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 import { DI } from '@/di-symbols.js';
-import type {
-	ChannelFavoritesRepository,
-	ChannelFollowingsRepository,
-	ChannelsRepository,
-	DriveFilesRepository,
-	NotesRepository,
-	NoteUnreadsRepository,
-} from '@/models/index.js';
+import type { ChannelFavoritesRepository, ChannelFollowingsRepository, ChannelsRepository, DriveFilesRepository, NoteUnreadsRepository, NotesRepository } from '@/models/_.js';
 import type { Packed } from '@/misc/json-schema.js';
 import type { MiUser } from '@/models/entities/User.js';
 import type { MiChannel } from '@/models/entities/Channel.js';
