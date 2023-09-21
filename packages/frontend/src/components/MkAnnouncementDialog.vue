@@ -30,8 +30,8 @@ import * as misskey from 'misskey-js';
 import * as os from '@/os';
 import MkModal from '@/components/MkModal.vue';
 import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n';
-import { $i, updateAccount } from '@/account';
+import { i18n } from '@/i18n.js';
+import { $i, updateAccount } from '@/account.js';
 
 const props = withDefaults(defineProps<{
 	announcement: Misskey.entities.Announcement;

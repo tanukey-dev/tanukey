@@ -1116,6 +1116,9 @@ export interface Locale {
     "renotes": string;
     "loadReplies": string;
     "loadConversation": string;
+    "pinnedList": string;
+    "keepScreenOn": string;
+    "verifiedLink": string;
     "_announcement": {
         "forExistingUsers": string;
         "forExistingUsersDescription": string;
@@ -2020,6 +2023,7 @@ export interface Locale {
         "metadataContent": string;
         "changeAvatar": string;
         "changeBanner": string;
+        "verifiedLinkDescription": string;
     };
     "_exportOrImport": {
         "allNotes": string;
