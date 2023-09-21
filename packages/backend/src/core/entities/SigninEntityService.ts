@@ -4,7 +4,7 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import type { MiSignin } from '@/models/entities/Signin.js';
+import type { MiSignin } from '@/models/Signin.js';
 import { bindThis } from '@/decorators.js';
 
 @Injectable()

@@ -6,7 +6,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
 import type { GalleryLikesRepository } from '@/models/_.js';
-import type { MiGalleryLike } from '@/models/entities/GalleryLike.js';
+import type { MiGalleryLike } from '@/models/GalleryLike.js';
 import { bindThis } from '@/decorators.js';
 import { Packed } from '@/misc/json-schema.js';
 import type { MiUser } from '@/models/entities/User.js';

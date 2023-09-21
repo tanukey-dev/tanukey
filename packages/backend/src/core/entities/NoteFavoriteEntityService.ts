@@ -6,8 +6,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
 import type { NoteFavoritesRepository } from '@/models/_.js';
-import type { MiUser } from '@/models/entities/User.js';
-import type { MiNoteFavorite } from '@/models/entities/NoteFavorite.js';
+import type { MiUser } from '@/models/User.js';
+import type { MiNoteFavorite } from '@/models/NoteFavorite.js';
 import { bindThis } from '@/decorators.js';
 import { Packed } from '@/misc/json-schema.js';
 import { NoteEntityService } from './NoteEntityService.js';
