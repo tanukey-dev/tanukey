@@ -51,6 +51,7 @@ import { UserKeypairService } from './UserKeypairService.js';
 import { UserListService } from './UserListService.js';
 import { UserMutingService } from './UserMutingService.js';
 import { UserSuspendService } from './UserSuspendService.js';
+import { UserAuthService } from './UserAuthService.js';
 import { VideoProcessingService } from './VideoProcessingService.js';
 import { WebhookService } from './WebhookService.js';
 import { ProxyAccountService } from './ProxyAccountService.js';
@@ -178,6 +179,7 @@ const $UserKeypairService: Provider = { provide: 'UserKeypairService', useExisti
 const $UserListService: Provider = { provide: 'UserListService', useExisting: UserListService };
 const $UserMutingService: Provider = { provide: 'UserMutingService', useExisting: UserMutingService };
 const $UserSuspendService: Provider = { provide: 'UserSuspendService', useExisting: UserSuspendService };
+const $UserAuthService: Provider = { provide: 'UserAuthService', useExisting: UserAuthService };
 const $VideoProcessingService: Provider = { provide: 'VideoProcessingService', useExisting: VideoProcessingService };
 const $WebhookService: Provider = { provide: 'WebhookService', useExisting: WebhookService };
 const $UtilityService: Provider = { provide: 'UtilityService', useExisting: UtilityService };
@@ -308,6 +310,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		UserListService,
 		UserMutingService,
 		UserSuspendService,
+		UserAuthService,
 		VideoProcessingService,
 		WebhookService,
 		UtilityService,
@@ -431,6 +434,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$UserListService,
 		$UserMutingService,
 		$UserSuspendService,
+		$UserAuthService,
 		$VideoProcessingService,
 		$WebhookService,
 		$UtilityService,
@@ -555,6 +559,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		UserListService,
 		UserMutingService,
 		UserSuspendService,
+		UserAuthService,
 		VideoProcessingService,
 		WebhookService,
 		UtilityService,
@@ -677,6 +682,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$UserListService,
 		$UserMutingService,
 		$UserSuspendService,
+		$UserAuthService,
 		$VideoProcessingService,
 		$WebhookService,
 		$UtilityService,
