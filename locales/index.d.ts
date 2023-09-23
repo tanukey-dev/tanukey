@@ -995,6 +995,7 @@ export interface Locale {
     "thisPostMayBeAnnoyingHome": string;
     "thisPostMayBeAnnoyingCancel": string;
     "thisPostMayBeAnnoyingIgnore": string;
+    "saveDraftNote": string;
     "collapseRenotes": string;
     "internalServerError": string;
     "internalServerErrorDescription": string;
@@ -1005,6 +1006,7 @@ export interface Locale {
     "disableFederationConfirm": string;
     "disableFederationConfirmWarn": string;
     "disableFederationOk": string;
+    "contentWarningWarn": string;
     "invitationRequiredToRegister": string;
     "emailNotSupported": string;
     "postToTheChannel": string;
@@ -1670,6 +1672,7 @@ export interface Locale {
         "contributors": string;
         "allContributors": string;
         "source": string;
+        "sourceOriginal": string;
         "translation": string;
         "donate": string;
         "morePatrons": string;
