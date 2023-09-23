@@ -6,7 +6,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Brackets, In } from 'typeorm';
 import type { AnnouncementReadsRepository, AnnouncementsRepository, UsersRepository } from '@/models/_.js';
-import type { MiUser } from '@/models/entities/User.js';
+import type { MiUser } from '@/models/User.js';
 import { MiAnnouncement, MiAnnouncementRead } from '@/models/_.js';
 import { AnnouncementEntityService } from '@/core/entities/AnnouncementEntityService.js';
 import { bindThis } from '@/decorators.js';
@@ -15,6 +15,7 @@ import { GlobalEventService } from '@/core/GlobalEventService.js';
 import { IdService } from '@/core/IdService.js';
 import { Packed } from '@/misc/json-schema.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import { ModerationLogService } from '@/core/ModerationLogService.js';
 
 @Injectable()
 export class AnnouncementService {
@@ -32,11 +33,12 @@ export class AnnouncementService {
 		private userEntityService: UserEntityService,
 		private announcementEntityService: AnnouncementEntityService,
 		private globalEventService: GlobalEventService,
+		private moderationLogService: ModerationLogService,
 	) {}
 
 	@bindThis
 	public async create(
-		values: Partial<MiAnnouncement>,
+		values: Partial<MiAnnouncement>, moderator: MiUser,
 	): Promise<{ raw: MiAnnouncement; packed: Packed<'Announcement'> }> {
 		const announcement = await this.announcementsRepository
 			.insert({
@@ -71,9 +73,20 @@ export class AnnouncementService {
 					announcement: packed,
 				},
 			);
+
+			this.moderationLogService.log(moderator, 'createUserAnnouncement', {
+				announcementId: announcement.id,
+				announcement: announcement,
+				userId: values.userId,
+			});
 		} else {
 			this.globalEventService.publishBroadcastStream('announcementCreated', {
 				announcement: packed,
+			});
+
+			this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
+				announcementId: announcement.id,
+				announcement: announcement,
 			});
 		}
 
@@ -131,7 +144,7 @@ export class AnnouncementService {
 
 	@bindThis
 	public async update(
-		announcementId: MiAnnouncement['id'],
+		announcementId: MiAnnouncement['id'], moderator: MiUser,
 		values: Partial<MiAnnouncement>,
 	): Promise<{ raw: MiAnnouncement; packed: Packed<'Announcement'> }> {
 		const oldAnnouncement = await this.announcementsRepository.findOneByOrFail({
@@ -177,9 +190,20 @@ export class AnnouncementService {
 					announcement: packed,
 				},
 			);
+
+			this.moderationLogService.log(moderator, 'createUserAnnouncement', {
+				announcementId: announcement.id,
+				announcement: announcement,
+				userId: values.userId,
+			});
 		} else {
 			this.globalEventService.publishBroadcastStream('announcementCreated', {
 				announcement: packed,
+			});
+
+			this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
+				announcementId: announcement.id,
+				announcement: announcement,
 			});
 		}
 

@@ -422,6 +422,7 @@ export interface Locale {
     "moderation": string;
     "moderationNote": string;
     "addModerationNote": string;
+    "moderationLogs": string;
     "nUsersMentioned": string;
     "securityKeyAndPasskey": string;
     "securityKey": string;
@@ -994,6 +995,7 @@ export interface Locale {
     "thisPostMayBeAnnoyingHome": string;
     "thisPostMayBeAnnoyingCancel": string;
     "thisPostMayBeAnnoyingIgnore": string;
+    "saveDraftNote": string;
     "collapseRenotes": string;
     "internalServerError": string;
     "internalServerErrorDescription": string;
@@ -1004,6 +1006,7 @@ export interface Locale {
     "disableFederationConfirm": string;
     "disableFederationConfirmWarn": string;
     "disableFederationOk": string;
+    "contentWarningWarn": string;
     "invitationRequiredToRegister": string;
     "emailNotSupported": string;
     "postToTheChannel": string;
@@ -1160,6 +1163,8 @@ export interface Locale {
         "appIconStyleRecommendation": string;
         "appIconResolutionMustBe": string;
         "manifestJsonOverride": string;
+        "shortName": string;
+        "shortNameDescription": string;
     };
     "_accountMigration": {
         "moveFrom": string;
@@ -1634,6 +1639,7 @@ export interface Locale {
         "install": string;
         "installWarn": string;
         "manage": string;
+        "viewSource": string;
     };
     "_preferencesBackups": {
         "list": string;
@@ -1666,6 +1672,7 @@ export interface Locale {
         "contributors": string;
         "allContributors": string;
         "source": string;
+        "sourceOriginal": string;
         "translation": string;
         "donate": string;
         "morePatrons": string;
@@ -2168,6 +2175,7 @@ export interface Locale {
         "notificationWillBeDisplayedLikeThis": string;
         "_types": {
             "all": string;
+            "note": string;
             "follow": string;
             "mention": string;
             "reply": string;
@@ -2246,6 +2254,20 @@ export interface Locale {
             "reaction": string;
             "mention": string;
         };
+    };
+    "_moderationLogTypes": {
+        "assignRole": string;
+        "unassignRole": string;
+        "updateRole": string;
+        "suspend": string;
+        "unsuspend": string;
+        "addCustomEmoji": string;
+        "updateServerSettings": string;
+        "updateUserNote": string;
+        "deleteDriveFile": string;
+        "deleteNote": string;
+        "createGlobalAnnouncement": string;
+        "createUserAnnouncement": string;
     };
 }
 declare const locales: {

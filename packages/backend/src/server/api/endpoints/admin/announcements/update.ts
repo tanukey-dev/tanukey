@@ -56,7 +56,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (announcement == null) throw new ApiError(meta.errors.noSuchAnnouncement);
 
-			await this.announcementService.update(announcement.id, ps);
+			await this.announcementService.update(announcement.id, me, ps);
 		});
 	}
 }

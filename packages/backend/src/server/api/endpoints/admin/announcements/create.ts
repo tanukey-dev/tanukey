@@ -113,7 +113,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				closeDuration: ps.closeDuration,
 				displayOrder: ps.displayOrder,
 				userId: ps.userId,
-			});
+			}, me);
 
 			return {
 				id: packed.id,
