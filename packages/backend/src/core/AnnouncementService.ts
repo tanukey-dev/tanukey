@@ -6,7 +6,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Brackets, In } from 'typeorm';
 import type { AnnouncementReadsRepository, AnnouncementsRepository, UsersRepository } from '@/models/_.js';
-import type { MiUser } from '@/models/entities/User.js';
+import type { MiUser } from '@/models/User.js';
 import { MiAnnouncement, MiAnnouncementRead } from '@/models/_.js';
 import { AnnouncementEntityService } from '@/core/entities/AnnouncementEntityService.js';
 import { bindThis } from '@/decorators.js';
@@ -38,7 +38,7 @@ export class AnnouncementService {
 
 	@bindThis
 	public async create(
-		values: Partial<MiAnnouncement>,
+		values: Partial<MiAnnouncement>, moderator: MiUser,
 	): Promise<{ raw: MiAnnouncement; packed: Packed<'Announcement'> }> {
 		const announcement = await this.announcementsRepository
 			.insert({
@@ -83,7 +83,7 @@ export class AnnouncementService {
 			this.globalEventService.publishBroadcastStream('announcementCreated', {
 				announcement: packed,
 			});
-            
+
 			this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
 				announcementId: announcement.id,
 				announcement: announcement,
@@ -144,7 +144,7 @@ export class AnnouncementService {
 
 	@bindThis
 	public async update(
-		announcementId: MiAnnouncement['id'],
+		announcementId: MiAnnouncement['id'], moderator: MiUser,
 		values: Partial<MiAnnouncement>,
 	): Promise<{ raw: MiAnnouncement; packed: Packed<'Announcement'> }> {
 		const oldAnnouncement = await this.announcementsRepository.findOneByOrFail({
