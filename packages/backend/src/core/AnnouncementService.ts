@@ -15,6 +15,7 @@ import { GlobalEventService } from '@/core/GlobalEventService.js';
 import { IdService } from '@/core/IdService.js';
 import { Packed } from '@/misc/json-schema.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import { ModerationLogService } from '@/core/ModerationLogService.js';
 
 @Injectable()
 export class AnnouncementService {
@@ -32,6 +33,7 @@ export class AnnouncementService {
 		private userEntityService: UserEntityService,
 		private announcementEntityService: AnnouncementEntityService,
 		private globalEventService: GlobalEventService,
+		private moderationLogService: ModerationLogService,
 	) {}
 
 	@bindThis
@@ -71,9 +73,20 @@ export class AnnouncementService {
 					announcement: packed,
 				},
 			);
+
+			this.moderationLogService.log(moderator, 'createUserAnnouncement', {
+				announcementId: announcement.id,
+				announcement: announcement,
+				userId: values.userId,
+			});
 		} else {
 			this.globalEventService.publishBroadcastStream('announcementCreated', {
 				announcement: packed,
+			});
+            
+			this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
+				announcementId: announcement.id,
+				announcement: announcement,
 			});
 		}
 
@@ -177,9 +190,20 @@ export class AnnouncementService {
 					announcement: packed,
 				},
 			);
+
+			this.moderationLogService.log(moderator, 'createUserAnnouncement', {
+				announcementId: announcement.id,
+				announcement: announcement,
+				userId: values.userId,
+			});
 		} else {
 			this.globalEventService.publishBroadcastStream('announcementCreated', {
 				announcement: packed,
+			});
+
+			this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
+				announcementId: announcement.id,
+				announcement: announcement,
 			});
 		}
 
