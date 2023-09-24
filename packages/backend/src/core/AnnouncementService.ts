@@ -191,20 +191,24 @@ export class AnnouncementService {
 				},
 			);
 
-			this.moderationLogService.log(moderator, 'createUserAnnouncement', {
-				announcementId: announcement.id,
-				announcement: announcement,
-				userId: values.userId,
-			});
+			if (moderator) {
+				this.moderationLogService.log(moderator, 'createUserAnnouncement', {
+					announcementId: announcement.id,
+					announcement: announcement,
+					userId: values.userId,
+				});
+			}
 		} else {
 			this.globalEventService.publishBroadcastStream('announcementCreated', {
 				announcement: packed,
 			});
 
-			this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
-				announcementId: announcement.id,
-				announcement: announcement,
-			});
+			if (moderator) {
+				this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
+					announcementId: announcement.id,
+					announcement: announcement,
+				});
+			}
 		}
 
 		return {
