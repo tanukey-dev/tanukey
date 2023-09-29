@@ -192,11 +192,15 @@ export class AnnouncementService {
 			);
 
 			if (moderator) {
-				this.moderationLogService.log(moderator, 'createUserAnnouncement', {
-					announcementId: announcement.id,
-					announcement: announcement,
-					userId: values.userId,
-				});
+				const user = await this.usersRepository.findOneByOrFail({ id: values.userId });
+                this.moderationLogService.log(moderator, 'updateUserAnnouncement', {
+                    announcementId: announcement.id,
+                    before: oldAnnouncement,
+                    after: announcement,
+                    userId: values.userId,
+                    userUsername: user.username,
+                    userHost: user.host,
+                });
 			}
 		} else {
 			this.globalEventService.publishBroadcastStream('announcementCreated', {
@@ -204,10 +208,11 @@ export class AnnouncementService {
 			});
 
 			if (moderator) {
-				this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
-					announcementId: announcement.id,
-					announcement: announcement,
-				});
+				this.moderationLogService.log(moderator, 'updateGlobalAnnouncement', {
+                    announcementId: announcement.id,
+                    before: oldAnnouncement,
+                    after: announcement,
+                });
 			}
 		}
 
