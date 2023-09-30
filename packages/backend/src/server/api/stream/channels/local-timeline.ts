@@ -40,7 +40,7 @@ class LocalTimelineChannel extends Channel {
 
 		this.withReplies = params.withReplies ?? false;
 		this.withRenotes = params.withRenotes ?? true;
-		this.withFiles = params.withFiles ?? boolean;
+		this.withFiles = params.withFiles ?? false;
 
 		// Subscribe events
 		this.subscriber.on('notesStream', this.onNote);
