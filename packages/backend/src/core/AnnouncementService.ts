@@ -74,20 +74,27 @@ export class AnnouncementService {
 				},
 			);
 
-			this.moderationLogService.log(moderator, 'createUserAnnouncement', {
-				announcementId: announcement.id,
-				announcement: announcement,
-				userId: values.userId,
-			});
+			if (moderator) {
+				const user = await this.usersRepository.findOneByOrFail({ id: values.userId });
+				this.moderationLogService.log(moderator, 'createUserAnnouncement', {
+					announcementId: announcement.id,
+					announcement: announcement,
+					userId: values.userId,
+					userUsername: user.username,
+					userHost: user.host,
+				});
+			}
 		} else {
 			this.globalEventService.publishBroadcastStream('announcementCreated', {
 				announcement: packed,
 			});
 
-			this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
-				announcementId: announcement.id,
-				announcement: announcement,
-			});
+			if (moderator) {
+				this.moderationLogService.log(moderator, 'createGlobalAnnouncement', {
+					announcementId: announcement.id,
+					announcement: announcement,
+				});
+			}
 		}
 
 		return {
@@ -193,14 +200,14 @@ export class AnnouncementService {
 
 			if (moderator) {
 				const user = await this.usersRepository.findOneByOrFail({ id: values.userId });
-                this.moderationLogService.log(moderator, 'updateUserAnnouncement', {
-                    announcementId: announcement.id,
-                    before: oldAnnouncement,
-                    after: announcement,
-                    userId: values.userId,
-                    userUsername: user.username,
-                    userHost: user.host,
-                });
+				this.moderationLogService.log(moderator, 'updateUserAnnouncement', {
+					announcementId: announcement.id,
+					before: oldAnnouncement,
+					after: announcement,
+					userId: values.userId,
+					userUsername: user.username,
+					userHost: user.host,
+				});
 			}
 		} else {
 			this.globalEventService.publishBroadcastStream('announcementCreated', {
@@ -209,10 +216,10 @@ export class AnnouncementService {
 
 			if (moderator) {
 				this.moderationLogService.log(moderator, 'updateGlobalAnnouncement', {
-                    announcementId: announcement.id,
-                    before: oldAnnouncement,
-                    after: announcement,
-                });
+					announcementId: announcement.id,
+					before: oldAnnouncement,
+					after: announcement,
+				});
 			}
 		}
 
@@ -223,11 +230,29 @@ export class AnnouncementService {
 	}
 
 	@bindThis
-	public async delete(announcementId: MiAnnouncement['id']): Promise<void> {
+	public async delete(announcement: MiAnnouncement, moderator: MiUser): Promise<void> {
 		await this.announcementReadsRepository.delete({
-			announcementId: announcementId,
+			announcementId: announcement.id,
 		});
-		await this.announcementsRepository.delete({ id: announcementId });
+		await this.announcementsRepository.delete({ id: announcement.id });
+
+		if (moderator) {
+			if (announcement.userId) {
+				const user = await this.usersRepository.findOneByOrFail({ id: announcement.userId });
+				this.moderationLogService.log(moderator, 'deleteUserAnnouncement', {
+					announcementId: announcement.id,
+					announcement: announcement,
+					userId: announcement.userId,
+					userUsername: user.username,
+					userHost: user.host,
+				});
+			} else {
+				this.moderationLogService.log(moderator, 'deleteGlobalAnnouncement', {
+					announcementId: announcement.id,
+					announcement: announcement,
+				});
+			}
+		}
 	}
 
 	@bindThis
