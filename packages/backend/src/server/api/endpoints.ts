@@ -609,7 +609,6 @@ const eps = [
 	['notes/global-timeline', ep___notes_globalTimeline],
 	['notes/hybrid-timeline', ep___notes_hybridTimeline],
 	['notes/local-timeline', ep___notes_localTimeline],
-	['notes/media-timeline', ep___notes_mediaTimeline],
 	['notes/mentions', ep___notes_mentions],
 	['notes/polls/recommendation', ep___notes_polls_recommendation],
 	['notes/polls/vote', ep___notes_polls_vote],
