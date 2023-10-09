@@ -39,6 +39,8 @@ class HomeTimelineChannel extends Channel {
 
 	@bindThis
 	private async onNote(note: Packed<'Note'>) {
+		if (this.withFiles && (note.fileIds == null || note.fileIds.length === 0)) return;
+
 		if (note.channelId) {
 			if (!this.followingChannels.has(note.channelId)) return;
 		} else {
