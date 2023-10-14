@@ -53,7 +53,7 @@ export const meta = {
 				type: 'string',
 				optional: false, nullable: false,
 			},
-			forExistingUsers: {
+			forYou: {
 				type: 'boolean',
 				optional: false, nullable: false,
 			},
@@ -69,9 +69,9 @@ export const meta = {
 				type: 'number',
 				optional: false, nullable: false,
 			},
-			userId: {
-				type: 'string',
-				optional: false, nullable: true,
+			isRead: {
+				type: 'boolean',
+				optional: true, nullable: false,
 			},
 		},
 	},
@@ -115,21 +115,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				userId: ps.userId,
 			}, me);
 
-			return {
-				id: packed.id,
-				createdAt: packed.createdAt,
-				updatedAt: packed.updatedAt,
-				title: packed.title,
-				text: packed.text,
-				imageUrl: packed.imageUrl,
-				icon: packed.icon,
-				display: packed.display,
-				forExistingUsers: raw.forExistingUsers,
-				needConfirmationToRead: packed.needConfirmationToRead,
-				closeDuration: packed.closeDuration,
-				displayOrder: packed.displayOrder,
-				userId: raw.userId,
-			};
+			return packed;
 		});
 	}
 }

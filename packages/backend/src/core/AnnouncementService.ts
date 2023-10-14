@@ -5,17 +5,16 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { Brackets, In } from 'typeorm';
-import type { AnnouncementReadsRepository, AnnouncementsRepository, UsersRepository } from '@/models/_.js';
-import type { MiUser } from '@/models/User.js';
-import { MiAnnouncement, MiAnnouncementRead } from '@/models/_.js';
-import { AnnouncementEntityService } from '@/core/entities/AnnouncementEntityService.js';
-import { bindThis } from '@/decorators.js';
 import { DI } from '@/di-symbols.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { IdService } from '@/core/IdService.js';
+import type { MiUser } from '@/models/User.js';
+import type { AnnouncementReadsRepository, AnnouncementsRepository, MiAnnouncement, UsersRepository } from '@/models/_.js';
+import { MiAnnouncementRead } from '@/models/_.js';
+import { bindThis } from '@/decorators.js';
 import { Packed } from '@/misc/json-schema.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import { IdService } from '@/core/IdService.js';
+import { GlobalEventService } from '@/core/GlobalEventService.js';
 import { ModerationLogService } from '@/core/ModerationLogService.js';
+import { UserEntityService } from '@/core/entities/UserEntityService.js';
 
 @Injectable()
 export class AnnouncementService {
@@ -31,48 +30,75 @@ export class AnnouncementService {
 
 		private idService: IdService,
 		private userEntityService: UserEntityService,
-		private announcementEntityService: AnnouncementEntityService,
 		private globalEventService: GlobalEventService,
 		private moderationLogService: ModerationLogService,
-	) {}
+	) {
+	}
 
 	@bindThis
-	public async create(
-		values: Partial<MiAnnouncement>, moderator: MiUser,
-	): Promise<{ raw: MiAnnouncement; packed: Packed<'Announcement'> }> {
-		const announcement = await this.announcementsRepository
-			.insert({
-				id: this.idService.genId(),
-				createdAt: new Date(),
-				updatedAt: null,
-				title: values.title,
-				text: values.text,
-				imageUrl: values.imageUrl,
-				icon: values.icon,
-				display: values.display,
-				forExistingUsers: values.forExistingUsers,
-				needConfirmationToRead: values.needConfirmationToRead,
-				closeDuration: values.closeDuration,
-				displayOrder: values.displayOrder,
-				userId: values.userId,
-			})
-			.then((x) =>
-				this.announcementsRepository.findOneByOrFail(x.identifiers[0]),
-			);
+	public async getReads(userId: MiUser['id']): Promise<MiAnnouncementRead[]> {
+		return this.announcementReadsRepository.findBy({
+			userId: userId,
+		});
+	}
 
-		const packed = await this.announcementEntityService.pack(
-			announcement,
-			null,
+	@bindThis
+	public async getUnreadAnnouncements(user: MiUser): Promise<Packed<'Announcement'>[]> {
+		const q = this.announcementsRepository.createQueryBuilder('announcement');
+		q.leftJoin(
+			MiAnnouncementRead,
+			'read',
+			'read."announcementId" = announcement.id AND read."userId" = :userId',
+			{ userId: user.id },
 		);
+		q.andWhere('read.id IS NULL');
+
+		q
+			.where('announcement.isActive = true')
+			.andWhere(new Brackets(qb => {
+				qb.orWhere('announcement.userId = :userId', { userId: user.id });
+				qb.orWhere('announcement.userId IS NULL');
+			}))
+			.andWhere(new Brackets(qb => {
+				qb.orWhere('announcement.forExistingUsers = false');
+				qb.orWhere('announcement.createdAt > :createdAt', { createdAt: user.createdAt });
+			}));
+
+		q.orderBy({
+			'announcement."displayOrder"': 'DESC',
+			'announcement."createdAt"': 'DESC',
+		});
+
+		return this.packMany(
+			await q.getMany(),
+			user,
+		);
+	}
+
+	@bindThis
+	public async create(values: Partial<MiAnnouncement>, moderator?: MiUser): Promise<{ raw: MiAnnouncement; packed: Packed<'Announcement'> }> {
+		const announcement = await this.announcementsRepository.insert({
+			id: this.idService.genId(),
+			createdAt: new Date(),
+			updatedAt: null,
+			title: values.title,
+			text: values.text,
+			imageUrl: values.imageUrl,
+			icon: values.icon,
+			display: values.display,
+			forExistingUsers: values.forExistingUsers,
+			needConfirmationToRead: values.needConfirmationToRead,
+			closeDuration: values.closeDuration,
+			displayOrder: values.displayOrder,
+			userId: values.userId,
+		}).then(x => this.announcementsRepository.findOneByOrFail(x.identifiers[0]));
+
+		const packed = (await this.packMany([announcement], null))[0];
 
 		if (values.userId) {
-			this.globalEventService.publishMainStream(
-				values.userId,
-				'announcementCreated',
-				{
-					announcement: packed,
-				},
-			);
+			this.globalEventService.publishMainStream(values.userId, 'announcementCreated', {
+				announcement: packed,
+			});
 
 			if (moderator) {
 				const user = await this.usersRepository.findOneByOrFail({ id: values.userId });
@@ -118,6 +144,7 @@ export class AnnouncementService {
 		}
 
 		query.orderBy({
+			'announcement."isActive"': 'DESC',
 			'announcement."displayOrder"': 'DESC',
 			'announcement."createdAt"': 'DESC',
 		});
@@ -150,91 +177,59 @@ export class AnnouncementService {
 	}
 
 	@bindThis
-	public async update(
-		announcementId: MiAnnouncement['id'], moderator: MiUser,
-		values: Partial<MiAnnouncement>,
-	): Promise<{ raw: MiAnnouncement; packed: Packed<'Announcement'> }> {
-		const oldAnnouncement = await this.announcementsRepository.findOneByOrFail({
-			id: announcementId,
-		});
-
-		if (oldAnnouncement.userId && oldAnnouncement.userId !== values.userId) {
+	public async update(announcement: MiAnnouncement, values: Partial<MiAnnouncement>, moderator?: MiUser): Promise<void> {
+		if (announcement.userId && announcement.userId !== values.userId) {
 			await this.announcementReadsRepository.delete({
-				announcementId: announcementId,
-				userId: oldAnnouncement.userId,
+				announcementId: announcement.id,
+				userId: announcement.userId,
 			});
 		}
 
-		const announcement = await this.announcementsRepository
-			.update(announcementId, {
-				updatedAt: new Date(),
-				isActive: values.isActive,
-				title: values.title,
-				text: values.text,
-				imageUrl: values.imageUrl !== '' ? values.imageUrl : null,
-				icon: values.icon,
-				display: values.display,
-				forExistingUsers: values.forExistingUsers,
-				needConfirmationToRead: values.needConfirmationToRead,
-				closeDuration: values.closeDuration,
-				displayOrder: values.displayOrder,
-				userId: values.userId,
-			})
-			.then(() =>
-				this.announcementsRepository.findOneByOrFail({ id: announcementId }),
-			);
+		await this.announcementsRepository.update(announcement.id, {
+			updatedAt: new Date(),
+			title: values.title,
+			text: values.text,
+			/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- 空の文字列の場合、nullを渡すようにするため */
+			imageUrl: values.imageUrl || null,
+			display: values.display,
+			icon: values.icon,
+			forExistingUsers: values.forExistingUsers,
+			needConfirmationToRead: values.needConfirmationToRead,
+			closeDuration: values.closeDuration,
+			displayOrder: values.displayOrder,
+			isActive: values.isActive,
+			userId: values.userId,
+		});
 
-		const packed = await this.announcementEntityService.pack(
-			announcement,
-			values.userId ? { id: values.userId } : null,
-		);
+		const after = await this.announcementsRepository.findOneByOrFail({ id: announcement.id });
 
-		if (values.userId) {
-			this.globalEventService.publishMainStream(
-				values.userId,
-				'announcementCreated',
-				{
-					announcement: packed,
-				},
-			);
-
-			if (moderator) {
-				const user = await this.usersRepository.findOneByOrFail({ id: values.userId });
+		if (moderator) {
+			if (announcement.userId) {
+				const user = await this.usersRepository.findOneByOrFail({ id: announcement.userId });
 				this.moderationLogService.log(moderator, 'updateUserAnnouncement', {
 					announcementId: announcement.id,
-					before: oldAnnouncement,
-					after: announcement,
-					userId: values.userId,
+					before: announcement,
+					after: after,
+					userId: announcement.userId,
 					userUsername: user.username,
 					userHost: user.host,
 				});
-			}
-		} else {
-			this.globalEventService.publishBroadcastStream('announcementCreated', {
-				announcement: packed,
-			});
-
-			if (moderator) {
+			} else {
 				this.moderationLogService.log(moderator, 'updateGlobalAnnouncement', {
 					announcementId: announcement.id,
-					before: oldAnnouncement,
-					after: announcement,
+					before: announcement,
+					after: after,
 				});
 			}
 		}
-
-		return {
-			raw: announcement,
-			packed: packed,
-		};
 	}
 
 	@bindThis
-	public async delete(announcement: MiAnnouncement, moderator: MiUser): Promise<void> {
+	public async delete(announcement: MiAnnouncement, moderator?: MiUser): Promise<void> {
 		await this.announcementReadsRepository.delete({
 			announcementId: announcement.id,
 		});
-		await this.announcementsRepository.delete({ id: announcement.id });
+		await this.announcementsRepository.delete(announcement.id);
 
 		if (moderator) {
 			if (announcement.userId) {
@@ -272,7 +267,7 @@ export class AnnouncementService {
 			);
 			query.select([
 				'announcement.*',
-				'CASE WHEN read.id IS NULL THEN FALSE ELSE TRUE END as "isRead"',
+				'read.id IS NOT NULL as "isRead"',
 			]);
 			query
 				.andWhere(
@@ -310,50 +305,11 @@ export class AnnouncementService {
 			'announcement."createdAt"': 'DESC',
 		});
 
-		return this.announcementEntityService.packMany(
+		return this.packMany(
 			await query
 				.limit(limit)
 				.offset(offset)
 				.getRawMany<MiAnnouncement & { isRead?: boolean | null }>(),
-			me,
-		);
-	}
-
-	@bindThis
-	public async getUnreadAnnouncements(me: MiUser): Promise<Packed<'Announcement'>[]> {
-		const query = this.announcementsRepository.createQueryBuilder('announcement');
-		query.leftJoinAndSelect(
-			MiAnnouncementRead,
-			'read',
-			'read."announcementId" = announcement.id AND read."userId" = :userId',
-			{ userId: me.id },
-		);
-		query.andWhere('read.id IS NULL');
-		query.andWhere('announcement."isActive" = true');
-
-		query
-			.andWhere(
-				new Brackets((qb) => {
-					qb.orWhere('announcement."userId" = :userId', { userId: me.id });
-					qb.orWhere('announcement."userId" IS NULL');
-				}),
-			)
-			.andWhere(
-				new Brackets((qb) => {
-					qb.orWhere('announcement."forExistingUsers" = false');
-					qb.orWhere('announcement."createdAt" > :createdAt', {
-						createdAt: me.createdAt,
-					});
-				}),
-			);
-
-		query.orderBy({
-			'announcement."displayOrder"': 'DESC',
-			'announcement."createdAt"': 'DESC',
-		});
-
-		return this.announcementEntityService.packMany(
-			await query.getMany(),
 			me,
 		);
 	}
@@ -390,23 +346,42 @@ export class AnnouncementService {
 	}
 
 	@bindThis
-	public async markAsRead(
-		me: MiUser,
-		announcementId: MiAnnouncement['id'],
-	): Promise<void> {
+	public async read(user: MiUser, announcementId: MiAnnouncement['id']): Promise<void> {
 		try {
 			await this.announcementReadsRepository.insert({
 				id: this.idService.genId(),
 				createdAt: new Date(),
 				announcementId: announcementId,
-				userId: me.id,
+				userId: user.id,
 			});
 		} catch (e) {
 			return;
 		}
 
-		if ((await this.countUnreadAnnouncements(me)) === 0) {
-			this.globalEventService.publishMainStream(me.id, 'readAllAnnouncements');
+		if ((await this.countUnreadAnnouncements(user)) === 0) {
+			this.globalEventService.publishMainStream(user.id, 'readAllAnnouncements');
 		}
+	}
+
+	@bindThis
+	public async packMany(
+		announcements: (MiAnnouncement & { isRead?: boolean | null })[],
+		me: { id: MiUser['id'] } | null | undefined,
+	): Promise<Packed<'Announcement'>[]> {
+		return announcements.map(announcement => ({
+			id: announcement.id,
+			createdAt: announcement.createdAt.toISOString(),
+			updatedAt: announcement.updatedAt?.toISOString() ?? null,
+			text: announcement.text,
+			title: announcement.title,
+			imageUrl: announcement.imageUrl,
+			icon: announcement.icon,
+			display: announcement.display,
+			needConfirmationToRead: announcement.needConfirmationToRead,
+			closeDuration: announcement.closeDuration,
+			displayOrder: announcement.displayOrder,
+			forYou: announcement.userId === me?.id,
+			isRead: announcement.isRead ?? undefined,
+		}));
 	}
 }

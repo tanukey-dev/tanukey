@@ -62,7 +62,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import * as misskey from 'misskey-js';
+import * as Misskey from 'misskey-js';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import MkButton from '@/components/MkButton.vue';
@@ -74,7 +74,7 @@ import MkTextarea from '@/components/MkTextarea.vue';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
 
 const props = defineProps<{
-	user: misskey.entities.UserLite,
+	user: Misskey.entities.UserLite,
 	announcement?: any,
 }>();
 
