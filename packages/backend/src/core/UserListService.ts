@@ -120,7 +120,7 @@ export class UserListService implements OnApplicationShutdown {
 		});
 
 		this.globalEventService.publishInternalEvent('userListMemberRemoved', { userListId: list.id, memberId: target.id });
-		this.globalEventService.publishUserListStream(list.id, 'userRemoved', await this.userEntityService.pack(target));
+		this.globalEventService.publishUserListStream(list.id, 'userRemoved', await this.userEntityService.pack(target, null));
 	}
 
 	@bindThis

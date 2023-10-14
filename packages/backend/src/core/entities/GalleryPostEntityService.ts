@@ -56,7 +56,7 @@ export class GalleryPostEntityService {
 
 	@bindThis
 	public async packMany(
-		posts: (MiGalleryPost['id'] | MiGalleryPost)[],
+		posts: MiGalleryPost[],
 		me: { id: MiUser['id'] } | null | undefined,
 	) : Promise<Packed<'GalleryPost'>[]> {
 		return (await Promise.allSettled(posts.map(x => this.pack(x, me))))
