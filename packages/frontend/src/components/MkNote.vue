@@ -124,7 +124,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</div>
 	</article>
 </div>
-<div v-else-if="muted && !hideMutedNotes" :class="$style.muted" @click="muted = false">
+<div v-else :class="$style.muted" :style="hideMutedNotes ? 'display: none' : null" @click="muted = false">
 	<I18n :src="i18n.ts.userSaysSomething" tag="small">
 		<template #name>
 			<MkA v-user-preview="appearNote.userId" :to="userPage(appearNote.user)">

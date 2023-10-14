@@ -287,6 +287,7 @@ watch([
 	reactionsDisplaySize,
 	highlightSensitiveMedia,
 	keepScreenOn,
+    hideMutedNotes,
 ], async () => {
 	await reloadAsk();
 });
