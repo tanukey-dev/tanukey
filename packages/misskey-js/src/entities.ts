@@ -466,6 +466,7 @@ export type Antenna = {
 	userGroupId: ID | null; // TODO
 	users: string[]; // TODO
 	caseSensitive: boolean;
+	localOnly: boolean;
 	notify: boolean;
 	withReplies: boolean;
 	withFile: boolean;

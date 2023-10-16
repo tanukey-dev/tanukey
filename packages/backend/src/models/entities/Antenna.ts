@@ -93,4 +93,9 @@ export class Antenna {
 		default: true,
 	})
 	public isActive: boolean;
+
+	@Column('boolean', {
+		default: false,
+	})
+	public localOnly: boolean;
 }

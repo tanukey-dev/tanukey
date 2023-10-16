@@ -112,7 +112,9 @@ export class AntennaService implements OnApplicationShutdown {
 	public async checkHitAntenna(antenna: Antenna, note: (Note | Packed<'Note'>), noteUser: { id: User['id']; username: string; host: string | null; }): Promise<boolean> {
 		if (note.visibility === 'specified') return false;
 		if (note.visibility === 'followers') return false;
-	
+
+		if (antenna.localOnly && noteUser.host != null) return false;
+
 		if (!antenna.withReplies && note.replyId != null) return false;
 	
 		if (antenna.src === 'home') {

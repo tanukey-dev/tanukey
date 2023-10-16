@@ -22,6 +22,7 @@ let draft = $ref({
 	excludeKeywords: [],
 	withReplies: false,
 	caseSensitive: false,
+	localOnly: false,
 	withFile: false,
 	notify: false,
 });

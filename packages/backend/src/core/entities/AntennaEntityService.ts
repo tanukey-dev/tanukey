@@ -29,6 +29,7 @@ export class AntennaEntityService {
 			userListId: antenna.userListId,
 			users: antenna.users,
 			caseSensitive: antenna.caseSensitive,
+			localOnly: antenna.localOnly,
 			notify: antenna.notify,
 			withReplies: antenna.withReplies,
 			withFile: antenna.withFile,
