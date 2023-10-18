@@ -2,6 +2,9 @@
 <MkStickyContainer>
 	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
 	<MkSpacer :contentMax="700">
+		<div v-if="tab === 'calender'">
+			<FullCalendar defaultView="dayGridMonth" :options="calendarOptions"/>
+		</div>
 		<div v-if="tab === 'search'">
 			<div class="_gaps">
 				<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search">
@@ -28,7 +31,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import FullCalendar from '@fullcalendar/vue3';
+import dayGridPlugin from '@fullcalendar/daygrid';
 import MkEventList from '@/components/MkEventList.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkRadios from '@/components/MkRadios.vue';
@@ -37,6 +42,7 @@ import MkFoldableSection from '@/components/MkFoldableSection.vue';
 import { useRouter } from '@/router';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { i18n } from '@/i18n';
+import { miLocalStorage } from '@/local-storage';
 
 const router = useRouter();
 
@@ -46,15 +52,27 @@ const props = defineProps<{
 }>();
 
 let key = $ref('');
-let tab = $ref('search');
+let tab = $ref('calender');
 let searchQuery = $ref('');
 let searchType = $ref('nameAndDescription');
 let eventPagination = $ref();
+const lang = ref(miLocalStorage.getItem('lang'));
 
 onMounted(() => {
 	searchQuery = props.query ?? '';
 	searchType = props.type ?? 'nameAndDescription';
 });
+
+const calendarOptions = {
+	plugins: [dayGridPlugin],
+	initialView: 'dayGridMonth',
+	locale: lang.value,
+	dayCellContent: (e) => {
+		// X日表記の'日'を除去
+		return e.dayNumberText.replace('日', '');
+	},
+	events: [], //TODO
+};
 
 const ownedPagination = {
 	endpoint: 'events/owned' as const,
@@ -92,11 +110,15 @@ const headerActions = $computed(() => [{
 
 const headerTabs = $computed(() => [{
 	key: 'search',
-	title: i18n.ts.search,
+	title: i18n.ts._event.search,
 	icon: 'ti ti-search',
 }, {
+	key: 'calender',
+	title: i18n.ts._event.calender,
+	icon: 'ti ti-calendar',
+}, {
 	key: 'owned',
-	title: i18n.ts._channel.owned,
+	title: i18n.ts._event.owned,
 	icon: 'ti ti-edit',
 }]);
 

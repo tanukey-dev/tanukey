@@ -627,6 +627,15 @@ importers:
       '@discordapp/twemoji':
         specifier: 14.1.2
         version: 14.1.2
+      '@fullcalendar/core':
+        specifier: ^6.1.8
+        version: 6.1.8
+      '@fullcalendar/daygrid':
+        specifier: ^6.1.8
+        version: 6.1.8(@fullcalendar/core@6.1.8)
+      '@fullcalendar/vue3':
+        specifier: ^6.1.8
+        version: 6.1.8(@fullcalendar/core@6.1.8)(vue@3.3.4)
       '@rollup/plugin-alias':
         specifier: 5.0.0
         version: 5.0.0(rollup@3.23.0)
@@ -2896,6 +2905,30 @@ packages:
     dependencies:
       fastify-plugin: 4.5.0
       hashlru: 2.3.0
+    dev: false
+
+  /@fullcalendar/core@6.1.8:
+    resolution: {integrity: sha512-i8JBIvZCWGO9dsMEDcx9bnsQZ9PtGSJdOXGgWbhLaGq2iq41OBdp9g9gM4b/Otv2oK8bL5Gl6CsMmb/HkDtA6Q==}
+    dependencies:
+      preact: 10.12.1
+    dev: false
+
+  /@fullcalendar/daygrid@6.1.8(@fullcalendar/core@6.1.8):
+    resolution: {integrity: sha512-kCZxQFKb9Vqa3CZRX0v7rMSJ2mlTt4gDpyLfiNJKxUAq7W51uKurPaFZWicaXy1ESHVBxKNlbx5uNjBpyu50JQ==}
+    peerDependencies:
+      '@fullcalendar/core': ~6.1.8
+    dependencies:
+      '@fullcalendar/core': 6.1.8
+    dev: false
+
+  /@fullcalendar/vue3@6.1.8(@fullcalendar/core@6.1.8)(vue@3.3.4):
+    resolution: {integrity: sha512-rO7vZnGXyd5djOhpJ9Y33PhnUeJ/1IN1rIVWPWpleh1hboi8kCwVqE47oOwj7NvTEJq1EH8/58UuYtIqRQ73Lg==}
+    peerDependencies:
+      '@fullcalendar/core': ~6.1.8
+      vue: ^3.0.11
+    dependencies:
+      '@fullcalendar/core': 6.1.8
+      vue: 3.3.4
     dev: false
 
   /@gar/promisify@1.1.3:
@@ -13603,6 +13636,10 @@ packages:
   /postgres-range@1.1.3:
     resolution: {integrity: sha512-VdlZoocy5lCP0c/t66xAfclglEapXPCIVhqqJRncYpvbCgImF0w67aPKfbqUMr72tO2k5q0TdTZwCLjPTI6C9g==}
     dev: true
+
+  /preact@10.12.1:
+    resolution: {integrity: sha512-l8386ixSsBdbreOAkqtrwqHwdvR35ID8c3rKPa8lCWuO86dBi32QWHV4vfsZK1utLLFMvw+Z5Ad4XLkZzchscg==}
+    dev: false
 
   /prebuild-install@7.1.1:
     resolution: {integrity: sha512-jAXscXWMcCK8GgCoHOfIr0ODh5ai8mj63L2nWrjuAgXE6tDyYGnx4/8o/rCgU+B4JSyZBKbeZqzhtwtC3ovxjw==}

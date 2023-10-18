@@ -1606,6 +1606,8 @@ _event:
   owned: "管理中"
   nameAndDescription: "名前と説明"
   nameOnly: "名前のみ"
+  calender: "カレンダー"
+  search: "検索"
 
 _eventCircle:
   create: "イベント用サークル設定を作成"

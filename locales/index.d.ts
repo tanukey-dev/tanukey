@@ -1685,6 +1685,8 @@ export interface Locale {
         "owned": string;
         "nameAndDescription": string;
         "nameOnly": string;
+        "calender": string;
+        "search": string;
     };
     "_eventCircle": {
         "create": string;
