@@ -172,6 +172,10 @@ const pagination = {
 	endpoint: endpoint,
 	limit: 10,
 	params: query,
+} as {
+	endpoint: any,
+	limit: number,
+	params: any,
 };
 
 onUnmounted(() => {
@@ -179,10 +183,15 @@ onUnmounted(() => {
 	if (connection2) connection2.dispose();
 });
 
-/* TODO
-const timetravel = (date?: Date) => {
-	this.date = date;
-	this.$refs.tl.reload();
+const timetravel = (date?: Date): void => {
+	pagination.params = {
+		...pagination.params,
+		untilDate: date?.getTime(),
+	};
+	tlComponent.pagingComponent?.reload();
 };
-*/
+
+defineExpose({
+	timetravel,
+});
 </script>
