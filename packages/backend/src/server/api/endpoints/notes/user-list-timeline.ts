@@ -129,6 +129,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			if (ps.withFiles) {
 				query.andWhere('note.fileIds != \'{}\'');
 			}
+
+			//検索不可チャンネルを除外
+			query
+				.leftJoinAndSelect('note.channel', 'channel')
+				.andWhere(new Brackets(qb => {
+					qb.orWhere('channel.searchable IS NULL');
+					qb.orWhere('channel.searchable = true');
+				}));
 			//#endregion
 
 			const timeline = await query.take(ps.limit).getMany();
