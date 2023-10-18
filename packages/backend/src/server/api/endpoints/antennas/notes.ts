@@ -1,3 +1,4 @@
+import { Brackets } from 'typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import * as Redis from 'ioredis';
 import { Endpoint } from '@/server/api/endpoint-base.js';
@@ -109,6 +110,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			this.queryService.generateVisibilityQuery(query, me);
 			this.queryService.generateMutedUserQuery(query, me);
 			this.queryService.generateBlockedUserQuery(query, me);
+
+			//検索不可チャンネルを除外
+			query
+				.leftJoinAndSelect('note.channel', 'channel')
+				.andWhere(new Brackets(qb => {
+					qb.orWhere('channel.searchable IS NULL');
+					qb.orWhere('channel.searchable = true');
+				}));
 
 			const notes = await query.getMany();
 			notes.sort((a, b) => a.id > b.id ? -1 : 1);
