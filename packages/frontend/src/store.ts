@@ -5,7 +5,7 @@
 
 import { markRaw, ref } from 'vue';
 import * as Misskey from 'misskey-js';
-import { miLocalStorage } from './local-storage';
+import { miLocalStorage } from './local-storage.js';
 import { Storage } from '@/pizzax.js';
 
 interface PostFormAction {
@@ -101,10 +101,6 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'account',
 		default: 'nonSensitiveOnly' as 'likeOnly' | 'likeOnlyForRemote' | 'nonSensitiveOnly' | 'nonSensitiveOnlyForLocalLikeOnlyForRemote' | null,
 	},
-	mutedWords: {
-		where: 'account',
-		default: [],
-	},
 	mutedAds: {
 		where: 'account',
 		default: [] as string[],
@@ -114,15 +110,17 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'deviceAccount',
 		default: [
 			'notifications',
+			'followRequests',
+			'favorites',
 			'clips',
 			'drive',
-			'followRequests',
 			'-',
-			'explore',
 			'announcements',
+			'explore',
 			'search',
 			'-',
 			'ui',
+			'profile',
 		],
 	},
 	visibility: {
@@ -199,7 +197,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	loadRawImages: {
 		where: 'device',
-		default: false,
+		default: !/mobile|iphone|android/.test(navigator.userAgent.toLowerCase()),
 	},
 	imageNewTab: {
 		where: 'device',
@@ -347,7 +345,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	notificationStackAxis: {
 		where: 'device',
-		default: 'horizontal' as 'vertical' | 'horizontal',
+		default: 'vertical' as 'vertical' | 'horizontal',
 	},
 	enableCondensedLineForAcct: {
 		where: 'device',
@@ -359,6 +357,18 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	keepScreenOn: {
 		where: 'device',
+		default: false,
+	},
+	hideMutedNotes: {
+		where: 'device',
+		default: false,
+	},
+	tlWithReplies: {
+		where: 'device',
+		default: false,
+	},
+	defaultWithReplies: {
+		where: 'account',
 		default: false,
 	},
 }));

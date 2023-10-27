@@ -29,6 +29,7 @@ type Ad = TODO_2;
 // @public (undocumented)
 type AdminInstanceMetadata = DetailedInstanceMetadata & {
     blockedHosts: string[];
+    silencedHosts: string[];
     app192IconUrl: string | null;
     app512IconUrl: string | null;
     manifestJsonOverride: string;
@@ -63,6 +64,7 @@ type Antenna = {
     userGroupId: ID | null;
     users: string[];
     caseSensitive: boolean;
+    localOnly: boolean;
     notify: boolean;
     withReplies: boolean;
     withFile: boolean;
@@ -1184,6 +1186,7 @@ export type Endpoints = {
     'following/create': {
         req: {
             userId: User['id'];
+            withReplies?: boolean;
         };
         res: User;
     };
@@ -1379,10 +1382,6 @@ export type Endpoints = {
         res: TODO;
     };
     'i/gallery/posts': {
-        req: TODO;
-        res: TODO;
-    };
-    'i/get-word-muted-notes-count': {
         req: TODO;
         res: TODO;
     };
@@ -2363,6 +2362,7 @@ type Instance = {
     lastCommunicatedAt: DateString;
     isNotResponding: boolean;
     isSuspended: boolean;
+    isSilenced: boolean;
     isBlocked: boolean;
     softwareName: string | null;
     softwareVersion: string | null;
@@ -2413,6 +2413,8 @@ type LiteInstanceMetadata = {
     tosUrl: string | null;
     repositoryUrl: string;
     feedbackUrl: string;
+    impressumUrl: string | null;
+    privacyPolicyUrl: string | null;
     disableRegistration: boolean;
     disableLocalTimeline: boolean;
     disableGlobalTimeline: boolean;
@@ -2451,6 +2453,7 @@ type LiteInstanceMetadata = {
         url: string;
         imageUrl: string;
     }[];
+    notesPerOneAd: number;
     translatorAvailable: boolean;
     serverRules: string[];
 };
@@ -2644,7 +2647,6 @@ export const mutedNoteReasons: readonly ["word", "manual", "spam", "other"];
 type Note = {
     id: ID;
     createdAt: DateString;
-    updatedAt?: DateString | null;
     text: string | null;
     cw: string | null;
     user: User;
@@ -2759,6 +2761,9 @@ type Notification_2 = {
     user: User;
     userId: User['id'];
 } | {
+    type: 'achievementEarned';
+    achievement: string;
+} | {
     type: 'app';
     header?: string | null;
     body: string;
@@ -2768,7 +2773,7 @@ type Notification_2 = {
 });
 
 // @public (undocumented)
-export const notificationTypes: readonly ["note", "follow", "mention", "reply", "renote", "quote", "reaction", "pollVote", "pollEnded", "receiveFollowRequest", "followRequestAccepted", "groupInvited", "app"];
+export const notificationTypes: readonly ["note", "follow", "mention", "reply", "renote", "quote", "reaction", "pollVote", "pollEnded", "receiveFollowRequest", "followRequestAccepted", "groupInvited", "app", "achievementEarned"];
 
 // @public (undocumented)
 type OriginType = 'combined' | 'local' | 'remote';
@@ -2957,7 +2962,7 @@ type UserLite = {
     id: ID;
     username: string;
     host: string | null;
-    name: string;
+    name: string | null;
     onlineStatus: 'online' | 'active' | 'offline' | 'unknown';
     avatarUrl: string;
     avatarBlurhash: string;
@@ -2973,6 +2978,8 @@ type UserLite = {
         faviconUrl: Instance['faviconUrl'];
         themeColor: Instance['themeColor'];
     };
+    isCat?: boolean;
+    isBot?: boolean;
 };
 
 // @public (undocumented)
@@ -2982,9 +2989,9 @@ type UserSorting = '+follower' | '-follower' | '+createdAt' | '-createdAt' | '+u
 //
 // src/api.types.ts:16:32 - (ae-forgotten-export) The symbol "TODO" needs to be exported by the entry point index.d.ts
 // src/api.types.ts:18:25 - (ae-forgotten-export) The symbol "NoParams" needs to be exported by the entry point index.d.ts
-// src/api.types.ts:631:18 - (ae-forgotten-export) The symbol "ShowUserReq" needs to be exported by the entry point index.d.ts
-// src/entities.ts:107:2 - (ae-forgotten-export) The symbol "notificationTypes_2" needs to be exported by the entry point index.d.ts
-// src/entities.ts:595:2 - (ae-forgotten-export) The symbol "ModerationLogPayloads" needs to be exported by the entry point index.d.ts
+// src/api.types.ts:633:18 - (ae-forgotten-export) The symbol "ShowUserReq" needs to be exported by the entry point index.d.ts
+// src/entities.ts:109:2 - (ae-forgotten-export) The symbol "notificationTypes_2" needs to be exported by the entry point index.d.ts
+// src/entities.ts:605:2 - (ae-forgotten-export) The symbol "ModerationLogPayloads" needs to be exported by the entry point index.d.ts
 // src/streaming.types.ts:33:4 - (ae-forgotten-export) The symbol "FIXME" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)

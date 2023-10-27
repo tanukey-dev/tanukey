@@ -3,9 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import type { AnnouncementsRepository, AnnouncementReadsRepository } from '@/models/_.js';
+import type { MiAnnouncement } from '@/models/Announcement.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { AnnouncementService } from '@/core/AnnouncementService.js';
+import { IdService } from '@/core/IdService.js';
 
 export const meta = {
 	tags: ['admin'],
@@ -36,15 +39,15 @@ export const meta = {
 					optional: false, nullable: true,
 					format: 'date-time',
 				},
+				text: {
+					type: 'string',
+					optional: false, nullable: false,
+				},
 				isActive: {
 					type: 'boolean',
 					optional: false, nullable: false,
 				},
 				title: {
-					type: 'string',
-					optional: false, nullable: false,
-				},
-				text: {
 					type: 'string',
 					optional: false, nullable: false,
 				},
@@ -85,7 +88,7 @@ export const meta = {
 					optional: false, nullable: true,
 					ref: 'UserLite',
 				},
-				readCount: {
+				reads: {
 					type: 'number',
 					optional: false, nullable: false,
 				},
@@ -108,27 +111,29 @@ export const paramDef = {
 export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-disable-line import/no-default-export
 	constructor(
 		private announcementService: AnnouncementService,
+
+		private idService: IdService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const announcements = await this.announcementService.list(ps.userId ?? null, ps.limit, ps.offset, me);
 
 			return announcements.map(announcement => ({
 				id: announcement.id,
-				createdAt: announcement.createdAt.toISOString(),
+				createdAt: this.idService.parse(announcement.id).date.toISOString(),
 				updatedAt: announcement.updatedAt?.toISOString() ?? null,
-				isActive: announcement.isActive,
 				title: announcement.title,
 				text: announcement.text,
 				imageUrl: announcement.imageUrl,
 				icon: announcement.icon,
 				display: announcement.display,
+				isActive: announcement.isActive,
 				forExistingUsers: announcement.forExistingUsers,
 				needConfirmationToRead: announcement.needConfirmationToRead,
 				closeDuration: announcement.closeDuration,
 				displayOrder: announcement.displayOrder,
 				userId: announcement.userId,
 				user: announcement.userInfo,
-				readCount: announcement.readCount,
+				reads: announcement.readCount,
 			}));
 		});
 	}

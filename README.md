@@ -10,18 +10,15 @@
 ## 🔧 Differences from the original
 
 - Change note length limit to 5,000 characters.
-- Remove URL upload functionality.
+- Remove URL upload function.
 - Customized image thumbnail display.
 - Add search filters to tag searches.
 - Add "日本語 (お嬢様)" to the display language. (Special Thanks to [緋色なつめ](https://nijimiss.moe/@Nattsume_hi_iro))
-- Add media timeline. (It was imported from [this fork](https://github.com/tanukey-dev/tanukey). Further improved by [u1-liquid](https://github.com/u1-liquid).)
 
 **These changes were incorporated from a fork of [MisskeyIO](https://github.com/MisskeyIO/misskey/tree/io).**
 
-- Add user-specified announcement function.
-- Add a display order setting for announcements.
+- Enhance the announcement function.
 - Do not display posts of frozen users.
-- Change memory allocator to jemalloc
 
 
 <div align="center">

@@ -142,13 +142,6 @@ export type NoteUpdatedEvent = {
 	};
 } | {
 	id: Note['id'];
-	type: 'updated';
-	body: {
-		cw: string | null;
-		text: string;
-	};
-} | {
-	id: Note['id'];
 	type: 'pollVoted';
 	body: {
 		choice: number;

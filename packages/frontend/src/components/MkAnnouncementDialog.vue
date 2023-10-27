@@ -26,7 +26,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script lang="ts" setup>
 import { onMounted, ref, shallowRef } from 'vue';
-import * as misskey from 'misskey-js';
+import * as Misskey from 'misskey-js';
 import * as os from '@/os';
 import MkModal from '@/components/MkModal.vue';
 import MkButton from '@/components/MkButton.vue';

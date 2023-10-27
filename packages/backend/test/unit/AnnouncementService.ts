@@ -5,20 +5,19 @@
 
 process.env.NODE_ENV = 'test';
 
+import { jest } from '@jest/globals';
 import { ModuleMocker } from 'jest-mock';
 import { Test } from '@nestjs/testing';
-import { jest } from '@jest/globals';
-import type { MiAnnouncement, AnnouncementsRepository, AnnouncementReadsRepository, UsersRepository, MiUser } from '@/models/_.js';
-import { secureRndstr } from '@/misc/secure-rndstr.js';
 import { GlobalModule } from '@/GlobalModule.js';
-import { AnnouncementEntityService } from '@/core/entities/AnnouncementEntityService.js';
 import { AnnouncementService } from '@/core/AnnouncementService.js';
+import type { MiAnnouncement, AnnouncementsRepository, AnnouncementReadsRepository, UsersRepository, MiUser } from '@/models/_.js';
 import { DI } from '@/di-symbols.js';
 import { genAidx } from '@/misc/id/aidx.js';
 import { CacheService } from '@/core/CacheService.js';
 import { IdService } from '@/core/IdService.js';
 import { GlobalEventService } from '@/core/GlobalEventService.js';
 import { ModerationLogService } from '@/core/ModerationLogService.js';
+import { secureRndstr } from '@/misc/secure-rndstr.js';
 import type { TestingModule } from '@nestjs/testing';
 import type { MockFunctionMetadata } from 'jest-mock';
 
@@ -36,8 +35,7 @@ describe('AnnouncementService', () => {
 	function createUser(data: Partial<MiUser> = {}) {
 		const un = secureRndstr(16);
 		return usersRepository.insert({
-			id: genAidx(new Date()),
-			createdAt: new Date(),
+			id: genAidx(Date.now()),
 			username: un,
 			usernameLower: un,
 			...data,
@@ -45,10 +43,9 @@ describe('AnnouncementService', () => {
 			.then(x => usersRepository.findOneByOrFail(x.identifiers[0]));
 	}
 
-	function createAnnouncement(data: Partial<MiAnnouncement> = {}) {
+	function createAnnouncement(data: Partial<MiAnnouncement & { createdAt: Date }> = {}) {
 		return announcementsRepository.insert({
-			id: genAidx(new Date()),
-			createdAt: new Date(),
+			id: genAidx(data.createdAt ?? new Date()),
 			updatedAt: null,
 			title: 'Title',
 			text: 'Text',
@@ -63,7 +60,6 @@ describe('AnnouncementService', () => {
 				GlobalModule,
 			],
 			providers: [
-				AnnouncementEntityService,
 				AnnouncementService,
 				CacheService,
 				IdService,
@@ -203,4 +199,3 @@ describe('AnnouncementService', () => {
 		// TODO
 	});
 });
-

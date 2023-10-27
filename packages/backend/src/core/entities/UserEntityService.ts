@@ -21,6 +21,7 @@ import { RoleService } from '@/core/RoleService.js';
 import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
 import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
 import { IdentifiableError } from '@/misc/identifiable-error.js';
+import { IdService } from '@/core/IdService.js';
 import type { OnModuleInit } from '@nestjs/common';
 import type { AnnouncementService } from '../AnnouncementService.js';
 import type { CustomEmojiService } from '../CustomEmojiService.js';
@@ -32,9 +33,9 @@ type IsUserDetailed<Detailed extends boolean> = Detailed extends true ? Packed<'
 type IsMeAndIsUserDetailed<ExpectsMe extends boolean | null, Detailed extends boolean> =
 	Detailed extends true ?
 		ExpectsMe extends true ? Packed<'MeDetailed'> :
-		ExpectsMe extends false ? Packed<'UserDetailedNotMe'> :
-		Packed<'UserDetailed'> :
-	Packed<'UserLite'>;
+			ExpectsMe extends false ? Packed<'UserDetailedNotMe'> :
+				Packed<'UserDetailed'> :
+		Packed<'UserLite'>;
 
 const Ajv = _Ajv.default;
 const ajv = new Ajv();
@@ -61,6 +62,7 @@ export class UserEntityService implements OnModuleInit {
 	private announcementService: AnnouncementService;
 	private roleService: RoleService;
 	private federatedInstanceService: FederatedInstanceService;
+	private idService: IdService;
 
 	constructor(
 		private moduleRef: ModuleRef,
@@ -112,13 +114,6 @@ export class UserEntityService implements OnModuleInit {
 
 		@Inject(DI.userMemosRepository)
 		private userMemosRepository: UserMemoRepository,
-
-		//private noteEntityService: NoteEntityService,
-		//private driveFileEntityService: DriveFileEntityService,
-		//private pageEntityService: PageEntityService,
-		//private customEmojiService: CustomEmojiService,
-		//private antennaService: AntennaService,
-		//private roleService: RoleService,
 	) {
 	}
 
@@ -131,6 +126,7 @@ export class UserEntityService implements OnModuleInit {
 		this.announcementService = this.moduleRef.get('AnnouncementService');
 		this.roleService = this.moduleRef.get('RoleService');
 		this.federatedInstanceService = this.moduleRef.get('FederatedInstanceService');
+		this.idService = this.moduleRef.get('IdService');
 	}
 
 	//#region Validators
@@ -147,64 +143,76 @@ export class UserEntityService implements OnModuleInit {
 
 	@bindThis
 	public async getRelation(me: MiUser['id'], target: MiUser['id']) {
-		const following = await this.followingsRepository.findOneBy({
-			followerId: me,
-			followeeId: target,
-		});
-		return awaitAll({
-			id: target,
+		const [
 			following,
-			isFollowing: following != null,
-			isFollowed: this.followingsRepository.count({
+			isFollowed,
+			hasPendingFollowRequestFromYou,
+			hasPendingFollowRequestToYou,
+			isBlocking,
+			isBlocked,
+			isMuted,
+			isRenoteMuted,
+		] = await Promise.all([
+			this.followingsRepository.findOneBy({
+				followerId: me,
+				followeeId: target,
+			}),
+			this.followingsRepository.exist({
 				where: {
 					followerId: target,
 					followeeId: me,
 				},
-				take: 1,
-			}).then(n => n > 0),
-			hasPendingFollowRequestFromYou: this.followRequestsRepository.count({
+			}),
+			this.followRequestsRepository.exist({
 				where: {
 					followerId: me,
 					followeeId: target,
 				},
-				take: 1,
-			}).then(n => n > 0),
-			hasPendingFollowRequestToYou: this.followRequestsRepository.count({
+			}),
+			this.followRequestsRepository.exist({
 				where: {
 					followerId: target,
 					followeeId: me,
 				},
-				take: 1,
-			}).then(n => n > 0),
-			isBlocking: this.blockingsRepository.count({
+			}),
+			this.blockingsRepository.exist({
 				where: {
 					blockerId: me,
 					blockeeId: target,
 				},
-				take: 1,
-			}).then(n => n > 0),
-			isBlocked: this.blockingsRepository.count({
+			}),
+			this.blockingsRepository.exist({
 				where: {
 					blockerId: target,
 					blockeeId: me,
 				},
-				take: 1,
-			}).then(n => n > 0),
-			isMuted: this.mutingsRepository.count({
+			}),
+			this.mutingsRepository.exist({
 				where: {
 					muterId: me,
 					muteeId: target,
 				},
-				take: 1,
-			}).then(n => n > 0),
-			isRenoteMuted: this.renoteMutingsRepository.count({
+			}),
+			this.renoteMutingsRepository.exist({
 				where: {
 					muterId: me,
 					muteeId: target,
 				},
-				take: 1,
-			}).then(n => n > 0),
-		});
+			}),
+		]);
+
+		return {
+			id: target,
+			following,
+			isFollowing: following != null,
+			isFollowed,
+			hasPendingFollowRequestFromYou,
+			hasPendingFollowRequestToYou,
+			isBlocking,
+			isBlocked,
+			isMuted,
+			isRenoteMuted,
+		};
 	}
 
 	@bindThis
@@ -254,8 +262,8 @@ export class UserEntityService implements OnModuleInit {
 		const elapsed = Date.now() - user.lastActiveDate.getTime();
 		return (
 			elapsed < USER_ONLINE_THRESHOLD ? 'online' :
-			elapsed < USER_ACTIVE_THRESHOLD ? 'active' :
-			'offline'
+				elapsed < USER_ACTIVE_THRESHOLD ? 'active' :
+					'offline'
 		);
 	}
 
@@ -291,24 +299,6 @@ export class UserEntityService implements OnModuleInit {
 
 		const user = typeof src === 'object' ? src : await this.usersRepository.findOneByOrFail({ id: src });
 
-		// migration
-		if (user.avatarId != null && user.avatarUrl === null) {
-			const avatar = await this.driveFilesRepository.findOneByOrFail({ id: user.avatarId });
-			user.avatarUrl = this.driveFileEntityService.getPublicUrl(avatar, 'avatar');
-			this.usersRepository.update(user.id, {
-				avatarUrl: user.avatarUrl,
-				avatarBlurhash: avatar.blurhash,
-			});
-		}
-		if (user.bannerId != null && user.bannerUrl === null) {
-			const banner = await this.driveFilesRepository.findOneByOrFail({ id: user.bannerId });
-			user.bannerUrl = this.driveFileEntityService.getPublicUrl(banner);
-			this.usersRepository.update(user.id, {
-				bannerUrl: user.bannerUrl,
-				bannerBlurhash: banner.blurhash,
-			});
-		}
-
 		const meId = me ? me.id : null;
 		const isMe = meId === user.id;
 		const iAmModerator = me ? await this.roleService.isModerator(me as MiUser) : false;
@@ -324,17 +314,18 @@ export class UserEntityService implements OnModuleInit {
 
 		const followingCount = profile == null ? null :
 			(profile.ffVisibility === 'public') || isMe ? user.followingCount :
-			(profile.ffVisibility === 'followers') && (relation && relation.isFollowing) ? user.followingCount :
-			null;
+				(profile.ffVisibility === 'followers') && (relation && relation.isFollowing) ? user.followingCount :
+					null;
 
 		const followersCount = profile == null ? null :
 			(profile.ffVisibility === 'public') || isMe ? user.followersCount :
-			(profile.ffVisibility === 'followers') && (relation && relation.isFollowing) ? user.followersCount :
-			null;
+				(profile.ffVisibility === 'followers') && (relation && relation.isFollowing) ? user.followersCount :
+					null;
 
 		const isModerator = isMe && opts.detail ? this.roleService.isModerator(user) : null;
 		const isAdmin = isMe && opts.detail ? this.roleService.isAdministrator(user) : null;
-		const unreadAnnouncements = isMe && opts.detail ? this.announcementService.getUnreadAnnouncements(user) : null;
+		const policies = opts.detail ? await this.roleService.getUserPolicies(user.id) : null;
+		const unreadAnnouncements = isMe && opts.detail ? await this.announcementService.getUnreadAnnouncements(user) : null;
 
 		const falsy = opts.detail ? false : undefined;
 
@@ -345,8 +336,8 @@ export class UserEntityService implements OnModuleInit {
 			host: user.host,
 			avatarUrl: user.avatarUrl ?? this.getIdenticonUrl(user),
 			avatarBlurhash: user.avatarBlurhash,
-			isBot: user.isBot ?? falsy,
-			isCat: user.isCat ?? falsy,
+			isBot: user.isBot,
+			isCat: user.isCat,
 			instance: user.host ? this.federatedInstanceService.federatedInstanceCache.fetch(user.host).then(instance => instance ? {
 				name: instance.name,
 				softwareName: instance.softwareName,
@@ -372,14 +363,14 @@ export class UserEntityService implements OnModuleInit {
 					? Promise.all(user.alsoKnownAs.map(uri => this.apPersonService.fetchPerson(uri).then(user => user?.id).catch(() => null)))
 						.then(xs => xs.length === 0 ? null : xs.filter(x => x != null) as string[])
 					: null,
-				createdAt: user.createdAt.toISOString(),
+				createdAt: this.idService.parse(user.id).date.toISOString(),
 				updatedAt: user.updatedAt ? user.updatedAt.toISOString() : null,
 				lastFetchedAt: user.lastFetchedAt ? user.lastFetchedAt.toISOString() : null,
 				bannerUrl: user.bannerUrl,
 				bannerBlurhash: user.bannerBlurhash,
 				isLocked: user.isLocked,
-				isSilenced: this.roleService.getUserPolicies(user.id).then(r => !r.canPublicNote),
-				isSuspended: user.isSuspended ?? falsy,
+				isSilenced: !policies?.canPublicNote,
+				isSuspended: user.isSuspended,
 				description: profile!.description,
 				location: profile!.location,
 				birthday: profile!.birthday,
@@ -436,7 +427,7 @@ export class UserEntityService implements OnModuleInit {
 				preventAiLearning: profile!.preventAiLearning,
 				isExplorable: user.isExplorable,
 				isDeleted: user.isDeleted,
-				twoFactorBackupCodesStock: profile?.twoFactorBackupSecret?.length === 5 ? 'full' : (profile?.twoFactorBackupSecret?.length ?? 0) > 0 ? 'partial' : 'none',
+				twoFactorBackupCodesStock: profile?.twoFactorBackupSecret?.length === 20 ? 'full' : (profile?.twoFactorBackupSecret?.length ?? 0) > 0 ? 'partial' : 'none',
 				hideOnlineStatus: user.hideOnlineStatus,
 				hasUnreadSpecifiedNotes: this.noteUnreadsRepository.count({
 					where: { userId: user.id, isSpecified: true },
@@ -459,7 +450,7 @@ export class UserEntityService implements OnModuleInit {
 				emailNotificationTypes: profile!.emailNotificationTypes,
 				achievements: profile!.achievements,
 				loggedInDays: profile!.loggedInDates.length,
-				policies: this.roleService.getUserPolicies(user.id),
+				policies: policies,
 			} : {}),
 
 			...(opts.includeSecrets ? {
@@ -489,6 +480,7 @@ export class UserEntityService implements OnModuleInit {
 				isMuted: relation.isMuted,
 				isRenoteMuted: relation.isRenoteMuted,
 				notify: relation.following?.notify ?? 'none',
+				withReplies: relation.following?.withReplies ?? false,
 			} : {}),
 		} as Promiseable<Packed<'User'>> as Promiseable<IsMeAndIsUserDetailed<ExpectsMe, D>>;
 

@@ -46,6 +46,7 @@ import { SignupService } from './SignupService.js';
 import { WebAuthnService } from './WebAuthnService.js';
 import { UserBlockingService } from './UserBlockingService.js';
 import { CacheService } from './CacheService.js';
+import { UserService } from './UserService.js';
 import { UserFollowingService } from './UserFollowingService.js';
 import { UserKeypairService } from './UserKeypairService.js';
 import { UserListService } from './UserListService.js';
@@ -59,6 +60,8 @@ import { UtilityService } from './UtilityService.js';
 import { FileInfoService } from './FileInfoService.js';
 import { SearchService } from './SearchService.js';
 import { ClipService } from './ClipService.js';
+import { FeaturedService } from './FeaturedService.js';
+import { FunoutTimelineService } from './FunoutTimelineService.js';
 import { ChartLoggerService } from './chart/ChartLoggerService.js';
 import FederationChart from './chart/charts/federation.js';
 import NotesChart from './chart/charts/notes.js';
@@ -74,7 +77,6 @@ import PerUserDriveChart from './chart/charts/per-user-drive.js';
 import ApRequestChart from './chart/charts/ap-request.js';
 import { ChartManagementService } from './chart/ChartManagementService.js';
 import { AbuseUserReportEntityService } from './entities/AbuseUserReportEntityService.js';
-import { AnnouncementEntityService } from './entities/AnnouncementEntityService.js';
 import { AntennaEntityService } from './entities/AntennaEntityService.js';
 import { AppEntityService } from './entities/AppEntityService.js';
 import { AuthSessionEntityService } from './entities/AuthSessionEntityService.js';
@@ -174,6 +176,7 @@ const $SignupService: Provider = { provide: 'SignupService', useExisting: Signup
 const $WebAuthnService: Provider = { provide: 'WebAuthnService', useExisting: WebAuthnService };
 const $UserBlockingService: Provider = { provide: 'UserBlockingService', useExisting: UserBlockingService };
 const $CacheService: Provider = { provide: 'CacheService', useExisting: CacheService };
+const $UserService: Provider = { provide: 'UserService', useExisting: UserService };
 const $UserFollowingService: Provider = { provide: 'UserFollowingService', useExisting: UserFollowingService };
 const $UserKeypairService: Provider = { provide: 'UserKeypairService', useExisting: UserKeypairService };
 const $UserListService: Provider = { provide: 'UserListService', useExisting: UserListService };
@@ -186,6 +189,8 @@ const $UtilityService: Provider = { provide: 'UtilityService', useExisting: Util
 const $FileInfoService: Provider = { provide: 'FileInfoService', useExisting: FileInfoService };
 const $SearchService: Provider = { provide: 'SearchService', useExisting: SearchService };
 const $ClipService: Provider = { provide: 'ClipService', useExisting: ClipService };
+const $FeaturedService: Provider = { provide: 'FeaturedService', useExisting: FeaturedService };
+const $FunoutTimelineService: Provider = { provide: 'FunoutTimelineService', useExisting: FunoutTimelineService };
 
 const $ChartLoggerService: Provider = { provide: 'ChartLoggerService', useExisting: ChartLoggerService };
 const $FederationChart: Provider = { provide: 'FederationChart', useExisting: FederationChart };
@@ -203,7 +208,6 @@ const $ApRequestChart: Provider = { provide: 'ApRequestChart', useExisting: ApRe
 const $ChartManagementService: Provider = { provide: 'ChartManagementService', useExisting: ChartManagementService };
 
 const $AbuseUserReportEntityService: Provider = { provide: 'AbuseUserReportEntityService', useExisting: AbuseUserReportEntityService };
-const $AnnouncementEntityService: Provider = { provide: 'AnnouncementEntityService', useExisting: AnnouncementEntityService };
 const $AntennaEntityService: Provider = { provide: 'AntennaEntityService', useExisting: AntennaEntityService };
 const $AppEntityService: Provider = { provide: 'AppEntityService', useExisting: AppEntityService };
 const $AuthSessionEntityService: Provider = { provide: 'AuthSessionEntityService', useExisting: AuthSessionEntityService };
@@ -305,6 +309,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		WebAuthnService,
 		UserBlockingService,
 		CacheService,
+		UserService,
 		UserFollowingService,
 		UserKeypairService,
 		UserListService,
@@ -317,6 +322,8 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		FileInfoService,
 		SearchService,
 		ClipService,
+		FeaturedService,
+		FunoutTimelineService,
 		ChartLoggerService,
 		FederationChart,
 		NotesChart,
@@ -332,7 +339,6 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		ApRequestChart,
 		ChartManagementService,
 		AbuseUserReportEntityService,
-		AnnouncementEntityService,
 		AntennaEntityService,
 		AppEntityService,
 		AuthSessionEntityService,
@@ -429,6 +435,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$WebAuthnService,
 		$UserBlockingService,
 		$CacheService,
+		$UserService,
 		$UserFollowingService,
 		$UserKeypairService,
 		$UserListService,
@@ -441,6 +448,8 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$FileInfoService,
 		$SearchService,
 		$ClipService,
+		$FeaturedService,
+		$FunoutTimelineService,
 		$ChartLoggerService,
 		$FederationChart,
 		$NotesChart,
@@ -456,7 +465,6 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$ApRequestChart,
 		$ChartManagementService,
 		$AbuseUserReportEntityService,
-		$AnnouncementEntityService,
 		$AntennaEntityService,
 		$AppEntityService,
 		$AuthSessionEntityService,
@@ -554,6 +562,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		WebAuthnService,
 		UserBlockingService,
 		CacheService,
+		UserService,
 		UserFollowingService,
 		UserKeypairService,
 		UserListService,
@@ -566,6 +575,8 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		FileInfoService,
 		SearchService,
 		ClipService,
+		FeaturedService,
+		FunoutTimelineService,
 		FederationChart,
 		NotesChart,
 		UsersChart,
@@ -580,7 +591,6 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		ApRequestChart,
 		ChartManagementService,
 		AbuseUserReportEntityService,
-		AnnouncementEntityService,
 		AntennaEntityService,
 		AppEntityService,
 		AuthSessionEntityService,
@@ -677,6 +687,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$WebAuthnService,
 		$UserBlockingService,
 		$CacheService,
+		$UserService,
 		$UserFollowingService,
 		$UserKeypairService,
 		$UserListService,
@@ -689,6 +700,8 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$FileInfoService,
 		$SearchService,
 		$ClipService,
+		$FeaturedService,
+		$FunoutTimelineService,
 		$FederationChart,
 		$NotesChart,
 		$UsersChart,
@@ -703,7 +716,6 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$ApRequestChart,
 		$ChartManagementService,
 		$AbuseUserReportEntityService,
-		$AnnouncementEntityService,
 		$AntennaEntityService,
 		$AppEntityService,
 		$AuthSessionEntityService,
