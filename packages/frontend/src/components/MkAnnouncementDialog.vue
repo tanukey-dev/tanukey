@@ -4,30 +4,30 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<MkModal ref="modal" :zPriority="'middle'" @closed="$emit('closed')" @click="onBgClick">
-	<div ref="rootEl" :class="$style.root">
-		<div :class="$style.header">
+	<MkModal ref="modal" :zPriority="'middle'" @closed="$emit('closed')" @click="onBgClick">
+		<div ref="rootEl" :class="$style.root">
+			<div :class="$style.header">
 			<span :class="$style.icon">
 				<i v-if="announcement.icon === 'info'" class="ti ti-info-circle"></i>
 				<i v-else-if="announcement.icon === 'warning'" class="ti ti-alert-triangle" style="color: var(--warn);"></i>
 				<i v-else-if="announcement.icon === 'error'" class="ti ti-circle-x" style="color: var(--error);"></i>
 				<i v-else-if="announcement.icon === 'success'" class="ti ti-check" style="color: var(--success);"></i>
 			</span>
-			<Mfm :text="announcement.title"/>
+				<Mfm :text="announcement.title"/>
+			</div>
+			<div :class="$style.content">
+				<Mfm :text="announcement.text"/>
+				<img v-if="announcement.imageUrl" :src="announcement.imageUrl"/>
+			</div>
+			<MkButton :class="$style.gotIt" primary full :disabled="gotItDisabled" @click="gotIt">{{ i18n.ts.gotIt }}<span v-if="secVisible"> ({{ sec }})</span></MkButton>
 		</div>
-		<div :class="$style.content">
-			<Mfm :text="announcement.text"/>
-			<img v-if="announcement.imageUrl" :src="announcement.imageUrl"/>
-		</div>
-		<MkButton :class="$style.gotIt" primary full :disabled="gotItDisabled" @click="gotIt">{{ i18n.ts.gotIt }}<span v-if="secVisible"> ({{ sec }})</span></MkButton>
-	</div>
-</MkModal>
+	</MkModal>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref, shallowRef } from 'vue';
 import * as Misskey from 'misskey-js';
-import * as os from '@/os';
+import * as os from '@/os.js';
 import MkModal from '@/components/MkModal.vue';
 import MkButton from '@/components/MkButton.vue';
 import { i18n } from '@/i18n.js';
@@ -54,19 +54,15 @@ async function gotIt(): Promise<void> {
 		if (confirm.canceled) return;
 	}
 
-	await os.api('i/read-announcement', { announcementId: props.announcement.id });
-	if ($i) {
-		updateAccount({
-			unreadAnnouncements: $i.unreadAnnouncements.filter((a: { id: string; }) => a.id !== props.announcement.id),
-		});
-	}
-	modal.value?.close();
+	modal.value.close();
+	os.api('i/read-announcement', { announcementId: props.announcement.id });
+	updateAccount({
+		unreadAnnouncements: $i!.unreadAnnouncements.filter(a => a.id !== props.announcement.id),
+	});
 }
 
-function onBgClick(): void {
-	if (sec.value > 0) return;
-
-	rootEl.value?.animate([{
+function onBgClick() {
+	rootEl.value.animate([{
 		offset: 0,
 		transform: 'scale(1)',
 	}, {
@@ -81,7 +77,7 @@ function onBgClick(): void {
 }
 
 onMounted(() => {
-	if (sec.value > 0 ) {
+	if (sec.value > 0) {
 		const waitTimer = setInterval(() => {
 			if (sec.value === 0) {
 				clearInterval(waitTimer);
