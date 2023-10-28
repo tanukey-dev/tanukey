@@ -1139,6 +1139,10 @@ export interface Locale {
     "fileAttachedOnly": string;
     "showRepliesToOthersInTimeline": string;
     "hideRepliesToOthersInTimeline": string;
+    "showRepliesToOthersInTimelineAll": string;
+    "hideRepliesToOthersInTimelineAll": string;
+    "confirmShowRepliesAll": string;
+    "confirmHideRepliesAll": string;
     "externalServices": string;
     "impressum": string;
     "impressumUrl": string;
@@ -1146,6 +1150,12 @@ export interface Locale {
     "privacyPolicy": string;
     "privacyPolicyUrl": string;
     "tosAndPrivacyPolicy": string;
+    "avatarDecorations": string;
+    "attach": string;
+    "detach": string;
+    "angle": string;
+    "flip": string;
+    "showAvatarDecorations": string;
     "_announcement": {
         "forExistingUsers": string;
         "forExistingUsersDescription": string;
@@ -1184,6 +1194,7 @@ export interface Locale {
         "manifestJsonOverride": string;
         "shortName": string;
         "shortNameDescription": string;
+        "fanoutTimelineDescription": string;
     };
     "_accountMigration": {
         "moveFrom": string;
@@ -2302,6 +2313,9 @@ export interface Locale {
         "createAd": string;
         "deleteAd": string;
         "updateAd": string;
+        "createAvatarDecoration": string;
+        "updateAvatarDecoration": string;
+        "deleteAvatarDecoration": string;
     };
     "_fileViewer": {
         "title": string;
@@ -2311,6 +2325,61 @@ export interface Locale {
         "uploadedAt": string;
         "attachedNotes": string;
         "thisPageCanBeSeenFromTheAuthor": string;
+    };
+    "_externalResourceInstaller": {
+        "title": string;
+        "checkVendorBeforeInstall": string;
+        "_plugin": {
+            "title": string;
+            "metaTitle": string;
+        };
+        "_theme": {
+            "title": string;
+            "metaTitle": string;
+        };
+        "_meta": {
+            "base": string;
+        };
+        "_vendorInfo": {
+            "title": string;
+            "endpoint": string;
+            "hashVerify": string;
+        };
+        "_errors": {
+            "_invalidParams": {
+                "title": string;
+                "description": string;
+            };
+            "_resourceTypeNotSupported": {
+                "title": string;
+                "description": string;
+            };
+            "_failedToFetch": {
+                "title": string;
+                "fetchErrorDescription": string;
+                "parseErrorDescription": string;
+            };
+            "_hashUnmatched": {
+                "title": string;
+                "description": string;
+            };
+            "_pluginParseFailed": {
+                "title": string;
+                "description": string;
+            };
+            "_pluginInstallFailed": {
+                "title": string;
+                "description": string;
+            };
+            "_themeParseFailed": {
+                "title": string;
+                "description": string;
+            };
+            "_themeInstallFailed": {
+                "title": string;
+                "description": string;
+            };
+        };
     };
 }
 declare const locales: {
