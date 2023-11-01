@@ -7,7 +7,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { In } from 'typeorm';
 import { DI } from '@/di-symbols.js';
-import type { AccessTokensRepository, FollowRequestsRepository, NotesRepository, MiUser, UsersRepository } from '@/models/_.js';
+import type { FollowRequestsRepository, NotesRepository, MiUser, UsersRepository } from '@/models/_.js';
 import { awaitAll } from '@/misc/prelude/await-all.js';
 import type { MiNotification } from '@/models/Notification.js';
 import type { MiNote } from '@/models/Note.js';
@@ -41,9 +41,6 @@ export class NotificationEntityService implements OnModuleInit {
 		@Inject(DI.followRequestsRepository)
 		private followRequestsRepository: FollowRequestsRepository,
 
-		@Inject(DI.accessTokensRepository)
-		private accessTokensRepository: AccessTokensRepository,
-
 		//private userEntityService: UserEntityService,
 		//private noteEntityService: NoteEntityService,
 		//private customEmojiService: CustomEmojiService,
@@ -70,7 +67,6 @@ export class NotificationEntityService implements OnModuleInit {
 		},
 	): Promise<Packed<'Notification'>> {
 		const notification = src;
-		const token = notification.appAccessTokenId ? await this.accessTokensRepository.findOneByOrFail({ id: notification.appAccessTokenId }) : null;
 		const noteIfNeed = NOTE_REQUIRED_NOTIFICATION_TYPES.has(notification.type) && notification.noteId != null ? (
 			hint?.packedNotes != null
 				? hint.packedNotes.get(notification.noteId)
@@ -101,8 +97,8 @@ export class NotificationEntityService implements OnModuleInit {
 			} : {}),
 			...(notification.type === 'app' ? {
 				body: notification.customBody,
-				header: notification.customHeader ?? token?.name,
-				icon: notification.customIcon ?? token?.iconUrl,
+				header: notification.customHeader,
+				icon: notification.customIcon,
 			} : {}),
 		});
 	}
