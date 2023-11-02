@@ -148,7 +148,7 @@ if (props.src === 'antenna') {
 	query = {
 		withFiles: true,
 		withReplies: false,
-	});
+	};
 } else if (props.src === 'social') {
 	endpoint = 'notes/hybrid-timeline';
 	query = {
