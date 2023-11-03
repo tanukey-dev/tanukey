@@ -1162,6 +1162,7 @@ export interface Locale {
     "pullDownToRefresh": string;
     "disableStreamingTimeline": string;
     "useGroupedNotifications": string;
+    "cwNotationRequired": string;
     "_announcement": {
         "forExistingUsers": string;
         "forExistingUsersDescription": string;
