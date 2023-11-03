@@ -983,6 +983,7 @@ export interface Locale {
     "unassign": string;
     "color": string;
     "manageCustomEmojis": string;
+    "manageAvatarDecorations": string;
     "youCannotCreateAnymore": string;
     "cannotPerformTemporary": string;
     "cannotPerformTemporaryDescription": string;
@@ -1156,6 +1157,12 @@ export interface Locale {
     "angle": string;
     "flip": string;
     "showAvatarDecorations": string;
+    "releaseToRefresh": string;
+    "refreshing": string;
+    "pullDownToRefresh": string;
+    "disableStreamingTimeline": string;
+    "useGroupedNotifications": string;
+    "cwNotationRequired": string;
     "_announcement": {
         "forExistingUsers": string;
         "forExistingUsersDescription": string;
@@ -1575,6 +1582,7 @@ export interface Locale {
             "inviteLimitCycle": string;
             "inviteExpirationTime": string;
             "canManageCustomEmojis": string;
+            "canManageAvatarDecorations": string;
             "driveCapacity": string;
             "alwaysMarkNsfw": string;
             "pinMax": string;
@@ -1712,6 +1720,7 @@ export interface Locale {
         "donate": string;
         "morePatrons": string;
         "patrons": string;
+        "projectMembers": string;
     };
     "_displayOfSensitiveMedia": {
         "respect": string;
@@ -2200,6 +2209,9 @@ export interface Locale {
         "checkNotificationBehavior": string;
         "sendTestNotification": string;
         "notificationWillBeDisplayedLikeThis": string;
+        "reactedBySomeUsers": string;
+        "renotedBySomeUsers": string;
+        "followedBySomeUsers": string;
         "_types": {
             "all": string;
             "note": string;
