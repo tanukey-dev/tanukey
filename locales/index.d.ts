@@ -1164,6 +1164,7 @@ export interface Locale {
     "useGroupedNotifications": string;
     "signupPendingError": string;
     "cwNotationRequired": string;
+    "doReaction": string;
     "_announcement": {
         "forExistingUsers": string;
         "forExistingUsersDescription": string;
