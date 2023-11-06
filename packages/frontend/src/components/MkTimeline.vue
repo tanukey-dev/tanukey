@@ -86,6 +86,11 @@ const connectChannel = () => {
 			withReplies: props.withReplies,
 			withFiles: props.onlyFiles ? true : undefined,
 		});
+	} else if (props.src === 'media') {
+		connection = stream.useChannel('localTimeline', {
+			withFiles: true,
+			withReplies: false,
+		});
 	} else if (props.src === 'social') {
 		connection = stream.useChannel('hybridTimeline', {
 			withRenotes: props.withRenotes,
