@@ -25,12 +25,6 @@ export const meta = {
 			code: 'NO_SUCH_ROLE',
 			id: '224eff5e-2488-4b18-b3e7-f50d94421648',
 		},
-
-		accessDenied: {
-			message: 'Only administrators can edit members of the role.',
-			code: 'ACCESS_DENIED',
-			id: '634be6bb-2ed5-44c3-8a50-68b50160cf52',
-		},
 	},
 } as const;
 
@@ -65,10 +59,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (role == null) {
 				throw new ApiError(meta.errors.noSuchRole);
-			}
-
-			if (!role.canEditMembersByModerator && !(await this.roleService.isAdministrator(me))) {
-				throw new ApiError(meta.errors.accessDenied);
 			}
 
 			const query = this.queryService.makePaginationQuery(this.roleAssignmentsRepository.createQueryBuilder('assign'), ps.sinceId, ps.untilId)
