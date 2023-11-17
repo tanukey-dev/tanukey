@@ -257,7 +257,11 @@ export default function(props: {
 								class: 'ti ti-clock',
 								style: 'margin-right: 0.25em;',
 							}),
-							h(MkTime, { time: unixtime * 1000, mode: 'detail' }),
+							h(MkTime, {
+								key: Math.random(),
+								time: unixtime * 1000,
+								mode: 'detail',
+							}),
 						]);
 					}
 				}
