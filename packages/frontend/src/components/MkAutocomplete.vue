@@ -40,7 +40,7 @@ import contains from '@/scripts/contains';
 import { char2twemojiFilePath, char2fluentEmojiFilePath } from '@/scripts/emoji-base';
 import { acct } from '@/filters/user';
 import * as os from '@/os';
-import { MFM_TAGS } from '@/scripts/mfm-tags';
+import { MFM_TAGS } from '@/const.js';
 import { defaultStore } from '@/store';
 import { emojilist } from '@/scripts/emojilist';
 import { i18n } from '@/i18n';

@@ -235,6 +235,12 @@ export default function(props: {
 						style = `background-color: #${color};`;
 						break;
 					}
+					case 'ruby': {
+						const child = token.children[0];
+						const text = child.type === 'text' ? child.props.text : '';
+						return h('ruby', {
+						}, [text.split(' ')[0], h('rt', text.split(' ')[1])]);
+					}
 				}
 				if (style == null) {
 					return h('span', {}, ['$[', token.props.name, ' ', ...genEl(token.children, scale), ']']);
