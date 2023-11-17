@@ -122,7 +122,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 							</template>
 						</MkFolder>
 
-                        <div>
+						<div>
 							<MkButton v-if="iAmModerator" inline danger style="margin-right: 8px;" @click="deleteUserAvatar"><i class="ti ti-user-circle"></i> {{ i18n.ts.deleteUserAvatar }}</MkButton>
 							<MkButton v-if="iAmModerator" inline danger @click="deleteUserBanner"><i class="ti ti-photo"></i> {{ i18n.ts.deleteUserBanner }}</MkButton>
 						</div>
@@ -223,7 +223,7 @@ import { url } from '@/config';
 import { acct } from '@/filters/user';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { i18n } from '@/i18n';
-import { iAmAdmin, $i } from '@/account';
+import { iAmAdmin, iAmModerator, $i } from '@/account';
 import MkRolePreview from '@/components/MkRolePreview.vue';
 import MkPagination, { Paging } from '@/components/MkPagination.vue';
 
