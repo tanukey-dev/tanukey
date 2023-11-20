@@ -1,9 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import type { Meta } from '@/models/entities/Meta.js';
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import { Injectable } from '@nestjs/common';
+import type { MiMeta } from '@/models/Meta.js';
 import { ModerationLogService } from '@/core/ModerationLogService.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
 import { MetaService } from '@/core/MetaService.js';
 
 export const meta = {
@@ -17,18 +20,26 @@ export const paramDef = {
 	type: 'object',
 	properties: {
 		disableRegistration: { type: 'boolean', nullable: true },
-		pinnedUsers: { type: 'array', nullable: true, items: {
-			type: 'string',
-		} },
-		hiddenTags: { type: 'array', nullable: true, items: {
-			type: 'string',
-		} },
-		blockedHosts: { type: 'array', nullable: true, items: {
-			type: 'string',
-		} },
-		sensitiveWords: { type: 'array', nullable: true, items: {
-			type: 'string',
-		} },
+		pinnedUsers: {
+			type: 'array', nullable: true, items: {
+				type: 'string',
+			},
+		},
+		hiddenTags: {
+			type: 'array', nullable: true, items: {
+				type: 'string',
+			},
+		},
+		blockedHosts: {
+			type: 'array', nullable: true, items: {
+				type: 'string',
+			},
+		},
+		sensitiveWords: {
+			type: 'array', nullable: true, items: {
+				type: 'string',
+			},
+		},
 		themeColor: { type: 'string', nullable: true, pattern: '^#[0-9a-fA-F]{6}$' },
 		mascotImageUrl: { type: 'string', nullable: true },
 		bannerUrl: { type: 'string', nullable: true },
@@ -36,9 +47,12 @@ export const paramDef = {
 		infoImageUrl: { type: 'string', nullable: true },
 		notFoundImageUrl: { type: 'string', nullable: true },
 		iconUrl: { type: 'string', nullable: true },
+		app192IconUrl: { type: 'string', nullable: true },
+		app512IconUrl: { type: 'string', nullable: true },
 		backgroundImageUrl: { type: 'string', nullable: true },
 		logoImageUrl: { type: 'string', nullable: true },
 		name: { type: 'string', nullable: true },
+		shortName: { type: 'string', nullable: true },
 		description: { type: 'string', nullable: true },
 		defaultLightTheme: { type: 'string', nullable: true },
 		defaultDarkTheme: { type: 'string', nullable: true },
@@ -59,9 +73,11 @@ export const paramDef = {
 		proxyAccountId: { type: 'string', format: 'misskey:id', nullable: true },
 		maintainerName: { type: 'string', nullable: true },
 		maintainerEmail: { type: 'string', nullable: true },
-		langs: { type: 'array', items: {
-			type: 'string',
-		} },
+		langs: {
+			type: 'array', items: {
+				type: 'string',
+			},
+		},
 		summalyProxy: { type: 'string', nullable: true },
 		deeplAuthKey: { type: 'string', nullable: true },
 		deeplIsPro: { type: 'boolean' },
@@ -78,6 +94,8 @@ export const paramDef = {
 		tosUrl: { type: 'string', nullable: true },
 		repositoryUrl: { type: 'string' },
 		feedbackUrl: { type: 'string' },
+		impressumUrl: { type: 'string', nullable: true },
+		privacyPolicyUrl: { type: 'string', nullable: true },
 		enableIpLogging: { type: 'boolean' },
 		enableActiveEmailValidation: { type: 'boolean' },
 		enableChartsForRemoteUser: { type: 'boolean' },
@@ -86,22 +104,33 @@ export const paramDef = {
 		enableIdenticonGeneration: { type: 'boolean' },
 		serverRules: { type: 'array', items: { type: 'string' } },
 		preservedUsernames: { type: 'array', items: { type: 'string' } },
+		manifestJsonOverride: { type: 'string' },
+		enableFanoutTimeline: { type: 'boolean' },
+		enableFanoutTimelineDbFallback: { type: 'boolean' },
+		perLocalUserUserTimelineCacheMax: { type: 'integer' },
+		perRemoteUserUserTimelineCacheMax: { type: 'integer' },
+		perUserHomeTimelineCacheMax: { type: 'integer' },
+		perUserListTimelineCacheMax: { type: 'integer' },
+		notesPerOneAd: { type: 'integer' },
+		silencedHosts: {
+			type: 'array',
+			nullable: true,
+			items: {
+				type: 'string',
+			},
+		},
 	},
 	required: [],
 } as const;
 
-// eslint-disable-next-line import/no-default-export
 @Injectable()
-export default class extends Endpoint<typeof meta, typeof paramDef> {
+export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-disable-line import/no-default-export
 	constructor(
-		@Inject(DI.db)
-		private db: DataSource,
-
 		private metaService: MetaService,
 		private moderationLogService: ModerationLogService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const set = {} as Partial<Meta>;
+			const set = {} as Partial<MiMeta>;
 
 			if (typeof ps.disableRegistration === 'boolean') {
 				set.disableRegistration = ps.disableRegistration;
@@ -122,7 +151,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			if (Array.isArray(ps.sensitiveWords)) {
 				set.sensitiveWords = ps.sensitiveWords.filter(Boolean);
 			}
-
+			if (Array.isArray(ps.silencedHosts)) {
+				let lastValue = '';
+				set.silencedHosts = ps.silencedHosts.sort().filter((h) => {
+					const lv = lastValue;
+					lastValue = h;
+					return h !== '' && h !== lv && !set.blockedHosts?.includes(h);
+				});
+			}
 			if (ps.themeColor !== undefined) {
 				set.themeColor = ps.themeColor;
 			}
@@ -137,6 +173,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (ps.iconUrl !== undefined) {
 				set.iconUrl = ps.iconUrl;
+			}
+
+			if (ps.app192IconUrl !== undefined) {
+				set.app192IconUrl = ps.app192IconUrl;
+			}
+
+			if (ps.app512IconUrl !== undefined) {
+				set.app512IconUrl = ps.app512IconUrl;
 			}
 
 			if (ps.serverErrorImageUrl !== undefined) {
@@ -161,6 +205,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (ps.name !== undefined) {
 				set.name = ps.name;
+			}
+
+			if (ps.shortName !== undefined) {
+				set.shortName = ps.shortName;
 			}
 
 			if (ps.description !== undefined) {
@@ -303,6 +351,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				set.feedbackUrl = ps.feedbackUrl;
 			}
 
+			if (ps.impressumUrl !== undefined) {
+				set.impressumUrl = ps.impressumUrl;
+			}
+
+			if (ps.privacyPolicyUrl !== undefined) {
+				set.privacyPolicyUrl = ps.privacyPolicyUrl;
+			}
+
 			if (ps.deeplAuthKey !== undefined) {
 				if (ps.deeplAuthKey === '') {
 					set.deeplAuthKey = null;
@@ -347,8 +403,48 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				set.preservedUsernames = ps.preservedUsernames;
 			}
 
+			if (ps.manifestJsonOverride !== undefined) {
+				set.manifestJsonOverride = ps.manifestJsonOverride;
+			}
+
+			if (ps.enableFanoutTimeline !== undefined) {
+				set.enableFanoutTimeline = ps.enableFanoutTimeline;
+			}
+
+			if (ps.enableFanoutTimelineDbFallback !== undefined) {
+				set.enableFanoutTimelineDbFallback = ps.enableFanoutTimelineDbFallback;
+			}
+
+			if (ps.perLocalUserUserTimelineCacheMax !== undefined) {
+				set.perLocalUserUserTimelineCacheMax = ps.perLocalUserUserTimelineCacheMax;
+			}
+
+			if (ps.perRemoteUserUserTimelineCacheMax !== undefined) {
+				set.perRemoteUserUserTimelineCacheMax = ps.perRemoteUserUserTimelineCacheMax;
+			}
+
+			if (ps.perUserHomeTimelineCacheMax !== undefined) {
+				set.perUserHomeTimelineCacheMax = ps.perUserHomeTimelineCacheMax;
+			}
+
+			if (ps.perUserListTimelineCacheMax !== undefined) {
+				set.perUserListTimelineCacheMax = ps.perUserListTimelineCacheMax;
+			}
+
+			if (ps.notesPerOneAd !== undefined) {
+				set.notesPerOneAd = ps.notesPerOneAd;
+			}
+
+			const before = await this.metaService.fetch(true);
+
 			await this.metaService.update(set);
-			this.moderationLogService.insertModerationLog(me, 'updateMeta');
+
+			const after = await this.metaService.fetch(true);
+
+			this.moderationLogService.log(me, 'updateServerSettings', {
+				before,
+				after,
+			});
 		});
 	}
 }

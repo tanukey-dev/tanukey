@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 <template>
 <Transition
 	:enterActiveClass="defaultStore.state.animation ? $style.transition_fade_enterActive : ''"
@@ -38,24 +43,23 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, isRef, nextTick, onActivated, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue';
-import * as misskey from 'misskey-js';
-import * as os from '@/os';
-import { onScrollTop, isTopVisible, getBodyScrollHeight, getScrollContainer, onScrollBottom, scrollToBottom, scroll, isBottomVisible } from '@/scripts/scroll';
-import { useDocumentVisibility } from '@/scripts/use-document-visibility';
-import MkButton from '@/components/MkButton.vue';
-import { defaultStore } from '@/store';
+import { computed, ComputedRef, isRef, nextTick, onActivated, onBeforeMount, onBeforeUnmount, onDeactivated, ref, watch } from 'vue';
+import * as Misskey from 'misskey-js';
+import * as os from '@/os.js';
+import { onScrollTop, isTopVisible, getBodyScrollHeight, getScrollContainer, onScrollBottom, scrollToBottom, scroll, isBottomVisible } from '@/scripts/scroll.js';
+import { useDocumentVisibility } from '@/scripts/use-document-visibility.js';
+import { defaultStore } from '@/store.js';
 import { MisskeyEntity } from '@/types/date-separated-list';
-import { i18n } from '@/i18n';
+import { i18n } from '@/i18n.js';
 
 const SECOND_FETCH_LIMIT = 30;
 const TOLERANCE = 16;
 const APPEAR_MINIMUM_INTERVAL = 600;
 
-export type Paging<E extends keyof misskey.Endpoints = keyof misskey.Endpoints> = {
+export type Paging<E extends keyof Misskey.Endpoints = keyof Misskey.Endpoints> = {
 	endpoint: E;
 	limit: number;
-	params?: misskey.Endpoints[E]['req'] | ComputedRef<misskey.Endpoints[E]['req']>;
+	params?: Misskey.Endpoints[E]['req'] | ComputedRef<Misskey.Endpoints[E]['req']>;
 
 	/**
 	 * 検索APIのような、ページング不可なエンドポイントを利用する場合
@@ -82,9 +86,11 @@ function arrayToEntries(entities: MisskeyEntity[]): [string, MisskeyEntity][] {
 function concatMapWithArray(map: MisskeyEntityMap, entities: MisskeyEntity[]): MisskeyEntityMap {
 	return new Map([...map, ...arrayToEntries(entities)]);
 }
+
 </script>
 <script lang="ts" setup>
-import { infoImageUrl } from '@/instance';
+import { infoImageUrl } from '@/instance.js';
+import MkButton from '@/components/MkButton.vue';
 
 const props = withDefaults(defineProps<{
 	pagination: Paging;
@@ -96,6 +102,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
 	(ev: 'queue', count: number): void;
+	(ev: 'status', error: boolean): void;
 }>();
 
 let rootEl = $shallowRef<HTMLElement>();
@@ -178,14 +185,18 @@ watch([$$(backed), $$(contentEl)], () => {
 	}
 });
 
-if (props.pagination.params && isRef(props.pagination.params)) {
-	watch(props.pagination.params, init, { deep: true });
-}
+// パラメータに何らかの変更があった際、再読込したい（チャンネル等のIDが変わったなど）
+watch(() => props.pagination.params, init, { deep: true });
 
 watch(queue, (a, b) => {
 	if (a.size === 0 && b.size === 0) return;
 	emit('queue', queue.value.size);
 }, { deep: true });
+
+watch(error, (n, o) => {
+	if (n === o) return;
+	emit('status', n);
+});
 
 async function init(): Promise<void> {
 	items.value = new Map();
@@ -428,8 +439,6 @@ const updateItem = (id: MisskeyEntity['id'], replacer: (old: MisskeyEntity) => M
 	if (queueItem) queue.value.set(id, replacer(queueItem));
 };
 
-const inited = init();
-
 onActivated(() => {
 	isBackTop.value = false;
 });
@@ -442,8 +451,8 @@ function toBottom() {
 	scrollToBottom(contentEl!);
 }
 
-onMounted(() => {
-	inited.then(() => {
+onBeforeMount(() => {
+	init().then(() => {
 		if (props.pagination.reversed) {
 			nextTick(() => {
 				setTimeout(toBottom, 800);
@@ -475,7 +484,6 @@ defineExpose({
 	queue,
 	backed,
 	more,
-	inited,
 	reload,
 	prepend,
 	append: appendItem,

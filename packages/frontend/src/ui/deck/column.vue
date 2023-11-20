@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 <template>
 <div
 	:class="[$style.root, { [$style.paged]: isMainColumn, [$style.naked]: naked, [$style.active]: active, [$style.draghover]: draghover, [$style.dragging]: dragging, [$style.dropready]: dropready }]"
@@ -39,9 +44,9 @@
 <script lang="ts" setup>
 import { onBeforeUnmount, onMounted, provide, watch } from 'vue';
 import { updateColumn, swapLeftColumn, swapRightColumn, swapUpColumn, swapDownColumn, stackLeftColumn, popRightColumn, removeColumn, swapColumn, Column } from './deck-store';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { MenuItem } from '@/types/menu';
+import * as os from '@/os.js';
+import { i18n } from '@/i18n.js';
+import { MenuItem } from '@/types/menu.js';
 
 provide('shouldHeaderThin', true);
 provide('shouldOmitHeaderTitle', true);
@@ -52,6 +57,7 @@ const props = withDefaults(defineProps<{
 	isStacked?: boolean;
 	naked?: boolean;
 	menu?: MenuItem[];
+	refresher?: () => Promise<void>;
 }>(), {
 	isStacked: false,
 	naked: false,
@@ -111,11 +117,12 @@ function getMenu() {
 				width: {
 					type: 'number',
 					label: i18n.ts.width,
+					description: i18n.ts._deck.usedAsMinWidthWhenFlexible,
 					default: props.column.width,
 				},
 				flexible: {
 					type: 'boolean',
-					label: i18n.ts.flexible,
+					label: i18n.ts._deck.flexible,
 					default: props.column.flexible,
 				},
 			});
@@ -175,6 +182,18 @@ function getMenu() {
 	if (props.menu) {
 		items.unshift(null);
 		items = props.menu.concat(items);
+	}
+
+	if (props.refresher) {
+		items = [{
+			icon: 'ti ti-refresh',
+			text: i18n.ts.reload,
+			action: () => {
+				if (props.refresher) {
+					props.refresher();
+				}
+			},
+		}, ...items];
 	}
 
 	return items;

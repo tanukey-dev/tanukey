@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 <template>
 <div class="_panel" :class="$style.root">
 	<div :class="$style.banner" :style="user.bannerUrl ? `background-image: url(${user.bannerUrl})` : ''"></div>
@@ -9,7 +14,7 @@
 	<span v-if="$i && $i.id !== user.id && user.isFollowed" :class="$style.followed">{{ i18n.ts.followsYou }}</span>
 	<div :class="$style.description">
 		<div v-if="user.description" :class="$style.mfm">
-			<Mfm :text="user.description" :author="user" :i="$i"/>
+			<Mfm :text="user.description" :author="user"/>
 		</div>
 		<span v-else style="opacity: 0.7;">{{ i18n.ts.noAccountDescription }}</span>
 	</div>
@@ -29,16 +34,16 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from 'misskey-js';
+import * as Misskey from 'misskey-js';
 import MkFollowButton from '@/components/MkFollowButton.vue';
-import number from '@/filters/number';
-import { userPage } from '@/filters/user';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
-import { isFfVisibleForMe } from '@/scripts/isFfVisibleForMe';
+import number from '@/filters/number.js';
+import { userPage } from '@/filters/user.js';
+import { i18n } from '@/i18n.js';
+import { $i } from '@/account.js';
+import { isFfVisibleForMe } from '@/scripts/isFfVisibleForMe.js';
 
 defineProps<{
-	user: misskey.entities.UserDetailed;
+	user: Misskey.entities.UserDetailed;
 }>();
 </script>
 

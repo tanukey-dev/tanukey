@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import type { Schema } from '@/misc/json-schema.js';
 import { refs } from '@/misc/json-schema.js';
 
@@ -21,7 +26,12 @@ export function convertSchemaToOpenApiSchema(schema: Schema) {
 	if (schema.allOf) res.allOf = schema.allOf.map(convertSchemaToOpenApiSchema);
 
 	if (schema.ref) {
-		res.$ref = `#/components/schemas/${schema.ref}`;
+		const $ref = `#/components/schemas/${schema.ref}`;
+		if (schema.nullable || schema.optional) {
+			res.allOf = [{ $ref }];
+		} else {
+			res.$ref = $ref;
+		}
 	}
 
 	return res;

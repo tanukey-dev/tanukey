@@ -12,10 +12,28 @@ export type Acct = {
     host: string | null;
 };
 
+declare namespace acct {
+    export {
+        parse,
+        toString_2 as toString,
+        Acct
+    }
+}
+export { acct }
+
 // Warning: (ae-forgotten-export) The symbol "TODO_2" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 type Ad = TODO_2;
+
+// @public (undocumented)
+type AdminInstanceMetadata = DetailedInstanceMetadata & {
+    blockedHosts: string[];
+    silencedHosts: string[];
+    app192IconUrl: string | null;
+    app512IconUrl: string | null;
+    manifestJsonOverride: string;
+};
 
 // @public (undocumented)
 type Announcement = {
@@ -25,6 +43,10 @@ type Announcement = {
     text: string;
     title: string;
     imageUrl: string | null;
+    display: 'normal' | 'banner' | 'dialog';
+    icon: 'info' | 'warning' | 'error' | 'success';
+    needConfirmationToRead: boolean;
+    forYou: boolean;
     isRead?: boolean;
 };
 
@@ -40,6 +62,7 @@ type Antenna = {
     userGroupId: ID | null;
     users: string[];
     caseSensitive: boolean;
+    localOnly: boolean;
     notify: boolean;
     withReplies: boolean;
     withFile: boolean;
@@ -111,6 +134,20 @@ type Blocking = {
 // @public (undocumented)
 type Channel = {
     id: ID;
+    lastNotedAt: Date | null;
+    userId: User['id'] | null;
+    user: User | null;
+    name: string;
+    description: string | null;
+    bannerId: DriveFile['id'] | null;
+    banner: DriveFile | null;
+    pinnedNoteIds: string[];
+    color: string;
+    isArchived: boolean;
+    notesCount: number;
+    usersCount: number;
+    isSensitive: boolean;
+    allowRenoteToExternal: boolean;
 };
 
 // Warning: (ae-forgotten-export) The symbol "AnyOf" needs to be exported by the entry point index.d.ts
@@ -329,8 +366,8 @@ export type Endpoints = {
         res: TODO;
     };
     'admin/meta': {
-        req: TODO;
-        res: TODO;
+        req: NoParams;
+        res: AdminInstanceMetadata;
     };
     'admin/reset-password': {
         req: TODO;
@@ -1162,6 +1199,7 @@ export type Endpoints = {
     'following/create': {
         req: {
             userId: User['id'];
+            withReplies?: boolean;
         };
         res: User;
     };
@@ -1360,10 +1398,6 @@ export type Endpoints = {
         req: TODO;
         res: TODO;
     };
-    'i/get-word-muted-notes-count': {
-        req: TODO;
-        res: TODO;
-    };
     'i/import-following': {
         req: TODO;
         res: TODO;
@@ -1462,10 +1496,6 @@ export type Endpoints = {
         };
         res: null;
     };
-    'i/registry/scopes': {
-        req: NoParams;
-        res: string[][];
-    };
     'i/registry/set': {
         req: {
             key: string;
@@ -1524,7 +1554,7 @@ export type Endpoints = {
             receiveAnnouncementEmail?: boolean;
             alwaysMarkNsfw?: boolean;
             mutedWords?: string[][];
-            mutingNotificationTypes?: Notification_2['type'][];
+            notificationRecieveConfig?: any;
             emailNotificationTypes?: string[];
             alsoKnownAs?: string[];
         };
@@ -1897,6 +1927,10 @@ export type Endpoints = {
         };
         res: null;
     };
+    'notifications/test-notification': {
+        req: NoParams;
+        res: null;
+    };
     'notifications/mark-all-as-read': {
         req: NoParams;
         res: null;
@@ -2163,6 +2197,10 @@ export type Endpoints = {
         req: TODO;
         res: TODO;
     };
+    'users/flashs': {
+        req: TODO;
+        res: TODO;
+    };
     'users/recommendation': {
         req: TODO;
         res: TODO;
@@ -2201,6 +2239,22 @@ export type Endpoints = {
             };
         };
     };
+    'fetch-rss': {
+        req: {
+            url: string;
+        };
+        res: TODO;
+    };
+    'fetch-external-resources': {
+        req: {
+            url: string;
+            hash: string;
+        };
+        res: {
+            type: string;
+            data: string;
+        };
+    };
 };
 
 declare namespace entities {
@@ -2226,6 +2280,7 @@ declare namespace entities {
         LiteInstanceMetadata,
         DetailedInstanceMetadata,
         InstanceMetadata,
+        AdminInstanceMetadata,
         ServerInfo,
         Stats,
         Page,
@@ -2248,7 +2303,8 @@ declare namespace entities {
         Invite,
         InviteLimit,
         UserSorting,
-        OriginType
+        OriginType,
+        ModerationLog
     }
 }
 export { entities }
@@ -2317,7 +2373,7 @@ type ID = string;
 // @public (undocumented)
 type Instance = {
     id: ID;
-    caughtAt: DateString;
+    firstRetrievedAt: DateString;
     host: string;
     usersCount: number;
     notesCount: number;
@@ -2331,6 +2387,8 @@ type Instance = {
     lastCommunicatedAt: DateString;
     isNotResponding: boolean;
     isSuspended: boolean;
+    isSilenced: boolean;
+    isBlocked: boolean;
     softwareName: string | null;
     softwareVersion: string | null;
     openRegistrations: boolean | null;
@@ -2373,12 +2431,15 @@ type LiteInstanceMetadata = {
     maintainerEmail: string | null;
     version: string;
     name: string | null;
+    shortName: string | null;
     uri: string;
     description: string | null;
     langs: string[];
     tosUrl: string | null;
     repositoryUrl: string;
     feedbackUrl: string;
+    impressumUrl: string | null;
+    privacyPolicyUrl: string | null;
     disableRegistration: boolean;
     disableLocalTimeline: boolean;
     disableGlobalTimeline: boolean;
@@ -2417,6 +2478,7 @@ type LiteInstanceMetadata = {
         url: string;
         imageUrl: string;
     }[];
+    notesPerOneAd: number;
     translatorAvailable: boolean;
     serverRules: string[];
 };
@@ -2436,16 +2498,34 @@ type MeDetailed = UserDetailed & {
     hasUnreadMessagingMessage: boolean;
     hasUnreadNotification: boolean;
     hasUnreadSpecifiedNotes: boolean;
+    unreadNotificationsCount: number;
     hideOnlineStatus: boolean;
     injectFeaturedNote: boolean;
     integrations: Record<string, any>;
     isDeleted: boolean;
     isExplorable: boolean;
     mutedWords: string[][];
-    mutingNotificationTypes: string[];
+    notificationRecieveConfig: {
+        [notificationType in typeof notificationTypes_2[number]]?: {
+            type: 'all';
+        } | {
+            type: 'never';
+        } | {
+            type: 'following';
+        } | {
+            type: 'follower';
+        } | {
+            type: 'mutualFollow';
+        } | {
+            type: 'list';
+            userListId: string;
+        };
+    };
     noCrawle: boolean;
     receiveAnnouncementEmail: boolean;
     usePasswordLessLogin: boolean;
+    unreadAnnouncements: Announcement[];
+    twoFactorBackupCodesStock: 'full' | 'partial' | 'none';
     [other: string]: any;
 };
 
@@ -2483,6 +2563,122 @@ type MessagingMessage = {
 };
 
 // @public (undocumented)
+type ModerationLog = {
+    id: ID;
+    createdAt: DateString;
+    userId: User['id'];
+    user: UserDetailed | null;
+} & ({
+    type: 'updateServerSettings';
+    info: ModerationLogPayloads['updateServerSettings'];
+} | {
+    type: 'suspend';
+    info: ModerationLogPayloads['suspend'];
+} | {
+    type: 'unsuspend';
+    info: ModerationLogPayloads['unsuspend'];
+} | {
+    type: 'updateUserNote';
+    info: ModerationLogPayloads['updateUserNote'];
+} | {
+    type: 'addCustomEmoji';
+    info: ModerationLogPayloads['addCustomEmoji'];
+} | {
+    type: 'updateCustomEmoji';
+    info: ModerationLogPayloads['updateCustomEmoji'];
+} | {
+    type: 'deleteCustomEmoji';
+    info: ModerationLogPayloads['deleteCustomEmoji'];
+} | {
+    type: 'assignRole';
+    info: ModerationLogPayloads['assignRole'];
+} | {
+    type: 'unassignRole';
+    info: ModerationLogPayloads['unassignRole'];
+} | {
+    type: 'createRole';
+    info: ModerationLogPayloads['createRole'];
+} | {
+    type: 'updateRole';
+    info: ModerationLogPayloads['updateRole'];
+} | {
+    type: 'deleteRole';
+    info: ModerationLogPayloads['deleteRole'];
+} | {
+    type: 'clearQueue';
+    info: ModerationLogPayloads['clearQueue'];
+} | {
+    type: 'promoteQueue';
+    info: ModerationLogPayloads['promoteQueue'];
+} | {
+    type: 'deleteDriveFile';
+    info: ModerationLogPayloads['deleteDriveFile'];
+} | {
+    type: 'deleteNote';
+    info: ModerationLogPayloads['deleteNote'];
+} | {
+    type: 'createGlobalAnnouncement';
+    info: ModerationLogPayloads['createGlobalAnnouncement'];
+} | {
+    type: 'createUserAnnouncement';
+    info: ModerationLogPayloads['createUserAnnouncement'];
+} | {
+    type: 'updateGlobalAnnouncement';
+    info: ModerationLogPayloads['updateGlobalAnnouncement'];
+} | {
+    type: 'updateUserAnnouncement';
+    info: ModerationLogPayloads['updateUserAnnouncement'];
+} | {
+    type: 'deleteGlobalAnnouncement';
+    info: ModerationLogPayloads['deleteGlobalAnnouncement'];
+} | {
+    type: 'deleteUserAnnouncement';
+    info: ModerationLogPayloads['deleteUserAnnouncement'];
+} | {
+    type: 'resetPassword';
+    info: ModerationLogPayloads['resetPassword'];
+} | {
+    type: 'suspendRemoteInstance';
+    info: ModerationLogPayloads['suspendRemoteInstance'];
+} | {
+    type: 'unsuspendRemoteInstance';
+    info: ModerationLogPayloads['unsuspendRemoteInstance'];
+} | {
+    type: 'markSensitiveDriveFile';
+    info: ModerationLogPayloads['markSensitiveDriveFile'];
+} | {
+    type: 'unmarkSensitiveDriveFile';
+    info: ModerationLogPayloads['unmarkSensitiveDriveFile'];
+} | {
+    type: 'createInvitation';
+    info: ModerationLogPayloads['createInvitation'];
+} | {
+    type: 'createAd';
+    info: ModerationLogPayloads['createAd'];
+} | {
+    type: 'updateAd';
+    info: ModerationLogPayloads['updateAd'];
+} | {
+    type: 'deleteAd';
+    info: ModerationLogPayloads['deleteAd'];
+} | {
+    type: 'createAvatarDecoration';
+    info: ModerationLogPayloads['createAvatarDecoration'];
+} | {
+    type: 'updateAvatarDecoration';
+    info: ModerationLogPayloads['updateAvatarDecoration'];
+} | {
+    type: 'deleteAvatarDecoration';
+    info: ModerationLogPayloads['deleteAvatarDecoration'];
+} | {
+    type: 'resolveAbuseReport';
+    info: ModerationLogPayloads['resolveAbuseReport'];
+});
+
+// @public (undocumented)
+export const moderationLogTypes: readonly ["updateServerSettings", "suspend", "unsuspend", "updateUserNote", "addCustomEmoji", "updateCustomEmoji", "deleteCustomEmoji", "assignRole", "unassignRole", "createRole", "updateRole", "deleteRole", "clearQueue", "promoteQueue", "deleteDriveFile", "deleteNote", "createGlobalAnnouncement", "createUserAnnouncement", "updateGlobalAnnouncement", "updateUserAnnouncement", "deleteGlobalAnnouncement", "deleteUserAnnouncement", "resetPassword", "suspendRemoteInstance", "unsuspendRemoteInstance", "markSensitiveDriveFile", "unmarkSensitiveDriveFile", "resolveAbuseReport", "createInvitation", "createAd", "updateAd", "deleteAd", "createAvatarDecoration", "updateAvatarDecoration", "deleteAvatarDecoration"];
+
+// @public (undocumented)
 export const mutedNoteReasons: readonly ["word", "manual", "spam", "other"];
 
 // @public (undocumented)
@@ -2501,11 +2697,14 @@ type Note = {
     fileIds: DriveFile['id'][];
     visibility: 'public' | 'home' | 'followers' | 'specified';
     visibleUserIds?: User['id'][];
+    channel?: Channel;
+    channelId?: Channel['id'];
     localOnly?: boolean;
     myReaction?: string;
     reactions: Record<string, number>;
     renoteCount: number;
     repliesCount: number;
+    clippedCount?: number;
     poll?: {
         expiresAt: DateString | null;
         multiple: boolean;
@@ -2575,7 +2774,12 @@ type Notification_2 = {
     userId: User['id'];
     note: Note;
 } | {
-    type: 'pollVote';
+    type: 'note';
+    user: User;
+    userId: User['id'];
+    note: Note;
+} | {
+    type: 'pollEnded';
     user: User;
     userId: User['id'];
     note: Note;
@@ -2597,14 +2801,19 @@ type Notification_2 = {
     user: User;
     userId: User['id'];
 } | {
+    type: 'achievementEarned';
+    achievement: string;
+} | {
     type: 'app';
     header?: string | null;
     body: string;
     icon?: string | null;
+} | {
+    type: 'test';
 });
 
 // @public (undocumented)
-export const notificationTypes: readonly ["follow", "mention", "reply", "renote", "quote", "reaction", "pollVote", "pollEnded", "receiveFollowRequest", "followRequestAccepted", "groupInvited", "app"];
+export const notificationTypes: readonly ["note", "follow", "mention", "reply", "renote", "quote", "reaction", "pollVote", "pollEnded", "receiveFollowRequest", "followRequestAccepted", "groupInvited", "app", "achievementEarned"];
 
 // @public (undocumented)
 type OriginType = 'combined' | 'local' | 'remote';
@@ -2640,6 +2849,9 @@ type PageEvent = {
     userId: User['id'];
     user: User;
 };
+
+// @public (undocumented)
+function parse(acct: string): Acct;
 
 // @public (undocumented)
 export const permissions: string[];
@@ -2720,6 +2932,9 @@ export class Stream extends EventEmitter<StreamEvents> {
 }
 
 // @public (undocumented)
+function toString_2(acct: Acct): string;
+
+// @public (undocumented)
 type User = UserLite | UserDetailed;
 
 // @public (undocumented)
@@ -2736,6 +2951,7 @@ type UserDetailed = UserLite & {
         name: string;
         value: string;
     }[];
+    verifiedLinks: string[];
     followersCount: number;
     followingCount: number;
     hasPendingFollowRequestFromYou: boolean;
@@ -2767,6 +2983,7 @@ type UserDetailed = UserLite & {
     updatedAt: DateString | null;
     uri: string | null;
     url: string | null;
+    notify: 'normal' | 'none';
 };
 
 // @public (undocumented)
@@ -2785,10 +3002,16 @@ type UserLite = {
     id: ID;
     username: string;
     host: string | null;
-    name: string;
+    name: string | null;
     onlineStatus: 'online' | 'active' | 'offline' | 'unknown';
     avatarUrl: string;
     avatarBlurhash: string;
+    avatarDecorations: {
+        id: ID;
+        url: string;
+        angle?: number;
+        flipH?: boolean;
+    }[];
     emojis: {
         name: string;
         url: string;
@@ -2801,6 +3024,8 @@ type UserLite = {
         faviconUrl: Instance['faviconUrl'];
         themeColor: Instance['themeColor'];
     };
+    isCat?: boolean;
+    isBot?: boolean;
 };
 
 // @public (undocumented)
@@ -2810,7 +3035,9 @@ type UserSorting = '+follower' | '-follower' | '+createdAt' | '-createdAt' | '+u
 //
 // src/api.types.ts:16:32 - (ae-forgotten-export) The symbol "TODO" needs to be exported by the entry point index.d.ts
 // src/api.types.ts:18:25 - (ae-forgotten-export) The symbol "NoParams" needs to be exported by the entry point index.d.ts
-// src/api.types.ts:629:18 - (ae-forgotten-export) The symbol "ShowUserReq" needs to be exported by the entry point index.d.ts
+// src/api.types.ts:632:18 - (ae-forgotten-export) The symbol "ShowUserReq" needs to be exported by the entry point index.d.ts
+// src/entities.ts:116:2 - (ae-forgotten-export) The symbol "notificationTypes_2" needs to be exported by the entry point index.d.ts
+// src/entities.ts:627:2 - (ae-forgotten-export) The symbol "ModerationLogPayloads" needs to be exported by the entry point index.d.ts
 // src/streaming.types.ts:33:4 - (ae-forgotten-export) The symbol "FIXME" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)

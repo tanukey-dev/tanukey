@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
 import type { DriveFilesRepository } from '@/models/index.js';
@@ -32,7 +37,7 @@ export class ApImageService {
 	 * Imageを作成します。
 	 */
 	@bindThis
-	public async createImage(actor: RemoteUser, value: string | IObject): Promise<DriveFile> {
+	public async createImage(actor: MiRemoteUser, value: string | IObject): Promise<MiDriveFile> {
 		// 投稿者が凍結されていたらスキップ
 		if (actor.isSuspended) {
 			throw new Error('actor has been suspended');
@@ -76,7 +81,7 @@ export class ApImageService {
 	 * リモートサーバーからフェッチしてMisskeyに登録しそれを返します。
 	 */
 	@bindThis
-	public async resolveImage(actor: RemoteUser, value: string | IObject): Promise<DriveFile> {
+	public async resolveImage(actor: MiRemoteUser, value: string | IObject): Promise<MiDriveFile> {
 		// TODO
 
 		// リモートサーバーからフェッチしてきて登録
