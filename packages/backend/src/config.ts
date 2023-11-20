@@ -139,6 +139,21 @@ export type Config = {
 		index: string;
 		scope?: 'local' | 'global' | string[];
 	} | undefined;
+	s3: {
+		baseUrl: string;
+		bucket: string;
+		prefix: string;
+		endpoint: string;
+		region?: string;
+		useSSL: boolean;
+		accessKey: string;
+		secretKey: string;
+		options?: {
+			setPublicRead?: boolean;
+			forcePathStyle?: boolean;
+			useProxy?: boolean;
+		}
+	} | undefined;
 	proxy: string | undefined;
 	proxySmtp: string | undefined;
 	proxyBypassHosts: string[] | undefined;
@@ -241,6 +256,7 @@ export function loadConfig(): Config {
 		dbReplications: config.dbReplications,
 		dbSlaves: config.dbSlaves,
 		meilisearch: config.meilisearch,
+		s3: config.s3,
 		redis,
 		redisForPubsub: config.redisForPubsub ? convertRedisOptions(config.redisForPubsub, host) : redis,
 		redisForJobQueue: config.redisForJobQueue ? convertRedisOptions(config.redisForJobQueue, host) : redis,
