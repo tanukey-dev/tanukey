@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 <template>
 <MkStickyContainer>
 	<template #header><XHeader :actions="headerActions" :tabs="headerTabs"/></template>
@@ -68,6 +73,13 @@
 						<MkSwitch v-model="enableActiveEmailValidation" @update:modelValue="save">
 							<template #label>Enable</template>
 						</MkSwitch>
+						<MkSwitch v-model="enableVerifymailApi" @update:modelValue="save">
+							<template #label>Use Verifymail API</template>
+						</MkSwitch>
+						<MkInput v-model="verifymailAuthKey" @update:modelValue="save">
+							<template #prefix><i class="ti ti-key"></i></template>
+							<template #label>Verifymail API Auth Key</template>
+						</MkInput>
 					</div>
 				</MkFolder>
 
@@ -112,10 +124,10 @@ import FormSuspense from '@/components/form/suspense.vue';
 import MkRange from '@/components/MkRange.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { fetchInstance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import * as os from '@/os.js';
+import { fetchInstance } from '@/instance.js';
+import { i18n } from '@/i18n.js';
+import { definePageMetadata } from '@/scripts/page-metadata.js';
 
 let summalyProxy: string = $ref('');
 let enableHcaptcha: boolean = $ref(false);
@@ -127,6 +139,8 @@ let setSensitiveFlagAutomatically: boolean = $ref(false);
 let enableSensitiveMediaDetectionForVideos: boolean = $ref(false);
 let enableIpLogging: boolean = $ref(false);
 let enableActiveEmailValidation: boolean = $ref(false);
+let enableVerifymailApi: boolean = $ref(false);
+let verifymailAuthKey: string | null = $ref(null);
 
 async function init() {
 	const meta = await os.api('admin/meta');
@@ -145,6 +159,8 @@ async function init() {
 	enableSensitiveMediaDetectionForVideos = meta.enableSensitiveMediaDetectionForVideos;
 	enableIpLogging = meta.enableIpLogging;
 	enableActiveEmailValidation = meta.enableActiveEmailValidation;
+	enableVerifymailApi = meta.enableVerifymailApi;
+	verifymailAuthKey = meta.verifymailAuthKey;
 }
 
 function save() {
@@ -162,6 +178,8 @@ function save() {
 		enableSensitiveMediaDetectionForVideos,
 		enableIpLogging,
 		enableActiveEmailValidation,
+		enableVerifymailApi,
+		verifymailAuthKey,
 	}).then(() => {
 		fetchInstance();
 	});

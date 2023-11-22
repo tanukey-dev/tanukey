@@ -43,8 +43,8 @@ jobs:
           platforms: ${{ steps.buildx.outputs.platforms }}
           provenance: false
           labels: ${{ env.FORMATTED_BRANCH_NAME }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=ghcr.io/misskeyio/misskey:host-buildcache
+          cache-to: type=registry,ref=ghcr.io/misskeyio/misskey:host-buildcache,mode=max
           tags: |
             ghcr.io/misskeyio/misskey:host
             ghcr.io/misskeyio/misskey:${{ env.FORMATTED_BRANCH_NAME }}

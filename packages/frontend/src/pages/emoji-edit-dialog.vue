@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 <template>
 <MkModalWindow
 	ref="dialog"
@@ -26,13 +31,13 @@
 					</div>
 				</div>
 				<MkButton rounded style="margin: 0 auto;" @click="changeImage">{{ i18n.ts.selectFile }}</MkButton>
-				<MkInput v-model="name" pattern="[a-z0-9_]">
+				<MkInput v-model="name" pattern="[a-z0-9_]" autocapitalize="off">
 					<template #label>{{ i18n.ts.name }}</template>
 				</MkInput>
 				<MkInput v-model="category" :datalist="customEmojiCategories">
 					<template #label>{{ i18n.ts.category }}</template>
 				</MkInput>
-				<MkInput v-model="aliases">
+				<MkInput v-model="aliases" autocapitalize="off">
 					<template #label>{{ i18n.ts.tags }}</template>
 					<template #caption>{{ i18n.ts.setMultipleBySeparatingWithSpace }}</template>
 				</MkInput>
@@ -58,7 +63,7 @@
 				</MkFolder>
 				<MkSwitch v-model="isSensitive">isSensitive</MkSwitch>
 				<MkSwitch v-model="localOnly">{{ i18n.ts.localOnly }}</MkSwitch>
-				<MkButton danger @click="del()"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+				<MkButton v-if="emoji" danger @click="del()"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
 			</div>
 		</MkSpacer>
 		<div :class="$style.footer">
@@ -70,17 +75,17 @@
 
 <script lang="ts" setup>
 import { computed, watch } from 'vue';
-import * as misskey from 'misskey-js';
+import * as Misskey from 'misskey-js';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkFolder from '@/components/MkFolder.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { customEmojiCategories } from '@/custom-emojis';
+import * as os from '@/os.js';
+import { i18n } from '@/i18n.js';
+import { customEmojiCategories } from '@/custom-emojis.js';
 import MkSwitch from '@/components/MkSwitch.vue';
-import { selectFile, selectFiles } from '@/scripts/select-file';
+import { selectFile, selectFiles } from '@/scripts/select-file.js';
 import MkRolePreview from '@/components/MkRolePreview.vue';
 
 const props = defineProps<{
@@ -96,7 +101,7 @@ let isSensitive = $ref(props.emoji ? props.emoji.isSensitive : false);
 let localOnly = $ref(props.emoji ? props.emoji.localOnly : false);
 let roleIdsThatCanBeUsedThisEmojiAsReaction = $ref(props.emoji ? props.emoji.roleIdsThatCanBeUsedThisEmojiAsReaction : []);
 let rolesThatCanBeUsedThisEmojiAsReaction = $ref([]);
-let file = $ref<misskey.entities.DriveFile>();
+let file = $ref<Misskey.entities.DriveFile>();
 
 watch($$(roleIdsThatCanBeUsedThisEmojiAsReaction), async () => {
 	rolesThatCanBeUsedThisEmojiAsReaction = (await Promise.all(roleIdsThatCanBeUsedThisEmojiAsReaction.map((id) => os.api('admin/roles/show', { roleId: id }).catch(() => null)))).filter(x => x != null);

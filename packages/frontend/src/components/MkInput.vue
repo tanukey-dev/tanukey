@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 <template>
 <div>
 	<div :class="$style.label" @click="focus"><slot name="label"></slot></div>
@@ -15,9 +20,12 @@
 			:placeholder="placeholder"
 			:pattern="pattern"
 			:autocomplete="autocomplete"
+			:autocapitalize="autocapitalize"
 			:spellcheck="spellcheck"
 			:step="step"
 			:list="id"
+			:min="min"
+			:max="max"
 			@focus="focused = true"
 			@blur="focused = false"
 			@keydown="onKeydown($event)"
@@ -38,8 +46,8 @@
 import { onMounted, nextTick, ref, shallowRef, watch, computed, toRefs } from 'vue';
 import { debounce } from 'throttle-debounce';
 import MkButton from '@/components/MkButton.vue';
-import { useInterval } from '@/scripts/use-interval';
-import { i18n } from '@/i18n';
+import { useInterval } from '@/scripts/use-interval.js';
+import { i18n } from '@/i18n.js';
 
 const props = defineProps<{
 	modelValue: string | number | null;
@@ -51,9 +59,12 @@ const props = defineProps<{
 	placeholder?: string;
 	autofocus?: boolean;
 	autocomplete?: string;
+	autocapitalize?: string;
 	spellcheck?: boolean;
 	step?: any;
 	datalist?: string[];
+	min?: number;
+	max?: number;
 	inline?: boolean;
 	debounce?: boolean;
 	manualSave?: boolean;
@@ -149,6 +160,10 @@ onMounted(() => {
 			focus();
 		}
 	});
+});
+
+defineExpose({
+	focus,
 });
 </script>
 

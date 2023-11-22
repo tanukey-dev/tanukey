@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 <template>
 <div
 	:class="[$style.root, { [$style.modal]: modal, _popup: modal }]"
@@ -68,7 +73,7 @@
 	<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
 	<XPostFormAttaches v-model="files" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName" @replaceFile="replaceFile"/>
 	<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
-	<MkNotePreview v-if="showPreview" :class="$style.preview" :text="text"/>
+	<MkNotePreview v-if="showPreview" :class="$style.preview" :text="text" :user="postAccount ?? $i"/>
 	<div v-if="showingOptions" style="padding: 8px 16px;">
 	</div>
 	<footer :class="$style.footer">
@@ -93,61 +98,67 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, watch, nextTick, onMounted, defineAsyncComponent } from 'vue';
+import { inject, watch, nextTick, onMounted, defineAsyncComponent, provide } from 'vue';
 import * as mfm from 'mfm-js';
-import * as misskey from 'misskey-js';
+import * as Misskey from 'misskey-js';
 import insertTextAtCursor from 'insert-text-at-cursor';
 import { toASCII } from 'punycode/';
-import * as Acct from 'misskey-js/built/acct';
 import MkNoteSimple from '@/components/MkNoteSimple.vue';
 import MkNotePreview from '@/components/MkNotePreview.vue';
 import XPostFormAttaches from '@/components/MkPostFormAttaches.vue';
 import MkPollEditor from '@/components/MkPollEditor.vue';
-import { host, url } from '@/config';
-import { erase, unique } from '@/scripts/array';
-import { extractMentions } from '@/scripts/extract-mentions';
-import { formatTimeString } from '@/scripts/format-time-string';
-import { Autocomplete } from '@/scripts/autocomplete';
-import * as os from '@/os';
-import { selectFiles } from '@/scripts/select-file';
-import { defaultStore, notePostInterruptors, postFormActions } from '@/store';
+import { host, url } from '@/config.js';
+import { erase, unique } from '@/scripts/array.js';
+import { extractMentions } from '@/scripts/extract-mentions.js';
+import { formatTimeString } from '@/scripts/format-time-string.js';
+import { Autocomplete } from '@/scripts/autocomplete.js';
+import * as os from '@/os.js';
+import { selectFiles } from '@/scripts/select-file.js';
+import { defaultStore, notePostInterruptors, postFormActions } from '@/store.js';
 import MkInfo from '@/components/MkInfo.vue';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import { $i, notesCount, incNotesCount, getAccounts, openAccountMenu as openAccountMenu_ } from '@/account';
-import { uploadFile } from '@/scripts/upload';
-import { deepClone } from '@/scripts/clone';
+import { i18n } from '@/i18n.js';
+import { instance } from '@/instance.js';
+import { $i, notesCount, incNotesCount, getAccounts, openAccountMenu as openAccountMenu_ } from '@/account.js';
+import { uploadFile } from '@/scripts/upload.js';
+import { deepClone } from '@/scripts/clone.js';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
-import { miLocalStorage } from '@/local-storage';
-import { claimAchievement } from '@/scripts/achievements';
+import { miLocalStorage } from '@/local-storage.js';
+import { claimAchievement } from '@/scripts/achievements.js';
 
 const modal = inject('modal');
 
 const props = withDefaults(defineProps<{
-	reply?: misskey.entities.Note;
-	renote?: misskey.entities.Note;
-	channel?: misskey.entities.Channel; // TODO
-	mention?: misskey.entities.User;
-	specified?: misskey.entities.User;
+	reply?: Misskey.entities.Note;
+	renote?: Misskey.entities.Note;
+	channel?: Misskey.entities.Channel; // TODO
+	mention?: Misskey.entities.User;
+	specified?: Misskey.entities.User;
 	initialText?: string;
-	initialVisibility?: (typeof misskey.noteVisibilities)[number];
-	initialFiles?: misskey.entities.DriveFile[];
+	initialVisibility?: (typeof Misskey.noteVisibilities)[number];
+	initialFiles?: Misskey.entities.DriveFile[];
 	initialLocalOnly?: boolean;
-	initialVisibleUsers?: misskey.entities.User[];
-	initialNote?: misskey.entities.Note;
+	initialVisibleUsers?: Misskey.entities.User[];
+	initialNote?: Misskey.entities.Note;
 	instant?: boolean;
 	fixed?: boolean;
 	autofocus?: boolean;
 	freezeAfterPosted?: boolean;
+	mock?: boolean;
 }>(), {
 	initialVisibleUsers: () => [],
 	autofocus: true,
+	mock: false,
 });
+
+provide('mock', props.mock);
 
 const emit = defineEmits<{
 	(ev: 'posted'): void;
 	(ev: 'cancel'): void;
 	(ev: 'esc'): void;
+
+	// Mock用
+	(ev: 'fileChangeSensitive', fileId: string, to: boolean): void;
 }>();
 
 const textareaEl = $shallowRef<HTMLTextAreaElement | null>(null);
@@ -166,10 +177,11 @@ let poll = $ref<{
 	expiredAfter: string | null;
 } | null>(null);
 let useCw = $ref(false);
-let showPreview = $ref(false);
+let showPreview = $ref(defaultStore.state.showPreview);
+watch($$(showPreview), () => defaultStore.set('showPreview', showPreview));
 let cw = $ref<string | null>(null);
 let localOnly = $ref<boolean>(props.initialLocalOnly ?? defaultStore.state.rememberNoteVisibility ? defaultStore.state.localOnly : defaultStore.state.defaultNoteLocalOnly);
-let visibility = $ref(props.initialVisibility ?? (defaultStore.state.rememberNoteVisibility ? defaultStore.state.visibility : defaultStore.state.defaultNoteVisibility) as typeof misskey.noteVisibilities[number]);
+let visibility = $ref(props.initialVisibility ?? (defaultStore.state.rememberNoteVisibility ? defaultStore.state.visibility : defaultStore.state.defaultNoteVisibility) as typeof Misskey.noteVisibilities[number]);
 let visibleUsers = $ref([]);
 if (props.initialVisibleUsers) {
 	props.initialVisibleUsers.forEach(pushVisibleUser);
@@ -234,7 +246,7 @@ const maxTextLength = $computed((): number => {
 });
 
 const canPost = $computed((): boolean => {
-	return !posting && !posted &&
+	return !props.mock && !posting && !posted &&
 		(1 <= textLength || 1 <= files.length || !!poll || !!props.renote) &&
 		(textLength <= maxTextLength) &&
 		(!poll || poll.choices.length >= 2);
@@ -285,6 +297,10 @@ if (props.reply && props.reply.text != null) {
 
 		text += `${mention} `;
 	}
+}
+
+if ($i?.isSilenced && visibility === 'public') {
+	visibility = 'home';
 }
 
 if (props.channel) {
@@ -391,6 +407,8 @@ function focus() {
 }
 
 function chooseFileFrom(ev) {
+	if (props.mock) return;
+
 	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(files_ => {
 		for (const file of files_) {
 			files.push(file);
@@ -403,6 +421,9 @@ function detachFile(id) {
 }
 
 function updateFileSensitive(file, sensitive) {
+	if (props.mock) {
+		emit('fileChangeSensitive', file.id, sensitive);
+	}
 	files[files.findIndex(x => x.id === file.id)].isSensitive = sensitive;
 }
 
@@ -410,11 +431,13 @@ function updateFileName(file, name) {
 	files[files.findIndex(x => x.id === file.id)].name = name;
 }
 
-function replaceFile(file: misskey.entities.DriveFile, newFile: misskey.entities.DriveFile): void {
+function replaceFile(file: Misskey.entities.DriveFile, newFile: Misskey.entities.DriveFile): void {
 	files[files.findIndex(x => x.id === file.id)] = newFile;
 }
 
 function upload(file: File, name?: string): void {
+	if (props.mock) return;
+
 	uploadFile(file, defaultStore.state.uploadFolder, name).then(res => {
 		files.push(res);
 	});
@@ -429,6 +452,7 @@ function setVisibility() {
 
 	os.popup(defineAsyncComponent(() => import('@/components/MkVisibilityPicker.vue')), {
 		currentVisibility: visibility,
+		isSilenced: $i?.isSilenced,
 		localOnly: localOnly,
 		src: visibilityButton,
 	}, {
@@ -510,7 +534,7 @@ function addVisibleUser() {
 		pushVisibleUser(user);
 
 		if (!text.toLowerCase().includes(`@${user.username.toLowerCase()}`)) {
-			text = `@${Acct.toString(user)} ${text}`;
+			text = `@${Misskey.acct.toString(user)} ${text}`;
 		}
 	});
 }
@@ -540,6 +564,8 @@ function onCompositionEnd(ev: CompositionEvent) {
 }
 
 async function onPaste(ev: ClipboardEvent) {
+	if (props.mock) return;
+
 	for (const { item, i } of Array.from(ev.clipboardData.items, (item, i) => ({ item, i }))) {
 		if (item.kind === 'file') {
 			const file = item.getAsFile();
@@ -624,6 +650,8 @@ function onDrop(ev): void {
 }
 
 function saveDraft() {
+	if (props.instant || props.mock) return;
+
 	const draftData = JSON.parse(miLocalStorage.getItem('drafts') ?? '{}');
 
 	draftData[draftKey] = {
@@ -651,6 +679,14 @@ function deleteDraft() {
 }
 
 async function post(ev?: MouseEvent) {
+	if (useCw && (cw == null || cw.trim() === '')) {
+		os.alert({
+			type: 'error',
+			text: i18n.ts.cwNotationRequired,
+		});
+		return;
+	}
+
 	if (ev) {
 		const el = ev.currentTarget ?? ev.target;
 		const rect = el.getBoundingClientRect();
@@ -658,6 +694,8 @@ async function post(ev?: MouseEvent) {
 		const y = rect.top + (el.offsetHeight / 2);
 		os.popup(MkRippleEffect, { x, y }, {}, 'end');
 	}
+
+	if (props.mock) return;
 
 	const annoying =
 		text.includes('$[x2') ||
@@ -691,13 +729,13 @@ async function post(ev?: MouseEvent) {
 	}
 
 	let postData = {
-		text: text === '' ? undefined : text,
+		text: text === '' ? null : text,
 		fileIds: files.length > 0 ? files.map(f => f.id) : undefined,
 		replyId: props.reply ? props.reply.id : undefined,
 		renoteId: props.renote ? props.renote.id : quoteId ? quoteId : undefined,
 		channelId: props.channel ? props.channel.id : undefined,
 		poll: poll,
-		cw: useCw ? cw ?? '' : undefined,
+		cw: useCw ? cw ?? '' : null,
 		localOnly: localOnly,
 		visibility: visibility,
 		visibleUserIds: visibility === 'specified' ? visibleUsers.map(u => u.id) : undefined,
@@ -712,7 +750,11 @@ async function post(ev?: MouseEvent) {
 	// plugin
 	if (notePostInterruptors.length > 0) {
 		for (const interruptor of notePostInterruptors) {
-			postData = await interruptor.handler(deepClone(postData));
+			try {
+				postData = await interruptor.handler(deepClone(postData));
+			} catch (err) {
+				console.error(err);
+			}
 		}
 	}
 
@@ -746,18 +788,25 @@ async function post(ev?: MouseEvent) {
 				claimAchievement('notes1');
 			}
 
-			const text = postData.text?.toLowerCase() ?? '';
-			if ((text.includes('love') || text.includes('❤')) && text.includes('misskey')) {
+			const text = postData.text ?? '';
+			const lowerCase = text.toLowerCase();
+			if ((lowerCase.includes('love') || lowerCase.includes('❤')) && lowerCase.includes('misskey')) {
 				claimAchievement('iLoveMisskey');
 			}
-			if (
-				text.includes('https://youtu.be/Efrlqw8ytg4'.toLowerCase()) ||
-				text.includes('https://www.youtube.com/watch?v=Efrlqw8ytg4'.toLowerCase()) ||
-				text.includes('https://m.youtube.com/watch?v=Efrlqw8ytg4'.toLowerCase()) ||
-				text.includes('https://youtu.be/XVCwzwxdHuA'.toLowerCase()) ||
-				text.includes('https://www.youtube.com/watch?v=XVCwzwxdHuA'.toLowerCase()) ||
-				text.includes('https://m.youtube.com/watch?v=XVCwzwxdHuA'.toLowerCase())
-			) {
+			if ([
+				'https://youtu.be/Efrlqw8ytg4',
+				'https://www.youtube.com/watch?v=Efrlqw8ytg4',
+				'https://m.youtube.com/watch?v=Efrlqw8ytg4',
+
+				'https://youtu.be/XVCwzwxdHuA',
+				'https://www.youtube.com/watch?v=XVCwzwxdHuA',
+				'https://m.youtube.com/watch?v=XVCwzwxdHuA',
+
+				'https://open.spotify.com/track/3Cuj0mZrlLoXx9nydNi7RB',
+				'https://open.spotify.com/track/7anfcaNPQWlWCwyCHmZqNy',
+				'https://open.spotify.com/track/5Odr16TvEN4my22K9nbH7l',
+				'https://open.spotify.com/album/5bOlxyl4igOrp2DwVQxBco',
+			].some(url => text.includes(url))) {
 				claimAchievement('brainDiver');
 			}
 
@@ -791,7 +840,7 @@ function cancel() {
 
 function insertMention() {
 	os.selectUser().then(user => {
-		insertTextAtCursor(textareaEl, '@' + Acct.toString(user) + ' ');
+		insertTextAtCursor(textareaEl, '@' + Misskey.acct.toString(user) + ' ');
 	});
 }
 
@@ -805,16 +854,20 @@ function showActions(ev) {
 		action: () => {
 			action.handler({
 				text: text,
+				cw: cw,
 			}, (key, value) => {
 				if (key === 'text') { text = value; }
+				if (key === 'cw') { useCw = value !== null; cw = value; }
 			});
 		},
 	})), ev.currentTarget ?? ev.target);
 }
 
-let postAccount = $ref<misskey.entities.UserDetailed | null>(null);
+let postAccount = $ref<Misskey.entities.UserDetailed | null>(null);
 
 function openAccountMenu(ev: MouseEvent) {
+	if (props.mock) return;
+
 	openAccountMenu_({
 		withExtraOperation: false,
 		includeCurrentAccount: true,
@@ -845,7 +898,7 @@ onMounted(() => {
 
 	nextTick(() => {
 		// 書きかけの投稿を復元
-		if (!props.instant && !props.mention && !props.specified) {
+		if (!props.instant && !props.mention && !props.specified && !props.mock) {
 			const draft = JSON.parse(miLocalStorage.getItem('drafts') ?? '{}')[draftKey];
 			if (draft) {
 				text = draft.data.text;
@@ -1019,6 +1072,7 @@ defineExpose({
 
 .preview {
 	padding: 16px 20px 0 20px;
+	min-height: 75px;
 	max-height: 150px;
 	overflow: auto;
 }
