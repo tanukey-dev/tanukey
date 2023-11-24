@@ -215,12 +215,7 @@ export class MiUserProfile {
 	@Column('jsonb', {
 		default: [],
 	})
-	public mutedWords: (string[] | string)[];
-
-	@Column('jsonb', {
-		default: [],
-	})
-	public hardMutedWords: (string[] | string)[];
+	public mutedWords: string[][];
 
 	@Column('jsonb', {
 		default: [],

@@ -432,8 +432,7 @@ export type Endpoints = {
 		injectFeaturedNote?: boolean;
 		receiveAnnouncementEmail?: boolean;
 		alwaysMarkNsfw?: boolean;
-		mutedWords?: (string[] | string)[];
-		hardMutedWords?: (string[] | string)[];
+		mutedWords?: string[][];
 		notificationRecieveConfig?: any;
 		emailNotificationTypes?: string[];
 		alsoKnownAs?: string[];
