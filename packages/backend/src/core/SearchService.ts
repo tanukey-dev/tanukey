@@ -200,14 +200,6 @@ export class SearchService {
 				query.andWhere('note.channelId = :channelId', { channelId: opts.channelId });
 			}
 
-			if (opts.host) {
-				if (opts.host === '.') {
-					query.andWhere('note.userHost IS NULL');
-				} else {
-					query.andWhere('note.userHost = :host', { host: opts.host });
-				}
-			}
-
 			query
 				.andWhere('note.text ILIKE :q', { q: `%${ sqlLikeEscape(q) }%` })
 				.innerJoinAndSelect('note.user', 'user')
