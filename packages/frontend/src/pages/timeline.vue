@@ -154,7 +154,7 @@ const headerActions = $computed(() => {
 			icon: 'ti ti-dots',
 			text: i18n.ts.options,
 			handler: (ev) => {
-				os.popupMenu([{
+				os.popupMenu(src !== 'media' ? [{
 					type: 'switch',
 					text: i18n.ts.showRenotes,
 					icon: 'ti ti-repeat',
@@ -168,7 +168,7 @@ const headerActions = $computed(() => {
 					text: i18n.ts.fileAttachedOnly,
 					icon: 'ti ti-photo',
 					ref: $$(onlyFiles),
-				}], ev.currentTarget ?? ev.target);
+				}] : [], ev.currentTarget ?? ev.target);
 			},
 		},
 	];
