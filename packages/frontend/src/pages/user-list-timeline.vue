@@ -11,9 +11,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" :class="$style.newButton" @click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
 			<div :class="$style.tl">
 				<MkTimeline
-					ref="tlEl" :key="listId"
+					ref="tlEl" :key="listId + withRenotes + onlyFiles"
 					src="list"
 					:list="listId"
+					:withRenotes="withRenotes"
+					:onlyFiles="onlyFiles"
 					:sound="true"
 					@queue="queueUpdated"
 				/>
@@ -43,6 +45,9 @@ let queue = $ref(0);
 let tlEl = $shallowRef<InstanceType<typeof MkTimeline>>();
 let rootEl = $shallowRef<HTMLElement>();
 
+const withRenotes = $ref(true);
+const onlyFiles = $ref(false);
+
 watch(() => props.listId, async () => {
 	list = await os.api('users/lists/show', {
 		listId: props.listId,
@@ -65,6 +70,23 @@ const headerActions = $computed(() => list ? [{
 	icon: 'ti ti-settings',
 	text: i18n.ts.settings,
 	handler: settings,
+},
+{
+	icon: 'ti ti-dots',
+	text: i18n.ts.options,
+	handler: (ev) => {
+		os.popupMenu([{
+			type: 'switch',
+			text: i18n.ts.showRenotes,
+			icon: 'ti ti-repeat',
+			ref: $$(withRenotes),
+		}, {
+			type: 'switch',
+			text: i18n.ts.fileAttachedOnly,
+			icon: 'ti ti-photo',
+			ref: $$(onlyFiles),
+		}], ev.currentTarget ?? ev.target);
+	},
 }] : []);
 
 const headerTabs = $computed(() => []);
