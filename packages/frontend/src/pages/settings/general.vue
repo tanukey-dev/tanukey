@@ -32,6 +32,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<MkFolder>
 				<template #label>{{ i18n.ts.pinnedList }}</template>
 				<!-- 複数ピン止め管理できるようにしたいけどめんどいので一旦ひとつのみ -->
+				<!-- 後でデザインなんとかする -->
+				<template v-if="defaultStore.reactiveState.pinnedUserLists.value.length !== 0"> {{ defaultStore.reactiveState.pinnedUserLists.value[0]?.name }}</template>
 				<MkButton v-if="defaultStore.reactiveState.pinnedUserLists.value.length === 0" @click="setPinnedList()">{{ i18n.ts.add }}</MkButton>
 				<MkButton v-else danger @click="removePinnedList()"><i class="ti ti-trash"></i> {{ i18n.ts.remove }}</MkButton>
 			</MkFolder>
