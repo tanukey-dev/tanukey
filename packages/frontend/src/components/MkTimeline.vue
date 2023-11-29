@@ -188,7 +188,8 @@ function updatePaginationQuery() {
 	} else if (props.src === 'social') {
 		endpoint = 'notes/hybrid-timeline';
 		query = {
-			withReplies: false,
+			withRenotes: props.withRenotes,
+			withReplies: props.withReplies,
 			withFiles: props.onlyFiles ? true : undefined,
 		};
 	} else if (props.src === 'global') {
