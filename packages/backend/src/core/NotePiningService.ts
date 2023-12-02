@@ -73,7 +73,7 @@ export class NotePiningService {
 		} as UserNotePining);
 
 		// Deliver to remote followers
-		if (this.userEntityService.isLocalUser(user)) {
+		if (this.userEntityService.isLocalUser(user) && !note.localOnly && ['public', 'home'].includes(note.visibility)) {
 			this.deliverPinnedChange(user.id, note.id, true);
 		}
 	}
@@ -101,7 +101,7 @@ export class NotePiningService {
 		});
 
 		// Deliver to remote followers
-		if (this.userEntityService.isLocalUser(user)) {
+		if (this.userEntityService.isLocalUser(user) && !note.localOnly && ['public', 'home'].includes(note.visibility)) {
 			this.deliverPinnedChange(user.id, noteId, false);
 		}
 	}
