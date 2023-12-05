@@ -39,6 +39,7 @@ import { packedRenoteMutingSchema } from '@/models/json-schema/renote-muting.js'
 import { packedRoleSchema } from '@/models/json-schema/role.js';
 import { packedUserListSchema } from '@/models/json-schema/user-list.js';
 import { packedAnnouncementSchema } from '@/models/json-schema/announcement.js';
+import { packedSigninSchema } from '@/models/json-schema/signin.js';
 
 export const refs = {
 	UserLite: packedUserLiteSchema,
@@ -77,11 +78,7 @@ export const refs = {
 	EmojiSimple: packedEmojiSimpleSchema,
 	EmojiDetailed: packedEmojiDetailedSchema,
 	Flash: packedFlashSchema,
-	FlashLike: packedFlashLikeSchema,
-
-	Role: packedRoleSchema,
-	AbuseUserReport: packedAbuseUserReportSchema,
-	ModerationLog: packedModerationLogSchema,
+	Signin: packedSigninSchema,
 };
 
 export type Packed<x extends keyof typeof refs> = SchemaType<typeof refs[x]>;

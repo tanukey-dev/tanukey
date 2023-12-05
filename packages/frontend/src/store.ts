@@ -225,10 +225,6 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'device',
 		default: false,
 	},
-	enableDataSaverMode: {
-		where: 'device',
-		default: false,
-	},
 	disableShowingAnimatedImages: {
 		where: 'device',
 		default: window.matchMedia('(prefers-reduced-motion)').matches,
@@ -408,6 +404,15 @@ export const defaultStore = markRaw(new Storage('base', {
 	useGroupedNotifications: {
 		where: 'device',
 		default: true,
+	},
+	dataSaver: {
+		where: 'device',
+		default: {
+			media: false,
+			avatar: false,
+			urlPreview: false,
+			code: false,
+		} as Record<string, boolean>,
 	},
 
 	sound_masterVolume: {
