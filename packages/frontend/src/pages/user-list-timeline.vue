@@ -45,8 +45,8 @@ const queue = ref(0);
 const tlEl = shallowRef<InstanceType<typeof MkTimeline>>();
 const rootEl = shallowRef<HTMLElement>();
 
-const withRenotes = $ref(true);
-const onlyFiles = $ref(false);
+const withRenotes = ref(true);
+const onlyFiles = ref(false);
 
 watch(() => props.listId, async () => {
 	list.value = await os.api('users/lists/show', {
@@ -79,12 +79,12 @@ const headerActions = computed(() => list.value ? [{
 			type: 'switch',
 			text: i18n.ts.showRenotes,
 			icon: 'ti ti-repeat',
-			ref: $$(withRenotes),
+			ref: withRenotes,
 		}, {
 			type: 'switch',
 			text: i18n.ts.fileAttachedOnly,
 			icon: 'ti ti-photo',
-			ref: $$(onlyFiles),
+			ref: onlyFiles,
 		}], ev.currentTarget ?? ev.target);
 	},
 }] : []);

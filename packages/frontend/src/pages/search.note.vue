@@ -58,12 +58,12 @@ import MkFolder from '@/components/MkFolder.vue';
 
 const router = useRouter();
 
-let key = $ref(0);
-let searchQuery = $ref('');
-let searchHost = $ref('');
-let notePagination = $ref();
-let user = $ref(null);
-let isLocalOnly = $ref(false);
+const key = ref(0);
+const searchQuery = ref('');
+const searchHost = ref('');
+const notePagination = ref();
+const user = ref(null);
+const isLocalOnly = ref(false);
 
 function selectUser() {
 	os.selectUser().then(_user => {
@@ -103,10 +103,10 @@ async function search() {
 		},
 	};
 
-	if (isLocalOnly) {
-		notePagination.params.host = '.';
-	} else if (searchHost.length > 0) {
-		notePagination.params.host = searchHost;
+	if (isLocalOnly.value) {
+		notePagination.value.params.host = '.';
+	} else if (searchHost.value.length > 0) {
+		notePagination.value.params.host = searchHost;
 	}
 
 	key.value++;

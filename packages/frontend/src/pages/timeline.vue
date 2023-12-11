@@ -154,7 +154,7 @@ const headerActions = computed(() => {
 			icon: 'ti ti-dots',
 			text: i18n.ts.options,
 			handler: (ev) => {
-				os.popupMenu(src !== 'media' ? [{
+				os.popupMenu(src.value !== 'media' ? [{
 					type: 'switch',
 					text: i18n.ts.showRenotes,
 					ref: withRenotes,
