@@ -45,7 +45,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import MkNotes from '@/components/MkNotes.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -67,12 +67,12 @@ let isLocalOnly = $ref(false);
 
 function selectUser() {
 	os.selectUser().then(_user => {
-		user = _user;
+		user.value = _user;
 	});
 }
 
 async function search() {
-	const query = searchQuery.toString().trim();
+	const query = searchQuery.value.toString().trim();
 
 	if (query == null || query === '') return;
 
@@ -94,12 +94,12 @@ async function search() {
 		return;
 	}
 
-	notePagination = {
+	notePagination.value = {
 		endpoint: 'notes/search',
 		limit: 10,
 		params: {
-			query: searchQuery,
-			userId: user ? user.id : null,
+			query: searchQuery.value,
+			userId: user.value ? user.value.id : null,
 		},
 	};
 
@@ -109,6 +109,6 @@ async function search() {
 		notePagination.params.host = searchHost;
 	}
 
-	key++;
+	key.value++;
 }
 </script>

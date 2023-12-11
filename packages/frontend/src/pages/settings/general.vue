@@ -297,6 +297,7 @@ const useGroupedNotifications = computed(defaultStore.makeGetterSetter('useGroup
 watch(lang, () => {
 	miLocalStorage.setItem('lang', lang.value as string);
 	miLocalStorage.removeItem('locale');
+	miLocalStorage.removeItem('localeVersion');
 });
 
 watch(fontSize, () => {
@@ -432,9 +433,9 @@ watch(dataSaver, (to) => {
 	deep: true,
 });
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.general,

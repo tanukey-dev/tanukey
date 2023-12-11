@@ -94,9 +94,9 @@ async function read(announcement): Promise<void> {
 	}
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'current',
 	title: i18n.ts.currentAnnouncements,
 	icon: 'ti ti-flare',
