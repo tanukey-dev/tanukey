@@ -40,6 +40,7 @@ import { packedRoleSchema } from '@/models/json-schema/role.js';
 import { packedUserListSchema } from '@/models/json-schema/user-list.js';
 import { packedAnnouncementSchema } from '@/models/json-schema/announcement.js';
 import { packedSigninSchema } from '@/models/json-schema/signin.js';
+import { packedRoleLiteSchema, packedRoleSchema } from '@/models/json-schema/role.js';
 
 export const refs = {
 	UserLite: packedUserLiteSchema,
@@ -79,6 +80,8 @@ export const refs = {
 	EmojiDetailed: packedEmojiDetailedSchema,
 	Flash: packedFlashSchema,
 	Signin: packedSigninSchema,
+	RoleLite: packedRoleLiteSchema,
+	Role: packedRoleSchema,
 };
 
 export type Packed<x extends keyof typeof refs> = SchemaType<typeof refs[x]>;

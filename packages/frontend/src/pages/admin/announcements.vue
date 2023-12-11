@@ -134,7 +134,7 @@ function insertEmoji(ev: MouseEvent): void {
 }
 
 function add() {
-	announcements.unshift({
+	announcements.value.unshift({
 		_id: Math.random().toString(36),
 		id: null,
 		title: 'New announcement',
@@ -156,7 +156,7 @@ function del(announcement) {
 		text: i18n.t('deleteAreYouSure', { x: announcement.title }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
-		announcements = announcements.filter(x => x !== announcement);
+		announcements.value = announcements.value.filter(x => x !== announcement);
 		os.api('admin/announcements/delete', announcement);
 	});
 }
@@ -206,7 +206,7 @@ const headerActions = $computed(() => [{
 	handler: add,
 }]);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.announcements,

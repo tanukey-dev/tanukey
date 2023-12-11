@@ -101,9 +101,9 @@ function insertEmoji(ev: MouseEvent): void {
 
 async function done(): Promise<void> {
 	const params = {
-		title: title,
-		text: text,
-		icon: icon,
+		title: title.value,
+		text: text.value,
+		icon: icon.value,
 		imageUrl: null,
 		display: display,
 		needConfirmationToRead: needConfirmationToRead,
@@ -141,7 +141,7 @@ async function done(): Promise<void> {
 async function del(): Promise<void> {
 	const { canceled } = await os.confirm({
 		type: 'warning',
-		text: i18n.t('removeAreYouSure', { x: title }),
+		text: i18n.t('removeAreYouSure', { x: title.value }),
 	});
 	if (canceled) return;
 
