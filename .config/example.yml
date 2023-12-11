@@ -72,6 +72,9 @@ dbReplications: false
 #    user:
 #    pass:
 
+# This option does not work if mailisearch is enabled.
+pgroonga: false
+
 #   ┌─────────────────────┐
 #───┘ Redis configuration └─────────────────────────────────────
 
