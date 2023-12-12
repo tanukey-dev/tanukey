@@ -332,7 +332,7 @@ watch([
 	highlightSensitiveMedia,
 	keepScreenOn,
 	disableStreamingTimeline,
-    hideMutedNotes,
+	hideMutedNotes,
 ], async () => {
 	await reloadAsk();
 });

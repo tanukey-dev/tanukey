@@ -3592,7 +3592,6 @@ export type components = {
       hasPendingReceivedFollowRequest: boolean;
       unreadNotificationsCount: number;
       mutedWords: string[][];
-      hardMutedWords: string[][];
       mutedInstances: string[] | null;
       notificationRecieveConfig: {
         app?: {
@@ -25035,4 +25034,3 @@ export type operations = {
     };
   };
 };
-
