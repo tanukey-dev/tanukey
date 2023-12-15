@@ -128,12 +128,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 				<MkInfo v-else-if="$i && $i.id === user.id">{{ i18n.ts.userPagePinTip }}</MkInfo>
 				<template v-if="narrow">
-					<XFiles :key="user.id" :user="user"/>
-					<XActivity :key="user.id" :user="user"/>
+					<MkLazy>
+						<XFiles :key="user.id" :user="user"/>
+					</MkLazy>
+					<MkLazy>
+						<XActivity :key="user.id" :user="user"/>
+					</MkLazy>
 				</template>
 				<div v-if="!disableNotes">
 					<div style="margin-bottom: 8px;">{{ i18n.ts.featured }}</div>
-					<MkNotes :class="$style.tl" :noGap="true" :pagination="pagination"/>
+					<MkLazy>
+						<MkNotes :class="$style.tl" :noGap="true" :pagination="pagination"/>
+					</MkLazy>
 				</div>
 			</div>
 		</div>
@@ -232,7 +238,7 @@ const age = computed(() => {
 	return calcAge(props.user.birthday);
 });
 
-function menu(ev) {
+function menu(ev: MouseEvent) {
 	const { menu, cleanup } = getUserMenu(user.value, router);
 	os.popupMenu(menu, ev.currentTarget ?? ev.target).finally(cleanup);
 }
