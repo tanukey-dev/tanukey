@@ -43,7 +43,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkTextarea v-model="announcement.text">
 							<template #label>{{ i18n.ts.text }}</template>
 						</MkTextarea>
-						<MkInput v-model="announcement.imageUrl">
+						<MkInput v-model="announcement.imageUrl" type="url">
 							<template #label>{{ i18n.ts.imageUrl }}</template>
 						</MkInput>
 						<MkRadios v-model="announcement.icon">
@@ -59,11 +59,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 							<option value="banner">{{ i18n.ts.banner }}</option>
 							<option value="dialog">{{ i18n.ts.dialog }}</option>
 						</MkRadios>
+						<MkInfo v-if="announcement.display === 'dialog'" warn>{{ i18n.ts._announcement.dialogAnnouncementUxWarn }}</MkInfo>
 						<MkSwitch v-model="announcement.forExistingUsers" :helpText="i18n.ts._announcement.forExistingUsersDescription">
 							{{ i18n.ts._announcement.forExistingUsers }}
-						</MkSwitch>
-						<MkSwitch v-model="announcement.silence" :helpText="i18n.ts._announcement.silenceDescription">
-							{{ i18n.ts._announcement.silence }}
 						</MkSwitch>
 						<MkSwitch v-model="announcement.needConfirmationToRead" :helpText="i18n.ts._announcement.needConfirmationToReadDescription">
 							{{ i18n.ts._announcement.needConfirmationToRead }}
@@ -75,6 +73,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<MkInput v-model="announcement.displayOrder" type="number">
 							<template #label>{{ i18n.ts.displayOrder }}</template>
 						</MkInput>
+						<MkSwitch v-model="announcement.silence" :helpText="i18n.ts._announcement.silenceDescription">
+							{{ i18n.ts._announcement.silence }}
+						</MkSwitch>
 						<p v-if="announcement.reads">{{ i18n.t('nUsersRead', { n: announcement.reads }) }}</p>
 						<MkUserCardMini v-if="announcement.userId" :user="announcement.user" @click="editUser(announcement)"></MkUserCardMini>
 						<MkButton v-else class="button" inline primary @click="editUser(announcement)">{{ i18n.ts.specifyUser }}</MkButton>
@@ -94,11 +95,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref, shallowRef, watch, computed } from 'vue';
 import * as Misskey from 'misskey-js';
 import XHeader from './_header_.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
+import MkTextarea from '@/components/MkTextarea.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
 import MkRadios from '@/components/MkRadios.vue';
 import MkInfo from '@/components/MkInfo.vue';
@@ -107,14 +109,13 @@ import { i18n } from '@/i18n.js';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
 import MkFolder from '@/components/MkFolder.vue';
 import MkUserCardMini from '@/components/MkUserCardMini.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
 
-const announceTitleEl = $shallowRef<HTMLInputElement | null>(null);
+const announceTitleEl = shallowRef<HTMLInputElement | null>(null);
 const user = ref<Misskey.entities.UserLite | null>(null);
 const offset = ref(0);
 const hasMore = ref(false);
 
-let announcements: any[] = $ref([]);
+const announcements = ref<any[]>([]);
 
 function selectUserFilter(): void {
 	os.selectUser().then(_user => {
@@ -143,10 +144,10 @@ function add() {
 		icon: 'info',
 		display: 'normal',
 		forExistingUsers: false,
-		silence: false,
 		needConfirmationToRead: false,
 		closeDuration: 0,
 		displayOrder: 0,
+		silence: false,
 	});
 }
 
@@ -180,7 +181,7 @@ async function save(announcement): Promise<void> {
 
 function fetch(resetOffset = false): void {
 	if (resetOffset) {
-		announcements = [];
+		announcements.value = [];
 		offset.value = 0;
 	}
 
@@ -190,16 +191,16 @@ function fetch(resetOffset = false): void {
 		limit: 10,
 		userId: user.value?.id,
 	}).then(announcementResponse => {
-		announcements = announcements.concat(announcementResponse);
+		announcements.value = announcementResponse;
 		hasMore.value = announcementResponse?.length === 10;
-		offset.value += announcements.length;
+		offset.value += announcementResponse?.length ?? 0;
 	});
 }
 
 watch(user, () => fetch(true));
 fetch(true);
 
-const headerActions = $computed(() => [{
+const headerActions = computed(() => [{
 	asFullButton: true,
 	icon: 'ti ti-plus',
 	text: i18n.ts.add,

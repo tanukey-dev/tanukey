@@ -37,7 +37,7 @@ import { $i } from '@/account.js';
 import { defaultStore } from '@/store.js';
 import * as os from '@/os.js';
 
-let tab = $ref('all');
+const tab = ref('all');
 
 const props = defineProps<{
 	tag: string;
