@@ -1570,6 +1570,7 @@ export interface Locale {
         "disposable": string;
         "mx": string;
         "smtp": string;
+        "banned": string;
     };
     "_ffVisibility": {
         "public": string;

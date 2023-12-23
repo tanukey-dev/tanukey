@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { validate as validateEmail } from 'deep-email-validator';
 import Redis from 'ioredis';
 import { MetaService } from '@/core/MetaService.js';
+import { UtilityService } from '@/core/UtilityService.js';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import type Logger from '@/logger.js';
@@ -33,6 +34,7 @@ export class EmailService {
 
 		private metaService: MetaService,
 		private loggerService: LoggerService,
+		private utilityService: UtilityService,
 		private httpRequestService: HttpRequestService,
 	) {
 		this.logger = this.loggerService.getLogger('email');
@@ -168,7 +170,7 @@ export class EmailService {
 	@bindThis
 	public async validateEmailForAccount(emailAddress: string): Promise<{
 		available: boolean;
-		reason: null | 'used' | 'format' | 'disposable' | 'mx' | 'smtp' | 'network' | 'blacklist';
+		reason: null | 'used' | 'format' | 'disposable' | 'mx' | 'smtp' | 'network' | 'blacklist' | 'banned';
 	}> {
 		const meta = await this.metaService.fetch();
 	
@@ -181,6 +183,16 @@ export class EmailService {
 			return {
 				available: false,
 				reason: 'used',
+			};
+		}
+
+		const emailDomain: string = emailAddress.split('@')[1];
+		const isBanned = this.utilityService.isBlockedHost(meta.bannedEmailDomains, emailDomain);
+
+		if (isBanned) {
+			return {
+				available: false,
+				reason: 'banned',
 			};
 		}
 

@@ -104,6 +104,7 @@ export const paramDef = {
 		enableChartsForRemoteUser: { type: 'boolean' },
 		enableChartsForFederatedInstances: { type: 'boolean' },
 		serverRules: { type: 'array', items: { type: 'string' } },
+		bannedEmailDomains: { type: 'array', items: { type: 'string' } },
 		preservedUsernames: { type: 'array', items: { type: 'string' } },
 		pinnedLtlChannelIds: { type: 'array', items: { type: 'string' } },
 	},
@@ -437,6 +438,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (ps.pinnedLtlChannelIds !== undefined) {
 				set.pinnedLtlChannelIds = ps.pinnedLtlChannelIds;
+			}
+
+			if (ps.bannedEmailDomains !== undefined) {
+				set.bannedEmailDomains = ps.bannedEmailDomains;
 			}
 
 			await this.metaService.update(set);

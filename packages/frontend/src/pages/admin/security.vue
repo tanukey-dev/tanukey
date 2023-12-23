@@ -79,6 +79,17 @@
 				</MkFolder>
 
 				<MkFolder>
+					<template #label>Banned Email Domains</template>
+
+					<div class="_gaps_m">
+						<MkTextarea v-model="bannedEmailDomains">
+							<template #label>Banned Email Domains List</template>
+						</MkTextarea>
+						<MkButton primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
+					</div>
+				</MkFolder>
+
+				<MkFolder>
 					<template #label>Log IP address</template>
 					<template v-if="enableIpLogging" #suffix>Enabled</template>
 					<template v-else #suffix>Disabled</template>
@@ -119,6 +130,7 @@ import FormSuspense from '@/components/form/suspense.vue';
 import MkRange from '@/components/MkRange.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkButton from '@/components/MkButton.vue';
+import MkTextarea from '@/components/MkTextarea.vue';
 import * as os from '@/os';
 import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
@@ -136,6 +148,7 @@ let enableIpLogging: boolean = $ref(false);
 let enableActiveEmailValidation: boolean = $ref(false);
 let enableVerifymailApi: boolean = $ref(false);
 let verifymailAuthKey: string | null = $ref(null);
+let bannedEmailDomains = $ref<string>('');
 
 async function init() {
 	const meta = await os.api('admin/meta');
@@ -156,6 +169,7 @@ async function init() {
 	enableActiveEmailValidation = meta.enableActiveEmailValidation;
 	enableVerifymailApi = meta.enableVerifymailApi;
 	verifymailAuthKey = meta.verifymailAuthKey;
+	bannedEmailDomains = meta.bannedEmailDomains.join('\n');
 }
 
 function save() {
@@ -175,6 +189,7 @@ function save() {
 		enableActiveEmailValidation,
 		enableVerifymailApi,
 		verifymailAuthKey,
+		bannedEmailDomains: bannedEmailDomains.split('\n'),
 	}).then(() => {
 		fetchInstance();
 	});
