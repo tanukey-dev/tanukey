@@ -27,8 +27,7 @@ const modal = shallowRef<InstanceType<typeof MkModal>>();
 
 const whatIsNew = () => {
 	modal.value.close();
-	const versionElements = version.split('-');
-	window.open(`https://github.com/TeamNijimiss/misskey/releases/tag/${versionElements[versionElements.length - 1]}`, '_blank');
+	window.open(`https://github.com/TeamNijimiss/misskey/releases/tag/${version}`, '_blank');
 };
 
 onMounted(() => {
