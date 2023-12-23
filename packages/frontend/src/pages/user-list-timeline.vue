@@ -11,9 +11,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" :class="$style.newButton" @click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
 			<div :class="$style.tl">
 				<MkTimeline
-					ref="tlEl" :key="listId"
+					ref="tlEl" :key="listId + withRenotes + onlyFiles"
 					src="list"
 					:list="listId"
+					:withRenotes="withRenotes"
+					:onlyFiles="onlyFiles"
 					:sound="true"
 					@queue="queueUpdated"
 				/>
@@ -24,7 +26,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
+import { computed, watch, ref, shallowRef } from 'vue';
 import MkTimeline from '@/components/MkTimeline.vue';
 import { scroll } from '@/scripts/scroll.js';
 import * as os from '@/os.js';
@@ -38,39 +40,59 @@ const props = defineProps<{
 	listId: string;
 }>();
 
-let list = $ref(null);
-let queue = $ref(0);
-let tlEl = $shallowRef<InstanceType<typeof MkTimeline>>();
-let rootEl = $shallowRef<HTMLElement>();
+const list = ref(null);
+const queue = ref(0);
+const tlEl = shallowRef<InstanceType<typeof MkTimeline>>();
+const rootEl = shallowRef<HTMLElement>();
+
+const withRenotes = ref(true);
+const onlyFiles = ref(false);
 
 watch(() => props.listId, async () => {
-	list = await os.api('users/lists/show', {
+	list.value = await os.api('users/lists/show', {
 		listId: props.listId,
 	});
 }, { immediate: true });
 
 function queueUpdated(q) {
-	queue = q;
+	queue.value = q;
 }
 
 function top() {
-	scroll(rootEl, { top: 0 });
+	scroll(rootEl.value, { top: 0 });
 }
 
 function settings() {
 	router.push(`/my/lists/${props.listId}`);
 }
 
-const headerActions = $computed(() => list ? [{
+const headerActions = computed(() => list.value ? [{
 	icon: 'ti ti-settings',
 	text: i18n.ts.settings,
 	handler: settings,
+},
+{
+	icon: 'ti ti-dots',
+	text: i18n.ts.options,
+	handler: (ev) => {
+		os.popupMenu([{
+			type: 'switch',
+			text: i18n.ts.showRenotes,
+			icon: 'ti ti-repeat',
+			ref: withRenotes,
+		}, {
+			type: 'switch',
+			text: i18n.ts.fileAttachedOnly,
+			icon: 'ti ti-photo',
+			ref: onlyFiles,
+		}], ev.currentTarget ?? ev.target);
+	},
 }] : []);
 
-const headerTabs = $computed(() => []);
+const headerTabs = computed(() => []);
 
-definePageMetadata(computed(() => list ? {
-	title: list.name,
+definePageMetadata(computed(() => list.value ? {
+	title: list.value.name,
 	icon: 'ti ti-list',
 } : null));
 </script>

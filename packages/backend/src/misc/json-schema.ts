@@ -12,33 +12,32 @@ import {
 	packedUserDetailedSchema,
 	packedUserSchema,
 } from '@/models/json-schema/user.js';
-import { packedAbuseUserReportSchema } from '@/models/json-schema/abuse-user-report.js';
-import { packedAntennaSchema } from '@/models/json-schema/antenna.js';
+import { packedNoteSchema } from '@/models/json-schema/note.js';
+import { packedUserListSchema } from '@/models/json-schema/user-list.js';
 import { packedAppSchema } from '@/models/json-schema/app.js';
-import { packedBlockingSchema } from '@/models/json-schema/blocking.js';
-import { packedChannelSchema } from '@/models/json-schema/channel.js';
-import { packedClipSchema } from '@/models/json-schema/clip.js';
+import { packedNotificationSchema } from '@/models/json-schema/notification.js';
 import { packedDriveFileSchema } from '@/models/json-schema/drive-file.js';
 import { packedDriveFolderSchema } from '@/models/json-schema/drive-folder.js';
-import { packedEmojiDetailedSchema, packedEmojiSimpleSchema } from '@/models/json-schema/emoji.js';
-import { packedFederationInstanceSchema } from '@/models/json-schema/federation-instance.js';
-import { packedFlashLikeSchema, packedFlashSchema } from '@/models/json-schema/flash.js';
-import { packedFollowRequestSchema, packedFollowingSchema } from '@/models/json-schema/following.js';
-import { packedGalleryLikeSchema, packedGalleryPostSchema } from '@/models/json-schema/gallery.js';
+import { packedFollowingSchema } from '@/models/json-schema/following.js';
+import { packedMutingSchema } from '@/models/json-schema/muting.js';
+import { packedRenoteMutingSchema } from '@/models/json-schema/renote-muting.js';
+import { packedBlockingSchema } from '@/models/json-schema/blocking.js';
+import { packedNoteReactionSchema } from '@/models/json-schema/note-reaction.js';
 import { packedHashtagSchema } from '@/models/json-schema/hashtag.js';
 import { packedInviteCodeSchema } from '@/models/json-schema/invite-code.js';
-import { packedModerationLogSchema } from '@/models/json-schema/moderation-log.js';
-import { packedMutingSchema } from '@/models/json-schema/muting.js';
+import { packedPageSchema } from '@/models/json-schema/page.js';
 import { packedNoteFavoriteSchema } from '@/models/json-schema/note-favorite.js';
-import { packedNoteReactionSchema } from '@/models/json-schema/note-reaction.js';
-import { packedNoteSchema } from '@/models/json-schema/note.js';
-import { packedNotificationSchema } from '@/models/json-schema/notification.js';
-import { packedPageLikeSchema, packedPageSchema } from '@/models/json-schema/page.js';
+import { packedChannelSchema } from '@/models/json-schema/channel.js';
+import { packedAntennaSchema } from '@/models/json-schema/antenna.js';
+import { packedClipSchema } from '@/models/json-schema/clip.js';
+import { packedFederationInstanceSchema } from '@/models/json-schema/federation-instance.js';
 import { packedQueueCountSchema } from '@/models/json-schema/queue.js';
-import { packedRenoteMutingSchema } from '@/models/json-schema/renote-muting.js';
-import { packedRoleSchema } from '@/models/json-schema/role.js';
-import { packedUserListSchema } from '@/models/json-schema/user-list.js';
+import { packedEmojiDetailedSchema, packedEmojiSimpleSchema } from '@/models/json-schema/emoji.js';
+import { packedFlashSchema } from '@/models/json-schema/flash.js';
 import { packedAnnouncementSchema } from '@/models/json-schema/announcement.js';
+import { packedSigninSchema } from '@/models/json-schema/signin.js';
+import { packedRoleLiteSchema, packedRoleSchema } from '@/models/json-schema/role.js';
+import { packedAdSchema } from '@/models/json-schema/ad.js';
 
 export const refs = {
 	UserLite: packedUserLiteSchema,
@@ -50,6 +49,7 @@ export const refs = {
 	User: packedUserSchema,
 
 	UserList: packedUserListSchema,
+	Ad: packedAdSchema,
 	Announcement: packedAnnouncementSchema,
 	App: packedAppSchema,
 	Note: packedNoteSchema,
@@ -59,29 +59,23 @@ export const refs = {
 	DriveFile: packedDriveFileSchema,
 	DriveFolder: packedDriveFolderSchema,
 	Following: packedFollowingSchema,
-	FollowRequest: packedFollowRequestSchema,
 	Muting: packedMutingSchema,
 	RenoteMuting: packedRenoteMutingSchema,
 	Blocking: packedBlockingSchema,
 	Hashtag: packedHashtagSchema,
 	InviteCode: packedInviteCodeSchema,
 	Page: packedPageSchema,
-	PageLike: packedPageLikeSchema,
 	Channel: packedChannelSchema,
 	QueueCount: packedQueueCountSchema,
 	Antenna: packedAntennaSchema,
 	Clip: packedClipSchema,
 	FederationInstance: packedFederationInstanceSchema,
-	GalleryPost: packedGalleryPostSchema,
-	GalleryLike: packedGalleryLikeSchema,
 	EmojiSimple: packedEmojiSimpleSchema,
 	EmojiDetailed: packedEmojiDetailedSchema,
 	Flash: packedFlashSchema,
-	FlashLike: packedFlashLikeSchema,
-
+	Signin: packedSigninSchema,
+	RoleLite: packedRoleLiteSchema,
 	Role: packedRoleSchema,
-	AbuseUserReport: packedAbuseUserReportSchema,
-	ModerationLog: packedModerationLogSchema,
 };
 
 export type Packed<x extends keyof typeof refs> = SchemaType<typeof refs[x]>;
@@ -89,13 +83,13 @@ export type Packed<x extends keyof typeof refs> = SchemaType<typeof refs[x]>;
 type TypeStringef = 'null' | 'boolean' | 'integer' | 'number' | 'string' | 'array' | 'object' | 'any';
 type StringDefToType<T extends TypeStringef> =
 	T extends 'null' ? null :
-	T extends 'boolean' ? boolean :
-	T extends 'integer' ? number :
-	T extends 'number' ? number :
-	T extends 'string' ? string | Date :
-	T extends 'array' ? ReadonlyArray<any> :
-	T extends 'object' ? Record<string, any> :
-	any;
+		T extends 'boolean' ? boolean :
+			T extends 'integer' ? number :
+				T extends 'number' ? number :
+					T extends 'string' ? string | Date :
+						T extends 'array' ? ReadonlyArray<any> :
+							T extends 'object' ? Record<string, any> :
+								any;
 
 // https://swagger.io/specification/?sbsearch=optional#schema-object
 type OfSchema = {
@@ -126,11 +120,11 @@ export interface Schema extends OfSchema {
 
 type RequiredPropertyNames<s extends Obj> = {
 	[K in keyof s]:
-		// K is not optional
-		s[K]['optional'] extends false ? K :
+	// K is not optional
+	s[K]['optional'] extends false ? K :
 		// K has default value
 		s[K]['default'] extends null | string | number | boolean | Record<string, unknown> ? K :
-		never
+			never
 }[keyof s];
 
 export type Obj = Record<string, Schema>;
@@ -164,42 +158,42 @@ type ArrayUnion<T> = T extends any ? Array<T> : never;
 
 type ObjectSchemaTypeDef<p extends Schema> =
 	p['ref'] extends keyof typeof refs ? Packed<p['ref']> :
-	p['properties'] extends NonNullable<Obj> ?
-		p['anyOf'] extends ReadonlyArray<Schema> ? p['anyOf'][number]['required'] extends ReadonlyArray<keyof p['properties']> ?
-			UnionObjType<p['properties'], NonNullable<p['anyOf'][number]['required']>> & ObjType<p['properties'], NonNullable<p['required']>>
-			: never
-			: ObjType<p['properties'], NonNullable<p['required']>>
-	:
-	p['anyOf'] extends ReadonlyArray<Schema> ? never : // see CONTRIBUTING.md
-	p['allOf'] extends ReadonlyArray<Schema> ? UnionToIntersection<UnionSchemaType<p['allOf']>> :
-	any
+		p['properties'] extends NonNullable<Obj> ?
+			p['anyOf'] extends ReadonlyArray<Schema> ? p['anyOf'][number]['required'] extends ReadonlyArray<keyof p['properties']> ?
+					UnionObjType<p['properties'], NonNullable<p['anyOf'][number]['required']>> & ObjType<p['properties'], NonNullable<p['required']>>
+					: never
+				: ObjType<p['properties'], NonNullable<p['required']>>
+			:
+			p['anyOf'] extends ReadonlyArray<Schema> ? never : // see CONTRIBUTING.md
+				p['allOf'] extends ReadonlyArray<Schema> ? UnionToIntersection<UnionSchemaType<p['allOf']>> :
+					any
 
 type ObjectSchemaType<p extends Schema> = NullOrUndefined<p, ObjectSchemaTypeDef<p>>;
 
 export type SchemaTypeDef<p extends Schema> =
 	p['type'] extends 'null' ? null :
-	p['type'] extends 'integer' ? number :
-	p['type'] extends 'number' ? number :
-	p['type'] extends 'string' ? (
-		p['enum'] extends readonly (string | null)[] ?
-		p['enum'][number] :
-		p['format'] extends 'date-time' ? string : // Dateにする？？
-		string
-	) :
-	p['type'] extends 'boolean' ? boolean :
-	p['type'] extends 'object' ? ObjectSchemaTypeDef<p> :
-	p['type'] extends 'array' ? (
-		p['items'] extends OfSchema ? (
-			p['items']['anyOf'] extends ReadonlyArray<Schema> ? UnionSchemaType<NonNullable<p['items']['anyOf']>>[] :
-			p['items']['oneOf'] extends ReadonlyArray<Schema> ? ArrayUnion<UnionSchemaType<NonNullable<p['items']['oneOf']>>> :
-			p['items']['allOf'] extends ReadonlyArray<Schema> ? UnionToIntersection<UnionSchemaType<NonNullable<p['items']['allOf']>>>[] :
-			never
-		) :
-		p['items'] extends NonNullable<Schema> ? SchemaTypeDef<p['items']>[] :
-		any[]
-	) :
-	p['anyOf'] extends ReadonlyArray<Schema> ? UnionSchemaType<p['anyOf']> & PartialIntersection<UnionSchemaType<p['anyOf']>> :
-	p['oneOf'] extends ReadonlyArray<Schema> ? UnionSchemaType<p['oneOf']> :
-	any;
+		p['type'] extends 'integer' ? number :
+			p['type'] extends 'number' ? number :
+				p['type'] extends 'string' ? (
+						p['enum'] extends readonly (string | null)[] ?
+							p['enum'][number] :
+							p['format'] extends 'date-time' ? string : // Dateにする？？
+								string
+						) :
+					p['type'] extends 'boolean' ? boolean :
+						p['type'] extends 'object' ? ObjectSchemaTypeDef<p> :
+							p['type'] extends 'array' ? (
+									p['items'] extends OfSchema ? (
+											p['items']['anyOf'] extends ReadonlyArray<Schema> ? UnionSchemaType<NonNullable<p['items']['anyOf']>>[] :
+												p['items']['oneOf'] extends ReadonlyArray<Schema> ? ArrayUnion<UnionSchemaType<NonNullable<p['items']['oneOf']>>> :
+													p['items']['allOf'] extends ReadonlyArray<Schema> ? UnionToIntersection<UnionSchemaType<NonNullable<p['items']['allOf']>>>[] :
+														never
+											) :
+										p['items'] extends NonNullable<Schema> ? SchemaTypeDef<p['items']>[] :
+											any[]
+									) :
+								p['anyOf'] extends ReadonlyArray<Schema> ? UnionSchemaType<p['anyOf']> & PartialIntersection<UnionSchemaType<p['anyOf']>> :
+									p['oneOf'] extends ReadonlyArray<Schema> ? UnionSchemaType<p['oneOf']> :
+										any;
 
 export type SchemaType<p extends Schema> = NullOrUndefined<p, SchemaTypeDef<p>>;

@@ -616,14 +616,14 @@ function getMenu() {
 		type: 'switch',
 		text: i18n.ts.keepOriginalUploading,
 		ref: keepOriginal,
-	}, null, {
+	}, { type: 'divider' }, {
 		text: i18n.ts.addFile,
 		type: 'label',
 	}, {
 		text: i18n.ts.upload,
 		icon: 'ti ti-upload',
 		action: () => { selectLocalFile(); },
-	}, null, {
+	}, { type: 'divider' }, {
 		text: folder.value ? folder.value.name : i18n.ts.drive,
 		type: 'label',
 	}, folder.value ? {

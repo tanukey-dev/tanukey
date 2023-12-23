@@ -17,7 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, onUnmounted, provide } from 'vue';
+import { computed, watch, onUnmounted, provide, ref } from 'vue';
 import { Connection } from 'misskey-js/built/streaming.js';
 import MkNotes from '@/components/MkNotes.vue';
 import MkPullToRefresh from '@/components/MkPullToRefresh.vue';
@@ -62,8 +62,8 @@ type TimelineQueryType = {
   roleId?: string
 }
 
-const prComponent: InstanceType<typeof MkPullToRefresh> = $ref();
-const tlComponent: InstanceType<typeof MkNotes> = $ref();
+const prComponent = ref<InstanceType<typeof MkPullToRefresh>>();
+const tlComponent = ref<InstanceType<typeof MkNotes>>();
 
 let tlNotesCount = 0;
 
@@ -74,7 +74,7 @@ const prepend = note => {
 		note._shouldInsertAd_ = true;
 	}
 
-	tlComponent.pagingComponent?.prepend(note);
+	tlComponent.value.pagingComponent?.prepend(note);
 
 	emit('note');
 
@@ -135,6 +135,7 @@ function connectChannel() {
 		connection.on('mention', onNote);
 	} else if (props.src === 'list') {
 		connection = stream.useChannel('userList', {
+			withRenotes: props.withRenotes,
 			withFiles: props.onlyFiles ? true : undefined,
 			listId: props.list,
 		});
@@ -187,7 +188,8 @@ function updatePaginationQuery() {
 	} else if (props.src === 'social') {
 		endpoint = 'notes/hybrid-timeline';
 		query = {
-			withReplies: false,
+			withRenotes: props.withRenotes,
+			withReplies: props.withReplies,
 			withFiles: props.onlyFiles ? true : undefined,
 		};
 	} else if (props.src === 'global') {
@@ -207,6 +209,7 @@ function updatePaginationQuery() {
 	} else if (props.src === 'list') {
 		endpoint = 'notes/user-list-timeline';
 		query = {
+			withRenotes: props.withRenotes,
 			withFiles: props.onlyFiles ? true : undefined,
 			listId: props.list,
 		};
@@ -259,7 +262,7 @@ function reloadTimeline() {
 	return new Promise<void>((res) => {
 		tlNotesCount = 0;
 
-		tlComponent.pagingComponent?.reload().then(() => {
+		tlComponent.value.pagingComponent?.reload().then(() => {
 			res();
 		});
 	});

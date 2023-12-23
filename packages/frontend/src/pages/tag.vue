@@ -37,7 +37,7 @@ import { $i } from '@/account.js';
 import { defaultStore } from '@/store.js';
 import * as os from '@/os.js';
 
-let tab = $ref('all');
+const tab = ref('all');
 
 const props = defineProps<{
 	tag: string;
@@ -79,9 +79,9 @@ async function post() {
 	notes.value?.pagingComponent?.reload();
 }
 
-const headerActions = $computed(() => []);
+const headerActions = computed(() => []);
 
-const headerTabs = $computed(() => [{
+const headerTabs = computed(() => [{
 	key: 'all',
 	title: i18n.ts.all,
 }, {

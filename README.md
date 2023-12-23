@@ -14,6 +14,7 @@
 - Customized image thumbnail display.
 - Add search filters to tag searches.
 - Add "日本語 (お嬢様)" to the display language. (Special Thanks to [緋色なつめ](https://nijimiss.moe/@Nattsume_hi_iro))
+- Add media timeline.
 
 **These changes were incorporated from a fork of [MisskeyIO](https://github.com/MisskeyIO/misskey/tree/io).**
 
@@ -30,10 +31,10 @@
 
 ---
 
-<a href="https://misskey-hub.net/instances.html">
+<a href="https://misskey-hub.net/servers/">
 		<img src="https://custom-icon-badges.herokuapp.com/badge/find_an-instance-acea31?logoColor=acea31&style=for-the-badge&logo=misskey&labelColor=363B40" alt="find an instance"/></a>
 
-<a href="https://misskey-hub.net/docs/install.html">
+<a href="https://misskey-hub.net/docs/for-admin/install/guides/">
 		<img src="https://custom-icon-badges.herokuapp.com/badge/create_an-instance-FBD53C?logoColor=FBD53C&style=for-the-badge&logo=server&labelColor=363B40" alt="create an instance"/></a>
 
 <a href="./CONTRIBUTING.md">
@@ -74,7 +75,7 @@ With Misskey's built in drive, you get cloud storage right in your social media,
 
 ## Documentation
 
-Misskey Documentation can be found at [Misskey Hub](https://misskey-hub.net/), some of the links and graphics above also lead to specific portions of it.
+Misskey Documentation can be found at [Misskey Hub](https://misskey-hub.net/docs/), some of the links and graphics above also lead to specific portions of it.
 
 ## Sponsors
 
