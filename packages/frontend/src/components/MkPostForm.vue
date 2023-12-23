@@ -840,8 +840,8 @@ async function post(ev?: MouseEvent) {
 }
 
 function cancel() {
-	if (!posting && !posted &&
-		(1 <= textLength || 1 <= files.length || !!poll || !!props.renote)) {
+	if (!posting.value && !posted.value &&
+		(1 <= textLength.value || 1 <= files.value.length || !!poll.value || !!props.renote)) {
 		os.confirm({
 			type: 'question',
 			text: i18n.ts.saveDraftNote,
