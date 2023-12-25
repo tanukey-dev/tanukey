@@ -42,6 +42,7 @@ export type AsUiMfm = AsUiComponentBase & {
 	bold?: boolean;
 	color?: string;
 	font?: 'serif' | 'sans-serif' | 'monospace';
+	onClickEv?: (evId: string) => void
 };
 
 export type AsUiButton = AsUiComponentBase & {
@@ -216,6 +217,8 @@ function getMfmOptions(def: values.Value | undefined): Omit<AsUiMfm, 'id' | 'typ
 	if (color) utils.assertString(color);
 	const font = def.value.get('font');
 	if (font) utils.assertString(font);
+	const onClickEv = def.value.get('onClickEv');
+	if (onClickEv) utils.assertFunction(onClickEv);
 
 	return {
 		text: text?.value,
@@ -223,6 +226,9 @@ function getMfmOptions(def: values.Value | undefined): Omit<AsUiMfm, 'id' | 'typ
 		bold: bold?.value,
 		color: color?.value,
 		font: font?.value,
+		onClickEv: (evId: string) => {
+			if (onClickEv) call(onClickEv, values.STR(evId));
+		},
 	};
 }
 

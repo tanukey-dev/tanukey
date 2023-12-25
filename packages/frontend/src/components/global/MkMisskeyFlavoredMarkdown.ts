@@ -1,4 +1,4 @@
-import { VNode, h } from 'vue';
+import { VNode, h, SetupContext } from 'vue';
 import * as mfm from 'tfm-js';
 import * as Misskey from 'misskey-js';
 import MkUrl from '@/components/global/MkUrl.vue';
@@ -24,6 +24,10 @@ border-left: solid 3px var(--fg);
 opacity: 0.7;
 `.split('\n').join(' ');
 
+type MfmEvents = {
+	clickEv(id: string): void;
+};
+
 export default function(props: {
 	text: string;
 	plain?: boolean;
@@ -33,7 +37,7 @@ export default function(props: {
 	isNote?: boolean;
 	emojiUrls?: string[];
 	rootScale?: number;
-}) {
+}, context: SetupContext<MfmEvents>) {
 	const isNote = props.isNote !== undefined ? props.isNote : true;
 
 	if (props.text == null || props.text === '') return;
@@ -271,6 +275,13 @@ export default function(props: {
 								mode: 'detail',
 							}),
 						]);
+					}
+					case 'clickable': {
+						return h('span', { onClick(ev: MouseEvent): void {
+							ev.stopPropagation();
+							ev.preventDefault();
+							context.emit('clickEv', token.props.args.ev ?? '');
+						} }, genEl(token.children, scale));
 					}
 				}
 				if (style == null) {
