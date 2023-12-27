@@ -2,8 +2,8 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
 /*
- * version: 2023.11.0-beta.3
- * generatedAt: 2023-12-08T04:57:48.142Z
+ * version: 2023.12.0
+ * generatedAt: 2023-12-26T23:35:09.389Z
  */
 
 /**
@@ -22,7 +22,7 @@ export type paths = {
      * admin/meta
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:meta*
      */
     post: operations['admin/meta'];
   };
@@ -31,7 +31,7 @@ export type paths = {
      * admin/abuse-user-reports
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:abuse-user-reports*
      */
     post: operations['admin/abuse-user-reports'];
   };
@@ -40,6 +40,7 @@ export type paths = {
      * admin/accounts/create
      * @description No description provided.
      *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
      * **Credential required**: *No*
      */
     post: operations['admin/accounts/create'];
@@ -49,7 +50,7 @@ export type paths = {
      * admin/accounts/delete
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:account*
      */
     post: operations['admin/accounts/delete'];
   };
@@ -58,7 +59,7 @@ export type paths = {
      * admin/accounts/find-by-email
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:account*
      */
     post: operations['admin/accounts/find-by-email'];
   };
@@ -67,7 +68,7 @@ export type paths = {
      * admin/ad/create
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:ad*
      */
     post: operations['admin/ad/create'];
   };
@@ -76,7 +77,7 @@ export type paths = {
      * admin/ad/delete
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:ad*
      */
     post: operations['admin/ad/delete'];
   };
@@ -85,7 +86,7 @@ export type paths = {
      * admin/ad/list
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:ad*
      */
     post: operations['admin/ad/list'];
   };
@@ -94,7 +95,7 @@ export type paths = {
      * admin/ad/update
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:ad*
      */
     post: operations['admin/ad/update'];
   };
@@ -103,7 +104,7 @@ export type paths = {
      * admin/announcements/create
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:announcements*
      */
     post: operations['admin/announcements/create'];
   };
@@ -112,7 +113,7 @@ export type paths = {
      * admin/announcements/delete
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:announcements*
      */
     post: operations['admin/announcements/delete'];
   };
@@ -121,7 +122,7 @@ export type paths = {
      * admin/announcements/list
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:announcements*
      */
     post: operations['admin/announcements/list'];
   };
@@ -130,7 +131,7 @@ export type paths = {
      * admin/announcements/update
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:announcements*
      */
     post: operations['admin/announcements/update'];
   };
@@ -139,7 +140,7 @@ export type paths = {
      * admin/avatar-decorations/create
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:avatar-decorations*
      */
     post: operations['admin/avatar-decorations/create'];
   };
@@ -148,7 +149,7 @@ export type paths = {
      * admin/avatar-decorations/delete
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:avatar-decorations*
      */
     post: operations['admin/avatar-decorations/delete'];
   };
@@ -157,7 +158,7 @@ export type paths = {
      * admin/avatar-decorations/list
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:avatar-decorations*
      */
     post: operations['admin/avatar-decorations/list'];
   };
@@ -166,7 +167,7 @@ export type paths = {
      * admin/avatar-decorations/update
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:avatar-decorations*
      */
     post: operations['admin/avatar-decorations/update'];
   };
@@ -175,7 +176,7 @@ export type paths = {
      * admin/delete-all-files-of-a-user
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:delete-all-files-of-a-user*
      */
     post: operations['admin/delete-all-files-of-a-user'];
   };
@@ -184,7 +185,7 @@ export type paths = {
      * admin/unset-user-avatar
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:unset-user-avatar*
      */
     post: operations['admin/unset-user-avatar'];
   };
@@ -193,7 +194,7 @@ export type paths = {
      * admin/unset-user-banner
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:unset-user-banner*
      */
     post: operations['admin/unset-user-banner'];
   };
@@ -202,7 +203,7 @@ export type paths = {
      * admin/drive/clean-remote-files
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:drive*
      */
     post: operations['admin/drive/clean-remote-files'];
   };
@@ -211,7 +212,7 @@ export type paths = {
      * admin/drive/cleanup
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:drive*
      */
     post: operations['admin/drive/cleanup'];
   };
@@ -220,7 +221,7 @@ export type paths = {
      * admin/drive/files
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:drive*
      */
     post: operations['admin/drive/files'];
   };
@@ -229,7 +230,7 @@ export type paths = {
      * admin/drive/show-file
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:drive*
      */
     post: operations['admin/drive/show-file'];
   };
@@ -238,7 +239,7 @@ export type paths = {
      * admin/emoji/add-aliases-bulk
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
      */
     post: operations['admin/emoji/add-aliases-bulk'];
   };
@@ -247,7 +248,7 @@ export type paths = {
      * admin/emoji/add
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
      */
     post: operations['admin/emoji/add'];
   };
@@ -256,7 +257,7 @@ export type paths = {
      * admin/emoji/copy
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
      */
     post: operations['admin/emoji/copy'];
   };
@@ -265,7 +266,7 @@ export type paths = {
      * admin/emoji/delete-bulk
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
      */
     post: operations['admin/emoji/delete-bulk'];
   };
@@ -274,7 +275,7 @@ export type paths = {
      * admin/emoji/delete
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
      */
     post: operations['admin/emoji/delete'];
   };
@@ -293,7 +294,7 @@ export type paths = {
      * admin/emoji/list-remote
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:emoji*
      */
     post: operations['admin/emoji/list-remote'];
   };
@@ -302,7 +303,7 @@ export type paths = {
      * admin/emoji/list
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:emoji*
      */
     post: operations['admin/emoji/list'];
   };
@@ -311,7 +312,7 @@ export type paths = {
      * admin/emoji/remove-aliases-bulk
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
      */
     post: operations['admin/emoji/remove-aliases-bulk'];
   };
@@ -320,7 +321,7 @@ export type paths = {
      * admin/emoji/set-aliases-bulk
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
      */
     post: operations['admin/emoji/set-aliases-bulk'];
   };
@@ -329,7 +330,7 @@ export type paths = {
      * admin/emoji/set-category-bulk
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
      */
     post: operations['admin/emoji/set-category-bulk'];
   };
@@ -338,7 +339,7 @@ export type paths = {
      * admin/emoji/set-license-bulk
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
      */
     post: operations['admin/emoji/set-license-bulk'];
   };
@@ -347,7 +348,7 @@ export type paths = {
      * admin/emoji/update
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
      */
     post: operations['admin/emoji/update'];
   };
@@ -356,7 +357,7 @@ export type paths = {
      * admin/federation/delete-all-files
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:federation*
      */
     post: operations['admin/federation/delete-all-files'];
   };
@@ -365,7 +366,7 @@ export type paths = {
      * admin/federation/refresh-remote-instance-metadata
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:federation*
      */
     post: operations['admin/federation/refresh-remote-instance-metadata'];
   };
@@ -374,7 +375,7 @@ export type paths = {
      * admin/federation/remove-all-following
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:federation*
      */
     post: operations['admin/federation/remove-all-following'];
   };
@@ -383,7 +384,7 @@ export type paths = {
      * admin/federation/update-instance
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:federation*
      */
     post: operations['admin/federation/update-instance'];
   };
@@ -392,7 +393,7 @@ export type paths = {
      * admin/get-index-stats
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:index-stats*
      */
     post: operations['admin/get-index-stats'];
   };
@@ -401,7 +402,7 @@ export type paths = {
      * admin/get-table-stats
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:table-stats*
      */
     post: operations['admin/get-table-stats'];
   };
@@ -410,7 +411,7 @@ export type paths = {
      * admin/get-user-ips
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:user-ips*
      */
     post: operations['admin/get-user-ips'];
   };
@@ -419,7 +420,7 @@ export type paths = {
      * admin/invite/create
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:invite-codes*
      */
     post: operations['admin/invite/create'];
   };
@@ -428,7 +429,7 @@ export type paths = {
      * admin/invite/list
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:invite-codes*
      */
     post: operations['admin/invite/list'];
   };
@@ -437,7 +438,7 @@ export type paths = {
      * admin/promo/create
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:promo*
      */
     post: operations['admin/promo/create'];
   };
@@ -446,7 +447,7 @@ export type paths = {
      * admin/queue/clear
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:queue*
      */
     post: operations['admin/queue/clear'];
   };
@@ -455,7 +456,7 @@ export type paths = {
      * admin/queue/deliver-delayed
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:queue*
      */
     post: operations['admin/queue/deliver-delayed'];
   };
@@ -464,7 +465,7 @@ export type paths = {
      * admin/queue/inbox-delayed
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:queue*
      */
     post: operations['admin/queue/inbox-delayed'];
   };
@@ -473,7 +474,7 @@ export type paths = {
      * admin/queue/promote
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:queue*
      */
     post: operations['admin/queue/promote'];
   };
@@ -482,7 +483,7 @@ export type paths = {
      * admin/queue/stats
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:emoji*
      */
     post: operations['admin/queue/stats'];
   };
@@ -491,7 +492,7 @@ export type paths = {
      * admin/relays/add
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:relays*
      */
     post: operations['admin/relays/add'];
   };
@@ -500,7 +501,7 @@ export type paths = {
      * admin/relays/list
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:relays*
      */
     post: operations['admin/relays/list'];
   };
@@ -509,7 +510,7 @@ export type paths = {
      * admin/relays/remove
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:relays*
      */
     post: operations['admin/relays/remove'];
   };
@@ -518,7 +519,7 @@ export type paths = {
      * admin/reset-password
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:reset-password*
      */
     post: operations['admin/reset-password'];
   };
@@ -527,7 +528,7 @@ export type paths = {
      * admin/resolve-abuse-user-report
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:resolve-abuse-user-report*
      */
     post: operations['admin/resolve-abuse-user-report'];
   };
@@ -536,7 +537,7 @@ export type paths = {
      * admin/send-email
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:send-email*
      */
     post: operations['admin/send-email'];
   };
@@ -545,7 +546,7 @@ export type paths = {
      * admin/server-info
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:server-info*
      */
     post: operations['admin/server-info'];
   };
@@ -554,7 +555,7 @@ export type paths = {
      * admin/show-moderation-logs
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:show-moderation-log*
      */
     post: operations['admin/show-moderation-logs'];
   };
@@ -563,7 +564,7 @@ export type paths = {
      * admin/show-user
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:show-user*
      */
     post: operations['admin/show-user'];
   };
@@ -572,7 +573,7 @@ export type paths = {
      * admin/show-users
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:show-users*
      */
     post: operations['admin/show-users'];
   };
@@ -581,7 +582,7 @@ export type paths = {
      * admin/suspend-user
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:suspend-user*
      */
     post: operations['admin/suspend-user'];
   };
@@ -590,7 +591,7 @@ export type paths = {
      * admin/unsuspend-user
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:unsuspend-user*
      */
     post: operations['admin/unsuspend-user'];
   };
@@ -599,7 +600,7 @@ export type paths = {
      * admin/update-meta
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:meta*
      */
     post: operations['admin/update-meta'];
   };
@@ -608,7 +609,7 @@ export type paths = {
      * admin/delete-account
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:delete-account*
      */
     post: operations['admin/delete-account'];
   };
@@ -617,7 +618,7 @@ export type paths = {
      * admin/update-user-note
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:user-note*
      */
     post: operations['admin/update-user-note'];
   };
@@ -626,7 +627,7 @@ export type paths = {
      * admin/roles/create
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
      */
     post: operations['admin/roles/create'];
   };
@@ -635,7 +636,7 @@ export type paths = {
      * admin/roles/delete
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
      */
     post: operations['admin/roles/delete'];
   };
@@ -644,7 +645,7 @@ export type paths = {
      * admin/roles/list
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:roles*
      */
     post: operations['admin/roles/list'];
   };
@@ -653,7 +654,7 @@ export type paths = {
      * admin/roles/show
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:admin:roles*
      */
     post: operations['admin/roles/show'];
   };
@@ -662,7 +663,7 @@ export type paths = {
      * admin/roles/update
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
      */
     post: operations['admin/roles/update'];
   };
@@ -671,7 +672,7 @@ export type paths = {
      * admin/roles/assign
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
      */
     post: operations['admin/roles/assign'];
   };
@@ -680,7 +681,7 @@ export type paths = {
      * admin/roles/unassign
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
      */
     post: operations['admin/roles/unassign'];
   };
@@ -689,7 +690,7 @@ export type paths = {
      * admin/roles/update-default-policies
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
      */
     post: operations['admin/roles/update-default-policies'];
   };
@@ -698,7 +699,7 @@ export type paths = {
      * admin/roles/users
      * @description No description provided.
      *
-     * **Credential required**: *No*
+     * **Credential required**: *No* / **Permission**: *read:admin:roles*
      */
     post: operations['admin/roles/users'];
   };
@@ -770,7 +771,7 @@ export type paths = {
      * ap/get
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:federation*
      */
     post: operations['ap/get'];
   };
@@ -779,7 +780,7 @@ export type paths = {
      * ap/show
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['ap/show'];
   };
@@ -1520,7 +1521,7 @@ export type paths = {
      * federation/update-remote-user
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *No*
      */
     post: operations['federation/update-remote-user'];
   };
@@ -1793,7 +1794,7 @@ export type paths = {
      * i
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['i'];
   };
@@ -1902,7 +1903,7 @@ export type paths = {
      * i/claim-achievement
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:account*
      */
     post: operations['i/claim-achievement'];
   };
@@ -2151,7 +2152,7 @@ export type paths = {
      * i/registry/get-all
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['i/registry/get-all'];
   };
@@ -2160,7 +2161,7 @@ export type paths = {
      * i/registry/get-detail
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['i/registry/get-detail'];
   };
@@ -2169,7 +2170,7 @@ export type paths = {
      * i/registry/get
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['i/registry/get'];
   };
@@ -2178,7 +2179,7 @@ export type paths = {
      * i/registry/keys-with-type
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['i/registry/keys-with-type'];
   };
@@ -2187,7 +2188,7 @@ export type paths = {
      * i/registry/keys
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['i/registry/keys'];
   };
@@ -2196,7 +2197,7 @@ export type paths = {
      * i/registry/remove
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:account*
      */
     post: operations['i/registry/remove'];
   };
@@ -2215,7 +2216,7 @@ export type paths = {
      * i/registry/set
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:account*
      */
     post: operations['i/registry/set'];
   };
@@ -2327,7 +2328,7 @@ export type paths = {
      * invite/create
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:invite-codes*
      */
     post: operations['invite/create'];
   };
@@ -2336,7 +2337,7 @@ export type paths = {
      * invite/delete
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:invite-codes*
      */
     post: operations['invite/delete'];
   };
@@ -2345,7 +2346,7 @@ export type paths = {
      * invite/list
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:invite-codes*
      */
     post: operations['invite/list'];
   };
@@ -2354,7 +2355,7 @@ export type paths = {
      * invite/limit
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:invite-codes*
      */
     post: operations['invite/limit'];
   };
@@ -2468,7 +2469,7 @@ export type paths = {
      * my/apps
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['my/apps'];
   };
@@ -2574,7 +2575,7 @@ export type paths = {
      * notes/hybrid-timeline
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['notes/hybrid-timeline'];
   };
@@ -2592,7 +2593,7 @@ export type paths = {
      * notes/mentions
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['notes/mentions'];
   };
@@ -2601,7 +2602,7 @@ export type paths = {
      * notes/polls/recommendation
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['notes/polls/recommendation'];
   };
@@ -2698,7 +2699,7 @@ export type paths = {
      * notes/state
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['notes/state'];
   };
@@ -2725,7 +2726,7 @@ export type paths = {
      * notes/timeline
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['notes/timeline'];
   };
@@ -2734,7 +2735,7 @@ export type paths = {
      * notes/translate
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['notes/translate'];
   };
@@ -2752,7 +2753,7 @@ export type paths = {
      * notes/user-list-timeline
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['notes/user-list-timeline'];
   };
@@ -2960,7 +2961,7 @@ export type paths = {
      * promo/read
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:account*
      */
     post: operations['promo/read'];
   };
@@ -2969,7 +2970,7 @@ export type paths = {
      * roles/list
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['roles/list'];
   };
@@ -2996,7 +2997,7 @@ export type paths = {
      * roles/notes
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['roles/notes'];
   };
@@ -3057,6 +3058,7 @@ export type paths = {
      * sw/show-registration
      * @description Check push notification registration exists.
      *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
      * **Credential required**: *Yes*
      */
     post: operations['sw/show-registration'];
@@ -3066,6 +3068,7 @@ export type paths = {
      * sw/update-registration
      * @description Update push notification registration.
      *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
      * **Credential required**: *Yes*
      */
     post: operations['sw/update-registration'];
@@ -3075,6 +3078,7 @@ export type paths = {
      * sw/register
      * @description Register to receive push notifications.
      *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
      * **Credential required**: *Yes*
      */
     post: operations['sw/register'];
@@ -3235,7 +3239,7 @@ export type paths = {
      * users/lists/favorite
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:account*
      */
     post: operations['users/lists/favorite'];
   };
@@ -3244,7 +3248,7 @@ export type paths = {
      * users/lists/unfavorite
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:account*
      */
     post: operations['users/lists/unfavorite'];
   };
@@ -3262,7 +3266,7 @@ export type paths = {
      * users/lists/create-from-public
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:account*
      */
     post: operations['users/lists/create-from-public'];
   };
@@ -3334,7 +3338,7 @@ export type paths = {
      * users/relation
      * @description Show the different kinds of relations between the authenticated user and the specified user(s).
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['users/relation'];
   };
@@ -3343,7 +3347,7 @@ export type paths = {
      * users/report-abuse
      * @description File a report.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *Yes* / **Permission**: *write:report-abuse*
      */
     post: operations['users/report-abuse'];
   };
@@ -3379,7 +3383,7 @@ export type paths = {
      * users/achievements
      * @description No description provided.
      *
-     * **Credential required**: *Yes*
+     * **Credential required**: *No*
      */
     post: operations['users/achievements'];
   };
@@ -3413,6 +3417,7 @@ export type paths = {
      * fetch-external-resources
      * @description No description provided.
      *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
      * **Credential required**: *Yes*
      */
     post: operations['fetch-external-resources'];
@@ -3478,6 +3483,8 @@ export type components = {
           flipH?: boolean;
           /** Format: url */
           url: string;
+          offsetX?: number;
+          offsetY?: number;
         }[];
       isBot?: boolean;
       isCat?: boolean;
@@ -3540,7 +3547,9 @@ export type components = {
       pinnedPage: components['schemas']['Page'] | null;
       publicReactions: boolean;
       /** @enum {string} */
-      ffVisibility: 'public' | 'followers' | 'private';
+      followingVisibility: 'public' | 'followers' | 'private';
+      /** @enum {string} */
+      followersVisibility: 'public' | 'followers' | 'private';
       /** @default false */
       twoFactorEnabled: boolean;
       /** @default false */
@@ -3626,15 +3635,7 @@ export type components = {
           /** @enum {string} */
           type: 'all' | 'following' | 'follower' | 'mutualFollow' | 'list' | 'never';
         };
-        achievementEarned?: {
-          /** @enum {string} */
-          type: 'all' | 'following' | 'follower' | 'mutualFollow' | 'list' | 'never';
-        };
         receiveFollowRequest?: {
-          /** @enum {string} */
-          type: 'all' | 'following' | 'follower' | 'mutualFollow' | 'list' | 'never';
-        };
-        followRequestAccepted?: {
           /** @enum {string} */
           type: 'all' | 'following' | 'follower' | 'mutualFollow' | 'list' | 'never';
         };
@@ -3669,6 +3670,7 @@ export type components = {
         userListLimit: number;
         userEachUserListsLimit: number;
         rateLimitFactor: number;
+        avatarDecorationLimit: number;
       };
       email?: string | null;
       emailVerified?: boolean | null;
@@ -3698,6 +3700,24 @@ export type components = {
       name: string;
       userIds?: string[];
       isPublic: boolean;
+    };
+    Ad: {
+      /**
+       * Format: id
+       * @example xxxxxxxxxx
+       */
+      id: string;
+      /** Format: date-time */
+      expiresAt: string;
+      /** Format: date-time */
+      startsAt: string;
+      place: string;
+      priority: string;
+      ratio: number;
+      url: string;
+      imageUrl: string;
+      memo: string;
+      dayOfWeek: number;
     };
     Announcement: {
       /**
@@ -3814,7 +3834,7 @@ export type components = {
       /** Format: date-time */
       createdAt: string;
       /** @enum {string} */
-      type: 'note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'achievementEarned' | 'app' | 'test' | 'reaction:grouped' | 'renote:grouped';
+      type: 'note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'roleAssigned' | 'achievementEarned' | 'app' | 'test' | 'reaction:grouped' | 'renote:grouped';
       user?: components['schemas']['UserLite'] | null;
       /** Format: id */
       userId?: string | null;
@@ -4340,6 +4360,11 @@ export type components = {
           priority: number;
           useDefault: boolean;
         };
+        avatarDecorationLimit: {
+          value: number | boolean;
+          priority: number;
+          useDefault: boolean;
+        };
       };
       usersCount: number;
     });
@@ -4361,7 +4386,7 @@ export type operations = {
    * admin/meta
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:meta*
    */
   'admin/meta': {
     responses: {
@@ -4396,6 +4421,7 @@ export type operations = {
             hiddenTags: string[];
             blockedHosts: string[];
             sensitiveWords: string[];
+            bannedEmailDomains?: string[];
             preservedUsernames: string[];
             hcaptchaSecretKey: string | null;
             recaptchaSecretKey: string | null;
@@ -4453,6 +4479,7 @@ export type operations = {
             maintainerEmail: string | null;
             maintainerName: string | null;
             name: string | null;
+            shortName: string | null;
             objectStorageS3ForcePathStyle: boolean;
             privacyPolicyUrl: string | null;
             repositoryUrl: string;
@@ -4500,7 +4527,7 @@ export type operations = {
    * admin/abuse-user-reports
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:abuse-user-reports*
    */
   'admin/abuse-user-reports': {
     requestBody: {
@@ -4592,6 +4619,7 @@ export type operations = {
    * admin/accounts/create
    * @description No description provided.
    *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
    * **Credential required**: *No*
    */
   'admin/accounts/create': {
@@ -4646,7 +4674,7 @@ export type operations = {
    * admin/accounts/delete
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:account*
    */
   'admin/accounts/delete': {
     requestBody: {
@@ -4698,7 +4726,7 @@ export type operations = {
    * admin/accounts/find-by-email
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:account*
    */
   'admin/accounts/find-by-email': {
     requestBody: {
@@ -4709,9 +4737,11 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['User'];
+        };
       };
       /** @description Client error */
       400: {
@@ -4749,7 +4779,7 @@ export type operations = {
    * admin/ad/create
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:ad*
    */
   'admin/ad/create': {
     requestBody: {
@@ -4768,9 +4798,11 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['Ad'];
+        };
       };
       /** @description Client error */
       400: {
@@ -4808,7 +4840,7 @@ export type operations = {
    * admin/ad/delete
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:ad*
    */
   'admin/ad/delete': {
     requestBody: {
@@ -4860,7 +4892,7 @@ export type operations = {
    * admin/ad/list
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:ad*
    */
   'admin/ad/list': {
     requestBody: {
@@ -4878,9 +4910,11 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['Ad'][];
+        };
       };
       /** @description Client error */
       400: {
@@ -4918,7 +4952,7 @@ export type operations = {
    * admin/ad/update
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:ad*
    */
   'admin/ad/update': {
     requestBody: {
@@ -4979,7 +5013,7 @@ export type operations = {
    * admin/announcements/create
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:announcements*
    */
   'admin/announcements/create': {
     requestBody: {
@@ -5068,7 +5102,7 @@ export type operations = {
    * admin/announcements/delete
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:announcements*
    */
   'admin/announcements/delete': {
     requestBody: {
@@ -5120,7 +5154,7 @@ export type operations = {
    * admin/announcements/list
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:announcements*
    */
   'admin/announcements/list': {
     requestBody: {
@@ -5194,7 +5228,7 @@ export type operations = {
    * admin/announcements/update
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:announcements*
    */
   'admin/announcements/update': {
     requestBody: {
@@ -5257,7 +5291,7 @@ export type operations = {
    * admin/avatar-decorations/create
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:avatar-decorations*
    */
   'admin/avatar-decorations/create': {
     requestBody: {
@@ -5311,7 +5345,7 @@ export type operations = {
    * admin/avatar-decorations/delete
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:avatar-decorations*
    */
   'admin/avatar-decorations/delete': {
     requestBody: {
@@ -5363,7 +5397,7 @@ export type operations = {
    * admin/avatar-decorations/list
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:avatar-decorations*
    */
   'admin/avatar-decorations/list': {
     requestBody: {
@@ -5437,7 +5471,7 @@ export type operations = {
    * admin/avatar-decorations/update
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:avatar-decorations*
    */
   'admin/avatar-decorations/update': {
     requestBody: {
@@ -5493,7 +5527,7 @@ export type operations = {
    * admin/delete-all-files-of-a-user
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:delete-all-files-of-a-user*
    */
   'admin/delete-all-files-of-a-user': {
     requestBody: {
@@ -5545,7 +5579,7 @@ export type operations = {
    * admin/unset-user-avatar
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:unset-user-avatar*
    */
   'admin/unset-user-avatar': {
     requestBody: {
@@ -5597,7 +5631,7 @@ export type operations = {
    * admin/unset-user-banner
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:unset-user-banner*
    */
   'admin/unset-user-banner': {
     requestBody: {
@@ -5649,7 +5683,7 @@ export type operations = {
    * admin/drive/clean-remote-files
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:drive*
    */
   'admin/drive/clean-remote-files': {
     responses: {
@@ -5693,7 +5727,7 @@ export type operations = {
    * admin/drive/cleanup
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:drive*
    */
   'admin/drive/cleanup': {
     responses: {
@@ -5737,7 +5771,7 @@ export type operations = {
    * admin/drive/files
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:drive*
    */
   'admin/drive/files': {
     requestBody: {
@@ -5808,7 +5842,7 @@ export type operations = {
    * admin/drive/show-file
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:drive*
    */
   'admin/drive/show-file': {
     requestBody: {
@@ -5912,7 +5946,7 @@ export type operations = {
    * admin/emoji/add-aliases-bulk
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
    */
   'admin/emoji/add-aliases-bulk': {
     requestBody: {
@@ -5964,7 +5998,7 @@ export type operations = {
    * admin/emoji/add
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
    */
   'admin/emoji/add': {
     requestBody: {
@@ -6024,7 +6058,7 @@ export type operations = {
    * admin/emoji/copy
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
    */
   'admin/emoji/copy': {
     requestBody: {
@@ -6081,7 +6115,7 @@ export type operations = {
    * admin/emoji/delete-bulk
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
    */
   'admin/emoji/delete-bulk': {
     requestBody: {
@@ -6132,7 +6166,7 @@ export type operations = {
    * admin/emoji/delete
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
    */
   'admin/emoji/delete': {
     requestBody: {
@@ -6237,7 +6271,7 @@ export type operations = {
    * admin/emoji/list-remote
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:emoji*
    */
   'admin/emoji/list-remote': {
     requestBody: {
@@ -6311,7 +6345,7 @@ export type operations = {
    * admin/emoji/list
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:emoji*
    */
   'admin/emoji/list': {
     requestBody: {
@@ -6380,7 +6414,7 @@ export type operations = {
    * admin/emoji/remove-aliases-bulk
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
    */
   'admin/emoji/remove-aliases-bulk': {
     requestBody: {
@@ -6432,7 +6466,7 @@ export type operations = {
    * admin/emoji/set-aliases-bulk
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
    */
   'admin/emoji/set-aliases-bulk': {
     requestBody: {
@@ -6484,7 +6518,7 @@ export type operations = {
    * admin/emoji/set-category-bulk
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
    */
   'admin/emoji/set-category-bulk': {
     requestBody: {
@@ -6537,7 +6571,7 @@ export type operations = {
    * admin/emoji/set-license-bulk
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
    */
   'admin/emoji/set-license-bulk': {
     requestBody: {
@@ -6590,7 +6624,7 @@ export type operations = {
    * admin/emoji/update
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:emoji*
    */
   'admin/emoji/update': {
     requestBody: {
@@ -6652,7 +6686,7 @@ export type operations = {
    * admin/federation/delete-all-files
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:federation*
    */
   'admin/federation/delete-all-files': {
     requestBody: {
@@ -6703,7 +6737,7 @@ export type operations = {
    * admin/federation/refresh-remote-instance-metadata
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:federation*
    */
   'admin/federation/refresh-remote-instance-metadata': {
     requestBody: {
@@ -6754,7 +6788,7 @@ export type operations = {
    * admin/federation/remove-all-following
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:federation*
    */
   'admin/federation/remove-all-following': {
     requestBody: {
@@ -6805,7 +6839,7 @@ export type operations = {
    * admin/federation/update-instance
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:federation*
    */
   'admin/federation/update-instance': {
     requestBody: {
@@ -6857,13 +6891,18 @@ export type operations = {
    * admin/get-index-stats
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:index-stats*
    */
   'admin/get-index-stats': {
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+              tablename: string;
+              indexname: string;
+            }[];
+        };
       };
       /** @description Client error */
       400: {
@@ -6901,7 +6940,7 @@ export type operations = {
    * admin/get-table-stats
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:table-stats*
    */
   'admin/get-table-stats': {
     responses: {
@@ -6947,7 +6986,7 @@ export type operations = {
    * admin/get-user-ips
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:user-ips*
    */
   'admin/get-user-ips': {
     requestBody: {
@@ -6959,9 +6998,15 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+              ip: string;
+              /** Format: date-time */
+              createdAt: string;
+            }[];
+        };
       };
       /** @description Client error */
       400: {
@@ -6999,7 +7044,7 @@ export type operations = {
    * admin/invite/create
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:invite-codes*
    */
   'admin/invite/create': {
     requestBody: {
@@ -7054,7 +7099,7 @@ export type operations = {
    * admin/invite/list
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:invite-codes*
    */
   'admin/invite/list': {
     requestBody: {
@@ -7117,7 +7162,7 @@ export type operations = {
    * admin/promo/create
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:promo*
    */
   'admin/promo/create': {
     requestBody: {
@@ -7170,7 +7215,7 @@ export type operations = {
    * admin/queue/clear
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:queue*
    */
   'admin/queue/clear': {
     responses: {
@@ -7214,7 +7259,7 @@ export type operations = {
    * admin/queue/deliver-delayed
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:queue*
    */
   'admin/queue/deliver-delayed': {
     responses: {
@@ -7260,7 +7305,7 @@ export type operations = {
    * admin/queue/inbox-delayed
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:queue*
    */
   'admin/queue/inbox-delayed': {
     responses: {
@@ -7306,7 +7351,7 @@ export type operations = {
    * admin/queue/promote
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:queue*
    */
   'admin/queue/promote': {
     requestBody: {
@@ -7358,7 +7403,7 @@ export type operations = {
    * admin/queue/stats
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:emoji*
    */
   'admin/queue/stats': {
     responses: {
@@ -7409,7 +7454,7 @@ export type operations = {
    * admin/relays/add
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:relays*
    */
   'admin/relays/add': {
     requestBody: {
@@ -7472,7 +7517,7 @@ export type operations = {
    * admin/relays/list
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:relays*
    */
   'admin/relays/list': {
     responses: {
@@ -7528,7 +7573,7 @@ export type operations = {
    * admin/relays/remove
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:relays*
    */
   'admin/relays/remove': {
     requestBody: {
@@ -7579,7 +7624,7 @@ export type operations = {
    * admin/reset-password
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:reset-password*
    */
   'admin/reset-password': {
     requestBody: {
@@ -7635,7 +7680,7 @@ export type operations = {
    * admin/resolve-abuse-user-report
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:resolve-abuse-user-report*
    */
   'admin/resolve-abuse-user-report': {
     requestBody: {
@@ -7689,7 +7734,7 @@ export type operations = {
    * admin/send-email
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:send-email*
    */
   'admin/send-email': {
     requestBody: {
@@ -7742,7 +7787,7 @@ export type operations = {
    * admin/server-info
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:server-info*
    */
   'admin/server-info': {
     responses: {
@@ -7812,7 +7857,7 @@ export type operations = {
    * admin/show-moderation-logs
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:show-moderation-log*
    */
   'admin/show-moderation-logs': {
     requestBody: {
@@ -7883,7 +7928,7 @@ export type operations = {
    * admin/show-user
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:show-user*
    */
   'admin/show-user': {
     requestBody: {
@@ -7937,7 +7982,7 @@ export type operations = {
    * admin/show-users
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:show-users*
    */
   'admin/show-users': {
     requestBody: {
@@ -8012,7 +8057,7 @@ export type operations = {
    * admin/suspend-user
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:suspend-user*
    */
   'admin/suspend-user': {
     requestBody: {
@@ -8064,7 +8109,7 @@ export type operations = {
    * admin/unsuspend-user
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:unsuspend-user*
    */
   'admin/unsuspend-user': {
     requestBody: {
@@ -8116,7 +8161,7 @@ export type operations = {
    * admin/update-meta
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:meta*
    */
   'admin/update-meta': {
     requestBody: {
@@ -8206,6 +8251,7 @@ export type operations = {
           enableServerMachineStats?: boolean;
           enableIdenticonGeneration?: boolean;
           serverRules?: string[];
+          bannedEmailDomains?: string[];
           preservedUsernames?: string[];
           manifestJsonOverride?: string;
           enableFanoutTimeline?: boolean;
@@ -8260,7 +8306,7 @@ export type operations = {
    * admin/delete-account
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:delete-account*
    */
   'admin/delete-account': {
     requestBody: {
@@ -8314,7 +8360,7 @@ export type operations = {
    * admin/update-user-note
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:user-note*
    */
   'admin/update-user-note': {
     requestBody: {
@@ -8367,7 +8413,7 @@ export type operations = {
    * admin/roles/create
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
    */
   'admin/roles/create': {
     requestBody: {
@@ -8435,7 +8481,7 @@ export type operations = {
    * admin/roles/delete
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
    */
   'admin/roles/delete': {
     requestBody: {
@@ -8487,7 +8533,7 @@ export type operations = {
    * admin/roles/list
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:roles*
    */
   'admin/roles/list': {
     responses: {
@@ -8533,7 +8579,7 @@ export type operations = {
    * admin/roles/show
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:admin:roles*
    */
   'admin/roles/show': {
     requestBody: {
@@ -8587,7 +8633,7 @@ export type operations = {
    * admin/roles/update
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
    */
   'admin/roles/update': {
     requestBody: {
@@ -8654,7 +8700,7 @@ export type operations = {
    * admin/roles/assign
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
    */
   'admin/roles/assign': {
     requestBody: {
@@ -8709,7 +8755,7 @@ export type operations = {
    * admin/roles/unassign
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
    */
   'admin/roles/unassign': {
     requestBody: {
@@ -8763,7 +8809,7 @@ export type operations = {
    * admin/roles/update-default-policies
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:admin:roles*
    */
   'admin/roles/update-default-policies': {
     requestBody: {
@@ -8814,7 +8860,7 @@ export type operations = {
    * admin/roles/users
    * @description No description provided.
    *
-   * **Credential required**: *No*
+   * **Credential required**: *No* / **Permission**: *read:admin:roles*
    */
   'admin/roles/users': {
     requestBody: {
@@ -8832,9 +8878,19 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': ({
+              /** Format: misskey:id */
+              id: string;
+              /** Format: date-time */
+              createdAt: string;
+              user: components['schemas']['UserDetailed'];
+              /** Format: date-time */
+              expiresAt: string | null;
+            })[];
+        };
       };
       /** @description Client error */
       400: {
@@ -9278,7 +9334,7 @@ export type operations = {
    * ap/get
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:federation*
    */
   'ap/get': {
     requestBody: {
@@ -9337,7 +9393,7 @@ export type operations = {
    * ap/show
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'ap/show': {
     requestBody: {
@@ -13176,6 +13232,17 @@ export type operations = {
       };
     };
     responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            params: {
+                name: string;
+                type: string;
+              }[];
+          } | null;
+        };
+      };
       /** @description OK (without any results) */
       204: {
         content: never;
@@ -13555,7 +13622,7 @@ export type operations = {
    * federation/update-remote-user
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *No*
    */
   'federation/update-remote-user': {
     requestBody: {
@@ -13678,9 +13745,16 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            topSubInstances: components['schemas']['FederationInstance'][];
+            otherFollowersCount: number;
+            topPubInstances: components['schemas']['FederationInstance'][];
+            otherFollowingCount: number;
+          };
+        };
       };
       /** @description Client error */
       400: {
@@ -14744,9 +14818,13 @@ export type operations = {
    */
   'get-online-users-count': {
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            count: number;
+          };
+        };
       };
       /** @description Client error */
       400: {
@@ -15129,7 +15207,7 @@ export type operations = {
    * i
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   i: {
     responses: {
@@ -15242,9 +15320,14 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            id: string;
+            name: string;
+          };
+        };
       };
       /** @description Client error */
       400: {
@@ -15347,9 +15430,45 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            rp: {
+              id: string | null;
+            };
+            user: {
+              id: string;
+              name: string;
+              displayName: string;
+            };
+            challenge: string;
+            pubKeyCredParams: {
+                type: string;
+                alg: number;
+              }[];
+            timeout: number | null;
+            excludeCredentials: (({
+                id: string;
+                type: string;
+                transports: ('ble' | 'cable' | 'hybrid' | 'internal' | 'nfc' | 'smart-card' | 'usb')[];
+              })[]) | null;
+            authenticatorSelection: ({
+              /** @enum {string} */
+              authenticatorAttachment: 'cross-platform' | 'platform';
+              requireResidentKey: boolean;
+              /** @enum {string} */
+              userVerification: 'discouraged' | 'preferred' | 'required';
+            }) | null;
+            /** @enum {string|null} */
+            attestation: 'direct' | 'enterprise' | 'indirect' | 'none' | null;
+            extensions: ({
+              appid: string | null;
+              credProps: boolean | null;
+              hmacCreateSecret: boolean | null;
+            }) | null;
+          };
+        };
       };
       /** @description Client error */
       400: {
@@ -15400,9 +15519,17 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            qr: string;
+            url: string;
+            secret: string;
+            label: string;
+            issuer: string;
+          };
+        };
       };
       /** @description Client error */
       400: {
@@ -15613,9 +15740,20 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+              /** Format: misskey:id */
+              id: string;
+              name: string;
+              /** Format: date-time */
+              createdAt: string;
+              /** Format: date-time */
+              lastUsedAt: string;
+              permission: string[];
+            }[];
+        };
       };
       /** @description Client error */
       400: {
@@ -15673,9 +15811,18 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': ({
+              /** Format: misskey:id */
+              id: string;
+              name: string;
+              callbackUrl: string | null;
+              permission: string[];
+              isAuthorized: boolean;
+            })[];
+        };
       };
       /** @description Client error */
       400: {
@@ -15713,7 +15860,7 @@ export type operations = {
    * i/claim-achievement
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:account*
    */
   'i/claim-achievement': {
     requestBody: {
@@ -16727,8 +16874,8 @@ export type operations = {
           untilId?: string;
           /** @default true */
           markAsRead?: boolean;
-          includeTypes?: ('note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'achievementEarned' | 'app' | 'test' | 'pollVote' | 'groupInvited')[];
-          excludeTypes?: ('note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'achievementEarned' | 'app' | 'test' | 'pollVote' | 'groupInvited')[];
+          includeTypes?: ('note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'roleAssigned' | 'achievementEarned' | 'app' | 'test' | 'pollVote' | 'groupInvited')[];
+          excludeTypes?: ('note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'roleAssigned' | 'achievementEarned' | 'app' | 'test' | 'pollVote' | 'groupInvited')[];
         };
       };
     };
@@ -16795,8 +16942,8 @@ export type operations = {
           untilId?: string;
           /** @default true */
           markAsRead?: boolean;
-          includeTypes?: ('note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'achievementEarned' | 'app' | 'test' | 'pollVote' | 'groupInvited')[];
-          excludeTypes?: ('note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'achievementEarned' | 'app' | 'test' | 'pollVote' | 'groupInvited')[];
+          includeTypes?: ('note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'roleAssigned' | 'achievementEarned' | 'app' | 'test' | 'pollVote' | 'groupInvited')[];
+          excludeTypes?: ('note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'roleAssigned' | 'achievementEarned' | 'app' | 'test' | 'pollVote' | 'groupInvited')[];
         };
       };
     };
@@ -17171,7 +17318,7 @@ export type operations = {
    * i/registry/get-all
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'i/registry/get-all': {
     requestBody: {
@@ -17184,9 +17331,11 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': Record<string, never>;
+        };
       };
       /** @description Client error */
       400: {
@@ -17224,7 +17373,7 @@ export type operations = {
    * i/registry/get-detail
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'i/registry/get-detail': {
     requestBody: {
@@ -17238,9 +17387,11 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': Record<string, never>;
+        };
       };
       /** @description Client error */
       400: {
@@ -17278,7 +17429,7 @@ export type operations = {
    * i/registry/get
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'i/registry/get': {
     requestBody: {
@@ -17292,9 +17443,11 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': Record<string, never>;
+        };
       };
       /** @description Client error */
       400: {
@@ -17332,7 +17485,7 @@ export type operations = {
    * i/registry/keys-with-type
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'i/registry/keys-with-type': {
     requestBody: {
@@ -17345,9 +17498,11 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': Record<string, never>;
+        };
       };
       /** @description Client error */
       400: {
@@ -17385,7 +17540,7 @@ export type operations = {
    * i/registry/keys
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'i/registry/keys': {
     requestBody: {
@@ -17438,7 +17593,7 @@ export type operations = {
    * i/registry/remove
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:account*
    */
   'i/registry/remove': {
     requestBody: {
@@ -17497,9 +17652,14 @@ export type operations = {
    */
   'i/registry/scopes-with-domain': {
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': ({
+              scopes: string[][];
+              domain: string | null;
+            })[];
+        };
       };
       /** @description Client error */
       400: {
@@ -17537,7 +17697,7 @@ export type operations = {
    * i/registry/set
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:account*
    */
   'i/registry/set': {
     requestBody: {
@@ -17773,9 +17933,11 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['UserDetailed'];
+        };
       };
       /** @description Client error */
       400: {
@@ -17838,6 +18000,8 @@ export type operations = {
               id: string;
               angle?: number | null;
               flipH?: boolean | null;
+              offsetX?: number | null;
+              offsetY?: number | null;
             })[];
           /** Format: misskey:id */
           bannerId?: string | null;
@@ -17860,7 +18024,9 @@ export type operations = {
           alwaysMarkNsfw?: boolean;
           autoSensitive?: boolean;
           /** @enum {string} */
-          ffVisibility?: 'public' | 'followers' | 'private';
+          followingVisibility?: 'public' | 'followers' | 'private';
+          /** @enum {string} */
+          followersVisibility?: 'public' | 'followers' | 'private';
           /** Format: misskey:id */
           pinnedPageId?: string | null;
           mutedWords?: (string[] | string)[];
@@ -17933,9 +18099,11 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': Record<string, never>;
+        };
       };
       /** @description Client error */
       400: {
@@ -17994,9 +18162,24 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            /** Format: misskey:id */
+            id: string;
+            /** Format: misskey:id */
+            userId: string;
+            name: string;
+            on: ('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction')[];
+            url: string;
+            secret: string;
+            active: boolean;
+            /** Format: date-time */
+            latestSentAt: string | null;
+            latestStatus: number | null;
+          };
+        };
       };
       /** @description Client error */
       400: {
@@ -18038,9 +18221,24 @@ export type operations = {
    */
   'i/webhooks/list': {
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': ({
+              /** Format: misskey:id */
+              id: string;
+              /** Format: misskey:id */
+              userId: string;
+              name: string;
+              on: ('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction')[];
+              url: string;
+              secret: string;
+              active: boolean;
+              /** Format: date-time */
+              latestSentAt: string | null;
+              latestStatus: number | null;
+            })[];
+        };
       };
       /** @description Client error */
       400: {
@@ -18090,9 +18288,24 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            /** Format: misskey:id */
+            id: string;
+            /** Format: misskey:id */
+            userId: string;
+            name: string;
+            on: ('mention' | 'unfollow' | 'follow' | 'followed' | 'note' | 'reply' | 'renote' | 'reaction')[];
+            url: string;
+            secret: string;
+            active: boolean;
+            /** Format: date-time */
+            latestSentAt: string | null;
+            latestStatus: number | null;
+          };
+        };
       };
       /** @description Client error */
       400: {
@@ -18240,7 +18453,7 @@ export type operations = {
    * invite/create
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:invite-codes*
    */
   'invite/create': {
     responses: {
@@ -18286,7 +18499,7 @@ export type operations = {
    * invite/delete
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:invite-codes*
    */
   'invite/delete': {
     requestBody: {
@@ -18338,7 +18551,7 @@ export type operations = {
    * invite/list
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:invite-codes*
    */
   'invite/list': {
     requestBody: {
@@ -18396,7 +18609,7 @@ export type operations = {
    * invite/limit
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:invite-codes*
    */
   'invite/limit': {
     responses: {
@@ -18499,11 +18712,18 @@ export type operations = {
             iconUrl: string | null;
             maxNoteTextLength: number;
             ads: {
-                place: string;
+                /**
+                 * Format: id
+                 * @example xxxxxxxxxx
+                 */
+                id: string;
                 /** Format: url */
                 url: string;
+                place: string;
+                ratio: number;
                 /** Format: url */
                 imageUrl: string;
+                dayOfWeek: number;
               }[];
             /** @default 0 */
             notesPerOneAd: number;
@@ -19069,7 +19289,7 @@ export type operations = {
    * my/apps
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'my/apps': {
     requestBody: {
@@ -19746,7 +19966,7 @@ export type operations = {
    * notes/hybrid-timeline
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'notes/hybrid-timeline': {
     requestBody: {
@@ -19888,7 +20108,7 @@ export type operations = {
    * notes/mentions
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'notes/mentions': {
     requestBody: {
@@ -19949,7 +20169,7 @@ export type operations = {
    * notes/polls/recommendation
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'notes/polls/recommendation': {
     requestBody: {
@@ -20549,7 +20769,7 @@ export type operations = {
    * notes/state
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'notes/state': {
     requestBody: {
@@ -20716,7 +20936,7 @@ export type operations = {
    * notes/timeline
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'notes/timeline': {
     requestBody: {
@@ -20788,7 +21008,7 @@ export type operations = {
    * notes/translate
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'notes/translate': {
     requestBody: {
@@ -20804,7 +21024,10 @@ export type operations = {
       /** @description OK (with results) */
       200: {
         content: {
-          'application/json': Record<string, never>;
+          'application/json': {
+            sourceLang: string;
+            text: string;
+          };
         };
       };
       /** @description Client error */
@@ -20901,7 +21124,7 @@ export type operations = {
    * notes/user-list-timeline
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'notes/user-list-timeline': {
     requestBody: {
@@ -21611,9 +21834,11 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['Flash'];
+        };
       };
       /** @description Client error */
       400: {
@@ -22191,7 +22416,7 @@ export type operations = {
    * promo/read
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:account*
    */
   'promo/read': {
     requestBody: {
@@ -22243,7 +22468,7 @@ export type operations = {
    * roles/list
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'roles/list': {
     responses: {
@@ -22361,9 +22586,15 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+              /** Format: misskey:id */
+              id: string;
+              user: components['schemas']['User'];
+            }[];
+        };
       };
       /** @description Client error */
       400: {
@@ -22401,7 +22632,7 @@ export type operations = {
    * roles/notes
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'roles/notes': {
     requestBody: {
@@ -22621,9 +22852,24 @@ export type operations = {
    */
   'server-info': {
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            machine: string;
+            cpu: {
+              model: string;
+              cores: number;
+            };
+            mem: {
+              total: number;
+            };
+            fs: {
+              total: number;
+              used: number;
+            };
+          };
+        };
       };
       /** @description Client error */
       400: {
@@ -22715,6 +22961,7 @@ export type operations = {
    * sw/show-registration
    * @description Check push notification registration exists.
    *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
    * **Credential required**: *Yes*
    */
   'sw/show-registration': {
@@ -22776,6 +23023,7 @@ export type operations = {
    * sw/update-registration
    * @description Update push notification registration.
    *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
    * **Credential required**: *Yes*
    */
   'sw/update-registration': {
@@ -22834,6 +23082,7 @@ export type operations = {
    * sw/register
    * @description Register to receive push notifications.
    *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
    * **Credential required**: *Yes*
    */
   'sw/register': {
@@ -22967,9 +23216,19 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            /** Format: misskey:id */
+            id: string;
+            required: boolean;
+            string: string;
+            default: string;
+            /** @default hello */
+            nullableDefault: string | null;
+          };
+        };
       };
       /** @description Client error */
       400: {
@@ -23828,7 +24087,7 @@ export type operations = {
    * users/lists/favorite
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:account*
    */
   'users/lists/favorite': {
     requestBody: {
@@ -23880,7 +24139,7 @@ export type operations = {
    * users/lists/unfavorite
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:account*
    */
   'users/lists/unfavorite': {
     requestBody: {
@@ -23988,7 +24247,7 @@ export type operations = {
    * users/lists/create-from-public
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:account*
    */
   'users/lists/create-from-public': {
     requestBody: {
@@ -24118,9 +24377,20 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+              /** Format: misskey:id */
+              id: string;
+              /** Format: date-time */
+              createdAt: string;
+              /** Format: misskey:id */
+              userId: string;
+              user: components['schemas']['User'];
+              withReplies: boolean;
+            }[];
+        };
       };
       /** @description Client error */
       400: {
@@ -24468,7 +24738,7 @@ export type operations = {
    * users/relation
    * @description Show the different kinds of relations between the authenticated user and the specified user(s).
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *read:account*
    */
   'users/relation': {
     requestBody: {
@@ -24543,7 +24813,7 @@ export type operations = {
    * users/report-abuse
    * @description File a report.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *Yes* / **Permission**: *write:report-abuse*
    */
   'users/report-abuse': {
     requestBody: {
@@ -24776,7 +25046,7 @@ export type operations = {
    * users/achievements
    * @description No description provided.
    *
-   * **Credential required**: *Yes*
+   * **Credential required**: *No*
    */
   'users/achievements': {
     requestBody: {
@@ -24788,9 +25058,14 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+              name: string;
+              unlockedAt: number;
+            }[];
+        };
       };
       /** @description Client error */
       400: {
@@ -24893,9 +25168,13 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            items: Record<string, never>[];
+          };
+        };
       };
       /** @description Client error */
       400: {
@@ -24933,6 +25212,7 @@ export type operations = {
    * fetch-external-resources
    * @description No description provided.
    *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
    * **Credential required**: *Yes*
    */
   'fetch-external-resources': {
@@ -24945,9 +25225,14 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': {
+            type: string;
+            data: string;
+          };
+        };
       };
       /** @description Client error */
       400: {
