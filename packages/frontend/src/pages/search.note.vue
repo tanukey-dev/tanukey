@@ -62,7 +62,7 @@ const key = ref(0);
 const searchQuery = ref('');
 const searchHost = ref('');
 const notePagination = ref();
-const user = ref(null);
+const user = ref<any>(null);
 const isLocalOnly = ref(false);
 
 function selectUser() {

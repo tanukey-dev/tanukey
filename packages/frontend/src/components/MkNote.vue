@@ -247,13 +247,22 @@ const urls = computed(() => parsed.value ? extractUrlFromMfm(parsed.value) : nul
 const isLong = shouldCollapsed(appearNote.value, urls.value ?? []);
 const collapsed = ref(appearNote.value.cw == null && isLong);
 const isDeleted = ref(false);
-const muted = ref($i ? checkWordMute(appearNote.value, $i, $i.mutedWords) : false);
-const translation = ref<any>(null);
+const muted = ref(checkMute(appearNote.value, $i?.mutedWords));
+const translation = ref<Misskey.entities.NotesTranslateResponse | null>(null);
 const translating = ref(false);
 const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultStore.state.instanceTicker === 'remote' && appearNote.value.user.instance);
 const canRenote = computed(() => ['public', 'home'].includes(appearNote.value.visibility) || (appearNote.value.visibility === 'followers' && appearNote.value.userId === $i.id));
 const hideMutedNotes = defaultStore.state.hideMutedNotes;
 const renoteCollapsed = ref(defaultStore.state.collapseRenotes && isRenote && (($i && ($i.id === note.value.userId || $i.id === appearNote.value.userId)) || (appearNote.value.myReaction != null)));
+
+function checkMute(note: Misskey.entities.Note, mutedWords: Array<string | string[]> | undefined | null): boolean {
+	if (mutedWords == null) return false;
+
+	if (checkWordMute(note, $i, mutedWords)) return true;
+	if (note.reply && checkWordMute(note.reply, $i, mutedWords)) return true;
+	if (note.renote && checkWordMute(note.renote, $i, mutedWords)) return true;
+	return false;
+}
 
 const keymap = {
 	'r': () => reply(true),

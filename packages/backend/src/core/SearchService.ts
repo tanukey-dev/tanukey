@@ -215,7 +215,7 @@ export class SearchService {
 			}
 
 			if (this.config.pgroonga) {
-				query.andWhere('note.text &@~ :q', { q: `${ sqlLikeEscape(q) }` });
+				query.andWhere('note.text &@~ :q', { q: q });
 			} else {
 				query.andWhere('note.text ILIKE :q', { q: `%${ sqlLikeEscape(q) }%` });
 			}
