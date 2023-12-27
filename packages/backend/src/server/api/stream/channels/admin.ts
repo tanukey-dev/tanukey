@@ -5,7 +5,8 @@ import Channel from '../channel.js';
 class AdminChannel extends Channel {
 	public readonly chName = 'admin';
 	public static shouldShare = true;
-	public static requireCredential = true;
+	public static requireCredential = true as const;
+	public static kind = 'read:admin:stream';
 
 	@bindThis
 	public async init(params: any) {
@@ -20,6 +21,7 @@ class AdminChannel extends Channel {
 export class AdminChannelService {
 	public readonly shouldShare = AdminChannel.shouldShare;
 	public readonly requireCredential = AdminChannel.requireCredential;
+	public readonly kind = AdminChannel.kind;
 
 	constructor(
 	) {

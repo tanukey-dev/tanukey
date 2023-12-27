@@ -12,10 +12,7 @@ export const meta = {
 	tags: ['eventCircles'],
 
 	requireCredential: true,
-
-	prohibitMoved: true,
-
-	kind: 'write:eventCircles',
+	kind: 'read:account',
 
 	limit: {
 		duration: ms('1hour'),

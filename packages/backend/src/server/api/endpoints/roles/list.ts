@@ -8,6 +8,8 @@ export const meta = {
 	tags: ['role'],
 
 	requireCredential: true,
+	kind: 'read:account',
+
 } as const;
 
 export const paramDef = {

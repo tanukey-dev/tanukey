@@ -10,6 +10,7 @@ export const meta = {
 
 	requireCredential: true,
 	requireModerator: true,
+	kind: 'read:admin:abuse-user-reports',
 
 	res: {
 		type: 'array',

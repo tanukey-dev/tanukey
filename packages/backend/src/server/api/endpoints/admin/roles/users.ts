@@ -12,6 +12,7 @@ export const meta = {
 
 	requireCredential: false,
 	requireAdmin: true,
+	kind: 'read:admin:roles',
 
 	errors: {
 		noSuchRole: {

@@ -10,6 +10,7 @@ export const meta = {
 
 	requireCredential: true,
 	requireModerator: true,
+	kind: 'write:admin:federation',
 } as const;
 
 export const paramDef = {

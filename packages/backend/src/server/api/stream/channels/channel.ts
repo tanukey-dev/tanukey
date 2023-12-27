@@ -8,7 +8,7 @@ import Channel from '../channel.js';
 class ChannelChannel extends Channel {
 	public readonly chName = 'channel';
 	public static shouldShare = false;
-	public static requireCredential = false;
+	public static requireCredential = false as const;
 	private channelId: string;
 
 	constructor(
@@ -69,6 +69,7 @@ class ChannelChannel extends Channel {
 export class ChannelChannelService {
 	public readonly shouldShare = ChannelChannel.shouldShare;
 	public readonly requireCredential = ChannelChannel.requireCredential;
+	public readonly kind = ChannelChannel.kind;
 
 	constructor(
 		private noteEntityService: NoteEntityService,

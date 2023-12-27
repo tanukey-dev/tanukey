@@ -8,6 +8,7 @@ export const meta = {
 	tags: ['account'],
 
 	requireCredential: true,
+	secure: true,
 
 	description: 'Update push notification registration.',
 

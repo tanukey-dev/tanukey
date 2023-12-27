@@ -12,6 +12,7 @@ class MediaTimelineChannel extends Channel {
 	public readonly chName = 'mediaTimeline';
 	public static shouldShare = true;
 	public static requireCredential = false;
+	public static kind = 'read:account';
 	private withReplies: boolean;
 
 	constructor(
@@ -93,6 +94,7 @@ class MediaTimelineChannel extends Channel {
 export class MediaTimelineChannelService {
 	public readonly shouldShare = MediaTimelineChannel.shouldShare;
 	public readonly requireCredential = MediaTimelineChannel.requireCredential;
+	public readonly kind = MediaTimelineChannel.kind;
 
 	constructor(
 		private metaService: MetaService,

@@ -5,6 +5,7 @@ import { DI } from '@/di-symbols.js';
 
 export const meta = {
 	requireCredential: true,
+	kind: 'read:account',
 
 	secure: true,
 } as const;

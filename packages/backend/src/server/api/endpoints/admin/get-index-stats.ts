@@ -6,6 +6,7 @@ import { DI } from '@/di-symbols.js';
 export const meta = {
 	requireCredential: true,
 	requireAdmin: true,
+	kind: 'read:admin:index-stats',
 
 	tags: ['admin'],
 } as const;

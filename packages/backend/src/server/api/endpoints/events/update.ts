@@ -10,8 +10,7 @@ export const meta = {
 	tags: ['events'],
 
 	requireCredential: true,
-
-	kind: 'write:events',
+	kind: 'read:account',
 
 	res: {
 		type: 'object',

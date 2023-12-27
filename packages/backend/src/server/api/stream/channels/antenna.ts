@@ -8,7 +8,8 @@ import type { StreamMessages } from '../types.js';
 class AntennaChannel extends Channel {
 	public readonly chName = 'antenna';
 	public static shouldShare = false;
-	public static requireCredential = false;
+	public static requireCredential = true as const;
+	public static kind = 'read:account';
 	private antennaId: string;
 
 	constructor(
@@ -60,6 +61,7 @@ class AntennaChannel extends Channel {
 export class AntennaChannelService {
 	public readonly shouldShare = AntennaChannel.shouldShare;
 	public readonly requireCredential = AntennaChannel.requireCredential;
+	public readonly kind = AntennaChannel.kind;
 
 	constructor(
 		private noteEntityService: NoteEntityService,

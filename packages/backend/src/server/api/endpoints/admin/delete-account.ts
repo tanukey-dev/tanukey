@@ -9,6 +9,7 @@ export const meta = {
 
 	requireCredential: true,
 	requireAdmin: true,
+	kind: 'write:admin:delete-account',
 
 	res: {
 	},

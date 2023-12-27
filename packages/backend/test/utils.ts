@@ -1,6 +1,7 @@
 import * as assert from 'node:assert';
 import { readFile } from 'node:fs/promises';
 import { isAbsolute, basename } from 'node:path';
+import { randomUUID } from 'node:crypto';
 import { inspect } from 'node:util';
 import WebSocket from 'ws';
 import fetch, { Blob, File, RequestInit } from 'node-fetch';
@@ -100,6 +101,15 @@ export const post = async (user: any, params?: misskey.Endpoints['notes/create']
 	const res = await api('notes/create', q, user);
 
 	return res.body ? res.body.createdNote : null;
+};
+
+export const createAppToken = async (user: UserToken, permissions: (typeof misskey.permissions)[number][]) => {
+	const res = await api('miauth/gen-token', {
+		session: randomUUID(),
+		permission: permissions,
+	}, user);
+
+	return (res.body as misskey.entities.MiauthGenTokenResponse).token;
 };
 
 // 非公開ノートをAPI越しに見たときのノート NoteEntityService.ts

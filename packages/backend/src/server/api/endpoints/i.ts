@@ -9,6 +9,7 @@ export const meta = {
 	tags: ['account'],
 
 	requireCredential: true,
+	kind: "read:account",
 
 	res: {
 		type: 'object',

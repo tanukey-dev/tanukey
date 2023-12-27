@@ -8,6 +8,7 @@ export const meta = {
 	tags: ['account', 'app'],
 
 	requireCredential: true,
+	kind: 'read:account',
 
 	res: {
 		type: 'array',

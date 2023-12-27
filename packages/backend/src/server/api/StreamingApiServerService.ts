@@ -69,6 +69,11 @@ export class StreamingApiServerService {
 			// (現状はエラーがキャッチされておらずサーバーのログに流れて邪魔なので)
 			const [user, miapp] = await this.authenticateService.authenticate(q.i as string);
 
+			if (miapp && !miapp.permission.some(p => p === 'read:account')) {
+				request.reject(400);
+				return;
+			}
+
 			if (user?.isSuspended) {
 				request.reject(400);
 				return;

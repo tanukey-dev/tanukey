@@ -11,6 +11,7 @@ export const meta = {
 
 	requireCredential: true,
 	requireRolePolicy: 'canRequestCustomEmojis',
+	kind: 'read:account',
 
 	errors: {
 		noSuchFile: {

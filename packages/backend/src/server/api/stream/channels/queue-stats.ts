@@ -8,7 +8,7 @@ const ev = new Xev();
 class QueueStatsChannel extends Channel {
 	public readonly chName = 'queueStats';
 	public static shouldShare = true;
-	public static requireCredential = false;
+	public static requireCredential = false as const;
 
 	constructor(id: string, connection: Channel['connection']) {
 		super(id, connection);
@@ -51,6 +51,7 @@ class QueueStatsChannel extends Channel {
 export class QueueStatsChannelService {
 	public readonly shouldShare = QueueStatsChannel.shouldShare;
 	public readonly requireCredential = QueueStatsChannel.requireCredential;
+	public readonly kind = QueueStatsChannel.kind;
 
 	constructor(
 	) {

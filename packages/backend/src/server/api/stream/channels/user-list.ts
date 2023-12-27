@@ -11,7 +11,7 @@ import Channel from '../channel.js';
 class UserListChannel extends Channel {
 	public readonly chName = 'userList';
 	public static shouldShare = false;
-	public static requireCredential = false;
+	public static requireCredential = false as const;
 	private listId: string;
 	public listUsers: User['id'][] = [];
 	private listUsersClock: NodeJS.Timer;
@@ -112,6 +112,7 @@ class UserListChannel extends Channel {
 export class UserListChannelService {
 	public readonly shouldShare = UserListChannel.shouldShare;
 	public readonly requireCredential = UserListChannel.requireCredential;
+	public readonly kind = UserListChannel.kind;
 
 	constructor(
 		@Inject(DI.userListsRepository)

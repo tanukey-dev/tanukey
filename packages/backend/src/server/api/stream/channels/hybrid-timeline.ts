@@ -13,6 +13,7 @@ class HybridTimelineChannel extends Channel {
 	public readonly chName = 'hybridTimeline';
 	public static shouldShare = true;
 	public static requireCredential = true;
+	public static kind = 'read:account';
 	private withReplies: boolean;
 
 	constructor(
@@ -114,6 +115,7 @@ class HybridTimelineChannel extends Channel {
 export class HybridTimelineChannelService {
 	public readonly shouldShare = HybridTimelineChannel.shouldShare;
 	public readonly requireCredential = HybridTimelineChannel.requireCredential;
+	public readonly kind = HybridTimelineChannel.kind;
 
 	constructor(
 		private metaService: MetaService,

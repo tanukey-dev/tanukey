@@ -12,10 +12,7 @@ export const meta = {
 	tags: ['events'],
 
 	requireCredential: true,
-
-	prohibitMoved: true,
-
-	kind: 'write:events',
+	kind: 'read:account',
 
 	limit: {
 		duration: ms('1hour'),

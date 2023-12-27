@@ -7,6 +7,7 @@ export const meta = {
 
 	requireCredential: true,
 	requireModerator: true,
+	kind: 'read:admin:emoji',
 
 	res: {
 		type: 'object',

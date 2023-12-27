@@ -10,8 +10,7 @@ export const meta = {
 	tags: ['circles'],
 
 	requireCredential: true,
-
-	kind: 'write:circles',
+	kind: 'read:account',
 
 	res: {
 		type: 'object',

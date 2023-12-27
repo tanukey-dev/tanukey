@@ -10,7 +10,7 @@ import { RoleService } from '@/core/RoleService.js';
 class RoleTimelineChannel extends Channel {
 	public readonly chName = 'roleTimeline';
 	public static shouldShare = false;
-	public static requireCredential = false;
+	public static requireCredential = false as const;
 	private roleId: string;
 	
 	constructor(
@@ -65,6 +65,7 @@ class RoleTimelineChannel extends Channel {
 export class RoleTimelineChannelService {
 	public readonly shouldShare = RoleTimelineChannel.shouldShare;
 	public readonly requireCredential = RoleTimelineChannel.requireCredential;
+	public readonly kind = RoleTimelineChannel.kind;
 
 	constructor(
 		private noteEntityService: NoteEntityService,

@@ -10,6 +10,7 @@ export const meta = {
 	tags: ['federation'],
 
 	requireCredential: true,
+	kind: 'read:federation',
 
 	limit: {
 		duration: ms('1hour'),

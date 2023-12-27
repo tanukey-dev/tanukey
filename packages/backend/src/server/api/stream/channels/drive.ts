@@ -5,7 +5,8 @@ import Channel from '../channel.js';
 class DriveChannel extends Channel {
 	public readonly chName = 'drive';
 	public static shouldShare = true;
-	public static requireCredential = true;
+	public static requireCredential = true as const;
+	public static kind = 'read:account';
 
 	@bindThis
 	public async init(params: any) {
@@ -20,6 +21,7 @@ class DriveChannel extends Channel {
 export class DriveChannelService {
 	public readonly shouldShare = DriveChannel.shouldShare;
 	public readonly requireCredential = DriveChannel.requireCredential;
+	public readonly kind = DriveChannel.kind;
 
 	constructor(
 	) {

@@ -11,6 +11,7 @@ class HomeTimelineChannel extends Channel {
 	public readonly chName = 'homeTimeline';
 	public static shouldShare = true;
 	public static requireCredential = true;
+	public static kind = 'read:account';
 	private withReplies: boolean;
 
 	constructor(
@@ -102,6 +103,7 @@ class HomeTimelineChannel extends Channel {
 export class HomeTimelineChannelService {
 	public readonly shouldShare = HomeTimelineChannel.shouldShare;
 	public readonly requireCredential = HomeTimelineChannel.requireCredential;
+	public readonly kind = HomeTimelineChannel.kind;
 
 	constructor(
 		private noteEntityService: NoteEntityService,

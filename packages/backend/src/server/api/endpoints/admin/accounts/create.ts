@@ -10,6 +10,8 @@ import { DI } from '@/di-symbols.js';
 export const meta = {
 	tags: ['admin'],
 
+	secure: true,
+
 	res: {
 		type: 'object',
 		optional: false, nullable: false,

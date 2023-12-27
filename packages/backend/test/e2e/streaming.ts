@@ -391,6 +391,28 @@ describe('Streaming', () => {
 			});
 		});
 
+		test('Authentication', async () => {
+			const application = await createAppToken(ayano, []);
+			const application2 = await createAppToken(ayano, ['read:account']);
+			const socket = new WebSocket(`ws://127.0.0.1:${port}/streaming?i=${application}`);
+			const established = await new Promise<boolean>((resolve, reject) => {
+				socket.on('error', () => resolve(false));
+				socket.on('unexpected-response', () => resolve(false));
+				setTimeout(() => resolve(true), 3000);
+			});
+
+			socket.close();
+			assert.strictEqual(established, false);
+
+			const fired = await waitFire(
+				{ token: application2 }, 'hybridTimeline',
+				() => api('notes/create', { text: 'Hello, world!' }, ayano),
+				msg => msg.type === 'note' && msg.body.userId === ayano.id,
+			);
+
+			assert.strictEqual(fired, true);
+		});
+
 		// XXX: QueryFailedError: duplicate key value violates unique constraint "IDX_347fec870eafea7b26c8a73bac"
 		/*
 		describe('Hashtag Timeline', () => {

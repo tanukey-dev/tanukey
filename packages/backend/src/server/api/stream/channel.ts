@@ -10,6 +10,7 @@ export default abstract class Channel {
 	public abstract readonly chName: string;
 	public static readonly shouldShare: boolean;
 	public static readonly requireCredential: boolean;
+	public static readonly kind?: string | null;
 
 	protected get user() {
 		return this.connection.user;

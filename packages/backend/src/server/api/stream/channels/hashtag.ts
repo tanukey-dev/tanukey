@@ -9,7 +9,7 @@ import Channel from '../channel.js';
 class HashtagChannel extends Channel {
 	public readonly chName = 'hashtag';
 	public static shouldShare = false;
-	public static requireCredential = false;
+	public static requireCredential = false as const;
 	private q: string[][];
 
 	constructor(
@@ -68,6 +68,7 @@ class HashtagChannel extends Channel {
 export class HashtagChannelService {
 	public readonly shouldShare = HashtagChannel.shouldShare;
 	public readonly requireCredential = HashtagChannel.requireCredential;
+	public readonly kind = HashtagChannel.kind;
 
 	constructor(
 		private noteEntityService: NoteEntityService,

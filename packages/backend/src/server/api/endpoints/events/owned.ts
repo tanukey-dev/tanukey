@@ -10,8 +10,7 @@ export const meta = {
 	tags: ['events', 'account'],
 
 	requireCredential: true,
-
-	kind: 'read:events',
+	kind: 'read:account',
 
 	res: {
 		type: 'array',

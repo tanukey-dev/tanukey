@@ -12,20 +12,11 @@ export const meta = {
 	tags: ['circles'],
 
 	requireCredential: true,
-
-	prohibitMoved: true,
-
-	kind: 'write:circles',
+	kind: 'read:account',
 
 	limit: {
 		duration: ms('1hour'),
 		max: 10,
-	},
-
-	res: {
-		type: 'object',
-		optional: false, nullable: false,
-		ref: 'Circle',
 	},
 
 	errors: {

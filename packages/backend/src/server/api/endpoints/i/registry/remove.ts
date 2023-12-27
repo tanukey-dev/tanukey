@@ -6,6 +6,7 @@ import { ApiError } from '../../../error.js';
 
 export const meta = {
 	requireCredential: true,
+	kind: 'write:account',
 
 	secure: true,
 

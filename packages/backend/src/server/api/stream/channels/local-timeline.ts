@@ -93,6 +93,7 @@ class LocalTimelineChannel extends Channel {
 export class LocalTimelineChannelService {
 	public readonly shouldShare = LocalTimelineChannel.shouldShare;
 	public readonly requireCredential = LocalTimelineChannel.requireCredential;
+	public readonly kind = LocalTimelineChannel.kind;
 
 	constructor(
 		private metaService: MetaService,

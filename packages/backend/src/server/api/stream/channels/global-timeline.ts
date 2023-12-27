@@ -96,6 +96,7 @@ class GlobalTimelineChannel extends Channel {
 export class GlobalTimelineChannelService {
 	public readonly shouldShare = GlobalTimelineChannel.shouldShare;
 	public readonly requireCredential = GlobalTimelineChannel.requireCredential;
+	public readonly kind = GlobalTimelineChannel.kind;
 
 	constructor(
 		private metaService: MetaService,

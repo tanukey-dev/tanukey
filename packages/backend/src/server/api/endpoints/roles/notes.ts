@@ -12,6 +12,7 @@ export const meta = {
 	tags: ['role', 'notes'],
 
 	requireCredential: true,
+	kind: 'read:account',
 
 	errors: {
 		noSuchRole: {

@@ -10,8 +10,7 @@ export const meta = {
 	tags: ['eventCircles'],
 
 	requireCredential: true,
-
-	kind: 'write:eventCircles',
+	kind: 'read:account',
 
 	res: {
 		type: 'object',

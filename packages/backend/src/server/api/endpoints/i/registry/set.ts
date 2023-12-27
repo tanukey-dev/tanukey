@@ -7,8 +7,7 @@ import { DI } from '@/di-symbols.js';
 
 export const meta = {
 	requireCredential: true,
-
-	secure: true,
+	kind: 'write:account',
 } as const;
 
 export const paramDef = {
