@@ -1,6 +1,6 @@
 /*
- * version: 2023.12.0
- * generatedAt: 2023-12-26T23:35:09.489Z
+ * version: 2023.12.2-NJ-1.3.3
+ * generatedAt: 2023-12-28T08:44:48.216Z
  */
 
 import { operations } from './types.js';
@@ -216,7 +216,6 @@ export type DriveFilesShowRequest = operations['drive/files/show']['requestBody'
 export type DriveFilesShowResponse = operations['drive/files/show']['responses']['200']['content']['application/json'];
 export type DriveFilesUpdateRequest = operations['drive/files/update']['requestBody']['content']['application/json'];
 export type DriveFilesUpdateResponse = operations['drive/files/update']['responses']['200']['content']['application/json'];
-export type DriveFilesUploadFromUrlRequest = operations['drive/files/upload-from-url']['requestBody']['content']['application/json'];
 export type DriveFoldersRequest = operations['drive/folders']['requestBody']['content']['application/json'];
 export type DriveFoldersResponse = operations['drive/folders']['responses']['200']['content']['application/json'];
 export type DriveFoldersCreateRequest = operations['drive/folders/create']['requestBody']['content']['application/json'];
