@@ -27,8 +27,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<option value="selfHarm">{{ i18n.ts._abuseReportCategory.selfHarm }}</option>
 					<option value="criticalBreach">{{ i18n.ts._abuseReportCategory.criticalBreach }}</option>
 					<option value="otherBreach">{{ i18n.ts._abuseReportCategory.otherBreach }}</option>
+					<option value="spoofing">{{ i18n.ts._abuseReportCategory.spoofing }}</option>
+					<!-- 別途報告フォームを用意したほうがよい。
 					<option value="violationRights">{{ i18n.ts._abuseReportCategory.violationRights }}</option>
 					<option value="violationRightsOther">{{ i18n.ts._abuseReportCategory.violationRightsOther }}</option>
+					-->
 					<option value="notLike">{{ i18n.ts._abuseReportCategory.notLike }}</option>
 					<option value="other">{{ i18n.ts._abuseReportCategory.other }}</option>
 				</MkSelect>
