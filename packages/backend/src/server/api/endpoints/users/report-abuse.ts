@@ -62,17 +62,10 @@ export const paramDef = {
 				'selfHarm',
 				'criticalBreach',
 				'otherBreach',
+				'spoofing',
 				'violationRights',
 				'violationRightsOther',
 				'other',
-				// for compatibility
-				'personalinfoleak',
-				'selfharm',
-				'criticalbreach',
-				'otherbreach',
-				'violationrights',
-				'violationrightsother',
-				'notlike',
 			],
 		},
 	},
@@ -105,11 +98,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (await this.roleService.isAdministrator(user)) {
 				throw new ApiError(meta.errors.cannotReportAdmin);
-			}
-
-			// for compatibility
-			if (ps.category === 'notlike') {
-				return;
 			}
 
 			const categoriesMap: Record<string, typeof paramDef['properties']['category']['enum'][number]> = {
