@@ -52,8 +52,6 @@ export const paramDef = {
 		comment: { type: 'string', minLength: 1, maxLength: 2048 },
 		category: {
 			type: 'string',
-			minLength: 1,
-			maxLength: 20,
 			default: 'other',
 			enum: [
 				'nsfw',
