@@ -1202,13 +1202,13 @@ export interface Locale {
         "spam": string;
         "explicit": string;
         "phishing": string;
-        "personalinfoleak": string;
-        "selfharm": string;
-        "criticalbreach": string;
-        "otherbreach": string;
-        "violationrights": string;
-        "violationrightsother": string;
-        "notlike": string;
+        "personalInfoLeak": string;
+        "selfHarm": string;
+        "criticalBreach": string;
+        "otherBreach": string;
+        "violationRights": string;
+        "violationRightsOther": string;
+        "notLike": string;
         "other": string;
     };
     "_announcement": {
