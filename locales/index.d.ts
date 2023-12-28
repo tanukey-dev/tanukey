@@ -1203,6 +1203,7 @@ export interface Locale {
         "selfHarm": string;
         "criticalBreach": string;
         "otherBreach": string;
+        "spoofing": string;
         "violationRights": string;
         "violationRightsOther": string;
         "notLike": string;

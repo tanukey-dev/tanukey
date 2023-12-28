@@ -1201,6 +1201,7 @@ _abuseReportCategory:
   selfHarm: "自殺もしくは自害など生命に関わる問題"
   criticalBreach: "重大な規約違反"
   otherBreach: "その他の規約違反"
+  spoofing: "なりすまし"
   violationRights: "権利侵害もしくはなりすまし（本人）"
   violationRightsOther: "権利侵害（他人）"
   notLike: "この人が気に入らない"
