@@ -2,8 +2,8 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
 /*
- * version: 2023.12.0
- * generatedAt: 2023-12-26T23:35:09.389Z
+ * version: 2023.12.2-NJ-1.3.3
+ * generatedAt: 2023-12-28T08:44:48.083Z
  */
 
 /**
@@ -40,7 +40,6 @@ export type paths = {
      * admin/accounts/create
      * @description No description provided.
      *
-     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
      * **Credential required**: *No*
      */
     post: operations['admin/accounts/create'];
@@ -1363,15 +1362,6 @@ export type paths = {
      * **Credential required**: *Yes* / **Permission**: *write:drive*
      */
     post: operations['drive/files/update'];
-  };
-  '/drive/files/upload-from-url': {
-    /**
-     * drive/files/upload-from-url
-     * @description Request the server to download a new drive file from the specified URL.
-     *
-     * **Credential required**: *Yes* / **Permission**: *write:drive*
-     */
-    post: operations['drive/files/upload-from-url'];
   };
   '/drive/folders': {
     /**
@@ -4553,6 +4543,8 @@ export type operations = {
           targetUserOrigin?: 'combined' | 'local' | 'remote';
           /** @default false */
           forwarded?: boolean;
+          /** @default null */
+          category?: string | null;
         };
       };
     };
@@ -4580,6 +4572,7 @@ export type operations = {
               reporter: components['schemas']['User'];
               targetUser: components['schemas']['User'];
               assignee?: components['schemas']['User'] | null;
+              category: string;
             })[];
         };
       };
@@ -4619,7 +4612,6 @@ export type operations = {
    * admin/accounts/create
    * @description No description provided.
    *
-   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
    * **Credential required**: *No*
    */
   'admin/accounts/create': {
@@ -5038,6 +5030,10 @@ export type operations = {
           silence?: boolean;
           /** @default false */
           needConfirmationToRead?: boolean;
+          /** @default 0 */
+          closeDuration?: number;
+          /** @default 0 */
+          displayOrder?: number;
           /**
            * Format: misskey:id
            * @default null
@@ -5063,6 +5059,13 @@ export type operations = {
             title: string;
             text: string;
             imageUrl: string | null;
+            icon: string;
+            display: string;
+            forYou: boolean;
+            needConfirmationToRead: boolean;
+            closeDuration: number;
+            displayOrder: number;
+            isRead?: boolean;
           };
         };
       };
@@ -5162,10 +5165,8 @@ export type operations = {
         'application/json': {
           /** @default 10 */
           limit?: number;
-          /** Format: misskey:id */
-          sinceId?: string;
-          /** Format: misskey:id */
-          untilId?: string;
+          /** @default 0 */
+          offset?: number;
           /** Format: misskey:id */
           userId?: string | null;
         };
@@ -5186,8 +5187,17 @@ export type operations = {
               /** Format: date-time */
               updatedAt: string | null;
               text: string;
+              isActive: boolean;
               title: string;
               imageUrl: string | null;
+              icon: string;
+              display: string;
+              forExistingUsers: boolean;
+              needConfirmationToRead: boolean;
+              closeDuration: number;
+              displayOrder: number;
+              userId: string | null;
+              user: components['schemas']['UserLite'] | null;
               reads: number;
             })[];
         };
@@ -5246,6 +5256,10 @@ export type operations = {
           forExistingUsers?: boolean;
           silence?: boolean;
           needConfirmationToRead?: boolean;
+          /** @default 0 */
+          closeDuration?: number;
+          /** @default 0 */
+          displayOrder?: number;
           isActive?: boolean;
         };
       };
@@ -8936,10 +8950,8 @@ export type operations = {
         'application/json': {
           /** @default 10 */
           limit?: number;
-          /** Format: misskey:id */
-          sinceId?: string;
-          /** Format: misskey:id */
-          untilId?: string;
+          /** @default 0 */
+          offset?: number;
           /** @default true */
           isActive?: boolean;
         };
@@ -12674,76 +12686,6 @@ export type operations = {
       };
       /** @description I'm Ai */
       418: {
-        content: {
-          'application/json': components['schemas']['Error'];
-        };
-      };
-      /** @description Internal server error */
-      500: {
-        content: {
-          'application/json': components['schemas']['Error'];
-        };
-      };
-    };
-  };
-  /**
-   * drive/files/upload-from-url
-   * @description Request the server to download a new drive file from the specified URL.
-   *
-   * **Credential required**: *Yes* / **Permission**: *write:drive*
-   */
-  'drive/files/upload-from-url': {
-    requestBody: {
-      content: {
-        'application/json': {
-          url: string;
-          /**
-           * Format: misskey:id
-           * @default null
-           */
-          folderId?: string | null;
-          /** @default false */
-          isSensitive?: boolean;
-          /** @default null */
-          comment?: string | null;
-          /** @default null */
-          marker?: string | null;
-          /** @default false */
-          force?: boolean;
-        };
-      };
-    };
-    responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
-      };
-      /** @description Client error */
-      400: {
-        content: {
-          'application/json': components['schemas']['Error'];
-        };
-      };
-      /** @description Authentication error */
-      401: {
-        content: {
-          'application/json': components['schemas']['Error'];
-        };
-      };
-      /** @description Forbidden error */
-      403: {
-        content: {
-          'application/json': components['schemas']['Error'];
-        };
-      };
-      /** @description I'm Ai */
-      418: {
-        content: {
-          'application/json': components['schemas']['Error'];
-        };
-      };
-      /** @description To many requests */
-      429: {
         content: {
           'application/json': components['schemas']['Error'];
         };
@@ -18029,8 +17971,7 @@ export type operations = {
           followersVisibility?: 'public' | 'followers' | 'private';
           /** Format: misskey:id */
           pinnedPageId?: string | null;
-          mutedWords?: (string[] | string)[];
-          hardMutedWords?: (string[] | string)[];
+          mutedWords?: unknown[];
           mutedInstances?: string[];
           notificationRecieveConfig?: Record<string, never>;
           emailNotificationTypes?: string[];
@@ -20577,6 +20518,8 @@ export type operations = {
       content: {
         'application/json': {
           /** @default null */
+          local?: boolean | null;
+          /** @default null */
           reply?: boolean | null;
           /** @default null */
           renote?: boolean | null;
@@ -20658,7 +20601,7 @@ export type operations = {
           /** @default 0 */
           offset?: number;
           /** @description The local host is represented with `.`. */
-          host?: string;
+          host?: string | null;
           /**
            * Format: misskey:id
            * @default null
@@ -24822,6 +24765,11 @@ export type operations = {
           /** Format: misskey:id */
           userId: string;
           comment: string;
+          /**
+           * @default other
+           * @enum {string}
+           */
+          category?: 'nsfw' | 'spam' | 'explicit' | 'phishing' | 'personalInfoLeak' | 'selfHarm' | 'criticalBreach' | 'otherBreach' | 'violationRights' | 'violationRightsOther' | 'other' | 'personalinfoleak' | 'selfharm' | 'criticalbreach' | 'otherbreach' | 'violationrights' | 'violationrightsother' | 'notlike';
         };
       };
     };
@@ -25319,3 +25267,4 @@ export type operations = {
     };
   };
 };
+
