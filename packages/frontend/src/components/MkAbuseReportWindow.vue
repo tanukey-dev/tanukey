@@ -113,15 +113,6 @@ function refreshUserInfo() {
 }
 
 function send() {
-	if (category.value === 'violationRightsOther') {
-		os.alert({
-			type: 'info',
-			text: i18n.ts._abuseReportMsgs.rightsAbuseCantAccept,
-		});
-		uiWindow.value?.close();
-		emit('closed');
-		return;
-	}
 	if (category.value === 'notLike') {
 		uiWindow.value?.close();
 		page.value = 2;

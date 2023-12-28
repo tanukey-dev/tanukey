@@ -1194,9 +1194,6 @@ export interface Locale {
     "reportComplete": string;
     "blockThisUser": string;
     "muteThisUser": string;
-    "_abuseReportMsgs": {
-        "rightsAbuseCantAccept": string;
-    };
     "_abuseReportCategory": {
         "nsfw": string;
         "spam": string;
