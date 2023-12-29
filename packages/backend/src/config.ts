@@ -95,6 +95,11 @@ export type Source = {
 	videoThumbnailGenerator?: string;
 
 	signToActivityPubGet?: boolean;
+
+	stripe?: {
+		secretKey: string;
+		webhookSecret: string;
+	};
 };
 
 /**
@@ -118,6 +123,11 @@ export type Mixin = {
 	videoThumbnailGenerator: string | null;
 	redisForPubsub: NonNullable<Source['redisForPubsub']>;
 	redisForJobQueue: NonNullable<Source['redisForJobQueue']>;
+
+	stripe: {
+		secretKey: string;
+		webhookSecret?: string;
+	} | undefined;
 };
 
 export type Config = Source & Mixin;

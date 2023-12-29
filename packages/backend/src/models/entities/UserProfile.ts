@@ -230,6 +230,12 @@ export class UserProfile {
 		unlockedAt: number;
 	}[];
 
+	@Column('varchar', {
+		length: 128, nullable: true,
+		comment: 'The stripe customer id of the User.',
+	})
+	public stripeCustomerId: string | null;
+
 	//#region Denormalized fields
 	@Index()
 	@Column('varchar', {

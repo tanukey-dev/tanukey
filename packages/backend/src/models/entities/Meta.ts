@@ -469,4 +469,9 @@ export class Meta {
 		array: true, default: '{}',
 	})
 	public pinnedLtlChannelIds: Channel['id'][];
+
+	@Column('boolean', {
+		default: false,
+	})
+	public enableSubscriptions: boolean;
 }
