@@ -32,6 +32,11 @@ export const meta = {
 	},
 
 	errors: {
+		subscriptionIsActive: {
+			message: 'If Subscription is active, cannot move account.',
+			code: 'SUBSCRIPTION_IS_ACTIVE',
+			id: 'f5c8b3b4-9e4d-4b7f-9f4d-9f1f0a7a3d0a',
+		},
 		destinationAccountForbids: {
 			message:
 				'Destination account doesn\'t have proper \'Known As\' alias, or has already moved.',
@@ -95,6 +100,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			if (me.isRoot) throw new ApiError(meta.errors.rootForbidden);
 			// abort if user has already moved
 			if (me.movedToUri) throw new ApiError(meta.errors.alreadyMoved);
+			// abort if user has active subscription
+			if (!(me.subscriptionStatus === 'unpaid' || me.subscriptionStatus === 'canceled' || me.subscriptionStatus === 'none')) {
+				throw new ApiError(meta.errors.subscriptionIsActive);
+			}
 
 			// parse user's input into the destination account
 			const { username, host } = Acct.parse(ps.moveToAccount);

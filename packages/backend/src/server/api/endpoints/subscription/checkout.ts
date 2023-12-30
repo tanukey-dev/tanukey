@@ -1,7 +1,7 @@
 import ms from 'ms';
 import { Stripe } from 'stripe';
 import { Inject, Injectable } from '@nestjs/common';
-import type { UserProfilesRepository, RolesRepository } from '@/models/_.js';
+import type { UsersRepository, UserProfilesRepository, RolesRepository } from '@/models/_.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { DI } from '@/di-symbols.js';
 import { RoleService } from '@/core/RoleService.js';
@@ -74,6 +74,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		@Inject(DI.config)
 		private config: Config,
 		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
+		@Inject(DI.usersRepository)
 		private userProfilesRepository: UserProfilesRepository,
 		@Inject(DI.rolesRepository)
 		private rolesRepository: RolesRepository,
@@ -114,26 +116,43 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new ApiError(meta.errors.noSuchSubscription);
 			}
 
-			const session = await stripe.checkout.sessions.create({
-				mode: 'subscription',
-				billing_address_collection: 'auto',
-				line_items: [
-					{
-						price: role.stripeProductId,
-						quantity: 1,
-					},
-				],
-				success_url: `${this.config.url}/subscription/success`,
-				cancel_url: `${this.config.url}/subscription/cancel`,
-				customer: subscribeUser.stripeCustomerId ?? undefined,
-			}, {});
+			const subscriptionStatus = subscribeUser.user!.subscriptionStatus; // null? wtf. really? why? how? when? where? who? what?
+			if (subscriptionStatus === 'active') {
+				throw new ApiError(meta.errors.accessDenied);
+			} else if (subscriptionStatus === 'incomplete' || subscriptionStatus === 'incomplete_expired' || subscriptionStatus === 'past_due' || subscriptionStatus === 'unpaid') {
+				const session = await stripe.checkout.sessions.create({
+					customer: subscribeUser.stripeCustomerId ?? undefined,
+					return_url: `${this.config.url}/subscription/success`,
+				}, {});
 
-			return {
-				redirect: {
-					permanent: false,
-					destination: session.url,
-				},
-			};
+				return {
+					redirect: {
+						permanent: false,
+						destination: session.url,
+					},
+				};
+			} else { // null or 'canceled' or 'none'
+				const session = await stripe.checkout.sessions.create({
+					mode: 'subscription',
+					billing_address_collection: 'auto',
+					line_items: [
+						{
+							price: role.stripeProductId,
+							quantity: 1,
+						},
+					],
+					success_url: `${this.config.url}/subscription/success`,
+					cancel_url: `${this.config.url}/subscription/cancel`,
+					customer: subscribeUser.stripeCustomerId ?? undefined,
+				}, {});
+
+				return {
+					redirect: {
+						permanent: false,
+						destination: session.url,
+					},
+				};
+			}
 		});
 	}
 }

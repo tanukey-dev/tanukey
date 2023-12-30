@@ -54,6 +54,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			if (!(instance.enableSubscriptions && this.config.stripe?.secretKey)) {
 				throw new ApiError(meta.errors.unavailable);
 			}
+			if (me.subscriptionStatus === 'none') {
+				throw new ApiError(meta.errors.noSuchUser)
+			}
 
 			const stripe = new Stripe(this.config.stripe.secretKey);
 
