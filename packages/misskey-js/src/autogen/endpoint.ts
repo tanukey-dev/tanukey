@@ -1,6 +1,6 @@
 /*
  * version: 2023.12.2-NJ-1.3.3
- * generatedAt: 2023-12-28T08:44:48.218Z
+ * generatedAt: 2023-12-30T05:13:49.302Z
  */
 
 import type {
@@ -465,6 +465,8 @@ import type {
 	RolesUsersResponse,
 	RolesNotesRequest,
 	RolesNotesResponse,
+	SubscriptionCheckoutRequest,
+	SubscriptionGetAvailablePlansRequest,
 	RequestResetPasswordRequest,
 	ResetPasswordRequest,
 	ServerInfoResponse,
@@ -853,6 +855,9 @@ export type Endpoints = {
 	'roles/show': { req: RolesShowRequest; res: RolesShowResponse };
 	'roles/users': { req: RolesUsersRequest; res: RolesUsersResponse };
 	'roles/notes': { req: RolesNotesRequest; res: RolesNotesResponse };
+	'subscription/checkout': { req: SubscriptionCheckoutRequest; res: EmptyResponse };
+	'subscription/manage': { req: EmptyRequest; res: EmptyResponse };
+	'subscription/get-available-plans': { req: SubscriptionGetAvailablePlansRequest; res: EmptyResponse };
 	'request-reset-password': { req: RequestResetPasswordRequest; res: EmptyResponse };
 	'reset-db': { req: EmptyRequest; res: EmptyResponse };
 	'reset-password': { req: ResetPasswordRequest; res: EmptyResponse };

@@ -1,6 +1,6 @@
 /*
  * version: 2023.12.2-NJ-1.3.3
- * generatedAt: 2023-12-28T08:44:48.216Z
+ * generatedAt: 2023-12-30T05:13:49.295Z
  */
 
 import { operations } from './types.js';
@@ -467,6 +467,8 @@ export type RolesUsersRequest = operations['roles/users']['requestBody']['conten
 export type RolesUsersResponse = operations['roles/users']['responses']['200']['content']['application/json'];
 export type RolesNotesRequest = operations['roles/notes']['requestBody']['content']['application/json'];
 export type RolesNotesResponse = operations['roles/notes']['responses']['200']['content']['application/json'];
+export type SubscriptionCheckoutRequest = operations['subscription/checkout']['requestBody']['content']['application/json'];
+export type SubscriptionGetAvailablePlansRequest = operations['subscription/get-available-plans']['requestBody']['content']['application/json'];
 export type RequestResetPasswordRequest = operations['request-reset-password']['requestBody']['content']['application/json'];
 export type ResetPasswordRequest = operations['reset-password']['requestBody']['content']['application/json'];
 export type ServerInfoResponse = operations['server-info']['responses']['200']['content']['application/json'];

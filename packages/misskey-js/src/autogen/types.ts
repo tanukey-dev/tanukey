@@ -3,7 +3,7 @@
 
 /*
  * version: 2023.12.2-NJ-1.3.3
- * generatedAt: 2023-12-28T08:44:48.083Z
+ * generatedAt: 2023-12-30T05:13:49.140Z
  */
 
 /**
@@ -2990,6 +2990,33 @@ export type paths = {
      * **Credential required**: *Yes* / **Permission**: *read:account*
      */
     post: operations['roles/notes'];
+  };
+  '/subscription/checkout': {
+    /**
+     * subscription/checkout
+     * @description No description provided.
+     *
+     * **Credential required**: *Yes* / **Permission**: *write:account*
+     */
+    post: operations['subscription/checkout'];
+  };
+  '/subscription/manage': {
+    /**
+     * subscription/manage
+     * @description No description provided.
+     *
+     * **Credential required**: *Yes* / **Permission**: *read:account*
+     */
+    post: operations['subscription/manage'];
+  };
+  '/subscription/get-available-plans': {
+    /**
+     * subscription/get-available-plans
+     * @description No description provided.
+     *
+     * **Credential required**: *No*
+     */
+    post: operations['subscription/get-available-plans'];
   };
   '/request-reset-password': {
     /**
@@ -22634,6 +22661,166 @@ export type operations = {
     };
   };
   /**
+   * subscription/checkout
+   * @description No description provided.
+   *
+   * **Credential required**: *Yes* / **Permission**: *write:account*
+   */
+  'subscription/checkout': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          roleId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description To many requests */
+      429: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * subscription/manage
+   * @description No description provided.
+   *
+   * **Credential required**: *Yes* / **Permission**: *read:account*
+   */
+  'subscription/manage': {
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * subscription/get-available-plans
+   * @description No description provided.
+   *
+   * **Credential required**: *No*
+   */
+  'subscription/get-available-plans': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          roleId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description To many requests */
+      429: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
    * request-reset-password
    * @description Request a users password to be reset.
    *
@@ -24769,7 +24956,7 @@ export type operations = {
            * @default other
            * @enum {string}
            */
-          category?: 'nsfw' | 'spam' | 'explicit' | 'phishing' | 'personalInfoLeak' | 'selfHarm' | 'criticalBreach' | 'otherBreach' | 'violationRights' | 'violationRightsOther' | 'other' | 'personalinfoleak' | 'selfharm' | 'criticalbreach' | 'otherbreach' | 'violationrights' | 'violationrightsother' | 'notlike';
+          category?: 'nsfw' | 'spam' | 'explicit' | 'phishing' | 'personalInfoLeak' | 'selfHarm' | 'criticalBreach' | 'otherBreach' | 'spoofing' | 'violationRights' | 'violationRightsOther' | 'other';
         };
       };
     };
