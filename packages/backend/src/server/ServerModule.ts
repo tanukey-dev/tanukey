@@ -38,6 +38,7 @@ import { UserListChannelService } from './api/stream/channels/user-list.js';
 import { OpenApiServerService } from './api/openapi/OpenApiServerService.js';
 import { ClientLoggerService } from './web/ClientLoggerService.js';
 import { RoleTimelineChannelService } from './api/stream/channels/role-timeline.js';
+import { StripeWebhookServerService } from '@/server/StripeWebhookServerService.js';
 
 @Module({
 	imports: [
@@ -82,7 +83,8 @@ import { RoleTimelineChannelService } from './api/stream/channels/role-timeline.
 		UserListChannelService,
 		OpenApiServerService,
 		StripeWebhookServerService,
-	],	exports: [
+	],
+	exports: [
 		ServerService,
 	],
 })
