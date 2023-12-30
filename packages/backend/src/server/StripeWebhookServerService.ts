@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
-import type { RolesRepository, UserProfilesRepository } from '@/models/_.js';
+import type { RolesRepository, UsersRepository, UserProfilesRepository } from '@/models/_.js';
 import { RoleService } from '@/core/RoleService.js';
 import { MetaService } from '@/core/MetaService.js';
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
@@ -17,6 +17,8 @@ export class StripeWebhookServerService {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
+		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
 		@Inject(DI.usersRepository)
 		private userProfilesRepository: UserProfilesRepository,
 		@Inject(DI.rolesRepository)
@@ -39,7 +41,6 @@ export class StripeWebhookServerService {
 			const stripe = new Stripe(this.config.stripe.secretKey);
 
 			const body = request.rawBody;
-
 			if (!body) {
 				return reply.code(400);
 			}
@@ -76,6 +77,9 @@ export class StripeWebhookServerService {
 						const plan = subscription.items.data[0].plan as Stripe.Plan;
 						const role = await this.rolesRepository.findOneByOrFail({ stripeProductId: plan.product as string });
 						await this.roleService.assign(subscribeUser.userId, role.id);
+						this.usersRepository.update({ id: subscribeUser.userId }, {
+							subscriptionStatus: subscription.status,
+						});
 
 						return reply.code(200);
 					}
@@ -93,8 +97,11 @@ export class StripeWebhookServerService {
 
 						const plan = subscription.items.data[0].plan as Stripe.Plan;
 						const role = await this.rolesRepository.findOneByOrFail({ stripeProductId: plan.product as string });
-
 						await this.roleService.unassign(subscribeUser.userId, role.id);
+						await this.usersRepository.update({ id: subscribeUser.userId }, {
+							subscriptionStatus: subscription.status,
+						});
+
 						return reply.code(200);
 					}
 

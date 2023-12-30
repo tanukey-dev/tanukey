@@ -6,3 +6,15 @@ export const noteVisibilities = ['public', 'home', 'followers', 'specified'] as 
 export const mutedNoteReasons = ['word', 'manual', 'spam', 'other'] as const;
 
 export const ffVisibility = ['public', 'followers', 'private'] as const;
+
+export const subscriptionStatus = [
+	'incomplete',
+	'incomplete_expired',
+	'trialing',
+	'active',
+	'past_due',
+	'paused',
+	'canceled',
+	'unpaid',
+	'none',
+] as const;
