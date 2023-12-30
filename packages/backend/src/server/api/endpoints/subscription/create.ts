@@ -1,7 +1,12 @@
 import ms from 'ms';
 import { Stripe } from 'stripe';
 import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, UserProfilesRepository, RolesRepository } from '@/models/_.js';
+import type {
+	UsersRepository,
+	UserProfilesRepository,
+	RolesRepository,
+	SubscriptionPlansRepository
+} from '@/models/index.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { DI } from '@/di-symbols.js';
 import { RoleService } from '@/core/RoleService.js';
@@ -28,16 +33,10 @@ export const meta = {
 			id: '6a27f458-92aa-4807-bbc3-3b8223a84a7e',
 		},
 
-		noSuchRole: {
-			message: 'No such role.',
-			code: 'NO_SUCH_ROLE',
-			id: 'eb70323a-df61-4dd4-ad90-89c83c7cf26e',
-		},
-
-		noSuchSubscription: {
-			message: 'No such subscription.',
-			code: 'NO_SUCH_SUBSCRIPTION',
-			id: 'f8b5f1c0-7d1c-4a5b-9d9d-1d4d7e0c8e3a',
+		noSuchPlan: {
+			message: 'No such plan.',
+			code: 'NO_SUCH_PLAN',
+			id: 'd9f0d5c1-0b5b-4b7a-9d2c-1c1c5c6d1d1d',
 		},
 
 		accessDenied: {
@@ -63,9 +62,9 @@ export const meta = {
 export const paramDef = {
 	type: 'object',
 	properties: {
-		roleId: { type: 'string', format: 'misskey:id' },
+		planId: { type: 'string', format: 'misskey:id' },
 	},
-	required: ['roleId'],
+	required: ['planId'],
 } as const;
 
 @Injectable()
@@ -74,21 +73,21 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		@Inject(DI.config)
 		private config: Config,
 		@Inject(DI.usersRepository)
-		private usersRepository: UsersRepository,
-		@Inject(DI.usersRepository)
 		private userProfilesRepository: UserProfilesRepository,
-		@Inject(DI.rolesRepository)
-		private rolesRepository: RolesRepository,
-		private roleService: RoleService,
+		@Inject(DI.subscriptionPlansRepository)
+		private subscriptionPlanRepository: SubscriptionPlansRepository,
 		private metaService: MetaService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const instance = await this.metaService.fetch(true);
-			if (!(instance.enableSubscriptions && this.config.stripe?.secretKey)) {
+			if (!(instance.enableSubscriptions || this.config.stripe?.secretKey)) {
 				throw new ApiError(meta.errors.unavailable);
 			}
 
-			const stripe = new Stripe(this.config.stripe.secretKey);
+			const plan = await this.subscriptionPlanRepository.findOneBy({ id: ps.planId });
+			if (plan?.isArchived || !plan?.stripePriceId) {
+				throw new ApiError(meta.errors.noSuchPlan);
+			}
 
 			let subscribeUser = await this.userProfilesRepository.findOneBy({ userId: me.id });
 			if (!subscribeUser) {
@@ -98,6 +97,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new ApiError(meta.errors.requiredEmail);
 			}
 
+			const stripe = new Stripe(this.config.stripe!.secretKey);
 			if (!subscribeUser.stripeCustomerId) {
 				const makeCustomer = await stripe.customers.create({
 					email: subscribeUser.email,
@@ -106,14 +106,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					stripeCustomerId: makeCustomer.id,
 				});
 				subscribeUser = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
-			}
-
-			const role = await this.rolesRepository.findOneBy({ id: ps.roleId });
-			if (!role) {
-				throw new ApiError(meta.errors.noSuchRole);
-			}
-			if (!role.stripeProductId) {
-				throw new ApiError(meta.errors.noSuchSubscription);
 			}
 
 			const subscriptionStatus = subscribeUser.user!.subscriptionStatus; // null? wtf. really? why? how? when? where? who? what?
@@ -137,7 +129,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					billing_address_collection: 'auto',
 					line_items: [
 						{
-							price: role.stripeProductId,
+							price: plan.stripePriceId,
 							quantity: 1,
 						},
 					],
