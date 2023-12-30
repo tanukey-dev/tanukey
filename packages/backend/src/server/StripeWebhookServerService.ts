@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
-import type { RolesRepository, UsersRepository, UserProfilesRepository } from '@/models/_.js';
+import type { UsersRepository, UserProfilesRepository, SubscriptionPlansRepository } from '@/models/_.js';
 import { RoleService } from '@/core/RoleService.js';
 import { MetaService } from '@/core/MetaService.js';
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
@@ -21,8 +21,8 @@ export class StripeWebhookServerService {
 		private usersRepository: UsersRepository,
 		@Inject(DI.usersRepository)
 		private userProfilesRepository: UserProfilesRepository,
-		@Inject(DI.rolesRepository)
-		private rolesRepository: RolesRepository,
+		@Inject(DI.subscriptionPlansRepository)
+		private subscriptionPlansRepository: SubscriptionPlansRepository,
 		private roleService: RoleService,
 		private metaService: MetaService,
 		private loggerService: LoggerService,
@@ -34,11 +34,11 @@ export class StripeWebhookServerService {
 	public createServer(fastify: FastifyInstance, options: FastifyPluginOptions, done: (err?: Error) => void) {
 		fastify.post('/webhook', async (request, reply) => {
 			const instance = await this.metaService.fetch(true);
-			if (!(instance.enableSubscriptions && this.config.stripe?.secretKey)) {
+			if (!(instance.enableSubscriptions || this.config.stripe?.secretKey)) {
 				return reply.code(503);
 			}
 
-			const stripe = new Stripe(this.config.stripe.secretKey);
+			const stripe = new Stripe(this.config.stripe!.secretKey);
 
 			const body = request.rawBody;
 			if (!body) {
@@ -46,7 +46,7 @@ export class StripeWebhookServerService {
 			}
 
 			// Check if webhook signing is configured.
-			if (this.config.stripe.webhookSecret) {
+			if (this.config.stripe?.webhookSecret) {
 				// Retrieve the event by verifying the signature using the raw body and secret.
 				let event;
 				const signature = request.headers['stripe-signature'];
@@ -71,14 +71,14 @@ export class StripeWebhookServerService {
 						const subscribeUser = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer.id });
 
 						if (!subscribeUser) {
-							return reply.code(404);
+							return reply.code(400);
 						}
 
-						const plan = subscription.items.data[0].plan as Stripe.Plan;
-						const role = await this.rolesRepository.findOneByOrFail({ stripeProductId: plan.product as string });
-						await this.roleService.assign(subscribeUser.userId, role.id);
-						this.usersRepository.update({ id: subscribeUser.userId }, {
+						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
+						await this.roleService.assign(subscribeUser.userId, subscriptionPlan.roleId);
+						await this.usersRepository.update({id: subscribeUser.userId}, {
 							subscriptionStatus: subscription.status,
+							subscriptionPlanId: subscriptionPlan.id,
 						});
 
 						return reply.code(200);
@@ -92,17 +92,50 @@ export class StripeWebhookServerService {
 						const subscribeUser = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer.id });
 
 						if (!subscribeUser) {
-							return reply.code(404);
+							return reply.code(400);
 						}
 
-						const plan = subscription.items.data[0].plan as Stripe.Plan;
-						const role = await this.rolesRepository.findOneByOrFail({ stripeProductId: plan.product as string });
-						await this.roleService.unassign(subscribeUser.userId, role.id);
+						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
+						await this.roleService.unassign(subscribeUser.userId, subscriptionPlan.roleId);
 						await this.usersRepository.update({ id: subscribeUser.userId }, {
 							subscriptionStatus: subscription.status,
+							subscriptionPlanId: undefined,
 						});
 
 						return reply.code(200);
+					}
+
+					case 'customer.subscription.updated': {
+						// Update the subscription.
+						const subscription = event.data.object;
+
+						const customer = subscription.customer as Stripe.Customer;
+						const subscribeUser = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer.id });
+
+						if (!subscribeUser) {
+							return reply.code(400);
+						}
+
+						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
+						if (subscriptionPlan.id !== subscribeUser.user!.subscriptionPlanId) {
+							// サブスクリプションプランが変更された場合
+							const oldSubscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ id: subscribeUser.user!.subscriptionPlanId });
+							await this.roleService.unassign(subscribeUser.userId, oldSubscriptionPlan.roleId);
+
+							await this.roleService.assign(subscribeUser.userId, subscriptionPlan.id);
+							await this.usersRepository.update({id: subscribeUser.userId}, {
+								subscriptionStatus: subscription.status,
+								subscriptionPlanId: subscriptionPlan.id,
+							});
+						}
+
+						return reply.code(200);
+					}
+
+					case 'invoice.upcoming': {
+						// TODO サブスクリプションプランがアーカイブ状態になっていないかチェックする。
+						// アーカイブになっている場合は、サブスクリプションをキャンセルする。
+						break;
 					}
 
 					case 'invoice.paid':

@@ -47,6 +47,7 @@ import { MiRegistrationTicket } from '@/models/RegistrationTicket.js';
 import { MiRegistryItem } from '@/models/RegistryItem.js';
 import { MiRelay } from '@/models/Relay.js';
 import { MiSignin } from '@/models/Signin.js';
+import { MiSubscriptionPlan } from "@/models/SubscriptionPlan.js";
 import { MiSwSubscription } from '@/models/SwSubscription.js';
 import { MiUsedUsername } from '@/models/UsedUsername.js';
 import { MiUser } from '@/models/User.js';
@@ -115,6 +116,7 @@ export {
 	MiRegistryItem,
 	MiRelay,
 	MiSignin,
+	MiSubscriptionPlan,
 	MiSwSubscription,
 	MiUsedUsername,
 	MiUser,
@@ -182,6 +184,7 @@ export type RegistrationTicketsRepository = Repository<MiRegistrationTicket>;
 export type RegistryItemsRepository = Repository<MiRegistryItem>;
 export type RelaysRepository = Repository<MiRelay>;
 export type SigninsRepository = Repository<MiSignin>;
+export type SubscriptionPlansRepository = Repository<MiSubscriptionPlan>;
 export type SwSubscriptionsRepository = Repository<MiSwSubscription>;
 export type UsedUsernamesRepository = Repository<MiUsedUsername>;
 export type UsersRepository = Repository<MiUser>;

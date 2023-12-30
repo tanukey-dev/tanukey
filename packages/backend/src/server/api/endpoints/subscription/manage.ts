@@ -51,33 +51,19 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const instance = await this.metaService.fetch(true);
-			if (!(instance.enableSubscriptions && this.config.stripe?.secretKey)) {
+			if (!(instance.enableSubscriptions || this.config.stripe?.secretKey)) {
 				throw new ApiError(meta.errors.unavailable);
 			}
 			if (me.subscriptionStatus === 'none') {
 				throw new ApiError(meta.errors.noSuchUser)
 			}
 
-			const stripe = new Stripe(this.config.stripe.secretKey);
-
 			let subscribeUser = await this.userProfilesRepository.findOneBy({ userId: me.id });
-			if (!subscribeUser) {
+			if (!subscribeUser || !subscribeUser.stripeCustomerId) {
 				throw new ApiError(meta.errors.noSuchUser);
 			}
-			if (!subscribeUser.email) {
-				throw new ApiError(meta.errors.requiredEmail);
-			}
 
-			if (!subscribeUser.stripeCustomerId) {
-				const makeCustomer = await stripe.customers.create({
-					email: subscribeUser.email,
-				});
-				await this.userProfilesRepository.update({ userId: me.id }, {
-					stripeCustomerId: makeCustomer.id,
-				});
-				subscribeUser = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
-			}
-
+			const stripe = new Stripe(this.config.stripe!.secretKey);
 			const session = await stripe.billingPortal.sessions.create({
 				customer: subscribeUser.stripeCustomerId!,
 				return_url: `${this.config.url}/settings/subscription`,

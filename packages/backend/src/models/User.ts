@@ -7,6 +7,7 @@ import { Entity, Column, Index, OneToOne, JoinColumn, PrimaryColumn } from 'type
 import { subscriptionStatus } from '@/types.js';
 import { id } from './util/id.js';
 import { MiDriveFile } from './DriveFile.js';
+import { MiSubscriptionPlan } from "@/models/SubscriptionPlan.js";
 
 @Entity('user')
 @Index(['usernameLower', 'host'], { unique: true })
@@ -210,6 +211,9 @@ export class MiUser {
 		default: 'none',
 	})
 	public subscriptionStatus: typeof subscriptionStatus[number];
+
+	@Column(id())
+	public subscriptionPlanId: MiSubscriptionPlan['id'];
 
 	@Column('varchar', {
 		length: 128, array: true, default: '{}',
