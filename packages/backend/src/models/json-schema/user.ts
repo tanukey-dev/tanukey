@@ -316,6 +316,16 @@ export const packedMeDetailedOnlySchema = {
 			type: 'boolean',
 			nullable: false, optional: false,
 		},
+		subscriptionStatus: {
+			type: 'string',
+			enum: ['incomplete', 'incomplete_expired', 'trialing', 'active', 'past_due', 'paused', 'canceled', 'unpaid', 'none'],
+			nullable: false, optional: false,
+		},
+		subscriptionPlanId: {
+			type: 'string',
+			format: 'id',
+			nullable: true, optional: false,
+		},
 		hideOnlineStatus: {
 			type: 'boolean',
 			nullable: false, optional: false,
