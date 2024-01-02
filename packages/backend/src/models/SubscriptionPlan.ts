@@ -16,7 +16,7 @@ export class MiSubscriptionPlan {
 	@Column('varchar', {
 		length: 128
 	})
-	public stripePriceId: string | null;
+	public stripePriceId: string;
 
 	@Index({ unique: true })
 	@Column(id())
