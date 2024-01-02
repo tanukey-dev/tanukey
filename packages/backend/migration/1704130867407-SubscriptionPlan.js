@@ -1,6 +1,4 @@
-const { MigrationInterface, QueryRunner } = require("typeorm");
-
-module.exports = class SubscriptionPlan1704130867407 {
+export class SubscriptionPlan1704130867407 {
     name = 'SubscriptionPlan1704130867407'
 
     async up(queryRunner) {
