@@ -9,6 +9,11 @@ export class SubscriptionPlan {
 	public id: string;
 
 	@Column('varchar', {
+		length: 128,
+	})
+	public name: string;
+
+	@Column('varchar', {
 		length: 128
 	})
 	public stripePriceId: string | null;
