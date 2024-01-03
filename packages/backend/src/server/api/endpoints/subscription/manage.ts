@@ -4,7 +4,7 @@ import { Endpoint } from "@/server/api/endpoint-base.js";
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import { ApiError } from '../../error.js';
-import type { UserProfilesRepository } from "@/models/_.js";
+import type { UserProfilesRepository } from "@/models/index.js";
 import { MetaService } from "@/core/MetaService.js";
 
 export const meta = {
@@ -45,7 +45,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-		@Inject(DI.usersRepository)
+		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
 		private metaService: MetaService,
 	) {

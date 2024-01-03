@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Endpoint } from "@/server/api/endpoint-base.js";
-import type { SubscriptionPlansRepository } from "@/models/_.js";
+import type { SubscriptionPlansRepository } from "@/models/index.js";
 import { DI } from "@/di-symbols.js";
 import { IdService } from "@/core/IdService.js";
 
@@ -43,7 +43,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				name: ps.name,
 				stripePriceId: ps.stripePriceId,
 				roleId: ps.roleId,
-			}).then(x => this.subscriptionPlansRepository.findOneByOrFail(x.identifiers));
+				isArchived: false,
+			}).then(x => this.subscriptionPlansRepository.findOneByOrFail(x.identifiers[0]));
 
 			return subscriptionPlan;
 		});

@@ -1,6 +1,6 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { Role } from "@/models/Role.js";
-import { id } from './util/id.js';
+import { id } from '../id.js';
+import { Role } from './Role.js';
 
 @Entity('subscription_plan')
 

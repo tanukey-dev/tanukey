@@ -93,6 +93,7 @@ import { NotificationEntityService } from './entities/NotificationEntityService.
 import { PageEntityService } from './entities/PageEntityService.js';
 import { PageLikeEntityService } from './entities/PageLikeEntityService.js';
 import { SigninEntityService } from './entities/SigninEntityService.js';
+import { SubscriptionPlanEntityService } from "@/core/entities/SubscriptionPlanEntityService.js";
 import { UserEntityService } from './entities/UserEntityService.js';
 import { UserListEntityService } from './entities/UserListEntityService.js';
 import { FlashEntityService } from './entities/FlashEntityService.js';
@@ -227,6 +228,7 @@ const $UserListEntityService: Provider = { provide: 'UserListEntityService', use
 const $FlashEntityService: Provider = { provide: 'FlashEntityService', useExisting: FlashEntityService };
 const $FlashLikeEntityService: Provider = { provide: 'FlashLikeEntityService', useExisting: FlashLikeEntityService };
 const $RoleEntityService: Provider = { provide: 'RoleEntityService', useExisting: RoleEntityService };
+const $SubscriptionPlanEntityService: Provider = { provide: 'SubscriptionPlanEntityService', useExisting: SubscriptionPlanEntityService };
 
 const $ApAudienceService: Provider = { provide: 'ApAudienceService', useExisting: ApAudienceService };
 const $ApDbResolverService: Provider = { provide: 'ApDbResolverService', useExisting: ApDbResolverService };
@@ -357,6 +359,7 @@ const $EventCircleEntityService: Provider = { provide: 'EventCircleEntityService
 		FlashEntityService,
 		FlashLikeEntityService,
 		RoleEntityService,
+		SubscriptionPlanEntityService,
 		ApAudienceService,
 		ApDbResolverService,
 		ApDeliverManagerService,
@@ -481,6 +484,7 @@ const $EventCircleEntityService: Provider = { provide: 'EventCircleEntityService
 		$FlashEntityService,
 		$FlashLikeEntityService,
 		$RoleEntityService,
+		$SubscriptionPlanEntityService,
 		$ApAudienceService,
 		$ApDbResolverService,
 		$ApDeliverManagerService,
@@ -605,6 +609,7 @@ const $EventCircleEntityService: Provider = { provide: 'EventCircleEntityService
 		FlashEntityService,
 		FlashLikeEntityService,
 		RoleEntityService,
+		SubscriptionPlanEntityService,
 		ApAudienceService,
 		ApDbResolverService,
 		ApDeliverManagerService,
@@ -728,6 +733,7 @@ const $EventCircleEntityService: Provider = { provide: 'EventCircleEntityService
 		$FlashEntityService,
 		$FlashLikeEntityService,
 		$RoleEntityService,
+		$SubscriptionPlanEntityService,
 		$ApAudienceService,
 		$ApDbResolverService,
 		$ApDeliverManagerService,

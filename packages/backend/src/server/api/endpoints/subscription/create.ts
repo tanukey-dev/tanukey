@@ -72,7 +72,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-		@Inject(DI.usersRepository)
+		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
 		@Inject(DI.subscriptionPlansRepository)
 		private subscriptionPlanRepository: SubscriptionPlansRepository,
@@ -108,7 +108,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				subscribeUser = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
 			}
 
-			const subscriptionStatus = subscribeUser.user!.subscriptionStatus; // null? wtf. really? why? how? when? where? who? what?
+			const subscriptionStatus = me.subscriptionStatus; // null? wtf. really? why? how? when? where? who? what?
 			if (subscriptionStatus === 'active') {
 				throw new ApiError(meta.errors.accessDenied);
 			} else if (subscriptionStatus === 'incomplete' || subscriptionStatus === 'incomplete_expired' || subscriptionStatus === 'past_due' || subscriptionStatus === 'unpaid') {
@@ -136,7 +136,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					success_url: `${this.config.url}/subscription/success`,
 					cancel_url: `${this.config.url}/subscription/cancel`,
 					customer: subscribeUser.stripeCustomerId ?? undefined,
-				}, {});
+				});
 
 				return {
 					redirect: {
