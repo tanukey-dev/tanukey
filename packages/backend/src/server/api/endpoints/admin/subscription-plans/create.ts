@@ -46,7 +46,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				stripePriceId: ps.stripePriceId,
 				roleId: ps.roleId,
 				isArchived: false,
-			}).then(x => this.subscriptionPlansRepository.findOneOrFail(x.identifiers[0]));
+			}).then(x => this.subscriptionPlansRepository.findOneByOrFail(x.identifiers[0]));
 
 			return await this.subscriptionPlanEntityService.pack(subscriptionPlan, null);
 		});

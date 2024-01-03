@@ -5,7 +5,7 @@
 
 import { Module } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
-import { MiAbuseUserReport, MiAccessToken, MiAd, MiAnnouncement, MiAnnouncementRead, MiAntenna, MiApp, MiAuthSession, MiAvatarDecoration, MiBlocking, MiChannel, MiChannelFavorite, MiChannelFollowing, MiClip, MiClipFavorite, MiClipNote, MiDriveFile, MiDriveFolder, MiEmoji, MiFlash, MiFlashLike, MiFollowRequest, MiFollowing, MiGalleryLike, MiGalleryPost, MiHashtag, MiInstance, MiMeta, MiModerationLog, MiMuting, MiNote, MiNoteFavorite, MiNoteReaction, MiNoteThreadMuting, MiNoteUnread, MiPage, MiPageLike, MiPasswordResetRequest, MiPoll, MiPollVote, MiPromoNote, MiPromoRead, MiRegistrationTicket, MiRegistryItem, MiRelay, MiRenoteMuting, MiRetentionAggregation, MiRole, MiRoleAssignment, MiSignin, MiSwSubscription, MiUsedUsername, MiUser, MiUserIp, MiUserKeypair, MiUserList, MiUserListFavorite, MiUserListMembership, MiUserMemo, MiUserNotePining, MiUserPending, MiUserProfile, MiUserPublickey, MiUserSecurityKey, MiWebhook } from './_.js';
+import { MiAbuseUserReport, MiAccessToken, MiAd, MiAnnouncement, MiAnnouncementRead, MiAntenna, MiApp, MiAuthSession, MiAvatarDecoration, MiBlocking, MiChannel, MiChannelFavorite, MiChannelFollowing, MiClip, MiClipFavorite, MiClipNote, MiDriveFile, MiDriveFolder, MiEmoji, MiFlash, MiFlashLike, MiFollowRequest, MiFollowing, MiGalleryLike, MiGalleryPost, MiHashtag, MiInstance, MiMeta, MiModerationLog, MiMuting, MiNote, MiNoteFavorite, MiNoteReaction, MiNoteThreadMuting, MiNoteUnread, MiPage, MiPageLike, MiPasswordResetRequest, MiPoll, MiPollVote, MiPromoNote, MiPromoRead, MiRegistrationTicket, MiRegistryItem, MiRelay, MiRenoteMuting, MiRetentionAggregation, MiRole, MiRoleAssignment, MiSignin, MiSwSubscription, MiUsedUsername, MiUser, MiUserIp, MiUserKeypair, MiUserList, MiUserListFavorite, MiUserListMembership, MiUserMemo, MiUserNotePining, MiUserPending, MiUserProfile, MiUserPublickey, MiUserSecurityKey, MiWebhook, MiSubscriptionPlan } from './_.js';
 import type { DataSource } from 'typeorm';
 import type { Provider } from '@nestjs/common';
 
@@ -393,6 +393,12 @@ const $roleAssignmentsRepository: Provider = {
 	inject: [DI.db],
 };
 
+const $subscriptionPlansRepository: Provider = {
+	provide: DI.subscriptionPlansRepository,
+	useFactory: (db: DataSource) => db.getRepository(MiSubscriptionPlan),
+	inject: [DI.db],
+};
+
 const $userMemosRepository: Provider = {
 	provide: DI.userMemosRepository,
 	useFactory: (db: DataSource) => db.getRepository(MiUserMemo),
@@ -465,6 +471,7 @@ const $userMemosRepository: Provider = {
 		$retentionAggregationsRepository,
 		$rolesRepository,
 		$roleAssignmentsRepository,
+		$subscriptionPlansRepository,
 		$flashsRepository,
 		$flashLikesRepository,
 		$userMemosRepository,
@@ -532,6 +539,7 @@ const $userMemosRepository: Provider = {
 		$retentionAggregationsRepository,
 		$rolesRepository,
 		$roleAssignmentsRepository,
+		$subscriptionPlansRepository,
 		$flashsRepository,
 		$flashLikesRepository,
 		$userMemosRepository,

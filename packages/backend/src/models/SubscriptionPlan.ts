@@ -3,7 +3,6 @@ import { id } from './util/id.js';
 import { MiRole } from "@/models/Role.js";
 
 @Entity('subscription_plan')
-
 export class MiSubscriptionPlan {
 	@PrimaryColumn(id())
 	public id: string;
