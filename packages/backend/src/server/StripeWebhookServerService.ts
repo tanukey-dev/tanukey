@@ -9,6 +9,8 @@ import { bindThis } from "@/decorators.js";
 import { Stripe } from "stripe";
 import { LoggerService } from "@/core/LoggerService.js";
 import type Logger from "@/logger.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
 
 @Injectable()
 export class StripeWebhookServerService {
@@ -25,6 +27,8 @@ export class StripeWebhookServerService {
 		private subscriptionPlansRepository: SubscriptionPlansRepository,
 		private roleService: RoleService,
 		private metaService: MetaService,
+		private userEntityService: UserEntityService,
+		private globalEventService: GlobalEventService,
 		private loggerService: LoggerService,
 	) {
 		this.logger = this.loggerService.getLogger('server', 'gray', false);
@@ -81,19 +85,25 @@ export class StripeWebhookServerService {
 						const subscription = event.data.object;
 
 						const customer = subscription.customer as string;
-						const subscribeUser = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer });
+						const userProfile = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer });
 
-						if (!subscribeUser) {
+						if (!userProfile) {
 							return reply.code(400);
 						}
 						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
 
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
-						await this.roleService.assign(subscribeUser.userId, subscriptionPlan.roleId);
-						await this.usersRepository.update({id: subscribeUser.userId}, {
+						await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
+						await this.usersRepository.update({id: userProfile.userId}, {
 							subscriptionStatus: subscription.status,
 							subscriptionPlanId: subscriptionPlan.id,
 						});
+
+						// Publish meUpdated event
+						this.globalEventService.publishMainStream(userProfile.userId, 'meUpdated', await this.userEntityService.pack(userProfile.userId, { id: userProfile.userId }, {
+							detail: true,
+							includeSecrets: true
+						}));
 
 						return;
 					}
@@ -103,19 +113,25 @@ export class StripeWebhookServerService {
 						const subscription = event.data.object;
 
 						const customer = subscription.customer as string;
-						const subscribeUser = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer });
+						const userProfile = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer });
 
-						if (!subscribeUser) {
+						if (!userProfile) {
 							return reply.code(400);
 						}
 						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
 
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
-						await this.roleService.unassign(subscribeUser.userId, subscriptionPlan.roleId);
-						await this.usersRepository.update({ id: subscribeUser.userId }, {
+						await this.roleService.unassign(userProfile.userId, subscriptionPlan.roleId);
+						await this.usersRepository.update({ id: userProfile.userId }, {
 							subscriptionStatus: subscription.status,
 							subscriptionPlanId: undefined,
 						});
+
+						// Publish meUpdated event
+						this.globalEventService.publishMainStream(userProfile.userId, 'meUpdated', await this.userEntityService.pack(userProfile.userId, { id: userProfile.userId }, {
+							detail: true,
+							includeSecrets: true
+						}));
 
 						return;
 					}
@@ -144,7 +160,17 @@ export class StripeWebhookServerService {
 								subscriptionStatus: subscription.status,
 								subscriptionPlanId: subscriptionPlan.id,
 							});
+						} else {
+							await this.usersRepository.update({ id: user.id }, {
+								subscriptionStatus: subscription.status,
+							});
 						}
+
+						// Publish meUpdated event
+						this.globalEventService.publishMainStream(user.id, 'meUpdated', await this.userEntityService.pack(user.id, user, {
+							detail: true,
+							includeSecrets: true
+						}));
 
 						return;
 					}

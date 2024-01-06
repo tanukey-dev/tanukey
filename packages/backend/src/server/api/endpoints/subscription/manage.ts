@@ -4,7 +4,7 @@ import { Endpoint } from "@/server/api/endpoint-base.js";
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import { ApiError } from '../../error.js';
-import type { UserProfilesRepository } from "@/models/index.js";
+import type { UsersRepository, UserProfilesRepository } from '@/models/index.js';
 import { MetaService } from "@/core/MetaService.js";
 
 export const meta = {
@@ -32,7 +32,7 @@ export const meta = {
 			id: 'ca50e7c1-2589-4360-a338-e729100af0c4',
 		},
 	},
-	} as const;
+} as const;
 
 export const paramDef = {
 	type: 'object',
@@ -45,6 +45,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
+		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
 		private metaService: MetaService,
@@ -54,18 +56,20 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			if (!(instance.enableSubscriptions || this.config.stripe?.secretKey)) {
 				throw new ApiError(meta.errors.unavailable);
 			}
-			if (me.subscriptionStatus === 'none') {
-				throw new ApiError(meta.errors.noSuchUser)
+
+			const user = await this.usersRepository.findOneBy( { id: me.id });
+			const userProfile = await this.userProfilesRepository.findOneBy({ userId: me.id });
+			if (!user || !userProfile || !userProfile.stripeCustomerId) {
+				throw new ApiError(meta.errors.noSuchUser);
 			}
 
-			let subscribeUser = await this.userProfilesRepository.findOneBy({ userId: me.id });
-			if (!subscribeUser || !subscribeUser.stripeCustomerId) {
+			if (user.subscriptionStatus === 'none') {
 				throw new ApiError(meta.errors.noSuchUser);
 			}
 
 			const stripe = new Stripe(this.config.stripe!.secretKey);
 			const session = await stripe.billingPortal.sessions.create({
-				customer: subscribeUser.stripeCustomerId!,
+				customer: userProfile.stripeCustomerId!,
 				return_url: `${this.config.url}/settings/subscription`,
 			});
 
