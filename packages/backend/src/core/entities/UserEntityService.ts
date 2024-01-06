@@ -476,6 +476,7 @@ export class UserEntityService implements OnModuleInit {
 						},
 					})
 					: [],
+				stripeCustomerId: profile!.stripeCustomerId,
 			} : {}),
 
 			...(relation ? {

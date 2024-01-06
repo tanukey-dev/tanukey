@@ -407,6 +407,10 @@ export const packedMeDetailedOnlySchema = {
 				nullable: false, optional: false,
 			},
 		},
+		stripeCustomerId: {
+			type: 'string',
+			nullable: true, optional: true,
+		},
 		//#endregion
 	},
 } as const;
