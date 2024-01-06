@@ -1,15 +1,9 @@
 import ms from 'ms';
 import { Stripe } from 'stripe';
 import { Inject, Injectable } from '@nestjs/common';
-import type {
-	UsersRepository,
-	UserProfilesRepository,
-	RolesRepository,
-	SubscriptionPlansRepository
-} from '@/models/_.js';
+import type { UsersRepository, UserProfilesRepository, SubscriptionPlansRepository } from '@/models/_.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
 import { MetaService } from '@/core/MetaService.js';
 import type { Config } from '@/config.js';
 import { ApiError } from '../../error.js';
@@ -72,6 +66,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
+		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
 		@Inject(DI.subscriptionPlansRepository)
@@ -89,31 +85,32 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new ApiError(meta.errors.noSuchPlan);
 			}
 
-			let subscribeUser = await this.userProfilesRepository.findOneBy({ userId: me.id });
-			if (!subscribeUser) {
+			const user = await this.usersRepository.findOneByOrFail({ id: me.id });
+			let userProfile = await this.userProfilesRepository.findOneBy({ userId: me.id });
+			if (!user || !userProfile) {
 				throw new ApiError(meta.errors.noSuchUser);
 			}
-			if (!subscribeUser.email) {
+			if (!userProfile.email) {
 				throw new ApiError(meta.errors.requiredEmail);
 			}
 
 			const stripe = new Stripe(this.config.stripe!.secretKey);
-			if (!subscribeUser.stripeCustomerId) {
+			if (!userProfile.stripeCustomerId) {
 				const makeCustomer = await stripe.customers.create({
-					email: subscribeUser.email,
+					email: userProfile.email,
 				});
-				await this.userProfilesRepository.update({ userId: me.id }, {
+				await this.userProfilesRepository.update({ userId: user.id }, {
 					stripeCustomerId: makeCustomer.id,
 				});
-				subscribeUser = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+				userProfile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
 			}
 
-			const subscriptionStatus = me.subscriptionStatus; // null? wtf. really? why? how? when? where? who? what?
+			const subscriptionStatus = user.subscriptionStatus;
 			if (subscriptionStatus === 'active') {
 				throw new ApiError(meta.errors.accessDenied);
 			} else if (subscriptionStatus === 'incomplete' || subscriptionStatus === 'incomplete_expired' || subscriptionStatus === 'past_due' || subscriptionStatus === 'unpaid') {
 				const session = await stripe.checkout.sessions.create({
-					customer: subscribeUser.stripeCustomerId ?? undefined,
+					customer: userProfile.stripeCustomerId ?? undefined,
 					return_url: `${this.config.url}/subscription/success`,
 				}, {});
 
@@ -135,7 +132,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					],
 					success_url: `${this.config.url}/subscription/success`,
 					cancel_url: `${this.config.url}/subscription/cancel`,
-					customer: subscribeUser.stripeCustomerId ?? undefined,
+					customer: userProfile.stripeCustomerId ?? undefined,
 				});
 
 				return {
