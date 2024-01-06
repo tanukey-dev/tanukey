@@ -12,7 +12,10 @@
 
 -->
 
-## 13.14.2-tanu-1.48.0
+## 13.14.2-tanu-1.49.0
+### Server
+- Enhance: ActivityPub Deliver queueでBodyを事前処理するように (#12916)
+
 ### General
 - 連合のホワイトリスト形式に対応
 

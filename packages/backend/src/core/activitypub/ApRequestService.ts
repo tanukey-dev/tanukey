@@ -29,9 +29,9 @@ type PrivateKey = {
 };
 
 export class ApRequestCreator {
-	static createSignedPost(args: { key: PrivateKey, url: string, body: string, additionalHeaders: Record<string, string> }): Signed {
+	static createSignedPost(args: { key: PrivateKey, url: string, body: string, digest?: string, additionalHeaders: Record<string, string> }): Signed {
 		const u = new URL(args.url);
-		const digestHeader = `SHA-256=${crypto.createHash('sha256').update(args.body).digest('base64')}`;
+		const digestHeader = args.digest ?? this.createDigest(args.body);
 
 		const request: Request = {
 			url: u.href,
@@ -52,6 +52,10 @@ export class ApRequestCreator {
 			signature: result.signature,
 			signatureHeader: result.signatureHeader,
 		};
+	}
+
+	static createDigest(body: string): string {
+		return `SHA-256=${crypto.createHash('sha256').update(body).digest('base64')}`;
 	}
 
 	static createSignedGet(args: { key: PrivateKey, url: string, additionalHeaders: Record<string, string> }): Signed {
@@ -140,8 +144,8 @@ export class ApRequestService {
 	}
 
 	@bindThis
-	public async signedPost(user: { id: User['id'] }, url: string, object: any) {
-		const body = JSON.stringify(object);
+	public async signedPost(user: { id: User['id'] }, url: string, object: unknown, digest?: string): Promise<void> {
+		const body = typeof object === 'string' ? object : JSON.stringify(object);
 
 		const keypair = await this.userKeypairService.getUserKeypair(user.id);
 
@@ -152,6 +156,7 @@ export class ApRequestService {
 			},
 			url,
 			body,
+			digest,
 			additionalHeaders: {
 			},
 		});

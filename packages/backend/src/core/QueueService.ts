@@ -11,6 +11,7 @@ import type { Antenna } from '@/server/api/endpoints/i/import-antennas.js';
 import type { DbQueue, DeliverQueue, EndedPollNotificationQueue, InboxQueue, ObjectStorageQueue, RelationshipQueue, SystemQueue, WebhookDeliverQueue } from './QueueModule.js';
 import type { DbJobData, RelationshipJobData, ThinUser } from '../queue/types.js';
 import type httpSignature from '@peertube/http-signature';
+import { ApRequestCreator } from '@/core/activitypub/ApRequestService.js';
 
 @Injectable()
 export class QueueService {
@@ -33,11 +34,15 @@ export class QueueService {
 		if (content == null) return null;
 		if (to == null) return null;
 
+		const contentBody = JSON.stringify(content);
+		const digest = ApRequestCreator.createDigest(contentBody);
+
 		const data = {
 			user: {
 				id: user.id,
 			},
-			content,
+			content: contentBody,
+			digest,
 			to,
 			isSharedInbox,
 		};
