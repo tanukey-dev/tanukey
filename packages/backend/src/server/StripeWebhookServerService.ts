@@ -155,7 +155,7 @@ export class StripeWebhookServerService {
 							const oldSubscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ id: user.subscriptionPlanId ?? undefined });
 							await this.roleService.unassign(user.id, oldSubscriptionPlan.roleId);
 
-							await this.roleService.assign(user.id, subscriptionPlan.id);
+							await this.roleService.assign(user.id, subscriptionPlan.roleId);
 							await this.usersRepository.update({ id: user.id }, {
 								subscriptionStatus: subscription.status,
 								subscriptionPlanId: subscriptionPlan.id,

@@ -107,7 +107,22 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const subscriptionStatus = user.subscriptionStatus;
 			if (subscriptionStatus === 'active') {
-				throw new ApiError(meta.errors.accessDenied);
+				if (plan.id !== user.subscriptionPlanId) {
+					// Upgrade or downgrade subscription
+					const subscription = await stripe.subscriptions.list({
+						customer: userProfile.stripeCustomerId ?? undefined,
+					});
+					if (subscription.data.length === 0) {
+						throw new ApiError(meta.errors.accessDenied);
+					}
+					const oldSubscription = await subscriptionPlanRepository.findOneByOrFail({ id: user.subscriptionPlanId?? undefined });
+					const subscriptionItemId = subscription.data[0].items.data.filter(d => d.price.id === oldSubscription.stripePriceId)[0].id;
+					const updatedSubscription = await stripe.subscriptionItems.update(subscriptionItemId, { plan: plan.stripePriceId });
+
+					return; // fmm... I don't know how to return 204 No Content
+				} else {
+					throw new ApiError(meta.errors.accessDenied);
+				}
 			} else if (subscriptionStatus === 'incomplete' || subscriptionStatus === 'incomplete_expired' || subscriptionStatus === 'past_due' || subscriptionStatus === 'unpaid') {
 				const session = await stripe.checkout.sessions.create({
 					customer: userProfile.stripeCustomerId ?? undefined,
