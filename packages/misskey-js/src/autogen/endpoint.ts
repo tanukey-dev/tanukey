@@ -1,6 +1,6 @@
 /*
  * version: 2023.12.2-NJ-1.3.3
- * generatedAt: 2023-12-30T05:13:49.302Z
+ * generatedAt: 2024-01-07T17:19:18.052Z
  */
 
 import type {
@@ -104,6 +104,10 @@ import type {
 	AdminRolesUpdateDefaultPoliciesRequest,
 	AdminRolesUsersRequest,
 	AdminRolesUsersResponse,
+	AdminSubscriptionPlansCreateRequest,
+	AdminSubscriptionPlansCreateResponse,
+	AdminSubscriptionPlansArchiveRequest,
+	AdminSubscriptionPlansArchiveResponse,
 	AnnouncementsRequest,
 	AnnouncementsResponse,
 	AntennasCreateRequest,
@@ -465,8 +469,8 @@ import type {
 	RolesUsersResponse,
 	RolesNotesRequest,
 	RolesNotesResponse,
-	SubscriptionCheckoutRequest,
-	SubscriptionGetAvailablePlansRequest,
+	SubscriptionCreateRequest,
+	SubscriptionPlansListResponse,
 	RequestResetPasswordRequest,
 	ResetPasswordRequest,
 	ServerInfoResponse,
@@ -620,6 +624,8 @@ export type Endpoints = {
 	'admin/roles/unassign': { req: AdminRolesUnassignRequest; res: EmptyResponse };
 	'admin/roles/update-default-policies': { req: AdminRolesUpdateDefaultPoliciesRequest; res: EmptyResponse };
 	'admin/roles/users': { req: AdminRolesUsersRequest; res: AdminRolesUsersResponse };
+	'admin/subscription-plans/create': { req: AdminSubscriptionPlansCreateRequest; res: AdminSubscriptionPlansCreateResponse };
+	'admin/subscription-plans/archive': { req: AdminSubscriptionPlansArchiveRequest; res: AdminSubscriptionPlansArchiveResponse };
 	'announcements': { req: AnnouncementsRequest; res: AnnouncementsResponse };
 	'antennas/create': { req: AntennasCreateRequest; res: AntennasCreateResponse };
 	'antennas/delete': { req: AntennasDeleteRequest; res: EmptyResponse };
@@ -855,9 +861,9 @@ export type Endpoints = {
 	'roles/show': { req: RolesShowRequest; res: RolesShowResponse };
 	'roles/users': { req: RolesUsersRequest; res: RolesUsersResponse };
 	'roles/notes': { req: RolesNotesRequest; res: RolesNotesResponse };
-	'subscription/checkout': { req: SubscriptionCheckoutRequest; res: EmptyResponse };
+	'subscription/create': { req: SubscriptionCreateRequest; res: EmptyResponse };
 	'subscription/manage': { req: EmptyRequest; res: EmptyResponse };
-	'subscription/get-available-plans': { req: SubscriptionGetAvailablePlansRequest; res: EmptyResponse };
+	'subscription-plans/list': { req: EmptyRequest; res: SubscriptionPlansListResponse };
 	'request-reset-password': { req: RequestResetPasswordRequest; res: EmptyResponse };
 	'reset-db': { req: EmptyRequest; res: EmptyResponse };
 	'reset-password': { req: ResetPasswordRequest; res: EmptyResponse };

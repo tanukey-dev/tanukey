@@ -3,7 +3,7 @@
 
 /*
  * version: 2023.12.2-NJ-1.3.3
- * generatedAt: 2023-12-30T05:13:49.140Z
+ * generatedAt: 2024-01-07T17:19:17.904Z
  */
 
 /**
@@ -701,6 +701,26 @@ export type paths = {
      * **Credential required**: *No* / **Permission**: *read:admin:roles*
      */
     post: operations['admin/roles/users'];
+  };
+  '/admin/subscription-plans/create': {
+    /**
+     * admin/subscription-plans/create
+     * @description No description provided.
+     *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+     */
+    post: operations['admin/subscription-plans/create'];
+  };
+  '/admin/subscription-plans/archive': {
+    /**
+     * admin/subscription-plans/archive
+     * @description No description provided.
+     *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+     */
+    post: operations['admin/subscription-plans/archive'];
   };
   '/announcements': {
     /**
@@ -2991,14 +3011,14 @@ export type paths = {
      */
     post: operations['roles/notes'];
   };
-  '/subscription/checkout': {
+  '/subscription/create': {
     /**
-     * subscription/checkout
+     * subscription/create
      * @description No description provided.
      *
      * **Credential required**: *Yes* / **Permission**: *write:account*
      */
-    post: operations['subscription/checkout'];
+    post: operations['subscription/create'];
   };
   '/subscription/manage': {
     /**
@@ -3009,14 +3029,14 @@ export type paths = {
      */
     post: operations['subscription/manage'];
   };
-  '/subscription/get-available-plans': {
+  '/subscription-plans/list': {
     /**
-     * subscription/get-available-plans
+     * subscription-plans/list
      * @description No description provided.
      *
      * **Credential required**: *No*
      */
-    post: operations['subscription/get-available-plans'];
+    post: operations['subscription-plans/list'];
   };
   '/request-reset-password': {
     /**
@@ -3606,6 +3626,10 @@ export type components = {
       isExplorable: boolean;
       isDeleted: boolean;
       /** @enum {string} */
+      subscriptionStatus: 'incomplete' | 'incomplete_expired' | 'trialing' | 'active' | 'past_due' | 'paused' | 'canceled' | 'unpaid' | 'none';
+      /** Format: id */
+      subscriptionPlanId: string | null;
+      /** @enum {string} */
       twoFactorBackupCodesStock: 'full' | 'partial' | 'none';
       hideOnlineStatus: boolean;
       hasUnreadSpecifiedNotes: boolean;
@@ -3701,6 +3725,7 @@ export type components = {
           /** Format: date-time */
           lastUsed: string;
         }[];
+      stripeCustomerId?: string | null;
     };
     UserDetailedNotMe: components['schemas']['UserLite'] & components['schemas']['UserDetailedNotMeOnly'];
     MeDetailed: components['schemas']['UserLite'] & components['schemas']['UserDetailedNotMeOnly'] & components['schemas']['MeDetailedOnly'];
@@ -4225,6 +4250,25 @@ export type components = {
       ip: string;
       headers: Record<string, never>;
       success: boolean;
+    };
+    SubscriptionPlan: {
+      /**
+       * Format: id
+       * @example xxxxxxxxxx
+       */
+      id: string;
+      /** @example New Plan */
+      name: string;
+      /** @example price_xxxxxxxxxx */
+      stripePriceId: string;
+      /**
+       * Format: id
+       * @example xxxxxxxxxx
+       */
+      roleId: string;
+      role: components['schemas']['RoleLite'];
+      /** @example false */
+      isArchived: boolean;
     };
     RoleLite: {
       /**
@@ -8931,6 +8975,118 @@ export type operations = {
               /** Format: date-time */
               expiresAt: string | null;
             })[];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * admin/subscription-plans/create
+   * @description No description provided.
+   *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+   * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+   */
+  'admin/subscription-plans/create': {
+    requestBody: {
+      content: {
+        'application/json': {
+          name: string;
+          stripePriceId: string;
+          /** Format: misskey:id */
+          roleId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['SubscriptionPlan'];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * admin/subscription-plans/archive
+   * @description No description provided.
+   *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+   * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+   */
+  'admin/subscription-plans/archive': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          planId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': unknown;
         };
       };
       /** @description Client error */
@@ -22661,17 +22817,17 @@ export type operations = {
     };
   };
   /**
-   * subscription/checkout
+   * subscription/create
    * @description No description provided.
    *
    * **Credential required**: *Yes* / **Permission**: *write:account*
    */
-  'subscription/checkout': {
+  'subscription/create': {
     requestBody: {
       content: {
         'application/json': {
           /** Format: misskey:id */
-          roleId: string;
+          planId: string;
         };
       };
     };
@@ -22763,24 +22919,18 @@ export type operations = {
     };
   };
   /**
-   * subscription/get-available-plans
+   * subscription-plans/list
    * @description No description provided.
    *
    * **Credential required**: *No*
    */
-  'subscription/get-available-plans': {
-    requestBody: {
-      content: {
-        'application/json': {
-          /** Format: misskey:id */
-          roleId: string;
-        };
-      };
-    };
+  'subscription-plans/list': {
     responses: {
-      /** @description OK (without any results) */
-      204: {
-        content: never;
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['SubscriptionPlan'][];
+        };
       };
       /** @description Client error */
       400: {
@@ -22802,12 +22952,6 @@ export type operations = {
       };
       /** @description I'm Ai */
       418: {
-        content: {
-          'application/json': components['schemas']['Error'];
-        };
-      };
-      /** @description To many requests */
-      429: {
         content: {
           'application/json': components['schemas']['Error'];
         };

@@ -1,6 +1,6 @@
 /*
  * version: 2023.12.2-NJ-1.3.3
- * generatedAt: 2023-12-30T05:13:49.295Z
+ * generatedAt: 2024-01-07T17:19:18.048Z
  */
 
 import { operations } from './types.js';
@@ -106,6 +106,10 @@ export type AdminRolesUnassignRequest = operations['admin/roles/unassign']['requ
 export type AdminRolesUpdateDefaultPoliciesRequest = operations['admin/roles/update-default-policies']['requestBody']['content']['application/json'];
 export type AdminRolesUsersRequest = operations['admin/roles/users']['requestBody']['content']['application/json'];
 export type AdminRolesUsersResponse = operations['admin/roles/users']['responses']['200']['content']['application/json'];
+export type AdminSubscriptionPlansCreateRequest = operations['admin/subscription-plans/create']['requestBody']['content']['application/json'];
+export type AdminSubscriptionPlansCreateResponse = operations['admin/subscription-plans/create']['responses']['200']['content']['application/json'];
+export type AdminSubscriptionPlansArchiveRequest = operations['admin/subscription-plans/archive']['requestBody']['content']['application/json'];
+export type AdminSubscriptionPlansArchiveResponse = operations['admin/subscription-plans/archive']['responses']['200']['content']['application/json'];
 export type AnnouncementsRequest = operations['announcements']['requestBody']['content']['application/json'];
 export type AnnouncementsResponse = operations['announcements']['responses']['200']['content']['application/json'];
 export type AntennasCreateRequest = operations['antennas/create']['requestBody']['content']['application/json'];
@@ -467,8 +471,8 @@ export type RolesUsersRequest = operations['roles/users']['requestBody']['conten
 export type RolesUsersResponse = operations['roles/users']['responses']['200']['content']['application/json'];
 export type RolesNotesRequest = operations['roles/notes']['requestBody']['content']['application/json'];
 export type RolesNotesResponse = operations['roles/notes']['responses']['200']['content']['application/json'];
-export type SubscriptionCheckoutRequest = operations['subscription/checkout']['requestBody']['content']['application/json'];
-export type SubscriptionGetAvailablePlansRequest = operations['subscription/get-available-plans']['requestBody']['content']['application/json'];
+export type SubscriptionCreateRequest = operations['subscription/create']['requestBody']['content']['application/json'];
+export type SubscriptionPlansListResponse = operations['subscription-plans/list']['responses']['200']['content']['application/json'];
 export type RequestResetPasswordRequest = operations['request-reset-password']['requestBody']['content']['application/json'];
 export type ResetPasswordRequest = operations['reset-password']['requestBody']['content']['application/json'];
 export type ServerInfoResponse = operations['server-info']['responses']['200']['content']['application/json'];

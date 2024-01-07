@@ -1,6 +1,6 @@
 /*
  * version: 2023.12.2-NJ-1.3.3
- * generatedAt: 2023-12-30T05:13:49.308Z
+ * generatedAt: 2024-01-07T17:19:18.057Z
  */
 
 import type { SwitchCaseResponseType } from '../api.js';
@@ -840,6 +840,30 @@ declare module '../api.js' {
      * **Credential required**: *No* / **Permission**: *read:admin:roles*
      */
     request<E extends 'admin/roles/users', P extends Endpoints[E]['req']>(
+      endpoint: E,
+      params: P,
+      credential?: string | null,
+    ): Promise<SwitchCaseResponseType<E, P>>;
+
+    /**
+     * No description provided.
+     * 
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+     */
+    request<E extends 'admin/subscription-plans/create', P extends Endpoints[E]['req']>(
+      endpoint: E,
+      params: P,
+      credential?: string | null,
+    ): Promise<SwitchCaseResponseType<E, P>>;
+
+    /**
+     * No description provided.
+     * 
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+     */
+    request<E extends 'admin/subscription-plans/archive', P extends Endpoints[E]['req']>(
       endpoint: E,
       params: P,
       credential?: string | null,
@@ -3469,7 +3493,7 @@ declare module '../api.js' {
      * 
      * **Credential required**: *Yes* / **Permission**: *write:account*
      */
-    request<E extends 'subscription/checkout', P extends Endpoints[E]['req']>(
+    request<E extends 'subscription/create', P extends Endpoints[E]['req']>(
       endpoint: E,
       params: P,
       credential?: string | null,
@@ -3491,7 +3515,7 @@ declare module '../api.js' {
      * 
      * **Credential required**: *No*
      */
-    request<E extends 'subscription/get-available-plans', P extends Endpoints[E]['req']>(
+    request<E extends 'subscription-plans/list', P extends Endpoints[E]['req']>(
       endpoint: E,
       params: P,
       credential?: string | null,
