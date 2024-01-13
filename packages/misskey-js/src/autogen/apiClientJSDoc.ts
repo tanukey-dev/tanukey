@@ -1,6 +1,6 @@
 /*
  * version: 2023.12.2-NJ-1.3.3
- * generatedAt: 2023-12-28T08:44:48.222Z
+ * generatedAt: 2024-01-13T12:41:18.120Z
  */
 
 import type { SwitchCaseResponseType } from '../api.js';
@@ -2244,6 +2244,18 @@ declare module '../api.js' {
      * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
      * **Credential required**: *Yes*
      */
+    request<E extends 'i/export-clips', P extends Endpoints[E]['req']>(
+      endpoint: E,
+      params: P,
+      credential?: string | null,
+    ): Promise<SwitchCaseResponseType<E, P>>;
+
+    /**
+     * No description provided.
+     * 
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes*
+     */
     request<E extends 'i/export-favorites', P extends Endpoints[E]['req']>(
       endpoint: E,
       params: P,
@@ -3958,6 +3970,28 @@ declare module '../api.js' {
      * **Credential required**: *No*
      */
     request<E extends 'retention', P extends Endpoints[E]['req']>(
+      endpoint: E,
+      params: P,
+      credential?: string | null,
+    ): Promise<SwitchCaseResponseType<E, P>>;
+
+    /**
+     * No description provided.
+     * 
+     * **Credential required**: *Yes* / **Permission**: *write:account*
+     */
+    request<E extends 'bubble-game/register', P extends Endpoints[E]['req']>(
+      endpoint: E,
+      params: P,
+      credential?: string | null,
+    ): Promise<SwitchCaseResponseType<E, P>>;
+
+    /**
+     * No description provided.
+     * 
+     * **Credential required**: *No*
+     */
+    request<E extends 'bubble-game/ranking', P extends Endpoints[E]['req']>(
       endpoint: E,
       params: P,
       credential?: string | null,

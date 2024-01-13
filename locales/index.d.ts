@@ -383,6 +383,11 @@ export interface Locale {
     "enableHcaptcha": string;
     "hcaptchaSiteKey": string;
     "hcaptchaSecretKey": string;
+    "mcaptcha": string;
+    "enableMcaptcha": string;
+    "mcaptchaSiteKey": string;
+    "mcaptchaSecretKey": string;
+    "mcaptchaInstanceUrl": string;
     "recaptcha": string;
     "enableRecaptcha": string;
     "recaptchaSiteKey": string;
@@ -630,6 +635,7 @@ export interface Locale {
     "small": string;
     "generateAccessToken": string;
     "permission": string;
+    "adminPermission": string;
     "enableAll": string;
     "disableAll": string;
     "tokenRequested": string;
@@ -672,6 +678,7 @@ export interface Locale {
     "other": string;
     "regenerateLoginToken": string;
     "regenerateLoginTokenDescription": string;
+    "theKeywordWhenSearchingForCustomEmoji": string;
     "setMultipleBySeparatingWithSpace": string;
     "fileIdOrUrl": string;
     "behavior": string;
@@ -1189,11 +1196,28 @@ export interface Locale {
     "decorate": string;
     "addMfmFunction": string;
     "enableQuickAddMfmFunction": string;
+    "bubbleGame": string;
+    "sfx": string;
+    "soundWillBePlayed": string;
+    "showReplay": string;
+    "replay": string;
+    "replaying": string;
+    "ranking": string;
+    "lastNDays": string;
+    "backToTitle": string;
     "abuseReportCategory": string;
     "selectCategory": string;
     "reportComplete": string;
     "blockThisUser": string;
     "muteThisUser": string;
+    "_bubbleGame": {
+        "howToPlay": string;
+        "_howToPlay": {
+            "section1": string;
+            "section2": string;
+            "section3": string;
+        };
+    };
     "_abuseReportCategory": {
         "nsfw": string;
         "spam": string;
@@ -1672,6 +1696,15 @@ export interface Locale {
             "_tutorialCompleted": {
                 "title": string;
                 "description": string;
+            };
+            "_bubbleGameExplodingHead": {
+                "title": string;
+                "description": string;
+            };
+            "_bubbleGameDoubleExplodingHead": {
+                "title": string;
+                "description": string;
+                "flavor": string;
             };
         };
     };
@@ -2275,6 +2308,7 @@ export interface Locale {
     "_exportOrImport": {
         "allNotes": string;
         "favoritedNotes": string;
+        "clips": string;
         "followingList": string;
         "muteList": string;
         "blockingList": string;
