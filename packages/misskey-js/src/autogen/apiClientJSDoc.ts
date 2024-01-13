@@ -1,6 +1,6 @@
 /*
- * version: 2023.12.0
- * generatedAt: 2023-12-26T23:35:09.494Z
+ * version: 2023.12.2-NJ-1.3.3
+ * generatedAt: 2023-12-28T08:44:48.222Z
  */
 
 import type { SwitchCaseResponseType } from '../api.js';
@@ -33,7 +33,6 @@ declare module '../api.js' {
     /**
      * No description provided.
      * 
-     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
      * **Credential required**: *No*
      */
     request<E extends 'admin/accounts/create', P extends Endpoints[E]['req']>(
@@ -1546,17 +1545,6 @@ declare module '../api.js' {
      * **Credential required**: *Yes* / **Permission**: *write:drive*
      */
     request<E extends 'drive/files/update', P extends Endpoints[E]['req']>(
-      endpoint: E,
-      params: P,
-      credential?: string | null,
-    ): Promise<SwitchCaseResponseType<E, P>>;
-
-    /**
-     * Request the server to download a new drive file from the specified URL.
-     * 
-     * **Credential required**: *Yes* / **Permission**: *write:drive*
-     */
-    request<E extends 'drive/files/upload-from-url', P extends Endpoints[E]['req']>(
       endpoint: E,
       params: P,
       credential?: string | null,
