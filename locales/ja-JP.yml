@@ -298,6 +298,8 @@ image: "画像"
 birthday: "誕生日"
 yearsOld: "{age}歳"
 registeredDate: "登録日"
+subscription: "サブスクリプション"
+subscriptionStatus: "サブスクリプションの状態"
 location: "場所"
 theme: "テーマ"
 themeForLightMode: "ライトモードで使うテーマ"
@@ -1584,6 +1586,21 @@ _achievements:
     _tutorialCompleted:
       title: "Misskey初心者講座 修了証"
       description: "チュートリアルを完了した"
+
+_subscription:
+  price: "価格"
+  subscribe: "購入"
+  manage: "管理"
+  changePlan: "プランを変更"
+  confirmChangePlan: "プランを変更しますか？"
+  incomplete: "未完了"
+  incomplete_expired: "期限切れ"
+  trialing: "トライアル中"
+  active: "有効"
+  pastDue: "支払い期限切れ"
+  canceled: "キャンセル済み"
+  unpaid: "未払い"
+  none: "なし"
 
 _role:
   new: "ロールの作成"
