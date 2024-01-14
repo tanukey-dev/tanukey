@@ -25,10 +25,10 @@ export class SubscriptionPlan {
 		length: 1024,
 		nullable: true,
 	})
-	public description: string | null
+	public description: string | null;
 
 	@Column('varchar', {
-		length: 128
+		length: 128,
 	})
 	public stripePriceId: string | null;
 

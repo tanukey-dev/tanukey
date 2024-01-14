@@ -23,10 +23,6 @@
 							<template #key>{{ i18n.ts._subscription.price }}</template>
 							<template #value>{{ plan.price + ' ' + plan.currency }}</template>
 						</MkKeyValue>
-						<MkKeyValue oneline>
-							<template #key>{{ i18n.ts.lastUsedDate }}</template>
-							<template #value><MkTime :time="plan.lastUsedAt"/></template>
-						</MkKeyValue>
 						<div>
 							<MkButton v-if="currentPlan === null" primary @click="subscribe(plan)"><i class="ti ti-plus"></i>{{ i18n.ts._subscription.subscribe }}</MkButton>
 							<MkButton v-else-if="plan.id === currentPlan" @click="manage()"><i class="ti ti-settings"></i>{{ i18n.ts._subscription.manage }}</MkButton>
@@ -41,16 +37,16 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, ref } from 'vue';
 import { i18n } from '@/i18n.js';
-import { $i } from "@/account.js";
-import * as os from "@/os.js";
-import FormSection from "@/components/form/section.vue";
-import { infoImageUrl } from "@/instance.js";
-import MkKeyValue from "@/components/MkKeyValue.vue";
-import FormPagination from "@/components/MkPagination.vue";
-import MkButton from "@/components/MkButton.vue";
-import { computed, ref } from "vue";
-import { definePageMetadata } from "@/scripts/page-metadata.js";
+import { $i } from '@/account.js';
+import * as os from '@/os.js';
+import FormSection from '@/components/form/section.vue';
+import { infoImageUrl } from '@/instance.js';
+import MkKeyValue from '@/components/MkKeyValue.vue';
+import FormPagination from '@/components/MkPagination.vue';
+import MkButton from '@/components/MkButton.vue';
+import { definePageMetadata } from '@/scripts/page-metadata.js';
 
 const list = ref<InstanceType<typeof FormPagination>>();
 const currentPlan = computed(() => $i.subscriptionPlanId);
@@ -62,14 +58,11 @@ const pagination = {
 };
 
 function subscribe(plan) {
-	os.api('subscription/create', { planId: plan.planId }).then(() => {
-		list.value.reload();
-	});
+	os.api('subscription/create', { planId: plan.id });
 }
 
 function manage() {
-	os.api('subscription/manage').then(() => {
-	});
+	os.api('subscription/manage');
 }
 
 function change(plan) {
@@ -79,7 +72,7 @@ function change(plan) {
 	}).then((res) => {
 		if (res.canceled) return;
 		os.api('subscription/create', {
-			planId: plan.planId,
+			planId: plan.id,
 		});
 	});
 }
