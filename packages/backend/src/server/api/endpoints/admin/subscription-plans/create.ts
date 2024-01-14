@@ -30,7 +30,7 @@ export const paramDef = {
 		stripePriceId: { type: 'string' },
 		roleId: { type: 'string', format: 'misskey:id' },
 	},
-	required: ['name', 'stripePriceId', 'roleId'],
+	required: ['name', 'price',  'currency', 'stripePriceId', 'roleId'],
 } as const;
 
 @Injectable()

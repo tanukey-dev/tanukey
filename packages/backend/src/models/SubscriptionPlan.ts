@@ -21,9 +21,10 @@ export class MiSubscriptionPlan {
 	public currency: string;
 
 	@Column('varchar', {
-		length: 256,
+		length: 1024,
+		nullable: true,
 	})
-	public description: string;
+	public description: string | null
 
 	@Column('varchar', {
 		length: 128
