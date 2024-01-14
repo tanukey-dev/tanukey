@@ -219,11 +219,12 @@ import FormSuspense from '@/components/form/suspense.vue';
 import MkFileListForAdmin from '@/components/MkFileListForAdmin.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import * as os from '@/os.js';
+import { misskeyApi } from '@/scripts/misskey-api.js';
 import { url } from '@/config.js';
 import { acct } from '@/filters/user.js';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
 import { i18n } from '@/i18n.js';
-import { iAmAdmin, iAmModerator, $i } from '@/account.js';
+import { iAmAdmin, $i, iAmModerator } from '@/account.js';
 import MkRolePreview from '@/components/MkRolePreview.vue';
 import MkPagination from '@/components/MkPagination.vue';
 
@@ -264,11 +265,11 @@ const announcementsPagination = {
 const expandedRoles = ref([]);
 
 function createFetcher() {
-	return () => Promise.all([os.api('users/show', {
+	return () => Promise.all([misskeyApi('users/show', {
 		userId: props.userId,
-	}), os.api('admin/show-user', {
+	}), misskeyApi('admin/show-user', {
 		userId: props.userId,
-	}), iAmAdmin ? os.api('admin/get-user-ips', {
+	}), iAmAdmin ? misskeyApi('admin/get-user-ips', {
 		userId: props.userId,
 	}) : Promise.resolve(null)]).then(([_user, _info, _ips]) => {
 		user.value = _user;
@@ -280,7 +281,7 @@ function createFetcher() {
 		moderationNote.value = info.value.moderationNote;
 
 		watch(moderationNote, async () => {
-			await os.api('admin/update-user-note', { userId: user.value.id, text: moderationNote.value });
+			await misskeyApi('admin/update-user-note', { userId: user.value.id, text: moderationNote.value });
 			await refreshUser();
 		});
 	});
@@ -303,7 +304,7 @@ async function resetPassword() {
 	if (confirm.canceled) {
 		return;
 	} else {
-		const { password } = await os.api('admin/reset-password', {
+		const { password } = await misskeyApi('admin/reset-password', {
 			userId: user.value.id,
 		});
 		os.alert({
@@ -321,7 +322,7 @@ async function toggleSuspend(v) {
 	if (confirm.canceled) {
 		suspended.value = !v;
 	} else {
-		await os.api(v ? 'admin/suspend-user' : 'admin/unsuspend-user', { userId: user.value.id });
+		await misskeyApi(v ? 'admin/suspend-user' : 'admin/unsuspend-user', { userId: user.value.id });
 		await refreshUser();
 	}
 }
@@ -333,7 +334,7 @@ async function unsetUserAvatar() {
 	});
 	if (confirm.canceled) return;
 	const process = async () => {
-		await os.api('admin/unset-user-avatar', { userId: user.value.id });
+		await misskeyApi('admin/unset-user-avatar', { userId: user.value.id });
 		os.success();
 	};
 	await process().catch(err => {
@@ -352,7 +353,7 @@ async function unsetUserBanner() {
 	});
 	if (confirm.canceled) return;
 	const process = async () => {
-		await os.api('admin/unset-user-banner', { userId: user.value.id });
+		await misskeyApi('admin/unset-user-banner', { userId: user.value.id });
 		os.success();
 	};
 	await process().catch(err => {
@@ -371,7 +372,7 @@ async function deleteAllFiles() {
 	});
 	if (confirm.canceled) return;
 	const process = async () => {
-		await os.api('admin/delete-all-files-of-a-user', { userId: user.value.id });
+		await misskeyApi('admin/delete-all-files-of-a-user', { userId: user.value.id });
 		os.success();
 	};
 	await process().catch(err => {
@@ -408,7 +409,7 @@ async function deleteAccount() {
 }
 
 async function assignRole() {
-	const roles = await os.api('admin/roles/list');
+	const roles = await misskeyApi('admin/roles/list');
 
 	const { canceled, result: roleId } = await os.select({
 		title: i18n.ts._role.chooseRoleToAssign,
@@ -487,7 +488,7 @@ watch(() => props.userId, () => {
 });
 
 watch(user, () => {
-	os.api('ap/get', {
+	misskeyApi('ap/get', {
 		uri: user.value.uri ?? `${url}/users/${user.value.id}`,
 	}).then(res => {
 		ap.value = res;

@@ -30,10 +30,10 @@ import { computed, watch, ref, shallowRef } from 'vue';
 import * as Misskey from 'misskey-js';
 import MkTimeline from '@/components/MkTimeline.vue';
 import { scroll } from '@/scripts/scroll.js';
-import * as os from '@/os.js';
-import { useRouter } from '@/router.js';
+import { misskeyApi } from '@/scripts/misskey-api.js';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
 import { i18n } from '@/i18n.js';
+import { useRouter } from '@/global/router/supplier.js';
 
 const router = useRouter();
 
@@ -50,7 +50,7 @@ const withRenotes = ref(true);
 const onlyFiles = ref(false);
 
 watch(() => props.listId, async () => {
-	list.value = await os.api('users/lists/show', {
+	list.value = await misskeyApi('users/lists/show', {
 		listId: props.listId,
 	});
 }, { immediate: true });
