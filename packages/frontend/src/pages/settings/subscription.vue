@@ -1,11 +1,5 @@
 <template>
 <div class="_gaps_m">
-	<FormSection first>
-		<template #label>{{ i18n.ts.subscription }}</template>
-		<template #key>{{ i18n.ts.subscriptionStatus }}</template>
-		<template #value>{{ i18n.t(`_subscription.${ $i.subscriptionStatus }`) }}</template>
-	</FormSection>
-
 	<FormPagination ref="list" :pagination="pagination">
 		<template #empty>
 			<div class="_fullinfo">
@@ -24,9 +18,9 @@
 							<template #value>{{ plan.price + ' ' + plan.currency }}</template>
 						</MkKeyValue>
 						<div>
-							<MkButton v-if="currentPlan === null" primary @click="subscribe(plan)"><i class="ti ti-plus"></i>{{ i18n.ts._subscription.subscribe }}</MkButton>
-							<MkButton v-else-if="plan.id === currentPlan" @click="manage()"><i class="ti ti-settings"></i>{{ i18n.ts._subscription.manage }}</MkButton>
-							<MkButton v-else @click="change(plan)"><i class="ti ti-reload"></i>{{ i18n.ts._subscription.changePlan }}</MkButton>
+							<MkButton v-if="currentPlan === null" primary @click="subscribe(plan)" :class="$style.button"><i class="ti ti-plus"></i>{{ i18n.ts._subscription.subscribe }}</MkButton>
+							<MkButton v-else-if="plan.id === currentPlan" @click="manage()" :class="$style.button"><i class="ti ti-settings"></i>{{ i18n.ts._subscription.manage }}</MkButton>
+							<MkButton v-else @click="change(plan)" :class="$style.button"><i class="ti ti-reload"></i>{{ i18n.ts._subscription.changePlan }}</MkButton>
 						</div>
 					</div>
 				</div>
@@ -47,7 +41,6 @@ import MkKeyValue from '@/components/MkKeyValue.vue';
 import FormPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
-import { misskeyApi } from "@/scripts/misskey-api.js";
 
 const list = ref<InstanceType<typeof FormPagination>>();
 const currentPlan = computed(() => $i.subscriptionPlanId);
@@ -58,12 +51,18 @@ const pagination = {
 	noPaging: true,
 };
 
-function subscribe(plan) {
-	misskeyApi('subscription/create', { planId: plan.id });
+async function subscribe(plan) {
+	const redirect = await os.apiWithDialog('subscription/create', { planId: plan.id });
+	if (redirect) {
+		location.href = redirect.redirect.destination;
+	}
 }
 
-function manage() {
-	misskeyApi('subscription/manage');
+async function manage() {
+	const redirect = await os.apiWithDialog('subscription/manage');
+	if (redirect) {
+		location.href = redirect.redirect.destination;
+	}
 }
 
 function change(plan) {
@@ -72,10 +71,10 @@ function change(plan) {
 		type: 'question',
 	}).then((res) => {
 		if (res.canceled) return;
-		misskeyApi('subscription/create', {
+		os.apiWithDialog('subscription/create', {
 			planId: plan.id,
 		});
-	});
+	}); // TODO: 変更したことを通知するポップアップを表示してリロードする
 }
 
 const headerActions = computed(() => []);
@@ -101,5 +100,9 @@ definePageMetadata({
 .planBody {
 	width: calc(100% - 62px);
 	position: relative;
+}
+
+.button {
+	margin: 8px 0;
 }
 </style>
