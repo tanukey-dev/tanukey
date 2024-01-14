@@ -28,6 +28,7 @@ import { defaultStore } from '@/store.js';
 import { $i } from '@/account.js';
 import { i18n } from '@/i18n.js';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
+import { misskeyApi } from "@/scripts/misskey-api.js";
 
 const render = (mutedWords) => mutedWords.map(x => {
 	if (Array.isArray(x)) {
@@ -85,7 +86,7 @@ async function save() {
 		return;
 	}
 
-	await os.api('i/update', {
+	await misskeyApi('i/update', {
 		mutedWords: parsed,
 	});
 

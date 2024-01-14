@@ -186,7 +186,7 @@ function fetch(resetOffset = false): void {
 		offset.value = 0;
 	}
 
-	os.api('admin/announcements/list', {
+	misskeyApi('admin/announcements/list', {
 		offsetMode: true,
 		offset: offset.value,
 		limit: 10,
