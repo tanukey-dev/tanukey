@@ -23,6 +23,9 @@ export const paramDef = {
 	type: 'object',
 	properties: {
 		name: { type: 'string' },
+		price: { type: 'integer' },
+		currency: { type: 'string' },
+		description: { type: 'string' },
 		stripePriceId: { type: 'string' },
 		roleId: { type: 'string', format: 'misskey:id' },
 	},
@@ -41,6 +44,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			const subscriptionPlan = await this.subscriptionPlansRepository.insert({
 				id: this.idService.gen(),
 				name: ps.name,
+				price: ps.price,
+				currency: ps.currency,
+				description: ps.description,
 				stripePriceId: ps.stripePriceId,
 				roleId: ps.roleId,
 				isArchived: false,
