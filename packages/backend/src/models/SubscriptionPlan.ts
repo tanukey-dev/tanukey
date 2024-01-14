@@ -12,6 +12,19 @@ export class MiSubscriptionPlan {
 	})
 	public name: string;
 
+	@Column('integer')
+	public price: number;
+
+	@Column('varchar', {
+		length: 128,
+	})
+	public currency: string;
+
+	@Column('varchar', {
+		length: 256,
+	})
+	public description: string;
+
 	@Column('varchar', {
 		length: 128
 	})

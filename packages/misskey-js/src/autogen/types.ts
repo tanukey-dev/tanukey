@@ -4259,6 +4259,12 @@ export type components = {
       id: string;
       /** @example New Plan */
       name: string;
+      /** @example 1000 */
+      price: number;
+      /** @example usd */
+      currency: string;
+      /** @example New Plan */
+      description: string;
       /** @example price_xxxxxxxxxx */
       stripePriceId: string;
       /**
@@ -9021,6 +9027,9 @@ export type operations = {
       content: {
         'application/json': {
           name: string;
+          price?: number;
+          currency?: string;
+          description?: string;
           stripePriceId: string;
           /** Format: misskey:id */
           roleId: string;

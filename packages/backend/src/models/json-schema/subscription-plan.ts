@@ -12,6 +12,21 @@ export const packedSubscriptionPlanSchema = {
 			optional: false, nullable: false,
 			example: 'New Plan',
 		},
+		price: {
+			type: 'integer',
+			optional: false, nullable: false,
+			example: 1000,
+		},
+		currency: {
+			type: 'string',
+			optional: false, nullable: false,
+			example: 'usd',
+		},
+		description: {
+			type: 'string',
+			optional: false, nullable: false,
+			example: 'New Plan',
+		},
 		stripePriceId: {
 			type: 'string',
 			optional: false, nullable: false,

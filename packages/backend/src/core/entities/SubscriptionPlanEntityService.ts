@@ -27,6 +27,9 @@ export class SubscriptionPlanEntityService {
 		return await awaitAll({
 			id: subscriptionPlan.id,
 			name: subscriptionPlan.name,
+			price: subscriptionPlan.price,
+			currency: subscriptionPlan.currency,
+			description: subscriptionPlan.description,
 			stripePriceId: subscriptionPlan.stripePriceId,
 			roleId: subscriptionPlan.roleId,
 			role: await this.roleEntityService.pack(subscriptionPlan.roleId, me),
