@@ -87,7 +87,7 @@ async function read(announcement): Promise<void> {
 		a.isRead = true;
 		return a;
 	});
-	await os.api('i/read-announcement', { announcementId: announcement.id });
+	await misskeyApi('i/read-announcement', { announcementId: announcement.id });
 	if ($i) {
 		updateAccount({
 			unreadAnnouncements: $i.unreadAnnouncements.filter((a: { id: string; }) => a.id !== announcement.id),
