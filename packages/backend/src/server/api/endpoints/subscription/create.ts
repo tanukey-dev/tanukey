@@ -126,7 +126,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			} else if (subscriptionStatus === 'incomplete' || subscriptionStatus === 'incomplete_expired' || subscriptionStatus === 'past_due' || subscriptionStatus === 'unpaid') {
 				const session = await stripe.checkout.sessions.create({
 					customer: userProfile.stripeCustomerId ?? undefined,
-					return_url: `${this.config.url}/subscription/success`,
+					return_url: `${this.config.url}/settings/subscription`,
 				}, {});
 
 				return {
@@ -145,8 +145,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 							quantity: 1,
 						},
 					],
-					success_url: `${this.config.url}/subscription/success`,
-					cancel_url: `${this.config.url}/subscription/cancel`,
+					success_url: `${this.config.url}/settings/subscription`,
+					cancel_url: `${this.config.url}/settings/subscription`,
 					customer: userProfile.stripeCustomerId ?? undefined,
 				});
 
