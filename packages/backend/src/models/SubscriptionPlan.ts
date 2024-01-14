@@ -1,6 +1,6 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { MiRole } from '@/models/Role.js';
 import { id } from './util/id.js';
-import { MiRole } from "@/models/Role.js";
 
 @Entity('subscription_plan')
 export class MiSubscriptionPlan {
@@ -24,10 +24,10 @@ export class MiSubscriptionPlan {
 		length: 1024,
 		nullable: true,
 	})
-	public description: string | null
+	public description: string | null;
 
 	@Column('varchar', {
-		length: 128
+		length: 128,
 	})
 	public stripePriceId: string;
 
