@@ -124,7 +124,7 @@ export class StripeWebhookServerService {
 						await this.roleService.unassign(userProfile.userId, subscriptionPlan.roleId);
 						await this.usersRepository.update({ id: userProfile.userId }, {
 							subscriptionStatus: subscription.status,
-							subscriptionPlanId: undefined,
+							subscriptionPlanId: null,
 						});
 
 						// Publish meUpdated event
