@@ -1,5 +1,11 @@
 <template>
 <div class="_gaps_m">
+	<div class="_gaps_s">
+		<MkKeyValue>
+			<template #key>{{ i18n.ts.subscriptionStatus }}</template>
+			<template #value>{{ i18n.t(`_subscription.${subscriptionStatus}`) }}</template>
+		</MkKeyValue>
+	</div>
 	<FormPagination ref="list" :pagination="pagination">
 		<template #empty>
 			<div class="_fullinfo">
@@ -43,6 +49,7 @@ import MkButton from '@/components/MkButton.vue';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
 
 const list = ref<InstanceType<typeof FormPagination>>();
+const subscriptionStatus = computed(() => $i.subscriptionStatus);
 const currentPlan = computed(() => $i.subscriptionPlanId);
 
 const pagination = {
