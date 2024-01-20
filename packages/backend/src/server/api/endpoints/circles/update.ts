@@ -46,7 +46,7 @@ export const paramDef = {
 		circleId: { type: 'string', format: 'misskey:id' },
 		name: { type: 'string', minLength: 1, maxLength: 128 },
 		description: { type: 'string', nullable: true, minLength: 1, maxLength: 8192 },
-		profileId: { type: 'string', format: 'misskey:id', nullable: true },
+		profileImageId: { type: 'string', format: 'misskey:id', nullable: true },
 		pageId: { type: 'string', format: 'misskey:id', nullable: true },
 	},
 	required: ['circleId'],
@@ -82,16 +82,16 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			// eslint:disable-next-line:no-unnecessary-initializer
 			let profileImage = undefined;
-			if (ps.profileId != null) {
+			if (ps.profileImageId != null) {
 				profileImage = await this.driveFilesRepository.findOneBy({
-					id: ps.profileId,
+					id: ps.profileImageId,
 					userId: me.id,
 				});
 
 				if (profileImage == null) {
 					throw new ApiError(meta.errors.noSuchFile);
 				}
-			} else if (ps.profileId === null) {
+			} else if (ps.profileImageId === null) {
 				profileImage = null;
 			}
 
