@@ -57,7 +57,6 @@ export const paramDef = {
 	properties: {
 		eventCircleId: { type: 'string', format: 'misskey:id' },
 		description: { type: 'string', nullable: true, minLength: 1, maxLength: 8192 },
-		circleImageId: { type: 'string', format: 'misskey:id', nullable: true },
 		pageId: { type: 'string', format: 'misskey:id', nullable: true },
 	},
 	required: ['eventCircleId'],
@@ -114,24 +113,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.accessDenied);
 			}
 
-			// eslint:disable-next-line:no-unnecessary-initializer
-			let circleImage = undefined;
-			if (ps.circleImageId != null) {
-				circleImage = await this.driveFilesRepository.findOneBy({
-					id: ps.circleImageId,
-					userId: me.id,
-				});
-
-				if (circleImage == null) {
-					throw new ApiError(meta.errors.noSuchFile);
-				}
-			} else if (ps.circleImageId === null) {
-				circleImage = null;
-			}
-
 			await this.eventCirclesRepository.update(eventCircle.id, {
 				...(ps.description !== undefined ? { description: ps.description } : {}),
-				...(circleImage ? { circleImageId: circleImage.id } : {}),
 				...(ps.pageId !== undefined ? { pageId: ps.pageId } : {}),
 			});
 

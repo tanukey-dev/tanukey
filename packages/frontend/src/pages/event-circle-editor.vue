@@ -4,14 +4,6 @@
 	<MkSpacer :contentMax="700">
 		<div :class="$style.eventName">{{ i18n.ts.event }}: {{ eventName }}</div>
 		<div v-if="eventCircleId == null || eventCircle != null" class="_gaps_m">
-			<div>
-				<MkButton v-if="circleImageId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{ i18n.ts._channel.setBanner }}</MkButton>
-				<div v-else-if="circleImageUrl">
-					<img :src="circleImageUrl" style="width: 100%;"/>
-					<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{ i18n.ts._channel.removeBanner }}</MkButton>
-				</div>
-			</div>
-
 			<MkSelect v-model="circleId">
 				<template #label>{{ i18n.ts.circle }}</template>
 				<option v-for="circle in circles" :key="circle.id" :value="circle.id">{{ circle.name }}</option>
@@ -61,18 +53,6 @@ let eventName = $ref(null);
 let description = $ref(null);
 let pageId = $ref(null);
 let pages = $ref(null);
-let circleImageUrl = $ref<string | null>(null);
-let circleImageId = $ref<string | null>(null);
-
-watch(() => circleImageId, async () => {
-	if (circleImageId == null) {
-		circleImageUrl = null;
-	} else {
-		circleImageUrl = (await os.api('drive/files/show', {
-			fileId: circleImageId,
-		})).url;
-	}
-});
 
 async function fetchPages() {
 	pages = await os.api('i/pages');
@@ -109,8 +89,6 @@ async function fetchEventCircle() {
 
 	circleId = eventCircle.circleId;
 	description = eventCircle.description;
-	circleImageId = eventCircle.circleImageId;
-	circleImageUrl = eventCircle.circleImageUrl;
 	pageId = eventCircle.pageId;
 }
 
@@ -121,7 +99,6 @@ function save() {
 		eventId: event.id,
 		circleId: circleId,
 		description: description,
-		circleImageId: circleImageId,
 		pageId: pageId,
 	};
 
@@ -136,16 +113,6 @@ function save() {
 			router.push(`/events/${props.eventId}/${created.id}`);
 		});
 	}
-}
-
-function setBannerImage(evt) {
-	selectFile(evt.currentTarget ?? evt.target, null).then(file => {
-		circleImageId = file.id;
-	});
-}
-
-function removeBannerImage() {
-	circleImageId = null;
 }
 
 const headerActions = $computed(() => []);
