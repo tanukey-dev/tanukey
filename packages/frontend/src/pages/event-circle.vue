@@ -68,7 +68,7 @@ function edit() {
 }
 
 const headerActions = $computed(() => {
-	if (event && event.userId) {
+	if (event) {
 		const share = {
 			icon: 'ti ti-share',
 			text: i18n.ts.share,
@@ -81,7 +81,7 @@ const headerActions = $computed(() => {
 			},
 		};
 
-		const canEdit = $i && $i.id === event.userId || iAmModerator;
+		const canEdit = $i && $i.id === circle?.userId || iAmModerator;
 		return canEdit ? [share, {
 			icon: 'ti ti-settings',
 			text: i18n.ts.edit,
