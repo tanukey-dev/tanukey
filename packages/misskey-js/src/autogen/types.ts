@@ -4507,11 +4507,7 @@ export type components = {
       isLlotheo: boolean;
       canPutEverywhere: boolean;
       loopedBoard: boolean;
-      logs: {
-          at: number;
-          color: boolean;
-          pos: number;
-        }[];
+      logs: unknown[][];
       map: string[];
     };
   };
