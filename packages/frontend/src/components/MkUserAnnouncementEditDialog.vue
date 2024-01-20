@@ -149,7 +149,7 @@ async function done(): Promise<void> {
 async function del(): Promise<void> {
 	const { canceled } = await os.confirm({
 		type: 'warning',
-		text: i18n.t('removeAreYouSure', { x: title }),
+		text: i18n.tsx.removeAreYouSure({ x: title.value }),
 	});
 	if (canceled) return;
 
