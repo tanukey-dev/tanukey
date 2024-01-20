@@ -98,8 +98,8 @@ function save() {
 		pageId: pageId,
 	};
 
-	if (props.eventId) {
-		params.eventId = props.eventId;
+	if (props.circleId) {
+		params.circleId = props.circleId;
 		os.api('circles/update', params).then((u) => {
 			os.success();
 		});
