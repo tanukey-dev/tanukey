@@ -2,6 +2,7 @@ import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typ
 import { id } from '../id.js';
 import { User } from './User.js';
 import { DriveFile } from './DriveFile.js';
+import { Page } from './Page.js';
 
 @Entity()
 export class Circle {
@@ -50,4 +51,7 @@ export class Circle {
 	})
 	@JoinColumn()
 	public profileImage: DriveFile | null;
+
+	@Column({ ...id(), nullable: true })
+	public pageId: Page['id'] | null;
 }

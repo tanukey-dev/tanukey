@@ -3,6 +3,14 @@
 	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
 	<MkSpacer :contentMax="700">
 		<div v-if="circleId == null || circle != null" class="_gaps_m">
+			<div>
+				<MkButton v-if="profileImageId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{ i18n.ts._circle.setBanner }}</MkButton>
+				<div v-else-if="profileImageUrl">
+					<img :src="profileImageUrl" style="width: 100%;"/>
+					<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{ i18n.ts._circle.removeBanner }}</MkButton>
+				</div>
+			</div>
+
 			<MkInput v-model="name">
 				<template #label>{{ i18n.ts.name }}</template>
 			</MkInput>
@@ -11,13 +19,10 @@
 				<template #label>{{ i18n.ts.description }}</template>
 			</MkTextarea>
 
-			<div>
-				<MkButton v-if="profileImageId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{ i18n.ts._circle.setBanner }}</MkButton>
-				<div v-else-if="profileImageUrl">
-					<img :src="profileImageUrl" style="width: 100%;"/>
-					<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{ i18n.ts._circle.removeBanner }}</MkButton>
-				</div>
-			</div>
+			<MkSelect v-model="pageId">
+				<template #label>{{ i18n.ts._circle.embededPage }}</template>
+				<option v-for="page in pages" :key="page.id" :value="page.id">{{ page.title }}</option>
+			</MkSelect>
 
 			<div class="_buttons">
 				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ circleId ? i18n.ts.save : i18n.ts.create }}</MkButton>
@@ -32,6 +37,7 @@ import { computed, ref, watch } from 'vue';
 import MkTextarea from '@/components/MkTextarea.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
+import MkSelect from '@/components/MkSelect.vue';
 import { selectFile } from '@/scripts/select-file';
 import * as os from '@/os';
 import { useRouter } from '@/router';
@@ -47,6 +53,8 @@ const props = defineProps<{
 let circle = $ref(null);
 let name = $ref(null);
 let description = $ref(null);
+let pageId = $ref(null);
+let pages = $ref(null);
 let profileImageUrl = $ref<string | null>(null);
 let profileImageId = $ref<string | null>(null);
 
@@ -60,6 +68,12 @@ watch(() => profileImageId, async () => {
 	}
 });
 
+async function fetchPages() {
+	pages = await os.api('i/pages');
+}
+
+fetchPages();
+
 async function fetchEvent() {
 	if (props.circleId == null) return;
 
@@ -71,6 +85,7 @@ async function fetchEvent() {
 	description = circle.description;
 	profileImageId = circle.profileImageId;
 	profileImageUrl = circle.profileImageUrl;
+	pageId = circle.pageId;
 }
 
 fetchEvent();
@@ -80,6 +95,7 @@ function save() {
 		name: name,
 		description: description,
 		profileImageId: profileImageId,
+		pageId: pageId,
 	};
 
 	if (props.eventId) {

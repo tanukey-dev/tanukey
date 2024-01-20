@@ -31,16 +31,13 @@ export class EventCircleEntityService {
 		const eventCircle = typeof src === 'object' ? src : await this.eventCirclesRepository.findOneByOrFail({ id: src });
 		const meId = me ? me.id : null;
 
-		const circleImage = eventCircle.circleImageId ? await this.driveFilesRepository.findOneBy({ id: eventCircle.circleImageId }) : null;
-
 		return {
 			id: eventCircle.id,
 			createdAt: eventCircle.createdAt.toISOString(),
 			eventId: eventCircle.eventId,
 			circleId: eventCircle.circleId,
 			description: eventCircle.description,
-			circleImageId: circleImage ? circleImage.id : null,
-			circleImageUrl: circleImage ? this.driveFileEntityService.getPublicUrl(circleImage) : null,
+			pageId: eventCircle.pageId,
 		};
 	}
 }

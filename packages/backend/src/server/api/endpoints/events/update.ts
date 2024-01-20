@@ -47,6 +47,9 @@ export const paramDef = {
 		name: { type: 'string', minLength: 1, maxLength: 128 },
 		description: { type: 'string', nullable: true, minLength: 1, maxLength: 8192 },
 		bannerId: { type: 'string', format: 'misskey:id', nullable: true },
+		expiresAt: { type: 'integer' },
+		startsAt: { type: 'integer' },
+		pageId: { type: 'string', format: 'misskey:id', nullable: true },
 	},
 	required: ['eventId'],
 } as const;
@@ -98,6 +101,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				...(ps.name !== undefined ? { name: ps.name } : {}),
 				...(ps.description !== undefined ? { description: ps.description } : {}),
 				...(banner ? { bannerId: banner.id } : {}),
+				...(ps.expiresAt !== undefined ? { expiresAt: new Date(ps.expiresAt) } : {}),
+				...(ps.startsAt !== undefined ? { startsAt: new Date(ps.startsAt) } : {}),
+				...(ps.pageId !== undefined ? { pageId: ps.pageId } : {}),
 			});
 
 			return await this.eventEntityService.pack(event.id, me);

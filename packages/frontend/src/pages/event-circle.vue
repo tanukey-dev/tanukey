@@ -6,13 +6,9 @@
 			<div v-if="event && circle && eventCircle && tab === 'overview'" class="_gaps">
 				<div v-if="event.name" :class="$style.name"><a :href="`/events/${event.id}`"><i class="ti ti-calendar-event"></i> {{ event.name }}</a></div>
 				<div v-if="circle.name" :class="$style.name"><a :href="`/circles/${circle.id}`"><i class="ti ti-circles-relation"></i> {{ circle.name }}</a></div>
-				<div :class="$style.banner">
-					<img :src="eventCircle.circleImageUrl ?? 'https://ostanukey.tanukey.chat/assets/noImage.png'" :class="$style.bannerImage">
-					<img :src="circle?.profileImageUrl ?? 'https://ostanukey.tanukey.chat/assets/noImage.png'" :class="$style.bannerImage">
-				</div>
-				<div v-if="eventCircle.description" :class="$style.description">
-					<Mfm :text="eventCircle.description" :isNote="false" :i="$i"/>
-				</div>
+				<template v-if="page">
+					<XPage :page="page"/>
+				</template>
 			</div>
 		</MkSpacer>
 		<template #footer>
@@ -27,6 +23,7 @@
 import { computed, watch } from 'vue';
 import * as misskey from 'misskey-js';
 import * as os from '@/os';
+import XPage from '@/components/page/page.vue';
 import { useRouter } from '@/router';
 import { $i, iAmModerator } from '@/account';
 import { i18n } from '@/i18n';
@@ -44,6 +41,7 @@ let tab = $ref('overview');
 let event = $ref<null | misskey.entities.Channel>(null);
 let eventCircle = $ref<null | misskey.entities.Channel>(null);
 let circle = $ref<null | misskey.entities.Channel>(null);
+let page = $ref(null);
 
 watch(() => props.eventId, async () => {
 	event = await os.api('events/show', {
@@ -58,6 +56,10 @@ watch(() => props.eventCircleId, async () => {
 	
 	circle = await os.api('circles/show', {
 		circleId: eventCircle.circleId,
+	});
+
+	page = await os.api('pages/show', {
+		pageId: eventCircle.pageId,
 	});
 }, { immediate: true });
 

@@ -4,15 +4,9 @@
 		<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
 		<MkSpacer :contentMax="700" :class="$style.main">
 			<div v-if="event && tab === 'overview'" class="_gaps">
-				<div c.lass="_panel" :class="$style.bannerContainer">
-					<div :class="$style.bannerName"><i class="ti ti-calendar-event"></i> {{ event.name }}</div>
-					<div :class="$style.banner">
-						<img :src="event.bannerUrl" class="bannerImage">
-					</div>
-					<div v-if="event.description" :class="$style.description">
-						<Mfm :text="event.description" :isNote="false" :i="$i"/>
-					</div>
-				</div>
+				<template v-if="page">
+					<XPage :page="page"/>
+				</template>
 			</div>
 			<div v-if="tab === 'eventCircles'">
 				<MkButton class="new" @click="joinEvent()"><i class="ti ti-plus"></i></MkButton>
@@ -27,6 +21,7 @@
 import { computed, watch } from 'vue';
 import * as misskey from 'misskey-js';
 import * as os from '@/os';
+import XPage from '@/components/page/page.vue';
 import { useRouter } from '@/router';
 import { $i, iAmModerator } from '@/account';
 import { i18n } from '@/i18n';
@@ -42,8 +37,9 @@ const props = defineProps<{
 }>();
 
 let tab = $ref('overview');
-let event = $ref<null | misskey.entities.Channel>(null);
+let event = $ref(null);
 let circles = $ref([]);
+let page = $ref(null);
 
 watch(() => props.eventId, async () => {
 	event = await os.api('events/show', {
@@ -52,6 +48,10 @@ watch(() => props.eventId, async () => {
 
 	circles = await os.api('eventCircles/show', {
 		eventId: props.eventId,
+	});
+
+	page = await os.api('pages/show', {
+		pageId: event.pageId,
 	});
 }, { immediate: true });
 

@@ -1608,12 +1608,14 @@ _event:
   nameOnly: "名前のみ"
   calender: "カレンダー"
   search: "検索"
+  embededPage: "埋め込みページ"
 
 _eventCircle:
   create: "イベント用サークル設定を作成"
   edit: "イベント用サークル設定を編集"
   setBanner: "サークルアイコンを設定"
   removeBanner: "サークルアイコンを削除"
+  embededPage: "埋め込みページ"
 
 _circle:
   create: "サークルを作成"
@@ -1621,6 +1623,7 @@ _circle:
   setBanner: "バナーを設定"
   removeBanner: "バナーを削除"
   owned: "管理中"
+  embededPage: "埋め込みページ"
 
 _menuDisplay:
   sideFull: "横"

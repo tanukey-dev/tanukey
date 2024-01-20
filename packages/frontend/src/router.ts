@@ -351,11 +351,9 @@ export const routes = [{
 }, {
 	path: '/events/:eventId/:eventCircleId',
 	component: page(() => import('./pages/event-circle.vue')),
-	loginRequired: true,
 }, {
 	path: '/events/:eventId',
 	component: page(() => import('./pages/event.vue')),
-	loginRequired: true,
 }, {
 	path: '/events',
 	component: page(() => import('./pages/events.vue')),
@@ -371,7 +369,6 @@ export const routes = [{
 }, {
 	path: '/circles/:circleId',
 	component: page(() => import('./pages/circle.vue')),
-	loginRequired: true,
 }, {
 	path: '/circles',
 	component: page(() => import('./pages/circles.vue')),

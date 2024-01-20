@@ -4,6 +4,14 @@
 	<MkSpacer :contentMax="700">
 		<div :class="$style.eventName">{{ i18n.ts.event }}: {{ eventName }}</div>
 		<div v-if="eventCircleId == null || eventCircle != null" class="_gaps_m">
+			<div>
+				<MkButton v-if="circleImageId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{ i18n.ts._channel.setBanner }}</MkButton>
+				<div v-else-if="circleImageUrl">
+					<img :src="circleImageUrl" style="width: 100%;"/>
+					<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{ i18n.ts._channel.removeBanner }}</MkButton>
+				</div>
+			</div>
+
 			<MkSelect v-model="circleId">
 				<template #label>{{ i18n.ts.circle }}</template>
 				<option v-for="circle in circles" :key="circle.id" :value="circle.id">{{ circle.name }}</option>
@@ -13,13 +21,10 @@
 				<template #label>{{ i18n.ts.description }}</template>
 			</MkTextarea>
 
-			<div>
-				<MkButton v-if="circleImageId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{ i18n.ts._channel.setBanner }}</MkButton>
-				<div v-else-if="circleImageUrl">
-					<img :src="circleImageUrl" style="width: 100%;"/>
-					<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{ i18n.ts._channel.removeBanner }}</MkButton>
-				</div>
-			</div>
+			<MkSelect v-model="pageId">
+				<template #label>{{ i18n.ts._eventCircle.embededPage }}</template>
+				<option v-for="page in pages" :key="page.id" :value="page.id">{{ page.title }}</option>
+			</MkSelect>
 
 			<div class="_buttons">
 				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ eventId ? i18n.ts.save : i18n.ts.create }}</MkButton>
@@ -54,6 +59,8 @@ let circleId = $ref(null);
 let circles = $ref([]);
 let eventName = $ref(null);
 let description = $ref(null);
+let pageId = $ref(null);
+let pages = $ref(null);
 let circleImageUrl = $ref<string | null>(null);
 let circleImageId = $ref<string | null>(null);
 
@@ -66,6 +73,12 @@ watch(() => circleImageId, async () => {
 		})).url;
 	}
 });
+
+async function fetchPages() {
+	pages = await os.api('i/pages');
+}
+
+fetchPages();
 
 async function fetchCircles() {
 	circles = await os.api('circles/show', {
@@ -98,6 +111,7 @@ async function fetchEventCircle() {
 	description = eventCircle.description;
 	circleImageId = eventCircle.circleImageId;
 	circleImageUrl = eventCircle.circleImageUrl;
+	pageId = eventCircle.pageId;
 }
 
 fetchEventCircle();
@@ -108,6 +122,7 @@ function save() {
 		circleId: circleId,
 		description: description,
 		circleImageId: circleImageId,
+		pageId: pageId,
 	};
 
 	if (props.eventCircleId) {

@@ -1687,12 +1687,14 @@ export interface Locale {
         "nameOnly": string;
         "calender": string;
         "search": string;
+        "embededPage": string;
     };
     "_eventCircle": {
         "create": string;
         "edit": string;
         "setBanner": string;
         "removeBanner": string;
+        "embededPage": string;
     };
     "_circle": {
         "create": string;
@@ -1700,6 +1702,7 @@ export interface Locale {
         "setBanner": string;
         "removeBanner": string;
         "owned": string;
+        "embededPage": string;
     };
     "_menuDisplay": {
         "sideFull": string;

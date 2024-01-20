@@ -33,6 +33,11 @@ export class EventEntityService {
 
 		const banner = event.bannerId ? await this.driveFilesRepository.findOneBy({ id: event.bannerId }) : null;
 
+		const localTime = new Date();
+		const localTimeDiff = localTime.getTimezoneOffset() * 60 * 1000;
+		event.expiresAt?.setMilliseconds(event.expiresAt.getMilliseconds() - localTimeDiff);
+		event.startsAt?.setMilliseconds(event.startsAt.getMilliseconds() - localTimeDiff);
+
 		return {
 			id: event.id,
 			createdAt: event.createdAt.toISOString(),
@@ -41,6 +46,9 @@ export class EventEntityService {
 			description: event.description,
 			bannerId: banner ? banner.id : null,
 			bannerUrl: banner ? this.driveFileEntityService.getPublicUrl(banner) : null,
+			expiresAt: event.expiresAt ? event.expiresAt.toISOString().slice(0, 16) : null,
+			startsAt: event.startsAt ? event.startsAt.toISOString().slice(0, 16) : null,
+			pageId: event.pageId,
 		};
 	}
 }

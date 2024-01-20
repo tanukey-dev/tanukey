@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Brackets, In } from 'typeorm';
+import { Brackets, In, MoreThan, LessThan } from 'typeorm';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import type { Event, EventsRepository } from '@/models/index.js';
 import { EventEntityService } from '@/core/entities/EventEntityService.js';
@@ -44,10 +44,12 @@ export const paramDef = {
 		eventIds: { type: 'array', uniqueItems: true, items: {
 			type: 'string', format: 'misskey:id',
 		} },
+		time: { type: 'integer' },
 	},
 	anyOf: [
 		{ required: ['eventId'] },
 		{ required: ['eventIds'] },
+		{ required: ['time'] },
 	],
 } as const;
 
@@ -61,7 +63,19 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private eventEntityService: EventEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			if (ps.eventIds) {
+			if (ps.time) {
+				const start = new Date(ps.time);
+				const end = new Date(ps.time);
+				start.setMonth(start.getMonth() - 3);
+				end.setMonth(end.getMonth() + 3);
+
+				const events = await this.eventsRepository.createQueryBuilder('event')
+					.where({ startsAt: MoreThan(start) })
+					.andWhere({ expiresAt: LessThan(end) })
+					.getMany();
+
+				return await Promise.all(events.map(x => this.eventEntityService.pack(x, me)));
+			} else if (ps.eventIds) {
 				const events = await this.eventsRepository.createQueryBuilder('event')
 					.where({ id: In(ps.eventIds) })
 					.getMany();

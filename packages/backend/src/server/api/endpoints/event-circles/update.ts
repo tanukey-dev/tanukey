@@ -58,6 +58,7 @@ export const paramDef = {
 		eventCircleId: { type: 'string', format: 'misskey:id' },
 		description: { type: 'string', nullable: true, minLength: 1, maxLength: 8192 },
 		circleImageId: { type: 'string', format: 'misskey:id', nullable: true },
+		pageId: { type: 'string', format: 'misskey:id', nullable: true },
 	},
 	required: ['eventCircleId'],
 } as const;
@@ -131,6 +132,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			await this.eventCirclesRepository.update(eventCircle.id, {
 				...(ps.description !== undefined ? { description: ps.description } : {}),
 				...(circleImage ? { circleImageId: circleImage.id } : {}),
+				...(ps.pageId !== undefined ? { pageId: ps.pageId } : {}),
 			});
 
 			return await this.eventCircleEntityService.pack(eventCircle.id, me);

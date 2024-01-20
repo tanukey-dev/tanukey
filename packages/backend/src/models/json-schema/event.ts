@@ -35,5 +35,20 @@ export const packedEventSchema = {
 			format: 'url',
 			nullable: true, optional: false,
 		},
+		startsAt: {
+			type: 'string',
+			optional: false, nullable: true,
+			format: 'date-time',
+		},
+		expiresAt: {
+			type: 'string',
+			optional: false, nullable: true,
+			format: 'date-time',
+		},
+		pageId: {
+			type: 'string',
+			nullable: true, optional: false,
+			format: 'id',
+		},
 	},
 } as const;

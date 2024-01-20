@@ -4,13 +4,9 @@
 		<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
 		<MkSpacer :contentMax="700" :class="$style.main">
 			<div v-if="circle && tab === 'overview'" class="_gaps">
-				<div :class="$style.bannerName"><i class="ti ti-calendar-event"></i> {{ circle.name }}</div>
-				<div :class="$style.banner">
-					<img :src="circle.profileImageUrl ?? 'https://ostanukey.tanukey.chat/assets/noImage.png'" :class="$style.bannerImage">
-				</div>
-				<div v-if="circle.description" :class="$style.description">
-					<Mfm :text="circle.description" :isNote="false" :i="$i"/>
-				</div>
+				<template v-if="page">
+					<XPage :page="page"/>
+				</template>
 			</div>
 		</MkSpacer>
 		<template #footer>
@@ -25,6 +21,7 @@
 import { computed, watch } from 'vue';
 import * as misskey from 'misskey-js';
 import * as os from '@/os';
+import XPage from '@/components/page/page.vue';
 import { useRouter } from '@/router';
 import { $i, iAmModerator } from '@/account';
 import { i18n } from '@/i18n';
@@ -39,10 +36,15 @@ const props = defineProps<{
 
 let tab = $ref('overview');
 let circle = $ref<null | misskey.entities.Channel>(null);
+let page = $ref(null);
 
 watch(() => props.circleId, async () => {
 	circle = await os.api('circles/show', {
 		circleId: props.circleId,
+	});
+
+	page = await os.api('pages/show', {
+		pageId: circle.pageId,
 	});
 }, { immediate: true });
 

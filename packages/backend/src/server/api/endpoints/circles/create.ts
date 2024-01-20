@@ -43,6 +43,7 @@ export const paramDef = {
 		name: { type: 'string', minLength: 1, maxLength: 128 },
 		description: { type: 'string', nullable: true, minLength: 1, maxLength: 8192 },
 		profileImageId: { type: 'string', format: 'misskey:id', nullable: true },
+		pageId: { type: 'string', format: 'misskey:id', nullable: true },
 	},
 	required: ['name'],
 } as const;
@@ -80,6 +81,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				name: ps.name,
 				description: ps.description ?? null,
 				profileImageId: profileImage ? profileImage.id : null,
+				pageId: ps.pageId ?? null,
 			} as Circle).then(x => this.circlesRepository.findOneByOrFail(x.identifiers[0]));
 
 			return await this.circleEntityService.pack(channel, me);

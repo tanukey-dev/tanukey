@@ -35,5 +35,10 @@ export const packedCircleSchema = {
 			format: 'url',
 			nullable: true, optional: false,
 		},
+		pageId: {
+			type: 'string',
+			nullable: true, optional: false,
+			format: 'id',
+		},
 	},
 } as const;

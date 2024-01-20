@@ -47,6 +47,7 @@ export const paramDef = {
 		name: { type: 'string', minLength: 1, maxLength: 128 },
 		description: { type: 'string', nullable: true, minLength: 1, maxLength: 8192 },
 		profileId: { type: 'string', format: 'misskey:id', nullable: true },
+		pageId: { type: 'string', format: 'misskey:id', nullable: true },
 	},
 	required: ['circleId'],
 } as const;
@@ -98,6 +99,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				...(ps.name !== undefined ? { name: ps.name } : {}),
 				...(ps.description !== undefined ? { description: ps.description } : {}),
 				...(profileImage ? { profileImageId: profileImage.id } : {}),
+				...(ps.pageId !== undefined ? { pageId: ps.pageId } : {}),
 			});
 
 			return await this.circleEntityService.pack(circle.id, me);

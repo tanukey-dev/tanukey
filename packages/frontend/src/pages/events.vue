@@ -3,7 +3,7 @@
 	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
 	<MkSpacer :contentMax="700">
 		<div v-if="tab === 'calender'">
-			<FullCalendar defaultView="dayGridMonth" :options="calendarOptions"/>
+			<FullCalendar ref="fullCalendar" defaultView="dayGridMonth" :options="calendarOptions"/>
 		</div>
 		<div v-if="tab === 'search'">
 			<div class="_gaps">
@@ -39,6 +39,7 @@ import MkInput from '@/components/MkInput.vue';
 import MkRadios from '@/components/MkRadios.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
+import * as os from '@/os';
 import { useRouter } from '@/router';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { i18n } from '@/i18n';
@@ -57,13 +58,28 @@ let searchQuery = $ref('');
 let searchType = $ref('nameAndDescription');
 let eventPagination = $ref();
 const lang = ref(miLocalStorage.getItem('lang'));
+const fullCalendar = ref();
 
-onMounted(() => {
+onMounted(async () => {
 	searchQuery = props.query ?? '';
 	searchType = props.type ?? 'nameAndDescription';
+	const evs = await os.api('events/show', {
+		time: new Date().getTime(),
+	});
+
+	let calendarApi = fullCalendar.value.getApi();
+
+	evs.forEach(ev => {
+		calendarApi.addEvent({
+			id: ev.id,
+			title: ev.name,
+			start: new Date(ev.startsAt),
+			end: new Date(ev.expiresAt),
+		});
+	});
 });
 
-const calendarOptions = {
+const calendarOptions = $ref({
 	plugins: [dayGridPlugin],
 	initialView: 'dayGridMonth',
 	locale: lang.value,
@@ -71,8 +87,11 @@ const calendarOptions = {
 		// X日表記の'日'を除去
 		return e.dayNumberText.replace('日', '');
 	},
-	events: [], //TODO
-};
+	eventClick: (info) => {
+		router.push('/events/' + info.event.id);
+	},
+	events: [],
+});
 
 const ownedPagination = {
 	endpoint: 'events/owned' as const,

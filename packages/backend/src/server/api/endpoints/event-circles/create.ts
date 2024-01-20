@@ -55,7 +55,7 @@ export const paramDef = {
 		eventId: { type: 'string', format: 'misskey:id', nullable: false },
 		circleId: { type: 'string', format: 'misskey:id', nullable: false },
 		description: { type: 'string', nullable: true, minLength: 1, maxLength: 8192 },
-		circleImageId: { type: 'string', format: 'misskey:id', nullable: true },
+		pageId: { type: 'string', format: 'misskey:id', nullable: true },
 	},
 	required: ['eventId', 'circleId'],
 } as const;
@@ -80,18 +80,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private eventCircleEntityService: EventCircleEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			let banner = null;
-			if (ps.circleImageId != null) {
-				banner = await this.driveFilesRepository.findOneBy({
-					id: ps.circleImageId,
-					userId: me.id,
-				});
-
-				if (banner == null) {
-					throw new ApiError(meta.errors.noSuchFile);
-				}
-			}
-
 			const event = await this.eventsRepository.findOneBy({
 				id: ps.eventId,
 			});
@@ -114,7 +102,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				eventId: ps.eventId,
 				circleId: ps.circleId,
 				description: ps.description ?? null,
-				circleImageId: banner ? banner.id : null,
+				pageId: ps.pageId ?? null,
 			} as EventCircle).then(x => this.eventCirclesRepository.findOneByOrFail(x.identifiers[0]));
 
 			return await this.eventCircleEntityService.pack(eventCircle, me);

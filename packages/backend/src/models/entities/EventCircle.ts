@@ -3,6 +3,7 @@ import { id } from '../id.js';
 import { Circle } from './Circle.js';
 import { Event } from './Event.js';
 import { DriveFile } from './DriveFile.js';
+import { Page } from './Page.js';
 
 @Entity()
 @Index(['eventId', 'circleId'], { unique: true })
@@ -45,15 +46,6 @@ export class EventCircle {
 	})
 	public description: string | null;
 
-	@Column({
-		...id(),
-		nullable: true,
-	})
-	public circleImageId: DriveFile['id'] | null;
-
-	@ManyToOne(type => DriveFile, {
-		onDelete: 'SET NULL',
-	})
-	@JoinColumn()
-	public circleImage: DriveFile | null;
+	@Column({ ...id(), nullable: true })
+	public pageId: Page['id'] | null;
 }

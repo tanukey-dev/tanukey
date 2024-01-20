@@ -26,15 +26,10 @@ export const packedEventCircleSchema = {
 			type: 'string',
 			nullable: true, optional: false,
 		},
-		circleImageId: {
+		pageId: {
 			type: 'string',
+			nullable: true, optional: false,
 			format: 'id',
-			nullable: true, optional: false,
-		},
-		circleImageUrl: {
-			type: 'string',
-			format: 'url',
-			nullable: true, optional: false,
 		},
 	},
 } as const;

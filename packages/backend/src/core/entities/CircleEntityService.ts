@@ -41,6 +41,7 @@ export class CircleEntityService {
 			description: circle.description,
 			profileImageId: profile ? profile.id : null,
 			profileImageUrl: profile ? this.driveFileEntityService.getPublicUrl(profile) : null,
+			pageId: circle.pageId,
 		};
 	}
 }

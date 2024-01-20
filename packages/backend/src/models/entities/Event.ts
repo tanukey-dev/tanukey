@@ -2,6 +2,7 @@ import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typ
 import { id } from '../id.js';
 import { User } from './User.js';
 import { DriveFile } from './DriveFile.js';
+import { Page } from './Page.js';
 
 @Entity()
 export class Event {
@@ -49,4 +50,18 @@ export class Event {
 	})
 	@JoinColumn()
 	public banner: DriveFile | null;
+
+	@Column('timestamp with time zone', {
+		nullable: true,
+	})
+	public expiresAt: Date | null;
+
+	@Index()
+	@Column('timestamp with time zone', {
+		nullable: true,
+	})
+	public startsAt: Date | null;
+
+	@Column({ ...id(), nullable: true })
+	public pageId: Page['id'] | null;
 }
