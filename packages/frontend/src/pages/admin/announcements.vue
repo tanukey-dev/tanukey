@@ -155,7 +155,7 @@ function add() {
 function del(announcement) {
 	os.confirm({
 		type: 'warning',
-		text: i18n.t('deleteAreYouSure', { x: announcement.title }),
+		text: i18n.tsx.deleteAreYouSure({ x: announcement.title }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
 		announcements.value = announcements.value.filter(x => x !== announcement);
