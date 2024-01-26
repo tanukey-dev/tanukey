@@ -53,6 +53,7 @@ export const DI = {
 	authSessionsRepository: Symbol('authSessionsRepository'),
 	accessTokensRepository: Symbol('accessTokensRepository'),
 	signinsRepository: Symbol('signinsRepository'),
+	subscriptionPlansRepository: Symbol('subscriptionPlansRepository'),
 	pagesRepository: Symbol('pagesRepository'),
 	pageLikesRepository: Symbol('pageLikesRepository'),
 	galleryPostsRepository: Symbol('galleryPostsRepository'),
@@ -78,5 +79,7 @@ export const DI = {
 	flashsRepository: Symbol('flashsRepository'),
 	flashLikesRepository: Symbol('flashLikesRepository'),
 	userMemosRepository: Symbol('userMemosRepository'),
+	bubbleGameRecordsRepository: Symbol('bubbleGameRecordsRepository'),
+	reversiGamesRepository: Symbol('reversiGamesRepository'),
 	//#endregion
 };

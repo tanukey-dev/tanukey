@@ -105,6 +105,7 @@ import MkSwitch from '@/components/MkSwitch.vue';
 import MkRadios from '@/components/MkRadios.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import * as os from '@/os.js';
+import { misskeyApi } from '@/scripts/misskey-api.js';
 import { i18n } from '@/i18n.js';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
 import MkFolder from '@/components/MkFolder.vue';
@@ -154,11 +155,11 @@ function add() {
 function del(announcement) {
 	os.confirm({
 		type: 'warning',
-		text: i18n.t('deleteAreYouSure', { x: announcement.title }),
+		text: i18n.tsx.deleteAreYouSure({ x: announcement.title }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
 		announcements.value = announcements.value.filter(x => x !== announcement);
-		os.api('admin/announcements/delete', announcement);
+		misskeyApi('admin/announcements/delete', announcement);
 	});
 }
 
@@ -185,7 +186,7 @@ function fetch(resetOffset = false): void {
 		offset.value = 0;
 	}
 
-	os.api('admin/announcements/list', {
+	misskeyApi('admin/announcements/list', {
 		offsetMode: true,
 		offset: offset.value,
 		limit: 10,

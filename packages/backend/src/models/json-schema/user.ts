@@ -460,6 +460,16 @@ export const packedMeDetailedOnlySchema = {
 			type: 'boolean',
 			nullable: false, optional: false,
 		},
+		subscriptionStatus: {
+			type: 'string',
+			enum: ['incomplete', 'incomplete_expired', 'trialing', 'active', 'past_due', 'paused', 'canceled', 'unpaid', 'none'],
+			nullable: false, optional: false,
+		},
+		subscriptionPlanId: {
+			type: 'string',
+			format: 'id',
+			nullable: true, optional: false,
+		},
 		twoFactorBackupCodesStock: {
 			type: 'string',
 			enum: ['full', 'partial', 'none'],
@@ -710,6 +720,10 @@ export const packedMeDetailedOnlySchema = {
 					},
 				},
 			},
+		},
+		stripeCustomerId: {
+			type: 'string',
+			nullable: true, optional: true,
 		},
 		//#endregion
 	},

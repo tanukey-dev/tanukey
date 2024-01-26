@@ -44,7 +44,9 @@ import { ref, watch, computed } from 'vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInfo from '@/components/MkInfo.vue';
+import MkHorizontalSwipe from '@/components/MkHorizontalSwipe.vue';
 import * as os from '@/os.js';
+import { misskeyApi } from '@/scripts/misskey-api.js';
 import { i18n } from '@/i18n.js';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
 import { $i, updateAccount } from '@/account.js';
@@ -76,7 +78,7 @@ async function read(announcement): Promise<void> {
 		const confirm = await os.confirm({
 			type: 'question',
 			title: i18n.ts._announcement.readConfirmTitle,
-			text: i18n.t('_announcement.readConfirmText', { title: announcement.title }),
+			text: i18n.tsx._announcement.readConfirmText({ title: announcement.title }),
 		});
 		if (confirm.canceled) return;
 	}
@@ -86,7 +88,7 @@ async function read(announcement): Promise<void> {
 		a.isRead = true;
 		return a;
 	});
-	await os.api('i/read-announcement', { announcementId: announcement.id });
+	await misskeyApi('i/read-announcement', { announcementId: announcement.id });
 	if ($i) {
 		updateAccount({
 			unreadAnnouncements: $i.unreadAnnouncements.filter((a: { id: string; }) => a.id !== announcement.id),
