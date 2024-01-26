@@ -47,6 +47,7 @@ import { MiRegistrationTicket } from '@/models/RegistrationTicket.js';
 import { MiRegistryItem } from '@/models/RegistryItem.js';
 import { MiRelay } from '@/models/Relay.js';
 import { MiSignin } from '@/models/Signin.js';
+import { MiSubscriptionPlan } from "@/models/SubscriptionPlan.js";
 import { MiSwSubscription } from '@/models/SwSubscription.js';
 import { MiUsedUsername } from '@/models/UsedUsername.js';
 import { MiUser } from '@/models/User.js';
@@ -68,6 +69,9 @@ import { MiRoleAssignment } from '@/models/RoleAssignment.js';
 import { MiFlash } from '@/models/Flash.js';
 import { MiFlashLike } from '@/models/FlashLike.js';
 import { MiUserListFavorite } from '@/models/UserListFavorite.js';
+import { MiBubbleGameRecord } from '@/models/BubbleGameRecord.js';
+import { MiReversiGame } from '@/models/ReversiGame.js';
+
 import type { Repository } from 'typeorm';
 
 export {
@@ -115,6 +119,7 @@ export {
 	MiRegistryItem,
 	MiRelay,
 	MiSignin,
+	MiSubscriptionPlan,
 	MiSwSubscription,
 	MiUsedUsername,
 	MiUser,
@@ -136,6 +141,8 @@ export {
 	MiFlash,
 	MiFlashLike,
 	MiUserMemo,
+	MiBubbleGameRecord,
+	MiReversiGame,
 };
 
 export type AbuseUserReportsRepository = Repository<MiAbuseUserReport>;
@@ -182,6 +189,7 @@ export type RegistrationTicketsRepository = Repository<MiRegistrationTicket>;
 export type RegistryItemsRepository = Repository<MiRegistryItem>;
 export type RelaysRepository = Repository<MiRelay>;
 export type SigninsRepository = Repository<MiSignin>;
+export type SubscriptionPlansRepository = Repository<MiSubscriptionPlan>;
 export type SwSubscriptionsRepository = Repository<MiSwSubscription>;
 export type UsedUsernamesRepository = Repository<MiUsedUsername>;
 export type UsersRepository = Repository<MiUser>;
@@ -203,3 +211,5 @@ export type RoleAssignmentsRepository = Repository<MiRoleAssignment>;
 export type FlashsRepository = Repository<MiFlash>;
 export type FlashLikesRepository = Repository<MiFlashLike>;
 export type UserMemoRepository = Repository<MiUserMemo>;
+export type BubbleGameRecordsRepository = Repository<MiBubbleGameRecord>;
+export type ReversiGamesRepository = Repository<MiReversiGame>;

@@ -35,9 +35,9 @@ import MkSuperMenu from '@/components/MkSuperMenu.vue';
 import { signout, $i } from '@/account.js';
 import { clearCache } from '@/scripts/clear-cache.js';
 import { instance } from '@/instance.js';
-import { useRouter } from '@/router.js';
 import { PageMetadata, definePageMetadata, provideMetadataReceiver } from '@/scripts/page-metadata.js';
 import * as os from '@/os.js';
+import { useRouter } from '@/global/router/supplier.js';
 
 const indexInfo = {
 	title: i18n.ts.settings,
@@ -134,6 +134,11 @@ const menuDef = computed(() => [{
 }, {
 	title: i18n.ts.otherSettings,
 	items: [{
+		icon: 'ti ti-credit-card',
+		text: i18n.ts.subscription,
+		to: '/settings/subscription',
+		active: currentPage.value?.route.name === 'subscription',
+	}, {
 		icon: 'ti ti-badges',
 		text: i18n.ts.roles,
 		to: '/settings/roles',

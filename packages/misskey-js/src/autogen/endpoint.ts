@@ -1,6 +1,6 @@
 /*
- * version: 2023.12.2-NJ-1.3.3
- * generatedAt: 2023-12-28T08:44:48.218Z
+ * version: 2024.2.0-NJ-2.0.0-beta.2
+ * generatedAt: 2024-01-26T16:36:03.061Z
  */
 
 import type {
@@ -104,6 +104,10 @@ import type {
 	AdminRolesUpdateDefaultPoliciesRequest,
 	AdminRolesUsersRequest,
 	AdminRolesUsersResponse,
+	AdminSubscriptionPlansCreateRequest,
+	AdminSubscriptionPlansCreateResponse,
+	AdminSubscriptionPlansArchiveRequest,
+	AdminSubscriptionPlansArchiveResponse,
 	AnnouncementsRequest,
 	AnnouncementsResponse,
 	AntennasCreateRequest,
@@ -465,6 +469,8 @@ import type {
 	RolesUsersResponse,
 	RolesNotesRequest,
 	RolesNotesResponse,
+	SubscriptionCreateRequest,
+	SubscriptionPlansListResponse,
 	RequestResetPasswordRequest,
 	ResetPasswordRequest,
 	ServerInfoResponse,
@@ -539,6 +545,22 @@ import type {
 	FetchExternalResourcesRequest,
 	FetchExternalResourcesResponse,
 	RetentionResponse,
+	BubbleGameRegisterRequest,
+	BubbleGameRegisterResponse,
+	BubbleGameRankingRequest,
+	BubbleGameRankingResponse,
+	ReversiCancelMatchRequest,
+	ReversiCancelMatchResponse,
+	ReversiGamesRequest,
+	ReversiGamesResponse,
+	ReversiMatchRequest,
+	ReversiMatchResponse,
+	ReversiInvitationsResponse,
+	ReversiShowGameRequest,
+	ReversiShowGameResponse,
+	ReversiSurrenderRequest,
+	ReversiVerifyRequest,
+	ReversiVerifyResponse,
 } from './entities.js';
 
 export type Endpoints = {
@@ -618,6 +640,8 @@ export type Endpoints = {
 	'admin/roles/unassign': { req: AdminRolesUnassignRequest; res: EmptyResponse };
 	'admin/roles/update-default-policies': { req: AdminRolesUpdateDefaultPoliciesRequest; res: EmptyResponse };
 	'admin/roles/users': { req: AdminRolesUsersRequest; res: AdminRolesUsersResponse };
+	'admin/subscription-plans/create': { req: AdminSubscriptionPlansCreateRequest; res: AdminSubscriptionPlansCreateResponse };
+	'admin/subscription-plans/archive': { req: AdminSubscriptionPlansArchiveRequest; res: AdminSubscriptionPlansArchiveResponse };
 	'announcements': { req: AnnouncementsRequest; res: AnnouncementsResponse };
 	'antennas/create': { req: AntennasCreateRequest; res: AntennasCreateResponse };
 	'antennas/delete': { req: AntennasDeleteRequest; res: EmptyResponse };
@@ -743,6 +767,7 @@ export type Endpoints = {
 	'i/export-following': { req: IExportFollowingRequest; res: EmptyResponse };
 	'i/export-mute': { req: EmptyRequest; res: EmptyResponse };
 	'i/export-notes': { req: EmptyRequest; res: EmptyResponse };
+	'i/export-clips': { req: EmptyRequest; res: EmptyResponse };
 	'i/export-favorites': { req: EmptyRequest; res: EmptyResponse };
 	'i/export-user-lists': { req: EmptyRequest; res: EmptyResponse };
 	'i/export-antennas': { req: EmptyRequest; res: EmptyResponse };
@@ -853,6 +878,9 @@ export type Endpoints = {
 	'roles/show': { req: RolesShowRequest; res: RolesShowResponse };
 	'roles/users': { req: RolesUsersRequest; res: RolesUsersResponse };
 	'roles/notes': { req: RolesNotesRequest; res: RolesNotesResponse };
+	'subscription/create': { req: SubscriptionCreateRequest; res: EmptyResponse };
+	'subscription/manage': { req: EmptyRequest; res: EmptyResponse };
+	'subscription-plans/list': { req: EmptyRequest; res: SubscriptionPlansListResponse };
 	'request-reset-password': { req: RequestResetPasswordRequest; res: EmptyResponse };
 	'reset-db': { req: EmptyRequest; res: EmptyResponse };
 	'reset-password': { req: ResetPasswordRequest; res: EmptyResponse };
@@ -898,4 +926,13 @@ export type Endpoints = {
 	'fetch-rss': { req: FetchRssRequest; res: FetchRssResponse };
 	'fetch-external-resources': { req: FetchExternalResourcesRequest; res: FetchExternalResourcesResponse };
 	'retention': { req: EmptyRequest; res: RetentionResponse };
+	'bubble-game/register': { req: BubbleGameRegisterRequest; res: BubbleGameRegisterResponse };
+	'bubble-game/ranking': { req: BubbleGameRankingRequest; res: BubbleGameRankingResponse };
+	'reversi/cancel-match': { req: ReversiCancelMatchRequest; res: ReversiCancelMatchResponse };
+	'reversi/games': { req: ReversiGamesRequest; res: ReversiGamesResponse };
+	'reversi/match': { req: ReversiMatchRequest; res: ReversiMatchResponse };
+	'reversi/invitations': { req: EmptyRequest; res: ReversiInvitationsResponse };
+	'reversi/show-game': { req: ReversiShowGameRequest; res: ReversiShowGameResponse };
+	'reversi/surrender': { req: ReversiSurrenderRequest; res: EmptyResponse };
+	'reversi/verify': { req: ReversiVerifyRequest; res: ReversiVerifyResponse };
 }

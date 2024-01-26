@@ -4,8 +4,10 @@
  */
 
 import { Entity, Column, Index, OneToOne, JoinColumn, PrimaryColumn } from 'typeorm';
+import { subscriptionStatus } from '@/types.js';
 import { id } from './util/id.js';
 import { MiDriveFile } from './DriveFile.js';
+import { MiSubscriptionPlan } from "@/models/SubscriptionPlan.js";
 
 @Entity('user')
 @Index(['usernameLower', 'host'], { unique: true })
@@ -203,6 +205,18 @@ export class MiUser {
 		comment: 'Whether the User is deleted.',
 	})
 	public isDeleted: boolean;
+
+	@Column('enum', {
+		enum: subscriptionStatus,
+		default: 'none',
+	})
+	public subscriptionStatus: typeof subscriptionStatus[number];
+
+	@Column({
+		...id(),
+		nullable: true,
+	})
+	public subscriptionPlanId: MiSubscriptionPlan['id'] | null;
 
 	@Column('varchar', {
 		length: 128, array: true, default: '{}',

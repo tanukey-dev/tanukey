@@ -28,6 +28,7 @@ import { defaultStore } from '@/store.js';
 import { $i } from '@/account.js';
 import { i18n } from '@/i18n.js';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
+import { misskeyApi } from "@/scripts/misskey-api.js";
 
 const render = (mutedWords) => mutedWords.map(x => {
 	if (Array.isArray(x)) {
@@ -64,7 +65,7 @@ async function save() {
 					os.alert({
 						type: 'error',
 						title: i18n.ts.regexpError,
-						text: i18n.t('regexpErrorDescription', { tab: 'word mute', line: i + 1 }) + '\n' + err.toString(),
+						text: i18n.tsx.regexpErrorDescription({ tab: 'word mute', line: i + 1 }) + '\n' + err.toString(),
 					});
 					// re-throw error so these invalid settings are not saved
 					throw err;
@@ -85,7 +86,7 @@ async function save() {
 		return;
 	}
 
-	await os.api('i/update', {
+	await misskeyApi('i/update', {
 		mutedWords: parsed,
 	});
 
