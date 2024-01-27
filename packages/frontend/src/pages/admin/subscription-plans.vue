@@ -4,42 +4,45 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-	<MkStickyContainer>
-		<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-		<MkSpacer :contentMax="900">
-			<div class="_gaps">
-				<MkFolder v-for="subscriptionPlan in subscriptionPlans" :key="subscriptionPlan.id ?? subscriptionPlan._id" :defaultOpen="subscriptionPlan.id == null">
-					<template #label>{{ subscriptionPlan.name }}</template>
-					<template #caption>{{ subscriptionPlan.description }}</template>
+<MkStickyContainer>
+	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
+	<MkSpacer :contentMax="900">
+		<div class="_gaps">
+			<MkFolder v-for="subscriptionPlan in subscriptionPlans" :key="subscriptionPlan.id ?? subscriptionPlan._id" :defaultOpen="subscriptionPlan.id == null">
+				<template #label>{{ subscriptionPlan.name }}</template>
+				<template #icon>
+					<i v-if="subscriptionPlan.id && subscriptionPlan.isArchived" class="ti ti-archive"></i>
+				</template>
+				<template #caption>{{ subscriptionPlan.description }}</template>
 
-					<div class="_gaps_m">
-						<MkInput v-model="subscriptionPlan.name">
-							<template #label>{{ i18n.ts.name }}</template>
-						</MkInput>
-						<MkInput v-model="subscriptionPlan.price">
-							<template #label>{{ i18n.ts._subscription.price }}</template>
-						</MkInput>
-						<MkInput v-model="subscriptionPlan.currency">
-							<template #label>{{ i18n.ts._subscription.currency }}</template>
-						</MkInput>
-						<MkTextarea v-model="subscriptionPlan.description">
-							<template #label>{{ i18n.ts.description }}</template>
-						</MkTextarea>
-						<MkInput v-model="subscriptionPlan.stripePriceId">
-							<template #label>{{ i18n.ts._subscription.stripePriceId }}</template>
-						</MkInput>
-						<MkInput v-model="subscriptionPlan.roleId">
-							<template #label>{{ i18n.ts.role }}</template>
-						</MkInput>
-						<div class="buttons _buttons">
-							<MkButton class="button" inline primary @click="save(subscriptionPlan)"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
-							<MkButton v-if="subscriptionPlan.id != null" class="button" inline danger @click="archive(subscriptionPlan)"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
-						</div>
+				<div class="_gaps_m">
+					<MkInput v-model="subscriptionPlan.name">
+						<template #label>{{ i18n.ts.name }}</template>
+					</MkInput>
+					<MkInput v-model="subscriptionPlan.price" type="number">
+						<template #label>{{ i18n.ts._subscription.price }}</template>
+					</MkInput>
+					<MkInput v-model="subscriptionPlan.currency">
+						<template #label>{{ i18n.ts._subscription.currency }}</template>
+					</MkInput>
+					<MkTextarea v-model="subscriptionPlan.description">
+						<template #label>{{ i18n.ts.description }}</template>
+					</MkTextarea>
+					<MkInput v-model="subscriptionPlan.stripePriceId">
+						<template #label>{{ i18n.ts._subscription.stripePriceId }}</template>
+					</MkInput>
+					<MkInput v-model="subscriptionPlan.roleId">
+						<template #label>{{ i18n.ts.role }}</template>
+					</MkInput>
+					<div v-if="subscriptionPlan.isArchived === false" class="buttons _buttons">
+						<MkButton class="button" inline primary @click="save(subscriptionPlan)"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
+						<MkButton v-if="subscriptionPlan.id != null" class="button" inline danger @click="archive(subscriptionPlan)"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
 					</div>
-				</MkFolder>
-			</div>
-		</MkSpacer>
-	</MkStickyContainer>
+				</div>
+			</MkFolder>
+		</div>
+	</MkSpacer>
+</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -75,17 +78,32 @@ function archive(subscriptionPlan) {
 		text: i18n.tsx.channelArchiveConfirmTitle({ name: subscriptionPlan.name }), // TODO: i18n 専用のを用意する
 	}).then(({ canceled }) => {
 		if (canceled) return;
-		subscriptionPlans.value = subscriptionPlans.value.filter(x => x !== subscriptionPlan);
-		misskeyApi('admin/subscription-plans/archive', subscriptionPlan);
+		misskeyApi('admin/subscription-plans/archive', { planId: subscriptionPlan.id });
+		load();
 	});
 }
 
 async function save(subscriptionPlan) {
 	if (subscriptionPlan.id == null) {
-		await os.apiWithDialog('admin/subscription-plans/create', subscriptionPlan);
+		await os.apiWithDialog('admin/subscription-plans/create', {
+			name: subscriptionPlan.name,
+			price: subscriptionPlan.price,
+			currency: subscriptionPlan.currency,
+			description: subscriptionPlan.description,
+			stripePriceId: subscriptionPlan.stripePriceId,
+			roleId: subscriptionPlan.roleId,
+		});
 		load();
 	} else {
-		os.apiWithDialog('admin/subscription-plans/update', subscriptionPlan);
+		os.apiWithDialog('admin/subscription-plans/update', {
+			planId: subscriptionPlan.id,
+			name: subscriptionPlan.name,
+			price: subscriptionPlan.price,
+			currency: subscriptionPlan.currency,
+			description: subscriptionPlan.description,
+			stripePriceId: subscriptionPlan.stripePriceId,
+			roleId: subscriptionPlan.roleId,
+		});
 	}
 }
 

@@ -53,10 +53,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private roleService: RoleService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			if (!await subscriptionPlansRepository.exist( {
+			if (!await subscriptionPlansRepository.exists( {
 				where: {
-					roleId: ps.roleId
-				}
+					roleId: ps.roleId,
+				},
 			})) {
 				throw new ApiError(meta.errors.inUseRole);
 			}

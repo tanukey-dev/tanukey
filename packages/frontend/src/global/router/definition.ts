@@ -5,7 +5,7 @@
 
 import { App, AsyncComponentLoader, defineAsyncComponent, provide } from 'vue';
 import { IRouter, Router } from '@/nirax.js';
-import { $i, iAmModerator } from '@/account.js';
+import { $i, iAmAdmin, iAmModerator } from '@/account.js';
 import MkLoading from '@/pages/_loading_.vue';
 import MkError from '@/pages/_error_.vue';
 import { setMainRouter } from '@/global/router/main.js';
@@ -472,7 +472,7 @@ const routes = [{
 	}, {
 		path: '/subscription-plans',
 		name: 'subscription-plans',
-		component: page(() => import('@/pages/admin/subscription-plans.vue')),
+		component: iAmAdmin ? page(() => import('@/pages/admin/subscription-plans.vue')) : page(() => import('@/pages/not-found.vue')),
 	}, {
 		path: '/',
 		component: page(() => import('@/pages/_empty_.vue')),
