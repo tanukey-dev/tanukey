@@ -111,8 +111,8 @@ function connectChannel() {
 		});
 	} else if (props.src === 'media') {
 		connection = stream.useChannel('localTimeline', {
-			withFiles: true,
 			withReplies: false,
+			withFiles: true,
 		});
 	} else if (props.src === 'social') {
 		connection = stream.useChannel('hybridTimeline', {
@@ -184,8 +184,7 @@ function updatePaginationQuery() {
 	} else if (props.src === 'media') {
 		endpoint = 'notes/local-timeline';
 		query = {
-			withRenotes: props.withRenotes,
-			withReplies: props.withReplies,
+			withReplies: false,
 			withFiles: true,
 		};
 	} else if (props.src === 'social') {
