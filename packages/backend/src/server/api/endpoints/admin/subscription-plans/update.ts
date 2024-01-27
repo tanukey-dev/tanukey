@@ -2,8 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import type { SubscriptionPlansRepository } from '@/models/_.js';
 import { DI } from '@/di-symbols.js';
-import { IdService } from '@/core/IdService.js';
-import { SubscriptionPlanEntityService } from '@/core/entities/SubscriptionPlanEntityService.js';
+import { ApiError } from '@/server/api/error.js';
 import { ModerationLogService } from '@/core/ModerationLogService.js';
 
 export const meta = {
@@ -14,24 +13,26 @@ export const meta = {
 	kind: 'write:admin:subscription-plans',
 	secure: true,
 
-	res: {
-		type: 'object',
-		optional: false, nullable: false,
-		ref: 'SubscriptionPlan',
+	errors: {
+		noSuchPlan: {
+			message: 'No such plan.',
+			code: 'NO_SUCH_PLAN',
+			id: 'cd23ef55-09ad-428a-ac61-95a45e124b32',
+		},
 	},
 } as const;
 
 export const paramDef = {
 	type: 'object',
 	properties: {
+		planId: { type: 'string', format: 'misskey:id' },
 		name: { type: 'string' },
 		price: { type: 'integer' },
 		currency: { type: 'string' },
 		description: { type: 'string' },
-		stripePriceId: { type: 'string' },
 		roleId: { type: 'string', format: 'misskey:id' },
 	},
-	required: ['name', 'price', 'currency', 'stripePriceId', 'roleId'],
+	required: ['planId'],
 } as const;
 
 @Injectable()
@@ -40,28 +41,34 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		@Inject(DI.subscriptionPlansRepository)
 		private subscriptionPlansRepository: SubscriptionPlansRepository,
 
-		private subscriptionPlanEntityService: SubscriptionPlanEntityService,
-		private idService: IdService,
 		private moderationLogService: ModerationLogService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const subscriptionPlan = await this.subscriptionPlansRepository.insert({
-				id: this.idService.gen(),
+			const plan = await this.subscriptionPlansRepository.findOneByOrFail({
+				id: ps.planId,
+			});
+
+			if (!plan) {
+				throw new ApiError(meta.errors.noSuchPlan);
+			}
+
+			await this.subscriptionPlansRepository.update({
+				id: ps.planId,
+			}, {
 				name: ps.name,
 				price: ps.price,
 				currency: ps.currency,
 				description: ps.description,
-				stripePriceId: ps.stripePriceId,
 				roleId: ps.roleId,
-				isArchived: false,
-			}).then(x => this.subscriptionPlansRepository.findOneByOrFail(x.identifiers[0]));
-
-			this.moderationLogService.log(me, 'createSubscriptionPlan', {
-				subscriptionPlanId: subscriptionPlan.id,
-				subscriptionPlan: subscriptionPlan,
 			});
 
-			return await this.subscriptionPlanEntityService.pack(subscriptionPlan, null);
+			const updated = await this.subscriptionPlansRepository.findOneByOrFail({ id: ps.planId });
+
+			this.moderationLogService.log(me, 'updateSubscriptionPlan', {
+				subscriptionPlanId: updated.id,
+				before: plan,
+				after: updated,
+			});
 		});
 	}
 }

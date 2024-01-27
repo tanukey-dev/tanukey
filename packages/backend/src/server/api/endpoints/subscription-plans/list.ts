@@ -17,7 +17,7 @@ export const meta = {
 			optional: false, nullable: false,
 			ref: 'SubscriptionPlan',
 		},
-	}
+	},
 } as const;
 
 export const paramDef = {
@@ -39,7 +39,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		super(meta, paramDef, async (ps) => {
 			const subscriptionPlans = await this.subscriptionPlansRepository.find();
 			const packed = subscriptionPlans.map(async subscriptionPlan => {
-				const role = await this.rolesRepository.findOneByOrFail({id: subscriptionPlan.roleId});
+				const role = await this.rolesRepository.findOneByOrFail({ id: subscriptionPlan.roleId });
 				return {
 					id: subscriptionPlan.id,
 					name: subscriptionPlan.name,
@@ -59,7 +59,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 						displayOrder: role.displayOrder,
 					},
 					isArchived: subscriptionPlan.isArchived,
-				}
+				};
 			});
 
 			return await Promise.all(packed);

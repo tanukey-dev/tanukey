@@ -1626,6 +1626,8 @@ _achievements:
 
 _subscription:
   price: "価格"
+  currency: "通貨"
+  stripePriceId: "Stripeの価格ID"
   subscribe: "購入"
   manage: "管理"
   changePlan: "プランを変更"
@@ -2488,6 +2490,9 @@ _moderationLogTypes:
   deleteAvatarDecoration: "アイコンデコレーションを削除"
   unsetUserAvatar: "ユーザーのアイコンを解除"
   unsetUserBanner: "ユーザーのバナーを解除"
+  createSubscriptionPlan: "サブスクリプションプランを作成"
+  updateSubscriptionPlan: "サブスクリプションプランを更新"
+  archiveSubscriptionPlan: "サブスクリプションプランをアーカイブ"
 
 _fileViewer:
   title: "ファイルの詳細"
@@ -2605,4 +2610,3 @@ _reversi:
 _offlineScreen:
   title: "オフライン - サーバーに接続できません"
   header: "サーバーに接続できません"
-

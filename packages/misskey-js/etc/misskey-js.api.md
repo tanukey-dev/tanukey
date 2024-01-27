@@ -308,13 +308,13 @@ type AdminShowUsersResponse = operations['admin/show-users']['responses']['200']
 type AdminSubscriptionPlansArchiveRequest = operations['admin/subscription-plans/archive']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
-type AdminSubscriptionPlansArchiveResponse = operations['admin/subscription-plans/archive']['responses']['200']['content']['application/json'];
-
-// @public (undocumented)
 type AdminSubscriptionPlansCreateRequest = operations['admin/subscription-plans/create']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
 type AdminSubscriptionPlansCreateResponse = operations['admin/subscription-plans/create']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type AdminSubscriptionPlansUpdateRequest = operations['admin/subscription-plans/update']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
 type AdminSuspendUserRequest = operations['admin/suspend-user']['requestBody']['content']['application/json'];
@@ -1201,8 +1201,8 @@ declare namespace entities {
         AdminRolesUsersResponse,
         AdminSubscriptionPlansCreateRequest,
         AdminSubscriptionPlansCreateResponse,
+        AdminSubscriptionPlansUpdateRequest,
         AdminSubscriptionPlansArchiveRequest,
-        AdminSubscriptionPlansArchiveResponse,
         AnnouncementsRequest,
         AnnouncementsResponse,
         AntennasCreateRequest,
@@ -1566,6 +1566,8 @@ declare namespace entities {
         RolesNotesResponse,
         SubscriptionCreateRequest,
         SubscriptionPlansListResponse,
+        SubscriptionPlansShowRequest,
+        SubscriptionPlansShowResponse,
         RequestResetPasswordRequest,
         ResetPasswordRequest,
         ServerInfoResponse,
@@ -2818,6 +2820,12 @@ type SubscriptionPlan = components['schemas']['SubscriptionPlan'];
 
 // @public (undocumented)
 type SubscriptionPlansListResponse = operations['subscription-plans/list']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type SubscriptionPlansShowRequest = operations['subscription-plans/show']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type SubscriptionPlansShowResponse = operations['subscription-plans/show']['responses']['200']['content']['application/json'];
 
 // Warning: (ae-forgotten-export) The symbol "SwitchCase" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "IsCaseMatched" needs to be exported by the entry point index.d.ts

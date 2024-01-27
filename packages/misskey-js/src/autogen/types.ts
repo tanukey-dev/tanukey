@@ -3,7 +3,7 @@
 
 /*
  * version: 2024.2.0-NJ-2.0.0-beta.2
- * generatedAt: 2024-01-26T16:36:02.910Z
+ * generatedAt: 2024-01-27T06:58:08.577Z
  */
 
 /**
@@ -711,6 +711,16 @@ export type paths = {
      * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
      */
     post: operations['admin/subscription-plans/create'];
+  };
+  '/admin/subscription-plans/update': {
+    /**
+     * admin/subscription-plans/update
+     * @description No description provided.
+     *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+     */
+    post: operations['admin/subscription-plans/update'];
   };
   '/admin/subscription-plans/archive': {
     /**
@@ -3048,6 +3058,15 @@ export type paths = {
      */
     post: operations['subscription-plans/list'];
   };
+  '/subscription-plans/show': {
+    /**
+     * subscription-plans/show
+     * @description No description provided.
+     *
+     * **Credential required**: *No*
+     */
+    post: operations['subscription-plans/show'];
+  };
   '/request-reset-password': {
     /**
      * request-reset-password
@@ -4363,7 +4382,7 @@ export type components = {
       /** @example usd */
       currency: string;
       /** @example New Plan */
-      description?: string | null;
+      description: string | null;
       /** @example price_xxxxxxxxxx */
       stripePriceId: string;
       /**
@@ -9259,6 +9278,65 @@ export type operations = {
     };
   };
   /**
+   * admin/subscription-plans/update
+   * @description No description provided.
+   *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+   * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+   */
+  'admin/subscription-plans/update': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          planId: string;
+          name?: string;
+          price?: number;
+          currency?: string;
+          description?: string;
+          /** Format: misskey:id */
+          roleId?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
    * admin/subscription-plans/archive
    * @description No description provided.
    *
@@ -9275,11 +9353,9 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (with results) */
-      200: {
-        content: {
-          'application/json': unknown;
-        };
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -23176,6 +23252,60 @@ export type operations = {
       200: {
         content: {
           'application/json': components['schemas']['SubscriptionPlan'][];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * subscription-plans/show
+   * @description No description provided.
+   *
+   * **Credential required**: *No*
+   */
+  'subscription-plans/show': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          planId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['SubscriptionPlan'];
         };
       };
       /** @description Client error */

@@ -24,7 +24,7 @@ export const packedSubscriptionPlanSchema = {
 		},
 		description: {
 			type: 'string',
-			optional: true, nullable: true,
+			optional: false, nullable: true,
 			example: 'New Plan',
 		},
 		stripePriceId: {
@@ -48,5 +48,5 @@ export const packedSubscriptionPlanSchema = {
 			optional: false, nullable: false,
 			example: false,
 		},
-	}
+	},
 } as const;
