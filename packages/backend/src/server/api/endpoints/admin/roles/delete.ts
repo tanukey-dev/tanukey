@@ -53,7 +53,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			if (!await subscriptionPlansRepository.exist( {
 				where: {
 					roleId: ps.roleId,
-				}
+				},
 			})) {
 				throw new ApiError(meta.errors.inUseRole);
 			}

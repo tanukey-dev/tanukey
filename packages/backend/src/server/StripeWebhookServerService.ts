@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Stripe } from 'stripe';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import type { UsersRepository, UserProfilesRepository, SubscriptionPlansRepository } from '@/models/index.js';
 import { RoleService } from '@/core/RoleService.js';
 import { MetaService } from '@/core/MetaService.js';
-import type { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { bindThis } from "@/decorators.js";
-import { Stripe } from "stripe";
-import { LoggerService } from "@/core/LoggerService.js";
-import type Logger from "@/logger.js";
-import { UserEntityService } from "@/core/entities/UserEntityService.js";
-import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { bindThis } from '@/decorators.js';
+import { LoggerService } from '@/core/LoggerService.js';
+import type Logger from '@/logger.js';
+import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import { GlobalEventService } from '@/core/GlobalEventService.js';
+import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 
 @Injectable()
 export class StripeWebhookServerService {
@@ -37,17 +37,17 @@ export class StripeWebhookServerService {
 	@bindThis
 	public createServer(fastify: FastifyInstance, options: FastifyPluginOptions, done: (err?: Error) => void) {
 		fastify.addContentTypeParser(
-			"application/json",
-			{ parseAs: "buffer" },
-			function (_req, body, done) {
+			'application/json',
+			{ parseAs: 'buffer' },
+			(_req, body, done) => {
 				try {
-					done(null, body)
+					done(null, body);
 				} catch (err: any) {
 					err.statusCode = 400;
 					return done(err);
 				}
-			}
-		)
+			},
+		);
 
 		fastify.post('/webhook', { config: { rawBody: true }, bodyLimit: 1024 * 64 }, async (request, reply) => {
 			const instance = await this.metaService.fetch(true);
@@ -94,7 +94,7 @@ export class StripeWebhookServerService {
 
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
 						await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
-						await this.usersRepository.update({id: userProfile.userId}, {
+						await this.usersRepository.update({ id: userProfile.userId }, {
 							subscriptionStatus: subscription.status,
 							subscriptionPlanId: subscriptionPlan.id,
 						});
@@ -102,7 +102,7 @@ export class StripeWebhookServerService {
 						// Publish meUpdated event
 						this.globalEventService.publishMainStream(userProfile.userId, 'meUpdated', await this.userEntityService.pack(userProfile.userId, { id: userProfile.userId }, {
 							detail: true,
-							includeSecrets: true
+							includeSecrets: true,
 						}));
 
 						return;
@@ -130,7 +130,7 @@ export class StripeWebhookServerService {
 						// Publish meUpdated event
 						this.globalEventService.publishMainStream(userProfile.userId, 'meUpdated', await this.userEntityService.pack(userProfile.userId, { id: userProfile.userId }, {
 							detail: true,
-							includeSecrets: true
+							includeSecrets: true,
 						}));
 
 						return;
@@ -169,7 +169,7 @@ export class StripeWebhookServerService {
 						// Publish meUpdated event
 						this.globalEventService.publishMainStream(user.id, 'meUpdated', await this.userEntityService.pack(user.id, user, {
 							detail: true,
-							includeSecrets: true
+							includeSecrets: true,
 						}));
 
 						return;
