@@ -75,6 +75,7 @@ import * as ep___admin_roles_unassign from './endpoints/admin/roles/unassign.js'
 import * as ep___admin_roles_updateDefaultPolicies from './endpoints/admin/roles/update-default-policies.js';
 import * as ep___admin_roles_users from './endpoints/admin/roles/users.js';
 import * as ep___admin_subscriptionPlans_create from './endpoints/admin/subscription-plans/create.js';
+import * as ep___admin_subscriptionPlans_update from './endpoints/admin/subscription-plans/update.js';
 import * as ep___admin_subscriptionPlans_archive from './endpoints/admin/subscription-plans/archive.js';
 import * as ep___announcements from './endpoints/announcements.js';
 import * as ep___antennas_create from './endpoints/antennas/create.js';
@@ -313,6 +314,7 @@ import * as ep___roles_notes from './endpoints/roles/notes.js';
 import * as ep___subscription_create from './endpoints/subscription/create.js';
 import * as ep___subscription_manage from './endpoints/subscription/manage.js';
 import * as ep___subscription_plans_list from './endpoints/subscription-plans/list.js';
+import * as ep___subscription_plans_show from './endpoints/subscription-plans/show.js';
 import * as ep___requestResetPassword from './endpoints/request-reset-password.js';
 import * as ep___resetDb from './endpoints/reset-db.js';
 import * as ep___resetPassword from './endpoints/reset-password.js';
@@ -440,6 +442,7 @@ const eps = [
 	['admin/roles/update-default-policies', ep___admin_roles_updateDefaultPolicies],
 	['admin/roles/users', ep___admin_roles_users],
 	['admin/subscription-plans/create', ep___admin_subscriptionPlans_create],
+	['admin/subscription-plans/update', ep___admin_subscriptionPlans_update],
 	['admin/subscription-plans/archive', ep___admin_subscriptionPlans_archive],
 	['announcements', ep___announcements],
 	['antennas/create', ep___antennas_create],
@@ -678,6 +681,7 @@ const eps = [
 	['subscription/create', ep___subscription_create],
 	['subscription/manage', ep___subscription_manage],
 	['subscription-plans/list', ep___subscription_plans_list],
+	['subscription-plans/show', ep___subscription_plans_show],
 	['request-reset-password', ep___requestResetPassword],
 	['reset-db', ep___resetDb],
 	['reset-password', ep___resetPassword],

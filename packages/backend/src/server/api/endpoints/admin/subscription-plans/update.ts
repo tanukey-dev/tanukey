@@ -26,6 +26,11 @@ export const paramDef = {
 	type: 'object',
 	properties: {
 		planId: { type: 'string', format: 'misskey:id' },
+		name: { type: 'string' },
+		price: { type: 'integer' },
+		currency: { type: 'string' },
+		description: { type: 'string' },
+		roleId: { type: 'string', format: 'misskey:id' },
 	},
 	required: ['planId'],
 } as const;
@@ -50,11 +55,19 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			await this.subscriptionPlansRepository.update({
 				id: ps.planId,
 			}, {
-				isArchived: true,
+				name: ps.name,
+				price: ps.price,
+				currency: ps.currency,
+				description: ps.description,
+				roleId: ps.roleId,
 			});
 
-			moderationLogService.log(me, 'archiveSubscriptionPlan', {
-				subscriptionPlanId: plan.id,
+			const updated = await this.subscriptionPlansRepository.findOneByOrFail({ id: ps.planId });
+
+			this.moderationLogService.log(me, 'updateSubscriptionPlan', {
+				subscriptionPlanId: updated.id,
+				before: plan,
+				after: updated,
 			});
 		});
 	}

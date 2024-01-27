@@ -1481,6 +1481,8 @@ export interface Locale {
     };
     "_subscription": {
         "price": string;
+        "currency": string;
+        "stripePriceId": string;
         "subscribe": string;
         "manage": string;
         "changePlan": string;

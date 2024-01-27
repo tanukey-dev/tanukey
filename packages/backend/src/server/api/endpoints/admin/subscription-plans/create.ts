@@ -3,6 +3,8 @@ import { Endpoint } from "@/server/api/endpoint-base.js";
 import type { SubscriptionPlansRepository } from "@/models/index.js";
 import { DI } from "@/di-symbols.js";
 import { IdService } from "@/core/IdService.js";
+import { SubscriptionPlanEntityService } from '@/core/entities/SubscriptionPlanEntityService.js';
+import { ModerationLogService } from '@/core/ModerationLogService.js';
 
 export const meta = {
 	tags: ['admin', 'subscription-plans'],
@@ -29,7 +31,7 @@ export const paramDef = {
 		stripePriceId: { type: 'string' },
 		roleId: { type: 'string', format: 'misskey:id' },
 	},
-	required: ['name', 'price',  'currency', 'stripePriceId', 'roleId'],
+	required: ['name', 'price', 'currency', 'stripePriceId', 'roleId'],
 } as const;
 
 @Injectable()
@@ -38,11 +40,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		@Inject(DI.subscriptionPlansRepository)
 		private subscriptionPlansRepository: SubscriptionPlansRepository,
 
+		private subscriptionPlanEntityService: SubscriptionPlanEntityService,
 		private idService: IdService,
+		private moderationLogService: ModerationLogService,
 	) {
-		super(meta, paramDef, async (ps) => {
+		super(meta, paramDef, async (ps, me) => {
 			const subscriptionPlan = await this.subscriptionPlansRepository.insert({
-				id: this.idService.gen(),
+				id: this.idService.genId(),
 				name: ps.name,
 				price: ps.price,
 				currency: ps.currency,
@@ -52,7 +56,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				isArchived: false,
 			}).then(x => this.subscriptionPlansRepository.findOneByOrFail(x.identifiers[0]));
 
-			return subscriptionPlan;
+			this.moderationLogService.insertModerationLog(me, 'createSubscriptionPlan', {
+				subscriptionPlanId: subscriptionPlan.id,
+				subscriptionPlan: subscriptionPlan,
+			});
+
+			return await this.subscriptionPlanEntityService.pack(subscriptionPlan, null);
 		});
 	}
 }
