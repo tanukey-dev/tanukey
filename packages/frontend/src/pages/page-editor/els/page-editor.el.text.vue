@@ -4,15 +4,16 @@
 	<template #header><i class="ti ti-align-left"></i> {{ i18n.ts._pages.blocks.text }}</template>
 
 	<section>
-		<textarea v-model="text" :class="$style.textarea"></textarea>
+		<textarea ref="textareaEl" v-model="text" :class="$style.textarea"></textarea>
 	</section>
 </XContainer>
 </template>
 
 <script lang="ts" setup>
 /* eslint-disable vue/no-mutating-props */
-import { watch } from 'vue';
+import { watch, onMounted } from 'vue';
 import XContainer from '../page-editor.container.vue';
+import { Autocomplete } from '@/scripts/autocomplete';
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
@@ -23,7 +24,12 @@ const emit = defineEmits<{
 	(ev: 'update:modelValue', value: any): void;
 }>();
 
+const textareaEl = $shallowRef<HTMLTextAreaElement | null>(null);
 const text = $ref(props.modelValue.text ?? '');
+
+onMounted(() => {
+	new Autocomplete(textareaEl, $$(text));
+});
 
 watch($$(text), () => {
 	emit('update:modelValue', {

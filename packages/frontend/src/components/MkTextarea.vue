@@ -30,6 +30,7 @@
 import { onMounted, nextTick, ref, watch, computed, toRefs, shallowRef } from 'vue';
 import { debounce } from 'throttle-debounce';
 import MkButton from '@/components/MkButton.vue';
+import { Autocomplete } from '@/scripts/autocomplete';
 import { i18n } from '@/i18n';
 
 const props = defineProps<{
@@ -47,6 +48,7 @@ const props = defineProps<{
 	code?: boolean;
 	tall?: boolean;
 	pre?: boolean;
+	autocompleteEmoji?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -103,6 +105,9 @@ watch(v, newValue => {
 });
 
 onMounted(() => {
+	if (props.autocompleteEmoji) {
+		new Autocomplete(inputEl.value, $$(v));
+	}
 	nextTick(() => {
 		if (autofocus.value) {
 			focus();
