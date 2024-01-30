@@ -1070,6 +1070,8 @@ export interface Locale {
     "archive": string;
     "channelArchiveConfirmTitle": string;
     "channelArchiveConfirmDescription": string;
+    "archiveConfirmTitle": string;
+    "archiveConfirmDescription": string;
     "thisChannelArchived": string;
     "displayOfNote": string;
     "initialAccountSetting": string;

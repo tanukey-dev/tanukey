@@ -26,6 +26,7 @@
 
 			<div class="_buttons">
 				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ circleId ? i18n.ts.save : i18n.ts.create }}</MkButton>
+				<MkButton v-if="circleId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
 			</div>
 		</div>
 	</MkSpacer>
@@ -109,6 +110,25 @@ function save() {
 			router.push(`/circles/${created.id}`);
 		});
 	}
+}
+
+async function archive() {
+	const { canceled } = await os.confirm({
+		type: 'warning',
+		title: i18n.ts.archiveConfirmTitle,
+		text: i18n.ts.archiveConfirmDescription,
+	});
+
+	if (canceled) return;
+	
+	os.api('circles/update', {
+		circleId: props.circleId,
+		isArchived: true,
+	}).then(() => {
+		os.success();
+		router.push('/circles');
+		location.reload();
+	});
 }
 
 function setBannerImage(evt) {

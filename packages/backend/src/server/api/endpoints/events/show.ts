@@ -72,12 +72,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				const events = await this.eventsRepository.createQueryBuilder('event')
 					.where({ startsAt: MoreThan(start) })
 					.andWhere({ expiresAt: LessThan(end) })
+					.andWhere('event.isArchived = FALSE')
 					.getMany();
 
 				return await Promise.all(events.map(x => this.eventEntityService.pack(x, me)));
 			} else if (ps.eventIds) {
 				const events = await this.eventsRepository.createQueryBuilder('event')
 					.where({ id: In(ps.eventIds) })
+					.andWhere('event.isArchived = FALSE')
 					.getMany();
 
 				// リクエストされた通りに並べ替え

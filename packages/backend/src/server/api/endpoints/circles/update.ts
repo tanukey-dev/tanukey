@@ -48,6 +48,7 @@ export const paramDef = {
 		description: { type: 'string', nullable: true, minLength: 1, maxLength: 8192 },
 		profileImageId: { type: 'string', format: 'misskey:id', nullable: true },
 		pageId: { type: 'string', format: 'misskey:id', nullable: true },
+		isArchived: { type: 'boolean', nullable: true },
 	},
 	required: ['circleId'],
 } as const;
@@ -100,6 +101,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				...(ps.description !== undefined ? { description: ps.description } : {}),
 				...(profileImage ? { profileImageId: profileImage.id } : {}),
 				...(ps.pageId !== undefined ? { pageId: ps.pageId } : {}),
+				...(typeof ps.isArchived === 'boolean' ? { isArchived: ps.isArchived } : {}),
 			});
 
 			return await this.circleEntityService.pack(circle.id, me);

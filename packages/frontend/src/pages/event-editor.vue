@@ -35,6 +35,7 @@
 
 			<div class="_buttons">
 				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ eventId ? i18n.ts.save : i18n.ts.create }}</MkButton>
+				<MkButton v-if="eventId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
 			</div>
 		</div>
 	</MkSpacer>
@@ -125,6 +126,25 @@ function save() {
 			router.push(`/events/${created.id}`);
 		});
 	}
+}
+
+async function archive() {
+	const { canceled } = await os.confirm({
+		type: 'warning',
+		title: i18n.ts.archiveConfirmTitle,
+		text: i18n.ts.archiveConfirmDescription,
+	});
+
+	if (canceled) return;
+	
+	os.api('events/update', {
+		eventId: props.eventId,
+		isArchived: true,
+	}).then(() => {
+		os.success();
+		router.push('/events');
+		location.reload();
+	});
 }
 
 function setBannerImage(evt) {

@@ -50,6 +50,7 @@ export const paramDef = {
 		expiresAt: { type: 'integer' },
 		startsAt: { type: 'integer' },
 		pageId: { type: 'string', format: 'misskey:id', nullable: true },
+		isArchived: { type: 'boolean', nullable: true },
 	},
 	required: ['eventId'],
 } as const;
@@ -104,6 +105,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				...(ps.expiresAt !== undefined ? { expiresAt: new Date(ps.expiresAt) } : {}),
 				...(ps.startsAt !== undefined ? { startsAt: new Date(ps.startsAt) } : {}),
 				...(ps.pageId !== undefined ? { pageId: ps.pageId } : {}),
+				...(typeof ps.isArchived === 'boolean' ? { isArchived: ps.isArchived } : {}),
 			});
 
 			return await this.eventEntityService.pack(event.id, me);

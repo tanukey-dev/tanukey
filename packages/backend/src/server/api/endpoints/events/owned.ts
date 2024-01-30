@@ -46,7 +46,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const query = this.queryService.makePaginationQuery(this.eventsRepository.createQueryBuilder('event'), ps.sinceId, ps.untilId)
-				.andWhere({ userId: me.id });
+				.andWhere({ userId: me.id })
+				.andWhere('event.isArchived = FALSE');
 
 			const channels = await query
 				.take(ps.limit)

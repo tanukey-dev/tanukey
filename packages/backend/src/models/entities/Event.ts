@@ -64,4 +64,10 @@ export class Event {
 
 	@Column({ ...id(), nullable: true })
 	public pageId: Page['id'] | null;
+
+	@Index()
+	@Column('boolean', {
+		default: false,
+	})
+	public isArchived: boolean;
 }

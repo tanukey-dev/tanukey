@@ -66,6 +66,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			if (ps.circleIds) {
 				const circles = await this.circlesRepository.createQueryBuilder('circle')
 					.where({ id: In(ps.circleIds) })
+					.andWhere('circle.isArchived = FALSE')
 					.getMany();
 
 				// リクエストされた通りに並べ替え
@@ -82,6 +83,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 				const circles = await this.circlesRepository.createQueryBuilder('circle')
 					.where({ userId: ps.userId })
+					.andWhere('circle.isArchived = FALSE')
 					.getMany();
 
 				return await Promise.all(circles.map(x => this.circleEntityService.pack(x, me)));

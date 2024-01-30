@@ -20,6 +20,7 @@
 
 			<div class="_buttons">
 				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ eventId ? i18n.ts.save : i18n.ts.create }}</MkButton>
+				<MkButton v-if="eventCircleId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
 			</div>
 		</div>
 	</MkSpacer>
@@ -113,6 +114,25 @@ function save() {
 			router.push(`/events/${props.eventId}/${created.id}`);
 		});
 	}
+}
+
+async function archive() {
+	const { canceled } = await os.confirm({
+		type: 'warning',
+		title: i18n.ts.archiveConfirmTitle,
+		text: i18n.ts.archiveConfirmDescription,
+	});
+
+	if (canceled) return;
+	
+	os.api('eventCircles/update', {
+		eventCircleId: props.eventCircleId,
+		isArchived: true,
+	}).then(() => {
+		os.success();
+		router.push(`/events/${props.eventId}`);
+		location.reload();
+	});
 }
 
 const headerActions = $computed(() => []);

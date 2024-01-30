@@ -46,6 +46,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const query = this.queryService.makePaginationQuery(this.circlesRepository.createQueryBuilder('circle'), ps.sinceId, ps.untilId)
+				.andWhere('circle.isArchived = FALSE')
 				.andWhere({ userId: me.id });
 
 			const channels = await query

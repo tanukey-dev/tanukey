@@ -68,7 +68,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		super(meta, paramDef, async (ps, me) => {
 			if (ps.eventId) {
 				const query = this.queryService.makePaginationQuery(this.eventCirclesRepository.createQueryBuilder('eventCircle'), ps.sinceId, ps.untilId)
-					.where({ eventId: ps.eventId });
+					.where({ eventId: ps.eventId })
+					.andWhere('eventCircle.isArchived = FALSE');
 
 				const eventCircles = await query
 					.getMany();
@@ -76,7 +77,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				return await Promise.all(eventCircles.map(x => this.eventCircleEntityService.pack(x, me)));
 			} else if (ps.circleId) {
 				const query = this.queryService.makePaginationQuery(this.eventCirclesRepository.createQueryBuilder('eventCircle'), ps.sinceId, ps.untilId)
-					.where({ circleId: ps.circleId });
+					.where({ circleId: ps.circleId })
+					.andWhere('eventCircle.isArchived = FALSE');
 
 				const eventCircles = await query
 					.getMany();
