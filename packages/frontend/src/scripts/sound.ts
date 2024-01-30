@@ -138,7 +138,7 @@ export function play(type: 'noteMy' | 'note' | 'antenna' | 'channel' | 'notifica
 }
 
 export async function playFile(file: string, volume: number) {
-	const masterVolume = defaultStore.state.sound_masterVolume;
+	const masterVolume = soundConfigStore.state.sound_masterVolume;
 	if (masterVolume === 0 || volume === 0) {
 		return;
 	}
