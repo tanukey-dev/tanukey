@@ -126,6 +126,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			} else if (subscriptionStatus === 'incomplete' || subscriptionStatus === 'incomplete_expired' || subscriptionStatus === 'past_due' || subscriptionStatus === 'unpaid') {
 				const session = await stripe.checkout.sessions.create({
 					customer: userProfile.stripeCustomerId ?? undefined,
+					allow_promotion_codes: true,
 					return_url: `${this.config.url}/settings/subscription`,
 				}, {});
 
@@ -139,6 +140,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				const session = await stripe.checkout.sessions.create({
 					mode: 'subscription',
 					billing_address_collection: 'auto',
+					allow_promotion_codes: true,
 					line_items: [
 						{
 							price: plan.stripePriceId,
