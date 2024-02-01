@@ -3,7 +3,7 @@
 
 /*
  * version: 2024.2.0-NJ-2.0.0-beta.4
- * generatedAt: 2024-02-02T11:45:50.872Z
+ * generatedAt: 2024-02-02T12:49:50.144Z
  */
 
 /**
@@ -4490,6 +4490,10 @@ export type components = {
     EmojiDetailed: {
       /** Format: id */
       id: string;
+      /** Format: date-time */
+      createdAt?: string;
+      /** Format: date-time */
+      updatedAt?: string | null;
       aliases: string[];
       name: string;
       category: string | null;
@@ -4499,6 +4503,8 @@ export type components = {
       license: string | null;
       isSensitive: boolean;
       localOnly: boolean;
+      requestedBy?: string | null;
+      memo?: string | null;
       roleIdsThatCanBeUsedThisEmojiAsReaction: string[];
     };
     Flash: {
@@ -6369,6 +6375,8 @@ export type operations = {
           license?: string | null;
           isSensitive?: boolean;
           localOnly?: boolean;
+          requestedBy?: string | null;
+          memo?: string | null;
           roleIdsThatCanBeUsedThisEmojiAsReaction?: string[];
         };
       };
@@ -6997,6 +7005,8 @@ export type operations = {
           license?: string | null;
           isSensitive?: boolean;
           localOnly?: boolean;
+          requestedBy?: string | null;
+          memo?: string | null;
           roleIdsThatCanBeUsedThisEmojiAsReaction?: string[];
         };
       };
