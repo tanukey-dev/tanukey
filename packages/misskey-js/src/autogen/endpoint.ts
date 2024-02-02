@@ -1,6 +1,6 @@
 /*
- * version: 2024.2.0-NJ-2.0.0-beta.2
- * generatedAt: 2024-01-27T06:58:08.743Z
+ * version: 2024.2.0-NJ-2.0.0-beta.4
+ * generatedAt: 2024-02-02T11:45:51.019Z
  */
 
 import type {

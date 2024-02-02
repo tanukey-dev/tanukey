@@ -31,14 +31,6 @@ import type { NoteEntityService } from './NoteEntityService.js';
 import type { DriveFileEntityService } from './DriveFileEntityService.js';
 import type { PageEntityService } from './PageEntityService.js';
 
-type IsUserDetailed<Detailed extends boolean> = Detailed extends true ? Packed<'UserDetailed'> : Packed<'UserLite'>;
-type IsMeAndIsUserDetailed<ExpectsMe extends boolean | null, Detailed extends boolean> =
-	Detailed extends true ?
-		ExpectsMe extends true ? Packed<'MeDetailed'> :
-			ExpectsMe extends false ? Packed<'UserDetailedNotMe'> :
-				Packed<'UserDetailed'> :
-		Packed<'UserLite'>;
-
 const Ajv = _Ajv.default;
 const ajv = new Ajv();
 
@@ -304,51 +296,52 @@ export class UserEntityService implements OnModuleInit {
 		return `${this.config.url}/users/${userId}`;
 	}
 
-	public async pack<ExpectsMe extends boolean | null = null, D extends boolean = false>(
+	public async pack<S extends 'MeDetailed' | 'UserDetailedNotMe' | 'UserDetailed' | 'UserLite' = 'UserLite'>(
 		src: MiUser['id'] | MiUser,
 		me: { id: MiUser['id'] } | null | undefined,
 		options?: {
-			detail?: D,
+			schema?: S,
 			includeSecrets?: boolean,
 			userProfile?: MiUserProfile,
 		},
-	): Promise<IsMeAndIsUserDetailed<ExpectsMe, D>> {
+	): Promise<Packed<S>> {
 		const opts = Object.assign({
-			detail: false,
+			schema: 'UserLite',
 			includeSecrets: false,
 		}, options);
 
 		const user = typeof src === 'object' ? src : await this.usersRepository.findOneByOrFail({ id: src });
 
+		const isDetailed = opts.schema !== 'UserLite';
 		const meId = me ? me.id : null;
 		const isMe = meId === user.id;
 		const iAmModerator = me ? await this.roleService.isModerator(me as MiUser) : false;
 		if (user.isSuspended && !iAmModerator) throw new IdentifiableError('8ca4f428-b32e-4f83-ac43-406ed7cd0452', 'This user is suspended.');
 
-		const relation = meId && !isMe && opts.detail ? await this.getRelation(meId, user.id) : null;
-		const pins = opts.detail ? await this.userNotePiningsRepository.createQueryBuilder('pin')
+		const relation = meId && !isMe && isDetailed ? await this.getRelation(meId, user.id) : null;
+		const pins = isDetailed ? await this.userNotePiningsRepository.createQueryBuilder('pin')
 			.where('pin.userId = :userId', { userId: user.id })
 			.innerJoinAndSelect('pin.note', 'note')
 			.orderBy('pin.id', 'DESC')
 			.getMany() : [];
-		const profile = opts.detail ? (opts.userProfile ?? await this.userProfilesRepository.findOneByOrFail({ userId: user.id })) : null;
+		const profile = isDetailed ? (opts.userProfile ?? await this.userProfilesRepository.findOneByOrFail({ userId: user.id })) : null;
 
 		const followingCount = profile == null ? null :
 			(profile.followingVisibility === 'public') || isMe ? user.followingCount :
-			(profile.followingVisibility === 'followers') && (relation && relation.isFollowing) ? user.followingCount :
-			null;
+				(profile.followingVisibility === 'followers') && (relation && relation.isFollowing) ? user.followingCount :
+					null;
 
 		const followersCount = profile == null ? null :
 			(profile.followersVisibility === 'public') || isMe ? user.followersCount :
-			(profile.followersVisibility === 'followers') && (relation && relation.isFollowing) ? user.followersCount :
-			null;
+				(profile.followersVisibility === 'followers') && (relation && relation.isFollowing) ? user.followersCount :
+					null;
 
-		const isModerator = isMe && opts.detail ? this.roleService.isModerator(user) : null;
-		const isAdmin = isMe && opts.detail ? this.roleService.isAdministrator(user) : null;
-		const policies = opts.detail ? await this.roleService.getUserPolicies(user.id) : null;
-		const unreadAnnouncements = isMe && opts.detail ? await this.announcementService.getUnreadAnnouncements(user) : null;
+		const policies = isDetailed ? await this.roleService.getUserPolicies(user.id) : null;
+		const isModerator = (isMe || iAmModerator) && isDetailed ? this.roleService.isModerator(user) : null;
+		const isAdmin = (isMe || iAmModerator) && isDetailed ? this.roleService.isAdministrator(user) : null;
+		const unreadAnnouncements = isMe && isDetailed ? await this.announcementService.getUnreadAnnouncements(user) : null;
 
-		const notificationsInfo = isMe && opts.detail ? await this.getNotificationsInfo(user.id) : null;
+		const notificationsInfo = isMe && isDetailed ? await this.getNotificationsInfo(user.id) : null;
 
 		const packed = {
 			id: user.id,
@@ -384,7 +377,7 @@ export class UserEntityService implements OnModuleInit {
 				displayOrder: r.displayOrder,
 			}))) : undefined,
 
-			...(opts.detail ? {
+			...(isDetailed ? {
 				url: profile!.url,
 				uri: user.uri,
 				movedTo: user.movedToUri ? this.apPersonService.resolvePerson(user.movedToUri).then(user => user.id).catch(() => null) : null,
@@ -425,16 +418,20 @@ export class UserEntityService implements OnModuleInit {
 						userId: user.id,
 					}).then(result => result >= 1)
 					: false,
-				roles: this.roleService.getUserRoles(user.id).then(roles => roles.filter(role => role.isPublic).sort((a, b) => b.displayOrder - a.displayOrder).map(role => ({
-					id: role.id,
-					name: role.name,
-					color: role.color,
-					iconUrl: role.iconUrl,
-					description: role.description,
-					isModerator: role.isModerator,
-					isAdministrator: role.isAdministrator,
-					displayOrder: role.displayOrder,
-				}))),
+				roles: this.roleService.getUserRoles(user.id).then(roles => roles
+					.filter(role => role.isPublic || iAmModerator)
+					.sort((a, b) => b.displayOrder - a.displayOrder)
+					.map(role => ({
+						id: role.id,
+						name: role.name,
+						color: role.color,
+						iconUrl: role.iconUrl,
+						description: role.description,
+						isModerator: role.isModerator,
+						isAdministrator: role.isAdministrator,
+						displayOrder: role.displayOrder,
+					}))
+				),
 				memo: meId == null ? null : await this.userMemosRepository.findOneBy({
 					userId: meId,
 					targetUserId: user.id,
@@ -442,7 +439,7 @@ export class UserEntityService implements OnModuleInit {
 				moderationNote: iAmModerator ? (profile!.moderationNote ?? '') : undefined,
 			} : {}),
 
-			...(opts.detail && isMe ? {
+			...(isDetailed && (isMe || iAmModerator) ? {
 				avatarId: user.avatarId,
 				bannerId: user.bannerId,
 				isModerator: isModerator,
@@ -457,8 +454,6 @@ export class UserEntityService implements OnModuleInit {
 				preventAiLearning: profile!.preventAiLearning,
 				isExplorable: user.isExplorable,
 				isDeleted: user.isDeleted,
-				subscriptionStatus: user.subscriptionStatus,
-				subscriptionPlanId: user.subscriptionPlanId,
 				twoFactorBackupCodesStock: profile?.twoFactorBackupSecret?.length === 20 ? 'full' : (profile?.twoFactorBackupSecret?.length ?? 0) > 0 ? 'partial' : 'none',
 				hideOnlineStatus: user.hideOnlineStatus,
 				hasUnreadSpecifiedNotes: this.noteUnreadsRepository.count({
@@ -469,7 +464,7 @@ export class UserEntityService implements OnModuleInit {
 					where: { userId: user.id, isMentioned: true },
 					take: 1,
 				}).then(count => count > 0),
-				hasUnreadAnnouncement: unreadAnnouncements!.length > 0,
+				hasUnreadAnnouncement: (unreadAnnouncements?.length ?? 0) > 0,
 				unreadAnnouncements,
 				hasUnreadAntenna: this.getHasUnreadAntenna(user.id),
 				hasUnreadChannel: false, // 後方互換性のため
@@ -501,7 +496,6 @@ export class UserEntityService implements OnModuleInit {
 						},
 					})
 					: [],
-				stripeCustomerId: profile!.stripeCustomerId,
 			} : {}),
 
 			...(relation ? {
@@ -516,21 +510,21 @@ export class UserEntityService implements OnModuleInit {
 				notify: relation.following?.notify ?? 'none',
 				withReplies: relation.following?.withReplies ?? false,
 			} : {}),
-		} as Promiseable<Packed<'User'>> as Promiseable<IsMeAndIsUserDetailed<ExpectsMe, D>>;
+		} as Promiseable<Packed<S>>;
 
 		return await awaitAll(packed);
 	}
 
-	public async packMany<D extends boolean = false>(
+	public async packMany<S extends 'MeDetailed' | 'UserDetailedNotMe' | 'UserDetailed' | 'UserLite' = 'UserLite'>(
 		users: (MiUser['id'] | MiUser)[],
 		me: { id: MiUser['id'] } | null | undefined,
 		options?: {
-			detail?: D,
+			schema?: S,
 			includeSecrets?: boolean,
 		},
-	): Promise<IsUserDetailed<D>[]> {
+	): Promise<Packed<S>[]> {
 		return (await Promise.allSettled(users.map(u => this.pack(u, me, options))))
 			.filter(result => result.status === 'fulfilled')
-			.map(result => (result as PromiseFulfilledResult<IsUserDetailed<D>>).value);
+			.map(result => (result as PromiseFulfilledResult<Packed<S>>).value);
 	}
 }
