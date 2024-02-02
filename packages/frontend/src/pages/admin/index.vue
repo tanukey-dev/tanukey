@@ -37,7 +37,7 @@ import * as os from '@/os.js';
 import { misskeyApi } from '@/scripts/misskey-api.js';
 import { lookupUser, lookupUserByEmail } from '@/scripts/lookup-user.js';
 import { PageMetadata, definePageMetadata, provideMetadataReceiver } from '@/scripts/page-metadata.js';
-import { useRouter } from '@/global/router/supplier.js';
+import { useRouter } from '@/router/supplier.js';
 
 const isEmpty = (x: string | null) => x == null || x === '';
 
@@ -111,6 +111,11 @@ const menuDef = computed(() => [{
 		text: i18n.ts.roles,
 		to: '/admin/roles',
 		active: currentPage.value?.route.name === 'roles',
+	}, {
+		icon: 'ti ti-credit-card',
+		text: i18n.ts.subscription,
+		to: '/admin/subscription-plans',
+		active: currentPage.value?.route.name === 'subscription-plans',
 	}, {
 		icon: 'ti ti-icons',
 		text: i18n.ts.customEmojis,

@@ -1,6 +1,6 @@
 /*
- * version: 2024.2.0-NJ-2.0.0-beta.2
- * generatedAt: 2024-01-26T16:36:03.065Z
+ * version: 2024.2.0-NJ-2.0.0-beta.4
+ * generatedAt: 2024-02-02T12:49:50.316Z
  */
 
 import type { SwitchCaseResponseType } from '../api.js';
@@ -852,6 +852,18 @@ declare module '../api.js' {
      * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
      */
     request<E extends 'admin/subscription-plans/create', P extends Endpoints[E]['req']>(
+      endpoint: E,
+      params: P,
+      credential?: string | null,
+    ): Promise<SwitchCaseResponseType<E, P>>;
+
+    /**
+     * No description provided.
+     * 
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+     */
+    request<E extends 'admin/subscription-plans/update', P extends Endpoints[E]['req']>(
       endpoint: E,
       params: P,
       credential?: string | null,
@@ -3528,6 +3540,17 @@ declare module '../api.js' {
      * **Credential required**: *No*
      */
     request<E extends 'subscription-plans/list', P extends Endpoints[E]['req']>(
+      endpoint: E,
+      params: P,
+      credential?: string | null,
+    ): Promise<SwitchCaseResponseType<E, P>>;
+
+    /**
+     * No description provided.
+     * 
+     * **Credential required**: *No*
+     */
+    request<E extends 'subscription-plans/show', P extends Endpoints[E]['req']>(
       endpoint: E,
       params: P,
       credential?: string | null,

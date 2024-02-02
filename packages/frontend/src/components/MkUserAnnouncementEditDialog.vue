@@ -10,7 +10,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		:height="600"
 		:withOkButton="false"
 		:okButtonDisabled="false"
-		@close="dialog.close()"
+		@close="dialog?.close()"
 		@closed="$emit('closed')"
 	>
 		<template v-if="announcement" #header>:{{ announcement.title }}:</template>
@@ -53,7 +53,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 						{{ i18n.ts._announcement.silence }}
 						<template #caption>{{ i18n.ts._announcement.silenceDescription }}</template>
 					</MkSwitch>
-					<p v-if="reads">{{ i18n.t('nUsersRead', { n: reads }) }}</p>
+					<p v-if="reads">{{ i18n.tsx.nUsersRead({ n: reads }) }}</p>
 					<MkUserCardMini v-if="props.user.id" :user="props.user"></MkUserCardMini>
 					<MkButton v-if="announcement" danger @click="del()"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
 				</div>
@@ -66,7 +66,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef } from "vue";
+import { ref, shallowRef } from 'vue';
 import * as Misskey from 'misskey-js';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import MkButton from '@/components/MkButton.vue';
@@ -81,7 +81,7 @@ import MkUserCardMini from '@/components/MkUserCardMini.vue';
 
 const props = defineProps<{
 	user: Misskey.entities.User,
-	announcement?: any,
+	announcement?: Misskey.entities.Announcement,
 }>();
 
 const dialog = ref<InstanceType<typeof MkModalWindow> | null>(null);
@@ -90,10 +90,10 @@ const text = ref<string>(props.announcement ? props.announcement.text : '');
 const icon = ref<string>(props.announcement ? props.announcement.icon : 'info');
 const display = ref<string>(props.announcement ? props.announcement.display : 'dialog');
 const needConfirmationToRead = ref(props.announcement ? props.announcement.needConfirmationToRead : false);
-const closeDuration = ref(props.announcement ? props.announcement.closeDuration : 0);
-const displayOrder = ref(props.announcement ? props.announcement.displayOrder : 0);
-const silence = ref(props.announcement ? props.announcement.silence : false);
-const reads = ref(props.announcement ? props.announcement.reads : 0);
+const closeDuration = ref<number>(props.announcement ? props.announcement.closeDuration : 0);
+const displayOrder = ref<number>(props.announcement ? props.announcement.displayOrder : 0);
+const silence = ref<boolean>(props.announcement ? props.announcement.silence : false);
+const reads = ref<number>(props.announcement ? props.announcement.reads : 0);
 
 const emit = defineEmits<{
 	(ev: 'done', v: { deleted?: boolean; updated?: any; created?: any }): void,
@@ -103,7 +103,7 @@ const emit = defineEmits<{
 const announceTitleEl = shallowRef<HTMLInputElement | null>(null);
 
 function insertEmoji(ev: MouseEvent): void {
-	os.openEmojiPicker((ev.currentTarget ?? ev.target) as HTMLElement, {}, announceTitleEl);
+	os.openEmojiPicker((ev.currentTarget ?? ev.target) as HTMLElement, {}, announceTitleEl.value);
 }
 
 async function done(): Promise<void> {
@@ -123,18 +123,18 @@ async function done(): Promise<void> {
 
 	if (props.announcement) {
 		await os.apiWithDialog('admin/announcements/update', {
-			id: props.announcement.id,
 			...params,
+			id: props.announcement.id,
 		});
 
 		emit('done', {
 			updated: {
-				id: props.announcement.id,
 				...params,
+				id: props.announcement.id,
 			},
 		});
 
-		dialog.value.close();
+		dialog.value?.close();
 	} else {
 		const created = await os.apiWithDialog('admin/announcements/create', params);
 
@@ -142,7 +142,7 @@ async function done(): Promise<void> {
 			created: created,
 		});
 
-		dialog.value.close();
+		dialog.value?.close();
 	}
 }
 
@@ -153,14 +153,16 @@ async function del(): Promise<void> {
 	});
 	if (canceled) return;
 
-	misskeyApi('admin/announcements/delete', {
-		id: props.announcement.id,
-	}).then(() => {
-		emit('done', {
-			deleted: true,
+	if (props.announcement) {
+		await misskeyApi('admin/announcements/delete', {
+			id: props.announcement.id,
 		});
-		dialog.value.close();
+	}
+
+	emit('done', {
+		deleted: true,
 	});
+	dialog.value?.close();
 }
 </script>
 

@@ -308,13 +308,13 @@ type AdminShowUsersResponse = operations['admin/show-users']['responses']['200']
 type AdminSubscriptionPlansArchiveRequest = operations['admin/subscription-plans/archive']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
-type AdminSubscriptionPlansArchiveResponse = operations['admin/subscription-plans/archive']['responses']['200']['content']['application/json'];
-
-// @public (undocumented)
 type AdminSubscriptionPlansCreateRequest = operations['admin/subscription-plans/create']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
 type AdminSubscriptionPlansCreateResponse = operations['admin/subscription-plans/create']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type AdminSubscriptionPlansUpdateRequest = operations['admin/subscription-plans/update']['requestBody']['content']['application/json'];
 
 // @public (undocumented)
 type AdminSuspendUserRequest = operations['admin/suspend-user']['requestBody']['content']['application/json'];
@@ -532,10 +532,10 @@ export type Channels = {
             mention: (payload: Note) => void;
             reply: (payload: Note) => void;
             renote: (payload: Note) => void;
-            follow: (payload: User) => void;
-            followed: (payload: User) => void;
-            unfollow: (payload: User) => void;
-            meUpdated: (payload: MeDetailed) => void;
+            follow: (payload: UserDetailedNotMe) => void;
+            followed: (payload: UserDetailed | UserLite) => void;
+            unfollow: (payload: UserDetailed) => void;
+            meUpdated: (payload: UserDetailed) => void;
             pageEvent: (payload: PageEvent) => void;
             urlUploadFinished: (payload: {
                 marker: string;
@@ -617,6 +617,7 @@ export type Channels = {
         params: {
             listId: string;
             withFiles?: boolean;
+            withRenotes?: boolean;
         };
         events: {
             note: (payload: Note) => void;
@@ -667,7 +668,7 @@ export type Channels = {
             fileUpdated: (payload: DriveFile) => void;
             folderCreated: (payload: DriveFolder) => void;
             folderDeleted: (payload: DriveFolder['id']) => void;
-            folderUpdated: (payload: DriveFile) => void;
+            folderUpdated: (payload: DriveFolder) => void;
         };
         receives: null;
     };
@@ -708,6 +709,46 @@ export type Channels = {
             };
         };
         receives: null;
+    };
+    reversiGame: {
+        params: {
+            gameId: string;
+        };
+        events: {
+            started: (payload: {
+                game: ReversiGameDetailed;
+            }) => void;
+            ended: (payload: {
+                winnerId: User['id'] | null;
+                game: ReversiGameDetailed;
+            }) => void;
+            canceled: (payload: {
+                userId: User['id'];
+            }) => void;
+            changeReadyStates: (payload: {
+                user1: boolean;
+                user2: boolean;
+            }) => void;
+            updateSettings: (payload: {
+                userId: User['id'];
+                key: string;
+                value: any;
+            }) => void;
+            log: (payload: Record<string, any>) => void;
+        };
+        receives: {
+            putStone: {
+                pos: number;
+                id: string;
+            };
+            ready: boolean;
+            cancel: null | Record<string, never>;
+            updateSettings: {
+                key: string;
+                value: any;
+            };
+            claimTimeIsUp: null | Record<string, never>;
+        };
     };
 };
 
@@ -1201,8 +1242,8 @@ declare namespace entities {
         AdminRolesUsersResponse,
         AdminSubscriptionPlansCreateRequest,
         AdminSubscriptionPlansCreateResponse,
+        AdminSubscriptionPlansUpdateRequest,
         AdminSubscriptionPlansArchiveRequest,
-        AdminSubscriptionPlansArchiveResponse,
         AnnouncementsRequest,
         AnnouncementsResponse,
         AntennasCreateRequest,
@@ -1566,6 +1607,8 @@ declare namespace entities {
         RolesNotesResponse,
         SubscriptionCreateRequest,
         SubscriptionPlansListResponse,
+        SubscriptionPlansShowRequest,
+        SubscriptionPlansShowResponse,
         RequestResetPasswordRequest,
         ResetPasswordRequest,
         ServerInfoResponse,
@@ -1681,6 +1724,7 @@ declare namespace entities {
         Hashtag,
         InviteCode,
         Page,
+        PageBlock,
         Channel,
         QueueCount,
         Antenna,
@@ -1694,6 +1738,7 @@ declare namespace entities {
         SubscriptionPlan,
         RoleLite,
         Role,
+        RolePolicies,
         ReversiGameLite,
         ReversiGameDetailed
     }
@@ -2214,7 +2259,7 @@ type ModerationLog = {
     id: ID;
     createdAt: DateString;
     userId: User['id'];
-    user: UserDetailed | null;
+    user: UserDetailedNotMe | null;
 } & ({
     type: 'updateServerSettings';
     info: ModerationLogPayloads['updateServerSettings'];
@@ -2533,6 +2578,9 @@ export const notificationTypes: readonly ["note", "follow", "mention", "reply", 
 type Page = components['schemas']['Page'];
 
 // @public (undocumented)
+type PageBlock = components['schemas']['PageBlock'];
+
+// @public (undocumented)
 type PageEvent = {
     pageId: Page['id'];
     event: string;
@@ -2681,6 +2729,9 @@ type Role = components['schemas']['Role'];
 type RoleLite = components['schemas']['RoleLite'];
 
 // @public (undocumented)
+type RolePolicies = components['schemas']['RolePolicies'];
+
+// @public (undocumented)
 type RolesListResponse = operations['roles/list']['responses']['200']['content']['application/json'];
 
 // @public (undocumented)
@@ -2818,6 +2869,12 @@ type SubscriptionPlan = components['schemas']['SubscriptionPlan'];
 
 // @public (undocumented)
 type SubscriptionPlansListResponse = operations['subscription-plans/list']['responses']['200']['content']['application/json'];
+
+// @public (undocumented)
+type SubscriptionPlansShowRequest = operations['subscription-plans/show']['requestBody']['content']['application/json'];
+
+// @public (undocumented)
+type SubscriptionPlansShowResponse = operations['subscription-plans/show']['responses']['200']['content']['application/json'];
 
 // Warning: (ae-forgotten-export) The symbol "SwitchCase" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "IsCaseMatched" needs to be exported by the entry point index.d.ts

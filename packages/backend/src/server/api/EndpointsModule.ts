@@ -83,6 +83,7 @@ import * as ep___admin_roles_unassign from './endpoints/admin/roles/unassign.js'
 import * as ep___admin_roles_updateDefaultPolicies from './endpoints/admin/roles/update-default-policies.js';
 import * as ep___admin_roles_users from './endpoints/admin/roles/users.js';
 import * as ep___admin_subscriptionPlans_create from './endpoints/admin/subscription-plans/create.js';
+import * as ep___admin_subscriptionPlans_update from './endpoints/admin/subscription-plans/update.js';
 import * as ep___admin_subscriptionPlans_archive from './endpoints/admin/subscription-plans/archive.js';
 import * as ep___announcements from './endpoints/announcements.js';
 import * as ep___antennas_create from './endpoints/antennas/create.js';
@@ -323,6 +324,7 @@ import * as ep___roles_notes from './endpoints/roles/notes.js';
 import * as ep___subscription_create from './endpoints/subscription/create.js';
 import * as ep___subscription_manage from './endpoints/subscription/manage.js';
 import * as ep___subscription_plans_list from './endpoints/subscription-plans/list.js';
+import * as ep___subscription_plans_show from './endpoints/subscription-plans/show.js';
 import * as ep___requestResetPassword from './endpoints/request-reset-password.js';
 import * as ep___resetDb from './endpoints/reset-db.js';
 import * as ep___resetPassword from './endpoints/reset-password.js';
@@ -458,6 +460,7 @@ const $admin_roles_unassign: Provider = { provide: 'ep:admin/roles/unassign', us
 const $admin_roles_updateDefaultPolicies: Provider = { provide: 'ep:admin/roles/update-default-policies', useClass: ep___admin_roles_updateDefaultPolicies.default };
 const $admin_roles_users: Provider = { provide: 'ep:admin/roles/users', useClass: ep___admin_roles_users.default };
 const $admin_subscriptionPlans_create: Provider = { provide: 'ep:admin/subscription-plans/create', useClass: ep___admin_subscriptionPlans_create.default };
+const $admin_subscriptionPlans_update: Provider = { provide: 'ep:admin/subscription-plans/update', useClass: ep___admin_subscriptionPlans_update.default };
 const $admin_subscriptionPlans_archive: Provider = { provide: 'ep:admin/subscription-plans/archive', useClass: ep___admin_subscriptionPlans_archive.default };
 const $announcements: Provider = { provide: 'ep:announcements', useClass: ep___announcements.default };
 const $antennas_create: Provider = { provide: 'ep:antennas/create', useClass: ep___antennas_create.default };
@@ -698,6 +701,7 @@ const $roles_notes: Provider = { provide: 'ep:roles/notes', useClass: ep___roles
 const $subscription_create: Provider = { provide: 'ep:subscription/create', useClass: ep___subscription_create.default };
 const $subscription_manage: Provider = { provide: 'ep:subscription/manage', useClass: ep___subscription_manage.default };
 const $subscription_plans_list: Provider = { provide: 'ep:subscription-plans/list', useClass: ep___subscription_plans_list.default };
+const $subscription_plans_show: Provider = { provide: 'ep:subscription-plans/show', useClass: ep___subscription_plans_show.default };
 const $requestResetPassword: Provider = { provide: 'ep:request-reset-password', useClass: ep___requestResetPassword.default };
 const $resetDb: Provider = { provide: 'ep:reset-db', useClass: ep___resetDb.default };
 const $resetPassword: Provider = { provide: 'ep:reset-password', useClass: ep___resetPassword.default };
@@ -837,6 +841,7 @@ const $reversi_verify: Provider = { provide: 'ep:reversi/verify', useClass: ep__
 		$admin_roles_updateDefaultPolicies,
 		$admin_roles_users,
 		$admin_subscriptionPlans_create,
+		$admin_subscriptionPlans_update,
 		$admin_subscriptionPlans_archive,
 		$announcements,
 		$antennas_create,
@@ -1077,6 +1082,7 @@ const $reversi_verify: Provider = { provide: 'ep:reversi/verify', useClass: ep__
 		$subscription_create,
 		$subscription_manage,
 		$subscription_plans_list,
+		$subscription_plans_show,
 		$requestResetPassword,
 		$resetDb,
 		$resetPassword,
@@ -1209,6 +1215,9 @@ const $reversi_verify: Provider = { provide: 'ep:reversi/verify', useClass: ep__
 		$admin_roles_unassign,
 		$admin_roles_updateDefaultPolicies,
 		$admin_roles_users,
+		$admin_subscriptionPlans_create,
+		$admin_subscriptionPlans_update,
+		$admin_subscriptionPlans_archive,
 		$announcements,
 		$antennas_create,
 		$antennas_delete,
@@ -1447,6 +1456,7 @@ const $reversi_verify: Provider = { provide: 'ep:reversi/verify', useClass: ep__
 		$subscription_create,
 		$subscription_manage,
 		$subscription_plans_list,
+		$subscription_plans_show,
 		$requestResetPassword,
 		$resetDb,
 		$resetPassword,

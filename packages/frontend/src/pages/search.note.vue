@@ -4,44 +4,44 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
+<div class="_gaps">
 	<div class="_gaps">
-		<div class="_gaps">
-			<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search" @enter="search">
-				<template #prefix><i class="ti ti-search"></i></template>
-			</MkInput>
-			<MkFolder>
-				<template #label>{{ i18n.ts.options }}</template>
+		<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search" @enter="search">
+			<template #prefix><i class="ti ti-search"></i></template>
+		</MkInput>
+		<MkFolder>
+			<template #label>{{ i18n.ts.options }}</template>
 
-				<div class="_gaps_m">
-					<MkSwitch v-model="isLocalOnly">{{ i18n.ts.localOnly }}</MkSwitch>
-					<MkInput v-model="searchHost" :large="true" :disabled="isLocalOnly" type="text">
-						<template #label>{{ i18n.ts.host }}</template>
-					</MkInput>
+			<div class="_gaps_m">
+				<MkSwitch v-model="isLocalOnly">{{ i18n.ts.localOnly }}</MkSwitch>
+				<MkInput v-model="searchHost" :large="true" :disabled="isLocalOnly" type="text">
+					<template #label>{{ i18n.ts.host }}</template>
+				</MkInput>
 
-					<MkFolder>
-						<template #label>{{ i18n.ts.specifyUser }}</template>
-						<template v-if="user" #suffix>@{{ user.username }}</template>
+				<MkFolder :defaultOpen="true">
+					<template #label>{{ i18n.ts.specifyUser }}</template>
+					<template v-if="user" #suffix>@{{ user.username }}</template>
 
-						<div style="text-align: center;" class="_gaps">
-							<div v-if="user">@{{ user.username }}</div>
-							<div>
-								<MkButton v-if="user == null" primary rounded inline @click="selectUser">{{ i18n.ts.selectUser }}</MkButton>
-								<MkButton v-else danger rounded inline @click="user = null">{{ i18n.ts.remove }}</MkButton>
-							</div>
+					<div style="text-align: center;" class="_gaps">
+						<div v-if="user">@{{ user.username }}</div>
+						<div>
+							<MkButton v-if="user == null" primary rounded inline @click="selectUser">{{ i18n.ts.selectUser }}</MkButton>
+							<MkButton v-else danger rounded inline @click="user = null">{{ i18n.ts.remove }}</MkButton>
 						</div>
-					</MkFolder>
-				</div>
-			</MkFolder>
-			<div>
-				<MkButton large primary gradate rounded style="margin: 0 auto;" @click="search">{{ i18n.ts.search }}</MkButton>
+					</div>
+				</MkFolder>
 			</div>
+		</MkFolder>
+		<div>
+			<MkButton large primary gradate rounded style="margin: 0 auto;" @click="search">{{ i18n.ts.search }}</MkButton>
 		</div>
-
-		<MkFoldableSection v-if="notePagination">
-			<template #header>{{ i18n.ts.searchResult }}</template>
-			<MkNotes :key="key" :pagination="notePagination"/>
-		</MkFoldableSection>
 	</div>
+
+	<MkFoldableSection v-if="notePagination">
+		<template #header>{{ i18n.ts.searchResult }}</template>
+		<MkNotes :key="key" :pagination="notePagination"/>
+	</MkFoldableSection>
+</div>
 </template>
 
 <script lang="ts" setup>
@@ -55,7 +55,7 @@ import * as os from '@/os.js';
 import { misskeyApi } from '@/scripts/misskey-api.js';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
 import MkFolder from '@/components/MkFolder.vue';
-import { useRouter } from '@/global/router/supplier.js';
+import { useRouter } from '@/router/supplier.js';
 
 const router = useRouter();
 
@@ -67,7 +67,7 @@ const user = ref<any>(null);
 const isLocalOnly = ref(false);
 
 function selectUser() {
-	os.selectUser().then(_user => {
+	os.selectUser({ includeSelf: true }).then(_user => {
 		user.value = _user;
 	});
 }

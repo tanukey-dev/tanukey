@@ -1,6 +1,6 @@
 /*
- * version: 2024.2.0-NJ-2.0.0-beta.2
- * generatedAt: 2024-01-26T16:36:03.056Z
+ * version: 2024.2.0-NJ-2.0.0-beta.4
+ * generatedAt: 2024-02-02T12:49:50.308Z
  */
 
 import { operations } from './types.js';
@@ -108,8 +108,8 @@ export type AdminRolesUsersRequest = operations['admin/roles/users']['requestBod
 export type AdminRolesUsersResponse = operations['admin/roles/users']['responses']['200']['content']['application/json'];
 export type AdminSubscriptionPlansCreateRequest = operations['admin/subscription-plans/create']['requestBody']['content']['application/json'];
 export type AdminSubscriptionPlansCreateResponse = operations['admin/subscription-plans/create']['responses']['200']['content']['application/json'];
+export type AdminSubscriptionPlansUpdateRequest = operations['admin/subscription-plans/update']['requestBody']['content']['application/json'];
 export type AdminSubscriptionPlansArchiveRequest = operations['admin/subscription-plans/archive']['requestBody']['content']['application/json'];
-export type AdminSubscriptionPlansArchiveResponse = operations['admin/subscription-plans/archive']['responses']['200']['content']['application/json'];
 export type AnnouncementsRequest = operations['announcements']['requestBody']['content']['application/json'];
 export type AnnouncementsResponse = operations['announcements']['responses']['200']['content']['application/json'];
 export type AntennasCreateRequest = operations['antennas/create']['requestBody']['content']['application/json'];
@@ -473,6 +473,8 @@ export type RolesNotesRequest = operations['roles/notes']['requestBody']['conten
 export type RolesNotesResponse = operations['roles/notes']['responses']['200']['content']['application/json'];
 export type SubscriptionCreateRequest = operations['subscription/create']['requestBody']['content']['application/json'];
 export type SubscriptionPlansListResponse = operations['subscription-plans/list']['responses']['200']['content']['application/json'];
+export type SubscriptionPlansShowRequest = operations['subscription-plans/show']['requestBody']['content']['application/json'];
+export type SubscriptionPlansShowResponse = operations['subscription-plans/show']['responses']['200']['content']['application/json'];
 export type RequestResetPasswordRequest = operations['request-reset-password']['requestBody']['content']['application/json'];
 export type ResetPasswordRequest = operations['reset-password']['requestBody']['content']['application/json'];
 export type ServerInfoResponse = operations['server-info']['responses']['200']['content']['application/json'];

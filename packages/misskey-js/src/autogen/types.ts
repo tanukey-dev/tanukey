@@ -2,8 +2,8 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
 /*
- * version: 2024.2.0-NJ-2.0.0-beta.2
- * generatedAt: 2024-01-26T16:36:02.910Z
+ * version: 2024.2.0-NJ-2.0.0-beta.4
+ * generatedAt: 2024-02-02T12:49:50.144Z
  */
 
 /**
@@ -711,6 +711,16 @@ export type paths = {
      * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
      */
     post: operations['admin/subscription-plans/create'];
+  };
+  '/admin/subscription-plans/update': {
+    /**
+     * admin/subscription-plans/update
+     * @description No description provided.
+     *
+     * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+     */
+    post: operations['admin/subscription-plans/update'];
   };
   '/admin/subscription-plans/archive': {
     /**
@@ -3048,6 +3058,15 @@ export type paths = {
      */
     post: operations['subscription-plans/list'];
   };
+  '/subscription-plans/show': {
+    /**
+     * subscription-plans/show
+     * @description No description provided.
+     *
+     * **Credential required**: *No*
+     */
+    post: operations['subscription-plans/show'];
+  };
   '/request-reset-password': {
     /**
      * request-reset-password
@@ -3785,32 +3804,7 @@ export type components = {
           unlockedAt: number;
         }[];
       loggedInDays: number;
-      policies: {
-        gtlAvailable: boolean;
-        ltlAvailable: boolean;
-        canPublicNote: boolean;
-        canInvite: boolean;
-        inviteLimit: number;
-        inviteLimitCycle: number;
-        inviteExpirationTime: number;
-        canManageCustomEmojis: boolean;
-        canManageAvatarDecorations: boolean;
-        canSearchNotes: boolean;
-        canUseTranslator: boolean;
-        canHideAds: boolean;
-        driveCapacityMb: number;
-        alwaysMarkNsfw: boolean;
-        pinLimit: number;
-        antennaLimit: number;
-        wordMuteLimit: number;
-        webhookLimit: number;
-        clipLimit: number;
-        noteEachClipsLimit: number;
-        userListLimit: number;
-        userEachUserListsLimit: number;
-        rateLimitFactor: number;
-        avatarDecorationLimit: number;
-      };
+      policies: components['schemas']['RolePolicies'];
       email?: string | null;
       emailVerified?: boolean | null;
       securityKeysList?: {
@@ -3828,7 +3822,7 @@ export type components = {
     UserDetailedNotMe: components['schemas']['UserLite'] & components['schemas']['UserDetailedNotMeOnly'];
     MeDetailed: components['schemas']['UserLite'] & components['schemas']['UserDetailedNotMeOnly'] & components['schemas']['MeDetailedOnly'];
     UserDetailed: components['schemas']['UserDetailedNotMe'] | components['schemas']['MeDetailed'];
-    User: components['schemas']['UserLite'] | components['schemas']['UserDetailed'] | components['schemas']['UserDetailedNotMe'] | components['schemas']['MeDetailed'];
+    User: components['schemas']['UserLite'] | components['schemas']['UserDetailed'];
     UserList: {
       /**
        * Format: id
@@ -3872,8 +3866,10 @@ export type components = {
       text: string;
       title: string;
       imageUrl: string | null;
-      icon: string;
-      display: string;
+      /** @enum {string} */
+      icon: 'info' | 'warning' | 'error' | 'success';
+      /** @enum {string} */
+      display: 'dialog' | 'normal' | 'banner';
       needConfirmationToRead: boolean;
       silence: boolean;
       forYou: boolean;
@@ -3915,13 +3911,26 @@ export type components = {
       reply?: components['schemas']['Note'] | null;
       renote?: components['schemas']['Note'] | null;
       isHidden?: boolean;
-      visibility: string;
+      /** @enum {string} */
+      visibility: 'public' | 'home' | 'followers' | 'specified';
       mentions?: string[];
       visibleUserIds?: string[];
       fileIds?: string[];
       files?: components['schemas']['DriveFile'][];
       tags?: string[];
-      poll?: Record<string, never> | null;
+      poll?: ({
+        /** Format: date-time */
+        expiresAt?: string | null;
+        multiple: boolean;
+        choices: {
+            isVoted: boolean;
+            text: string;
+            votes: number;
+          }[];
+      }) | null;
+      emojis?: {
+        [key: string]: string;
+      };
       /**
        * Format: id
        * @example xxxxxxxxxx
@@ -3937,14 +3946,19 @@ export type components = {
       }) | null;
       localOnly?: boolean;
       reactionAcceptance: string | null;
-      reactions: Record<string, never>;
+      reactionEmojis: {
+        [key: string]: string;
+      };
+      reactions: {
+        [key: string]: number;
+      };
       renoteCount: number;
       repliesCount: number;
       uri?: string;
       url?: string;
       reactionAndUserPairCache?: string[];
       clippedCount?: number;
-      myReaction?: Record<string, never> | null;
+      myReaction?: string | null;
     };
     NoteReaction: {
       /**
@@ -3975,21 +3989,162 @@ export type components = {
       /** Format: date-time */
       createdAt: string;
       /** @enum {string} */
-      type: 'note' | 'follow' | 'mention' | 'reply' | 'renote' | 'quote' | 'reaction' | 'pollEnded' | 'receiveFollowRequest' | 'followRequestAccepted' | 'roleAssigned' | 'achievementEarned' | 'app' | 'test' | 'reaction:grouped' | 'renote:grouped';
-      user?: components['schemas']['UserLite'] | null;
+      type: 'note';
+      user: components['schemas']['UserLite'];
       /** Format: id */
-      userId?: string | null;
-      note?: components['schemas']['Note'] | null;
-      reaction?: string | null;
-      achievement?: string;
-      body?: string | null;
-      header?: string | null;
-      icon?: string | null;
-      reactions?: {
+      userId: string;
+      note: components['schemas']['Note'];
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'mention';
+      user: components['schemas']['UserLite'];
+      /** Format: id */
+      userId: string;
+      note: components['schemas']['Note'];
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'reply';
+      user: components['schemas']['UserLite'];
+      /** Format: id */
+      userId: string;
+      note: components['schemas']['Note'];
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'renote';
+      user: components['schemas']['UserLite'];
+      /** Format: id */
+      userId: string;
+      note: components['schemas']['Note'];
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'quote';
+      user: components['schemas']['UserLite'];
+      /** Format: id */
+      userId: string;
+      note: components['schemas']['Note'];
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'reaction';
+      user: components['schemas']['UserLite'];
+      /** Format: id */
+      userId: string;
+      note: components['schemas']['Note'];
+      reaction: string;
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'pollEnded';
+      user: components['schemas']['UserLite'];
+      /** Format: id */
+      userId: string;
+      note: components['schemas']['Note'];
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'follow';
+      user: components['schemas']['UserLite'];
+      /** Format: id */
+      userId: string;
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'receiveFollowRequest';
+      user: components['schemas']['UserLite'];
+      /** Format: id */
+      userId: string;
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'followRequestAccepted';
+      user: components['schemas']['UserLite'];
+      /** Format: id */
+      userId: string;
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'roleAssigned';
+      role: components['schemas']['Role'];
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'achievementEarned';
+      achievement: string;
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'app';
+      body: string;
+      header: string;
+      icon: string;
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'reaction:grouped';
+      note: components['schemas']['Note'];
+      reactions: {
           user: components['schemas']['UserLite'];
           reaction: string;
-        }[] | null;
-      users?: components['schemas']['UserLite'][] | null;
+        }[];
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'renote:grouped';
+      note: components['schemas']['Note'];
+      users: components['schemas']['UserLite'][];
+    } | {
+      /** Format: id */
+      id: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string} */
+      type: 'test';
     };
     DriveFile: {
       /**
@@ -4070,8 +4225,8 @@ export type components = {
       followeeId: string;
       /** Format: id */
       followerId: string;
-      followee?: components['schemas']['UserDetailed'];
-      follower?: components['schemas']['UserDetailed'];
+      followee?: components['schemas']['UserDetailedNotMe'];
+      follower?: components['schemas']['UserDetailedNotMe'];
     };
     Muting: {
       /**
@@ -4085,7 +4240,7 @@ export type components = {
       expiresAt: string | null;
       /** Format: id */
       muteeId: string;
-      mutee: components['schemas']['UserDetailed'];
+      mutee: components['schemas']['UserDetailedNotMe'];
     };
     RenoteMuting: {
       /**
@@ -4097,7 +4252,7 @@ export type components = {
       createdAt: string;
       /** Format: id */
       muteeId: string;
-      mutee: components['schemas']['UserDetailed'];
+      mutee: components['schemas']['UserDetailedNotMe'];
     };
     Blocking: {
       /**
@@ -4109,7 +4264,7 @@ export type components = {
       createdAt: string;
       /** Format: id */
       blockeeId: string;
-      blockee: components['schemas']['UserDetailed'];
+      blockee: components['schemas']['UserDetailedNotMe'];
     };
     Hashtag: {
       /** @example misskey */
@@ -4152,7 +4307,7 @@ export type components = {
       /** Format: id */
       userId: string;
       user: components['schemas']['UserLite'];
-      content: Record<string, never>[];
+      content: components['schemas']['PageBlock'][];
       variables: Record<string, never>[];
       title: string;
       name: string;
@@ -4167,6 +4322,29 @@ export type components = {
       likedCount: number;
       isLiked?: boolean;
     };
+    PageBlock: OneOf<[{
+      id: string;
+      /** @enum {string} */
+      type: 'text';
+      text: string;
+    }, {
+      id: string;
+      /** @enum {string} */
+      type: 'section';
+      title: string;
+      children: components['schemas']['PageBlock'][];
+    }, {
+      id: string;
+      /** @enum {string} */
+      type: 'image';
+      fileId: string | null;
+    }, {
+      id: string;
+      /** @enum {string} */
+      type: 'note';
+      detailed: boolean;
+      note: string | null;
+    }]>;
     Channel: {
       /**
        * Format: id
@@ -4312,6 +4490,10 @@ export type components = {
     EmojiDetailed: {
       /** Format: id */
       id: string;
+      /** Format: date-time */
+      createdAt?: string;
+      /** Format: date-time */
+      updatedAt?: string | null;
       aliases: string[];
       name: string;
       category: string | null;
@@ -4321,6 +4503,8 @@ export type components = {
       license: string | null;
       isSensitive: boolean;
       localOnly: boolean;
+      requestedBy?: string | null;
+      memo?: string | null;
       roleIdsThatCanBeUsedThisEmojiAsReaction: string[];
     };
     Flash: {
@@ -4363,7 +4547,7 @@ export type components = {
       /** @example usd */
       currency: string;
       /** @example New Plan */
-      description?: string | null;
+      description: string | null;
       /** @example price_xxxxxxxxxx */
       stripePriceId: string;
       /**
@@ -4411,129 +4595,40 @@ export type components = {
       /** @example false */
       canEditMembersByModerator: boolean;
       policies: {
-        pinLimit: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        canInvite: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        clipLimit: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        canHideAds: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        inviteLimit: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        antennaLimit: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        gtlAvailable: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        ltlAvailable: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        webhookLimit: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        canPublicNote: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        userListLimit: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        wordMuteLimit: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        alwaysMarkNsfw: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        canSearchNotes: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        driveCapacityMb: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        rateLimitFactor: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        inviteLimitCycle: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        noteEachClipsLimit: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        inviteExpirationTime: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        canManageCustomEmojis: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        userEachUserListsLimit: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        canManageAvatarDecorations: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        canUseTranslator: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
-        };
-        avatarDecorationLimit: {
-          value: number | boolean;
-          priority: number;
-          useDefault: boolean;
+        [key: string]: {
+          value?: number | boolean;
+          priority?: number;
+          useDefault?: boolean;
         };
       };
       usersCount: number;
     });
+    RolePolicies: {
+      gtlAvailable: boolean;
+      ltlAvailable: boolean;
+      canPublicNote: boolean;
+      canInvite: boolean;
+      inviteLimit: number;
+      inviteLimitCycle: number;
+      inviteExpirationTime: number;
+      canManageCustomEmojis: boolean;
+      canManageAvatarDecorations: boolean;
+      canSearchNotes: boolean;
+      canUseTranslator: boolean;
+      canHideAds: boolean;
+      driveCapacityMb: number;
+      alwaysMarkNsfw: boolean;
+      pinLimit: number;
+      antennaLimit: number;
+      wordMuteLimit: number;
+      webhookLimit: number;
+      clipLimit: number;
+      noteEachClipsLimit: number;
+      userListLimit: number;
+      userEachUserListsLimit: number;
+      rateLimitFactor: number;
+      avatarDecorationLimit: number;
+    };
     ReversiGameLite: {
       /** Format: id */
       id: string;
@@ -4822,9 +4917,9 @@ export type operations = {
               targetUserId: string;
               /** Format: id */
               assigneeId: string | null;
-              reporter: components['schemas']['User'];
-              targetUser: components['schemas']['User'];
-              assignee?: components['schemas']['User'] | null;
+              reporter: components['schemas']['UserDetailedNotMe'];
+              targetUser: components['schemas']['UserDetailedNotMe'];
+              assignee?: components['schemas']['UserDetailedNotMe'] | null;
               category: string;
             })[];
         };
@@ -4880,7 +4975,7 @@ export type operations = {
       /** @description OK (with results) */
       200: {
         content: {
-          'application/json': components['schemas']['User'];
+          'application/json': components['schemas']['MeDetailed'];
         };
       };
       /** @description Client error */
@@ -4985,7 +5080,7 @@ export type operations = {
       /** @description OK (with results) */
       200: {
         content: {
-          'application/json': components['schemas']['User'];
+          'application/json': components['schemas']['UserDetailedNotMe'];
         };
       };
       /** @description Client error */
@@ -6280,6 +6375,8 @@ export type operations = {
           license?: string | null;
           isSensitive?: boolean;
           localOnly?: boolean;
+          requestedBy?: string | null;
+          memo?: string | null;
           roleIdsThatCanBeUsedThisEmojiAsReaction?: string[];
         };
       };
@@ -6908,6 +7005,8 @@ export type operations = {
           license?: string | null;
           isSensitive?: boolean;
           localOnly?: boolean;
+          requestedBy?: string | null;
+          memo?: string | null;
           roleIdsThatCanBeUsedThisEmojiAsReaction?: string[];
         };
       };
@@ -8155,7 +8254,7 @@ export type operations = {
               info: Record<string, never>;
               /** Format: id */
               userId: string;
-              user: components['schemas']['UserDetailed'];
+              user: components['schemas']['UserDetailedNotMe'];
             }[];
         };
       };
@@ -9259,6 +9358,65 @@ export type operations = {
     };
   };
   /**
+   * admin/subscription-plans/update
+   * @description No description provided.
+   *
+   * **Internal Endpoint**: This endpoint is an API for the misskey mainframe and is not intended for use by third parties.
+   * **Credential required**: *Yes* / **Permission**: *write:admin:subscription-plans*
+   */
+  'admin/subscription-plans/update': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          planId: string;
+          name?: string;
+          price?: number;
+          currency?: string;
+          description?: string;
+          /** Format: misskey:id */
+          roleId?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
    * admin/subscription-plans/archive
    * @description No description provided.
    *
@@ -9275,11 +9433,9 @@ export type operations = {
       };
     };
     responses: {
-      /** @description OK (with results) */
-      200: {
-        content: {
-          'application/json': unknown;
-        };
+      /** @description OK (without any results) */
+      204: {
+        content: never;
       };
       /** @description Client error */
       400: {
@@ -11235,14 +11391,18 @@ export type operations = {
       200: {
         content: {
           'application/json': {
-            'local.incCount': number[];
-            'local.incSize': number[];
-            'local.decCount': number[];
-            'local.decSize': number[];
-            'remote.incCount': number[];
-            'remote.incSize': number[];
-            'remote.decCount': number[];
-            'remote.decSize': number[];
+            local: {
+              incCount: number[];
+              incSize: number[];
+              decCount: number[];
+              decSize: number[];
+            };
+            remote: {
+              incCount: number[];
+              incSize: number[];
+              decCount: number[];
+              decSize: number[];
+            };
           };
         };
       };
@@ -11370,30 +11530,44 @@ export type operations = {
       200: {
         content: {
           'application/json': {
-            'requests.failed': number[];
-            'requests.succeeded': number[];
-            'requests.received': number[];
-            'notes.total': number[];
-            'notes.inc': number[];
-            'notes.dec': number[];
-            'notes.diffs.normal': number[];
-            'notes.diffs.reply': number[];
-            'notes.diffs.renote': number[];
-            'notes.diffs.withFile': number[];
-            'users.total': number[];
-            'users.inc': number[];
-            'users.dec': number[];
-            'following.total': number[];
-            'following.inc': number[];
-            'following.dec': number[];
-            'followers.total': number[];
-            'followers.inc': number[];
-            'followers.dec': number[];
-            'drive.totalFiles': number[];
-            'drive.incFiles': number[];
-            'drive.decFiles': number[];
-            'drive.incUsage': number[];
-            'drive.decUsage': number[];
+            requests: {
+              failed: number[];
+              succeeded: number[];
+              received: number[];
+            };
+            notes: {
+              total: number[];
+              inc: number[];
+              dec: number[];
+              diffs: {
+                normal: number[];
+                reply: number[];
+                renote: number[];
+                withFile: number[];
+              };
+            };
+            users: {
+              total: number[];
+              inc: number[];
+              dec: number[];
+            };
+            following: {
+              total: number[];
+              inc: number[];
+              dec: number[];
+            };
+            followers: {
+              total: number[];
+              inc: number[];
+              dec: number[];
+            };
+            drive: {
+              totalFiles: number[];
+              incFiles: number[];
+              decFiles: number[];
+              incUsage: number[];
+              decUsage: number[];
+            };
           };
         };
       };
@@ -11453,20 +11627,28 @@ export type operations = {
       200: {
         content: {
           'application/json': {
-            'local.total': number[];
-            'local.inc': number[];
-            'local.dec': number[];
-            'local.diffs.normal': number[];
-            'local.diffs.reply': number[];
-            'local.diffs.renote': number[];
-            'local.diffs.withFile': number[];
-            'remote.total': number[];
-            'remote.inc': number[];
-            'remote.dec': number[];
-            'remote.diffs.normal': number[];
-            'remote.diffs.reply': number[];
-            'remote.diffs.renote': number[];
-            'remote.diffs.withFile': number[];
+            local: {
+              total: number[];
+              inc: number[];
+              dec: number[];
+              diffs: {
+                normal: number[];
+                reply: number[];
+                renote: number[];
+                withFile: number[];
+              };
+            };
+            remote: {
+              total: number[];
+              inc: number[];
+              dec: number[];
+              diffs: {
+                normal: number[];
+                reply: number[];
+                renote: number[];
+                withFile: number[];
+              };
+            };
           };
         };
       };
@@ -11595,18 +11777,30 @@ export type operations = {
       200: {
         content: {
           'application/json': {
-            'local.followings.total': number[];
-            'local.followings.inc': number[];
-            'local.followings.dec': number[];
-            'local.followers.total': number[];
-            'local.followers.inc': number[];
-            'local.followers.dec': number[];
-            'remote.followings.total': number[];
-            'remote.followings.inc': number[];
-            'remote.followings.dec': number[];
-            'remote.followers.total': number[];
-            'remote.followers.inc': number[];
-            'remote.followers.dec': number[];
+            local: {
+              followings: {
+                total: number[];
+                inc: number[];
+                dec: number[];
+              };
+              followers: {
+                total: number[];
+                inc: number[];
+                dec: number[];
+              };
+            };
+            remote: {
+              followings: {
+                total: number[];
+                inc: number[];
+                dec: number[];
+              };
+              followers: {
+                total: number[];
+                inc: number[];
+                dec: number[];
+              };
+            };
           };
         };
       };
@@ -11671,10 +11865,12 @@ export type operations = {
             total: number[];
             inc: number[];
             dec: number[];
-            'diffs.normal': number[];
-            'diffs.reply': number[];
-            'diffs.renote': number[];
-            'diffs.withFile': number[];
+            diffs: {
+              normal: number[];
+              reply: number[];
+              renote: number[];
+              withFile: number[];
+            };
           };
         };
       };
@@ -11736,10 +11932,14 @@ export type operations = {
       200: {
         content: {
           'application/json': {
-            'upv.user': number[];
-            'pv.user': number[];
-            'upv.visitor': number[];
-            'pv.visitor': number[];
+            upv: {
+              user: number[];
+              visitor: number[];
+            };
+            pv: {
+              user: number[];
+              visitor: number[];
+            };
           };
         };
       };
@@ -11801,8 +12001,12 @@ export type operations = {
       200: {
         content: {
           'application/json': {
-            'local.count': number[];
-            'remote.count': number[];
+            local: {
+              count: number[];
+            };
+            remote: {
+              count: number[];
+            };
           };
         };
       };
@@ -11862,12 +12066,16 @@ export type operations = {
       200: {
         content: {
           'application/json': {
-            'local.total': number[];
-            'local.inc': number[];
-            'local.dec': number[];
-            'remote.total': number[];
-            'remote.inc': number[];
-            'remote.dec': number[];
+            local: {
+              total: number[];
+              inc: number[];
+              dec: number[];
+            };
+            remote: {
+              total: number[];
+              inc: number[];
+              dec: number[];
+            };
           };
         };
       };
@@ -18304,7 +18512,7 @@ export type operations = {
       /** @description OK (with results) */
       200: {
         content: {
-          'application/json': components['schemas']['UserDetailed'];
+          'application/json': components['schemas']['MeDetailed'];
         };
       };
       /** @description Client error */
@@ -19121,6 +19329,7 @@ export type operations = {
             privacyPolicyUrl: string | null;
             serverRules: string[];
             themeColor: string | null;
+            policies: components['schemas']['RolePolicies'];
           };
         };
       };
@@ -22964,7 +23173,7 @@ export type operations = {
           'application/json': {
               /** Format: misskey:id */
               id: string;
-              user: components['schemas']['User'];
+              user: components['schemas']['UserDetailed'];
             }[];
         };
       };
@@ -23176,6 +23385,60 @@ export type operations = {
       200: {
         content: {
           'application/json': components['schemas']['SubscriptionPlan'][];
+        };
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * subscription-plans/show
+   * @description No description provided.
+   *
+   * **Credential required**: *No*
+   */
+  'subscription-plans/show': {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          planId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (with results) */
+      200: {
+        content: {
+          'application/json': components['schemas']['SubscriptionPlan'];
         };
       };
       /** @description Client error */
@@ -24907,7 +25170,7 @@ export type operations = {
               createdAt: string;
               /** Format: misskey:id */
               userId: string;
-              user: components['schemas']['User'];
+              user: components['schemas']['UserLite'];
               withReplies: boolean;
             }[];
         };
@@ -25808,7 +26071,14 @@ export type operations = {
       /** @description OK (with results) */
       200: {
         content: {
-          'application/json': unknown;
+          'application/json': {
+              /** Format: date-time */
+              createdAt: string;
+              users: number;
+              data: {
+                [key: string]: number;
+              };
+            }[];
         };
       };
       /** @description Client error */

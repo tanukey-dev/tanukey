@@ -1,6 +1,6 @@
 /*
- * version: 2024.2.0-NJ-2.0.0-beta.2
- * generatedAt: 2024-01-26T16:36:03.054Z
+ * version: 2024.2.0-NJ-2.0.0-beta.4
+ * generatedAt: 2024-02-02T12:49:50.306Z
  */
 
 import { components } from './types.js';
@@ -29,6 +29,7 @@ export type Blocking = components['schemas']['Blocking'];
 export type Hashtag = components['schemas']['Hashtag'];
 export type InviteCode = components['schemas']['InviteCode'];
 export type Page = components['schemas']['Page'];
+export type PageBlock = components['schemas']['PageBlock'];
 export type Channel = components['schemas']['Channel'];
 export type QueueCount = components['schemas']['QueueCount'];
 export type Antenna = components['schemas']['Antenna'];
@@ -42,5 +43,6 @@ export type Signin = components['schemas']['Signin'];
 export type SubscriptionPlan = components['schemas']['SubscriptionPlan'];
 export type RoleLite = components['schemas']['RoleLite'];
 export type Role = components['schemas']['Role'];
+export type RolePolicies = components['schemas']['RolePolicies'];
 export type ReversiGameLite = components['schemas']['ReversiGameLite'];
 export type ReversiGameDetailed = components['schemas']['ReversiGameDetailed'];

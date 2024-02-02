@@ -1,8 +1,9 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { Endpoint } from "@/server/api/endpoint-base.js";
-import type { SubscriptionPlansRepository } from "@/models/_.js";
-import { DI } from "@/di-symbols.js";
-import { ApiError } from "@/server/api/error.js";
+import { Inject, Injectable } from '@nestjs/common';
+import { Endpoint } from '@/server/api/endpoint-base.js';
+import type { SubscriptionPlansRepository } from '@/models/_.js';
+import { DI } from '@/di-symbols.js';
+import { ApiError } from '@/server/api/error.js';
+import { ModerationLogService } from '@/core/ModerationLogService.js';
 
 export const meta = {
 	tags: ['admin', 'subscription-plans'],
@@ -11,8 +12,6 @@ export const meta = {
 	requireAdmin: true,
 	kind: 'write:admin:subscription-plans',
 	secure: true,
-
-	res: {},
 
 	errors: {
 		noSuchPlan: {
@@ -36,11 +35,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		@Inject(DI.subscriptionPlansRepository)
 		private subscriptionPlansRepository: SubscriptionPlansRepository,
+
+		private moderationLogService: ModerationLogService,
 	) {
-		super(meta, paramDef, async (ps) => {
+		super(meta, paramDef, async (ps, me) => {
 			const plan = await this.subscriptionPlansRepository.findOneByOrFail({
 				id: ps.planId,
-			})
+			});
 
 			if (!plan) {
 				throw new ApiError(meta.errors.noSuchPlan);
@@ -50,6 +51,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				id: ps.planId,
 			}, {
 				isArchived: true,
+			});
+
+			moderationLogService.log(me, 'archiveSubscriptionPlan', {
+				subscriptionPlanId: plan.id,
 			});
 		});
 	}
