@@ -46,9 +46,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 						{{ i18n.ts.setMultipleBySeparatingWithSpace }}
 					</template>
 				</MkInput>
-				<MkInput v-model="license" :mfmAutocomplete="true">
+				<MkTextarea v-model="license" :mfmAutocomplete="true">
 					<template #label>{{ i18n.ts.license }}</template>
-				</MkInput>
+				</MkTextarea>
 				<MkFolder>
 					<template #label>{{ i18n.ts.rolesThatCanBeUsedThisEmojiAsReaction }}</template>
 					<template #suffix>{{ rolesThatCanBeUsedThisEmojiAsReaction.length === 0 ? i18n.ts.all : rolesThatCanBeUsedThisEmojiAsReaction.length }}</template>
@@ -84,6 +84,7 @@ import * as Misskey from 'misskey-js';
 import MkWindow from '@/components/MkWindow.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
+import MkTextarea from '@/components/MkTextarea.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkFolder from '@/components/MkFolder.vue';
 import * as os from '@/os.js';
