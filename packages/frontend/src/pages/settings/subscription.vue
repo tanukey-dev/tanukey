@@ -24,9 +24,9 @@
 							<template #value>{{ plan.price + ' ' + plan.currency }}</template>
 						</MkKeyValue>
 						<div>
-							<MkButton v-if="currentPlan === null" primary @click="subscribe(plan)" :class="$style.button"><i class="ti ti-plus"></i>{{ i18n.ts._subscription.subscribe }}</MkButton>
-							<MkButton v-else-if="plan.id === currentPlan" @click="manage()" :class="$style.button"><i class="ti ti-settings"></i>{{ i18n.ts._subscription.manage }}</MkButton>
-							<MkButton v-else @click="change(plan)" :class="$style.button"><i class="ti ti-reload"></i>{{ i18n.ts._subscription.changePlan }}</MkButton>
+							<MkButton v-if="currentPlan === null && !plan.isArchived" primary :class="$style.button" @click="subscribe(plan)"><i class="ti ti-plus"></i>{{ i18n.ts._subscription.subscribe }}</MkButton>
+							<MkButton v-else-if="plan.id === currentPlan" :class="$style.button" @click="manage()"><i class="ti ti-settings"></i>{{ i18n.ts._subscription.manage }}</MkButton>
+							<MkButton v-else-if="!plan.isArchived" :class="$style.button" @click="change(plan)"><i class="ti ti-reload"></i>{{ i18n.ts._subscription.changePlan }}</MkButton>
 						</div>
 					</div>
 				</div>
