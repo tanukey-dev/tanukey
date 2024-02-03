@@ -3,7 +3,7 @@
 
 /*
  * version: 2024.2.0-NJ-2.0.0-beta.4
- * generatedAt: 2024-02-02T12:49:50.144Z
+ * generatedAt: 2024-02-03T14:52:42.836Z
  */
 
 /**
@@ -4824,6 +4824,7 @@ export type operations = {
             summalyProxy: string | null;
             themeColor: string | null;
             tosUrl: string | null;
+            commerceDisclosureUrl: string | null;
             uri: string;
             version: string;
           };
@@ -8634,6 +8635,7 @@ export type operations = {
           perUserHomeTimelineCacheMax?: number;
           perUserListTimelineCacheMax?: number;
           notesPerOneAd?: number;
+          commerceDisclosureUrl?: string | null;
           silencedHosts?: string[] | null;
         };
       };

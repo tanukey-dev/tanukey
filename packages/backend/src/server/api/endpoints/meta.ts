@@ -292,6 +292,10 @@ export const meta = {
 				type: 'string',
 				optional: false, nullable: true,
 			},
+			commerceDisclosureUrl: {
+				type: 'string',
+				optional: false, nullable: true,
+			},
 			serverRules: {
 				type: 'array',
 				optional: false, nullable: false,
@@ -364,6 +368,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				feedbackUrl: instance.feedbackUrl,
 				impressumUrl: instance.impressumUrl,
 				privacyPolicyUrl: instance.privacyPolicyUrl,
+				commerceDisclosureUrl: instance.commerceDisclosureUrl,
 				disableRegistration: instance.disableRegistration,
 				emailRequiredForSignup: instance.emailRequiredForSignup,
 				enableHcaptcha: instance.enableHcaptcha,

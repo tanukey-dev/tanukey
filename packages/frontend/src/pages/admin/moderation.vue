@@ -30,6 +30,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<template #label>{{ i18n.ts.privacyPolicyUrl }}</template>
 					</MkInput>
 
+					<MkInput v-model="commerceDisclosureUrl" type="url">
+						<template #prefix><i class="ti ti-link"></i></template>
+						<template #label>{{ i18n.ts.commerceDisclosureUrl }}</template>
+					</MkInput>
+
 					<MkTextarea v-model="preservedUsernames">
 						<template #label>{{ i18n.ts.preservedUsernames }}</template>
 						<template #caption>{{ i18n.ts.preservedUsernamesDescription }}</template>
@@ -80,6 +85,7 @@ const hiddenTags = ref<string>('');
 const preservedUsernames = ref<string>('');
 const tosUrl = ref<string | null>(null);
 const privacyPolicyUrl = ref<string | null>(null);
+const commerceDisclosureUrl = ref<string | null>(null);
 
 async function init() {
 	const meta = await misskeyApi('admin/meta');
@@ -90,6 +96,7 @@ async function init() {
 	preservedUsernames.value = meta.preservedUsernames.join('\n');
 	tosUrl.value = meta.tosUrl;
 	privacyPolicyUrl.value = meta.privacyPolicyUrl;
+	commerceDisclosureUrl.value = meta.commerceDisclosureUrl;
 }
 
 function save() {
@@ -98,6 +105,7 @@ function save() {
 		emailRequiredForSignup: emailRequiredForSignup.value,
 		tosUrl: tosUrl.value,
 		privacyPolicyUrl: privacyPolicyUrl.value,
+		commerceDisclosureUrl: commerceDisclosureUrl.value,
 		sensitiveWords: sensitiveWords.value.split('\n'),
 		hiddenTags: hiddenTags.value.split('\n'),
 		preservedUsernames: preservedUsernames.value.split('\n'),

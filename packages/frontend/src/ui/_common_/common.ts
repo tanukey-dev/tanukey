@@ -97,6 +97,12 @@ export function openInstanceMenu(ev: MouseEvent) {
 		action: () => {
 			window.open(instance.privacyPolicyUrl, '_blank', 'noopener');
 		},
+	} : undefined, (instance.commerceDisclosureUrl) ? {
+		text: i18n.ts.commerceDisclosure,
+		icon: 'ti ti-shopping-cart',
+		action: () => {
+			window.open(instance.commerceDisclosureUrl, '_blank', 'noopener');
+		},
 	} : undefined, (!instance.impressumUrl && !instance.tosUrl && !instance.privacyPolicyUrl) ? undefined : { type: 'divider' }, {
 		text: i18n.ts.help,
 		icon: 'ti ti-help-circle',
