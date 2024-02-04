@@ -2,7 +2,7 @@ import { setTimeout } from 'node:timers/promises';
 import { Global, Inject, Module } from '@nestjs/common';
 import * as Redis from 'ioredis';
 import { DataSource } from 'typeorm';
-import { MeiliSearch } from 'meilisearch';
+import { Client as ElasticSearch } from '@elastic/elasticsearch';
 import { DI } from './di-symbols.js';
 import { Config, loadConfig } from './config.js';
 import { createPostgresDataSource } from './postgres.js';
@@ -23,13 +23,17 @@ const $db: Provider = {
 	inject: [DI.config],
 };
 
-const $meilisearch: Provider = {
-	provide: DI.meilisearch,
+const $elasticsearch: Provider = {
+	provide: DI.elasticsearch,
 	useFactory: (config: Config) => {
-		if (config.meilisearch) {
-			return new MeiliSearch({
-				host: `${config.meilisearch.ssl ? 'https' : 'http' }://${config.meilisearch.host}:${config.meilisearch.port}`,
-				apiKey: config.meilisearch.apiKey,
+		if (config.elasticsearch) {
+			return new ElasticSearch({
+				nodes: `${config.elasticsearch.ssl ? 'https' : 'http'}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
+				auth: {
+					username: config.elasticsearch.user,
+					password: config.elasticsearch.pass,
+				},
+				//headers: {'Content-Type': 'application/json'},
 			});
 		} else {
 			return null;
@@ -89,8 +93,8 @@ const $redisForSub: Provider = {
 @Global()
 @Module({
 	imports: [RepositoryModule],
-	providers: [$config, $db, $meilisearch, $redis, $redisForPub, $redisForSub],
-	exports: [$config, $db, $meilisearch, $redis, $redisForPub, $redisForSub, RepositoryModule],
+	providers: [$config, $db, $elasticsearch, $redis, $redisForPub, $redisForSub],
+	exports: [$config, $db, $elasticsearch, $redis, $redisForPub, $redisForSub, RepositoryModule],
 })
 export class GlobalModule implements OnApplicationShutdown {
 	constructor(

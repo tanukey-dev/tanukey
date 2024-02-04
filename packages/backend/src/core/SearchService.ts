@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { In, Brackets } from 'typeorm';
+import { Client as ElasticSearch } from '@elastic/elasticsearch';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import { bindThis } from '@/decorators.js';
@@ -9,7 +10,6 @@ import type { NotesRepository } from '@/models/index.js';
 import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
 import { QueryService } from '@/core/QueryService.js';
 import { IdService } from '@/core/IdService.js';
-import type { Index, MeiliSearch } from 'meilisearch';
 
 type K = string;
 type V = string | number | boolean;
@@ -52,14 +52,14 @@ function compileQuery(q: Q): string {
 
 @Injectable()
 export class SearchService {
-	private meilisearchNoteIndex: Index | null = null;
+	private elasticsearchNoteIndex: string | null = null;
 
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
 
-		@Inject(DI.meilisearch)
-		private meilisearch: MeiliSearch | null,
+		@Inject(DI.elasticsearch)
+		private elasticsearch: ElasticSearch | null,
 
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
@@ -67,30 +67,44 @@ export class SearchService {
 		private queryService: QueryService,
 		private idService: IdService,
 	) {
-		if (meilisearch) {
-			this.meilisearchNoteIndex = meilisearch.index(`${config.meilisearch!.index}---notes`);
-			this.meilisearchNoteIndex.updateSettings({
-				searchableAttributes: [
-					'text',
-					'cw',
-				],
-				sortableAttributes: [
-					'createdAt',
-				],
-				filterableAttributes: [
-					'createdAt',
-					'userId',
-					'userHost',
-					'channelId',
-					'tags',
-				],
-				typoTolerance: {
-					enabled: false,
-				},
-				pagination: {
-					maxTotalHits: 10000,
-				},
+		if (this.elasticsearch) {
+			const indexName = `${config.elasticsearch!.index}---notes`;
+			this.elasticsearchNoteIndex = indexName;
+		
+			this.elasticsearch.indices.exists({
+				index: indexName,
+			}).then((indexExists: any) => {
+				if (!indexExists) {
+					this.elasticsearch?.indices.create({
+						index: indexName,
+						body: {
+							mappings: {
+								properties: {
+									text: { type: 'text' },
+									cw: { type: 'text' },
+									createdAt: { type: 'long' },
+									userId: { type: 'keyword' },
+									userHost: { type: 'keyword' },
+									channelId: { type: 'keyword' },
+									tags: { type: 'keyword' },
+								},
+							},
+							settings: {
+								//TODO: Make settings for optimization.
+							},
+						},
+					}).catch((error: any) => {
+						console.error(error);
+					});
+				} else {
+					console.log(`Index ${indexName} already exists`);
+				}
+			}).catch((error: any) => {
+				console.error(error);
 			});
+		} else {
+			console.error('Elasticsearch is not available');
+			this.elasticsearchNoteIndex = null;
 		}
 	}
 
@@ -99,18 +113,35 @@ export class SearchService {
 		if (note.text == null && note.cw == null) return;
 		if (!['home', 'public'].includes(note.visibility)) return;
 
-		if (this.meilisearch) {
-			this.meilisearchNoteIndex!.addDocuments([{
-				id: note.id,
-				createdAt: note.createdAt.getTime(),
+		if (this.elasticsearch) {
+			const body = {
+				createdAt: this.idService.parse(note.id).date.getTime(),
 				userId: note.userId,
 				userHost: note.userHost,
 				channelId: note.channelId,
 				cw: note.cw,
 				text: note.text,
 				tags: note.tags,
-			}], {
-				primaryKey: 'id',
+			};
+
+			console.log(body);
+			console.log(this.elasticsearchNoteIndex);
+
+			await this.elasticsearch.index({
+				index: this.elasticsearchNoteIndex as string,
+				id: note.id,
+				body: body,
+			});
+		}
+	}
+
+	public async unindexNote(note: Note): Promise<void> {
+		if (!['home', 'public'].includes(note.visibility)) return;
+
+		if (this.elasticsearch) {
+			(this.elasticsearch.delete)({
+				index: this.elasticsearchNoteIndex as string,
+				id: note.id,
 			});
 		}
 	}
@@ -127,33 +158,51 @@ export class SearchService {
 		sinceId?: Note['id'];
 		limit?: number;
 	}): Promise<Note[]> {
-		if (this.meilisearch) {
-			const filter: Q = {
-				op: 'and',
-				qs: [],
+		if (this.elasticsearch) {
+			const esFilter: any = {
+				bool: {
+					must: [],
+				},
 			};
-			if (pagination.untilId) filter.qs.push({ op: '<', k: 'createdAt', v: this.idService.parse(pagination.untilId).date.getTime() });
-			if (pagination.sinceId) filter.qs.push({ op: '>', k: 'createdAt', v: this.idService.parse(pagination.sinceId).date.getTime() });
-			if (opts.userId) filter.qs.push({ op: '=', k: 'userId', v: opts.userId });
-			if (opts.channelId) filter.qs.push({ op: '=', k: 'channelId', v: opts.channelId });
+			if (pagination.untilId) esFilter.bool.must.push({ range: { createdAt: { lt: this.idService.parse(pagination.untilId).date.getTime() } } });
+			if (pagination.sinceId) esFilter.bool.must.push({ range: { createdAt: { gt: this.idService.parse(pagination.sinceId).date.getTime() } } });
+			if (opts.userId) esFilter.bool.must.push({ term: { userId: opts.userId } });
+			if (opts.channelId) esFilter.bool.must.push({ term: { channelId: opts.channelId } });
 			if (opts.host) {
 				if (opts.host === '.') {
-					// TODO: Meilisearchが2023/05/07現在値がNULLかどうかのクエリが書けない
+					esFilter.bool.must.push({ bool: { must_not: [{ exists: { field: 'userHost' } }] } });
 				} else {
-					filter.qs.push({ op: '=', k: 'userHost', v: opts.host });
+					esFilter.bool.must.push({ term: { userHost: opts.host } });
 				}
 			}
-			const res = await this.meilisearchNoteIndex!.search(q, {
-				sort: ['createdAt:desc'],
-				matchingStrategy: 'all',
-				attributesToRetrieve: ['id', 'createdAt'],
-				filter: compileQuery(filter),
-				limit: pagination.limit,
+			const res = await (this.elasticsearch.search)({
+				index: this.elasticsearchNoteIndex as string,
+				body: {
+					query: {
+						bool: {
+							must: [
+								{ wildcard: { "text": { value: `*${q}*` }, } },
+								esFilter,
+							]
+						},
+					},
+				},
+				sort: [{ createdAt: { order: "desc" } }],
+				_source: ['id', 'createdAt'],
+				size: pagination.limit,
+				
 			});
-			if (res.hits.length === 0) return [];
-			const notes = await this.notesRepository.findBy({
-				id: In(res.hits.map(x => x.id)),
-			});
+			const noteIds = res.hits.hits.map((hit: any) => hit._id);
+			if (noteIds.length === 0) return [];
+			const notes = (await this.notesRepository.findBy({
+				id: In(noteIds),
+			}));
+			//TODO
+			//.filter(note => {
+			// 	if (me && isUserRelated(note, userIdsWhoBlockingMe)) return false;
+			// 	if (me && isUserRelated(note, userIdsWhoMeMuting)) return false;
+			// 	return true;
+			// });
 			return notes.sort((a, b) => a.id > b.id ? -1 : 1);
 		} else {
 			const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), pagination.sinceId, pagination.untilId);

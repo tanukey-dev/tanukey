@@ -96,12 +96,13 @@ redis:
 #  #db: 1
 
 #   ┌───────────────────────────┐
-#───┘ MeiliSearch configuration └─────────────────────────────
+#───┘ ElasticSearch configuration └─────────────────────────────
 
-#meilisearch:
+#elasticsearch:
 #  host: localhost
-#  port: 7700
-#  apiKey: ''
+#  port: 9200
+#  user: ''
+#  pass: ''
 #  ssl: true
 #  index: ''
 

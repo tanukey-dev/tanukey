@@ -57,10 +57,11 @@ export type Source = {
 		db?: number;
 		prefix?: string;
 	};
-	meilisearch?: {
+	elasticsearch?: {
 		host: string;
 		port: string;
-		apiKey: string;
+		user: string;
+		pass: string;
 		ssl?: boolean;
 		index: string;
 	};
