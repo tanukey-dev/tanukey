@@ -93,7 +93,9 @@ export class StripeWebhookServerService {
 						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
 
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
-						await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
+						if (subscription.status === 'active') {
+							await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
+						}
 						await this.usersRepository.update({ id: userProfile.userId }, {
 							subscriptionStatus: subscription.status,
 							subscriptionPlanId: subscriptionPlan.id,
@@ -181,11 +183,37 @@ export class StripeWebhookServerService {
 						break;
 					}
 
-					case 'invoice.paid':
-						// Continue to provision the subscription as payments continue to be made.
-						// Store the status in your database and check when a user accesses your service.
-						// This approach helps you avoid hitting rate limits.
-						break;
+					case 'invoice.paid': {
+						const subscription = event.data.object;
+
+						const customer = subscription.customer as string;
+						const userProfile = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer });
+
+						if (!userProfile) {
+							return reply.code(400);
+						}
+						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
+
+						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
+						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: user.subscriptionPlanId ?? undefined });
+
+						if (user.subscriptionStatus === 'active') {
+							return;
+						}
+
+						await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
+						await this.usersRepository.update({ id: userProfile.userId }, {
+							subscriptionStatus: 'active',
+						});
+
+						// Publish meUpdated event
+						this.globalEventService.publishMainStream(userProfile.userId, 'meUpdated', await this.userEntityService.pack(userProfile.userId, { id: userProfile.userId }, {
+							schema: 'MeDetailed',
+							includeSecrets: true,
+						}));
+
+						return;
+					}
 
 					case 'invoice.payment_failed':
 						// TODO 保留中の支払いを記録する処理を書く
