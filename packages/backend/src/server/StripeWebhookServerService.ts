@@ -195,7 +195,7 @@ export class StripeWebhookServerService {
 						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
 
 						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
-						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: user.subscriptionPlanId ?? undefined });
+						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ id: user.subscriptionPlanId ?? undefined });
 
 						if (user.subscriptionStatus === 'active') {
 							return;
