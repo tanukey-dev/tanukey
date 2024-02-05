@@ -2961,6 +2961,10 @@ export interface Locale extends ILocale {
      */
     "alwaysMarkSensitive": string;
     /**
+     * タイムライン上で画像全体を表示する
+     */
+    "displayEntireImageOnTimeline": string;
+    /**
      * 添付画像のサムネイルをオリジナル画質にする
      */
     "loadRawImages": string;
