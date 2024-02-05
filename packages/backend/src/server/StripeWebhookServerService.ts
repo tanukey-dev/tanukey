@@ -90,7 +90,7 @@ export class StripeWebhookServerService {
 						if (!userProfile) {
 							return reply.code(400);
 						}
-						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
+						reply.code(204); // 204を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで204を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
 
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
 						if (subscription.status === 'active') {
@@ -120,7 +120,7 @@ export class StripeWebhookServerService {
 						if (!userProfile) {
 							return reply.code(400);
 						}
-						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
+						reply.code(204); // 204を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで204を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
 
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
 						await this.roleService.unassign(userProfile.userId, subscriptionPlan.roleId);
@@ -148,7 +148,7 @@ export class StripeWebhookServerService {
 						if (!userProfile) {
 							return reply.code(400);
 						}
-						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
+						reply.code(204); // 204を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで204を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
 
 						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
@@ -200,7 +200,7 @@ export class StripeWebhookServerService {
 						if (!userProfile) {
 							return reply.code(400);
 						}
-						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
+						reply.code(204); // 204を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで204を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
 
 						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ id: user.subscriptionPlanId ?? undefined });
