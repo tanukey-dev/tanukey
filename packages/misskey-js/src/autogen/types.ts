@@ -2,8 +2,8 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
 /*
- * version: 2024.2.0-NJ-2.0.0-beta.4
- * generatedAt: 2024-02-03T14:52:42.836Z
+ * version: 2024.2.0-NJ-2.0.0-beta.5
+ * generatedAt: 2024-02-05T07:18:26.203Z
  */
 
 /**
@@ -19329,6 +19329,7 @@ export type operations = {
             impressumUrl: string | null;
             logoImageUrl: string | null;
             privacyPolicyUrl: string | null;
+            commerceDisclosureUrl: string | null;
             serverRules: string[];
             themeColor: string | null;
             policies: components['schemas']['RolePolicies'];
