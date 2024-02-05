@@ -94,8 +94,14 @@ export class StripeWebhookServerService {
 
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
 						if (subscription.status === 'active') {
-							await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
+							await this.roleService.getUserRoles(userProfile.userId).then(async (roles) => {
+								// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
+								if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
+									await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
+								}
+							});
 						}
+
 						await this.usersRepository.update({ id: userProfile.userId }, {
 							subscriptionStatus: subscription.status,
 							subscriptionPlanId: subscriptionPlan.id,
