@@ -586,4 +586,10 @@ export class MiMeta {
 		default: false,
 	})
 	public enableSubscriptions: boolean;
+
+	@Column('varchar', {
+		length: 1024,
+		nullable: true,
+	})
+	public commerceDisclosureUrl: string | null;
 }

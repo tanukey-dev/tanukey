@@ -2961,6 +2961,10 @@ export interface Locale extends ILocale {
      */
     "alwaysMarkSensitive": string;
     /**
+     * タイムライン上で画像全体を表示する
+     */
+    "displayEntireImageOnTimeline": string;
+    /**
      * 添付画像のサムネイルをオリジナル画質にする
      */
     "loadRawImages": string;
@@ -4720,6 +4724,14 @@ export interface Locale extends ILocale {
      * 利用規約・プライバシーポリシー
      */
     "tosAndPrivacyPolicy": string;
+    /**
+     * 特定商取引法に基づく表記
+     */
+    "commerceDisclosure": string;
+    /**
+     * 特定商取引法に基づく表記URL
+     */
+    "commerceDisclosureUrl": string;
     /**
      * アイコンデコレーション
      */
