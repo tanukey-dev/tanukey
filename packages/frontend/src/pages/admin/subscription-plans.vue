@@ -34,8 +34,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<MkInput v-model="subscriptionPlan.roleId">
 						<template #label>{{ i18n.ts.role }}</template>
 					</MkInput>
-					<div v-if="subscriptionPlan.isArchived === false" class="buttons _buttons">
-						<MkButton class="button" inline primary @click="save(subscriptionPlan)"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
+					<div class="buttons _buttons">
+						<MkButton v-if="subscriptionPlan.isArchived !== true" class="button" inline primary @click="save(subscriptionPlan)"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
 						<MkButton v-if="subscriptionPlan.id != null" class="button" inline danger @click="archive(subscriptionPlan)"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
 					</div>
 				</div>
