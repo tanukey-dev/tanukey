@@ -101,7 +101,7 @@ export class StripeWebhookServerService {
 
 						// Publish meUpdated event
 						this.globalEventService.publishMainStream(userProfile.userId, 'meUpdated', await this.userEntityService.pack(userProfile.userId, { id: userProfile.userId }, {
-							detail: true,
+							schema: 'MeDetailed',
 							includeSecrets: true,
 						}));
 
@@ -129,7 +129,7 @@ export class StripeWebhookServerService {
 
 						// Publish meUpdated event
 						this.globalEventService.publishMainStream(userProfile.userId, 'meUpdated', await this.userEntityService.pack(userProfile.userId, { id: userProfile.userId }, {
-							detail: true,
+							schema: 'MeDetailed',
 							includeSecrets: true,
 						}));
 
@@ -168,7 +168,7 @@ export class StripeWebhookServerService {
 
 						// Publish meUpdated event
 						this.globalEventService.publishMainStream(user.id, 'meUpdated', await this.userEntityService.pack(user.id, user, {
-							detail: true,
+							schema: 'MeDetailed',
 							includeSecrets: true,
 						}));
 
