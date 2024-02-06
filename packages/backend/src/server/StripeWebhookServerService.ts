@@ -107,6 +107,7 @@ export class StripeWebhookServerService {
 						await this.usersRepository.update({ id: userProfile.userId }, {
 							subscriptionStatus: subscription.status,
 							subscriptionPlanId: subscriptionPlan.id,
+							stripeSubscriptionId: subscription.id,
 						});
 
 						// Publish meUpdated event
@@ -122,6 +123,10 @@ export class StripeWebhookServerService {
 						const previousData = event.data.previous_attributes;
 						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
+
+						if (user.stripeSubscriptionId && user.stripeSubscriptionId !== subscription.id) { // 既存のサブスクリプションIDとイベントのサブスクリプションIDが一致しない場合は何もしない
+							return;
+						}
 
 						if (subscription.cancel_at_period_end) {
 							return; // キャンセルされた場合は期限切れのタイミングでcustomer.subscription.deletedイベントが発生するので、ここでは何もしない
@@ -162,6 +167,7 @@ export class StripeWebhookServerService {
 						await this.usersRepository.update({ id: user.id }, {
 							subscriptionStatus: subscription.status,
 							subscriptionPlanId: subscriptionPlan.id,
+							stripeSubscriptionId: user.stripeSubscriptionId ? undefined : subscription.id, // 既存のサブスクリプションIDがない場合のみ更新する
 						});
 
 						// Publish meUpdated event
@@ -175,6 +181,11 @@ export class StripeWebhookServerService {
 
 					case 'customer.subscription.deleted': { // Delete the subscription.
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
+						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
+
+						if (user.stripeSubscriptionId && user.stripeSubscriptionId !== subscription.id) { // 既存のサブスクリプションIDとイベントのサブスクリプションIDが一致しない場合は何もしない
+							return;
+						}
 
 						// サブスクリプションプランのロールが割り当てられている場合、ロールを解除する
 						await this.roleService.getUserRoles(userProfile.userId).then(async (roles) => {
@@ -186,6 +197,7 @@ export class StripeWebhookServerService {
 						await this.usersRepository.update({ id: userProfile.userId }, {
 							subscriptionStatus: subscription.status,
 							subscriptionPlanId: null,
+							stripeSubscriptionId: null,
 						});
 
 						// Publish meUpdated event

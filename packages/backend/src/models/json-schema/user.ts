@@ -470,6 +470,10 @@ export const packedMeDetailedOnlySchema = {
 			format: 'id',
 			nullable: true, optional: false,
 		},
+		stripeSubscriptionId: {
+			type: 'string',
+			nullable: true, optional: false,
+		},
 		twoFactorBackupCodesStock: {
 			type: 'string',
 			enum: ['full', 'partial', 'none'],
