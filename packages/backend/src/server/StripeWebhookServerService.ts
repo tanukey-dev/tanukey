@@ -126,7 +126,14 @@ export class StripeWebhookServerService {
 						if (subscription.cancel_at_period_end) {
 							return; // キャンセルされた場合は期限切れのタイミングでcustomer.subscription.deletedイベントが発生するので、ここでは何もしない
 						} else if (!user.subscriptionPlanId) { // サブスクリプションプランが新規に設定された場合
-							await this.roleService.assign(user.id, subscriptionPlan.roleId);
+							if (subscription.status === 'active') {
+								await this.roleService.getUserRoles(user.id).then(async (roles) => {
+									// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
+									if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
+										await this.roleService.assign(user.id, subscriptionPlan.roleId);
+									}
+								});
+							}
 						} else if (subscriptionPlan.id !== user.subscriptionPlanId) { // サブスクリプションプランが変更された場合
 							const oldSubscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ id: user.subscriptionPlanId ?? undefined });
 							await this.roleService.getUserRoles(user.id).then(async (roles) => {
