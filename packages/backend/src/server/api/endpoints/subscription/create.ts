@@ -115,8 +115,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					if (subscription.data.length === 0) {
 						throw new ApiError(meta.errors.accessDenied);
 					}
-					const oldSubscription = await subscriptionPlanRepository.findOneByOrFail({ id: user.subscriptionPlanId?? undefined });
-					const subscriptionItemId = subscription.data[0].items.data.filter(d => d.price.id === oldSubscription.stripePriceId)[0].id;
+					const oldSubscription = await subscriptionPlanRepository.findOneByOrFail({ id: user.subscriptionPlanId ?? undefined });
+					const subscriptionItemId = subscription.data
+						.filter(d => d.id === user.stripeSubscriptionId)[0].items.data
+						.filter(d => d.price.id === oldSubscription.stripePriceId)[0].id;
 					const updatedSubscription = await stripe.subscriptionItems.update(subscriptionItemId, { plan: plan.stripePriceId });
 
 					return; // fmm... I don't know how to return 204 No Content

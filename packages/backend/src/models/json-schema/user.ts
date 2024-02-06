@@ -628,6 +628,10 @@ export const packedMeDetailedOnlySchema = {
 			type: 'string',
 			nullable: true, optional: true,
 		},
+		stripeSubscriptionId: {
+			type: 'string',
+			nullable: true, optional: false,
+		},
 		//#endregion
 	},
 } as const;

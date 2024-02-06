@@ -2,8 +2,8 @@
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
 /*
- * version: 2024.2.0-NJ-2.0.0-beta.5
- * generatedAt: 2024-02-05T07:18:26.203Z
+ * version: 2024.2.0-NJ-2.0.1-beta.1
+ * generatedAt: 2024-02-06T16:22:16.255Z
  */
 
 /**
@@ -3746,6 +3746,7 @@ export type components = {
       subscriptionStatus: 'incomplete' | 'incomplete_expired' | 'trialing' | 'active' | 'past_due' | 'paused' | 'canceled' | 'unpaid' | 'none';
       /** Format: id */
       subscriptionPlanId: string | null;
+      stripeSubscriptionId: string | null;
       /** @enum {string} */
       twoFactorBackupCodesStock: 'full' | 'partial' | 'none';
       hideOnlineStatus: boolean;
