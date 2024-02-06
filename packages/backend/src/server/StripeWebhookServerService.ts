@@ -95,6 +95,12 @@ export class StripeWebhookServerService {
 				switch (event.type) {
 					case 'customer.subscription.created': { // サブスクリプションが新規に作成された場合
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
+						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
+
+						if (user.stripeSubscriptionId && user.stripeSubscriptionId !== subscription.id) { // 既存のサブスクリプションIDとイベントのサブスクリプションIDが一致しない場合は何もしない
+							return;
+						}
+
 						if (subscription.status === 'active') {
 							await this.roleService.getUserRoles(userProfile.userId).then(async (roles) => {
 								// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
@@ -107,7 +113,7 @@ export class StripeWebhookServerService {
 						await this.usersRepository.update({ id: userProfile.userId }, {
 							subscriptionStatus: subscription.status,
 							subscriptionPlanId: subscriptionPlan.id,
-							stripeSubscriptionId: subscription.id,
+							stripeSubscriptionId: user.stripeSubscriptionId,
 						});
 
 						// Publish meUpdated event
