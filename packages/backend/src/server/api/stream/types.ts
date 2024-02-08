@@ -47,10 +47,10 @@ export interface InternalStreamTypes {
 
 export interface BroadcastTypes {
 	emojiAdded: {
-		emoji: Packed<'EmojiDetailed'>;
+		emoji: Packed<'EmojiSimple'>;
 	};
 	emojiUpdated: {
-		emojis: Packed<'EmojiDetailed'>[];
+		emojis: Packed<'EmojiSimple'>[];
 	};
 	emojiDeleted: {
 		emojis: {

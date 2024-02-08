@@ -20,11 +20,6 @@ export const meta = {
 			type: 'object',
 			optional: false, nullable: false,
 			properties: {
-				id: {
-					type: 'string',
-					optional: false, nullable: false,
-					format: 'id',
-				},
 				aliases: {
 					type: 'array',
 					optional: false, nullable: false,
@@ -40,11 +35,6 @@ export const meta = {
 				category: {
 					type: 'string',
 					optional: false, nullable: true,
-				},
-				host: {
-					type: 'string',
-					optional: false, nullable: true,
-					description: 'The local host is represented with `null`. The field exists for compatibility with other API endpoints that return files.',
 				},
 				url: {
 					type: 'string',
@@ -113,7 +103,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				emojis = await q.take(ps.limit).getMany();
 			}
 
-			return this.emojiEntityService.packDetailedMany(emojis);
+			return this.emojiEntityService.packSimpleMany(emojis);
 		});
 	}
 }

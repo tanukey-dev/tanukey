@@ -56,23 +56,25 @@ const paginationDraft = {
 };
 
 const editDraft = (emoji) => {
-	os.popup(defineAsyncComponent(() => import('@/components/MkEmojiEditDialog.vue')), {
-		emoji: emoji,
-		isRequest: false,
-	}, {
-		done: result => {
-			if (result.updated) {
-				emojisDraftPaginationComponent.value.updateItem(result.updated.id, (oldEmoji: any) => ({
-					...oldEmoji,
-					...result.updated,
-				}));
-				emojisDraftPaginationComponent.value.reload();
-			} else if (result.deleted) {
-				emojisDraftPaginationComponent.value.removeItem((item) => item.id === emoji.id);
-				emojisDraftPaginationComponent.value.reload();
-			}
-		},
-	}, 'closed');
+	os.apiGet('emoji', { name: emoji.name }).then(res => {
+		os.popup(defineAsyncComponent(() => import('@/components/MkEmojiEditDialog.vue')), {
+			emoji: res,
+			isRequest: false,
+		}, {
+			done: result => {
+				if (result.updated) {
+					emojisDraftPaginationComponent.value.updateItem(result.updated.id, (oldEmoji: any) => ({
+						...oldEmoji,
+						...result.updated,
+					}));
+					emojisDraftPaginationComponent.value.reload();
+				} else if (result.deleted) {
+					emojisDraftPaginationComponent.value.removeItem((item) => item.id === emoji.id);
+					emojisDraftPaginationComponent.value.reload();
+				}
+			},
+		}, 'closed');
+	});
 };
 
 async function undrafted(emoji) {

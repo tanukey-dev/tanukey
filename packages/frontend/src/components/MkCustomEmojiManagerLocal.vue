@@ -80,22 +80,24 @@ const toggleSelect = (emoji) => {
 };
 
 const edit = (emoji) => {
-	os.popup(defineAsyncComponent(() => import('@/components/MkEmojiEditDialog.vue')), {
-		emoji: emoji,
-		isRequest: false,
-	}, {
-		done: result => {
-			if (result.updated) {
-				emojisPaginationComponent.value.updateItem(result.updated.id, (oldEmoji: any) => ({
-					...oldEmoji,
-					...result.updated,
-				}));
-				emojisPaginationComponent.value.reload();
-			} else if (result.deleted) {
-				emojisPaginationComponent.value.removeItem((item) => item.id === emoji.id);
-			}
-		},
-	}, 'closed');
+	os.apiGet('emoji', { name: emoji.name }).then(res => {
+		os.popup(defineAsyncComponent(() => import('@/components/MkEmojiEditDialog.vue')), {
+			emoji: res,
+			isRequest: false,
+		}, {
+			done: result => {
+				if (result.updated) {
+					emojisPaginationComponent.value.updateItem(result.updated.id, (oldEmoji: any) => ({
+						...oldEmoji,
+						...result.updated,
+					}));
+					emojisPaginationComponent.value.reload();
+				} else if (result.deleted) {
+					emojisPaginationComponent.value.removeItem((item) => item.id === emoji.id);
+				}
+			},
+		}, 'closed');
+	});
 };
 
 const setCategoryBulk = async () => {
