@@ -12,6 +12,10 @@
 
 -->
 
+## 13.14.2-tanu-1.45.2
+### General
+- driveFileIdがない場合はpublicUrlからファイルの特定をするように修正
+
 ## 13.14.2-tanu-1.45.1
 ### General
 - driveFileIdがない場合はoriginalUrlからファイルの特定をするように修正
