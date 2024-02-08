@@ -51,7 +51,7 @@ export class EmojiEntityService {
 		src: Emoji['id'] | Emoji,
 	): Promise<Packed<'EmojiDetailed'>> {
 		const emoji = typeof src === 'object' ? src : await this.emojisRepository.findOneByOrFail({ id: src });
-		const file = emoji.driveFileId ? await this.driveFilesRepository.findOneBy({ id: emoji.driveFileId }) : null;
+		const file = emoji.driveFileId ? await this.driveFilesRepository.findOneBy({ id: emoji.driveFileId }) : await this.driveFilesRepository.findOneBy({ url: emoji.originalUrl });
 		const user = file?.userId ? await this.usersRepository.findOneBy({ id: file.userId }) : null;
 
 		return {
