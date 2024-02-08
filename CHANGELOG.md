@@ -12,6 +12,10 @@
 
 -->
 
+## 13.14.2-tanu-1.45.3
+### General
+- driveFileIdがない場合のemojiからの検索をwebpublicUrlを利用するように修正
+
 ## 13.14.2-tanu-1.45.2
 ### General
 - driveFileIdがない場合はpublicUrlからファイルの特定をするように修正
