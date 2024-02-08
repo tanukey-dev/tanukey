@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
-import type { EmojisRepository } from '@/models/index.js';
+import type { EmojisRepository, DriveFilesRepository, UsersRepository } from '@/models/index.js';
 import type { Packed } from '@/misc/json-schema.js';
 import type { } from '@/models/entities/Blocking.js';
 import type { Emoji } from '@/models/entities/Emoji.js';
@@ -11,6 +11,12 @@ export class EmojiEntityService {
 	constructor(
 		@Inject(DI.emojisRepository)
 		private emojisRepository: EmojisRepository,
+
+		@Inject(DI.driveFilesRepository)
+		private driveFilesRepository: DriveFilesRepository,
+
+		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
 	) {
 	}
 
@@ -45,6 +51,8 @@ export class EmojiEntityService {
 		src: Emoji['id'] | Emoji,
 	): Promise<Packed<'EmojiDetailed'>> {
 		const emoji = typeof src === 'object' ? src : await this.emojisRepository.findOneByOrFail({ id: src });
+		const file = emoji.driveFileId ? await this.driveFilesRepository.findOneBy({ id: emoji.driveFileId }) : null;
+		const user = file?.userId ? await this.usersRepository.findOneBy({ id: file.userId }) : null;
 
 		return {
 			id: emoji.id,
@@ -60,6 +68,7 @@ export class EmojiEntityService {
 			isSensitive: emoji.isSensitive,
 			localOnly: emoji.localOnly,
 			roleIdsThatCanBeUsedThisEmojiAsReaction: emoji.roleIdsThatCanBeUsedThisEmojiAsReaction,
+			uploadedUserName: user?.username ?? null,
 		};
 	}
 

@@ -1,5 +1,6 @@
 import { PrimaryColumn, Entity, Index, Column } from 'typeorm';
 import { id } from '../id.js';
+import { DriveFile } from './DriveFile.js';
 
 @Entity()
 @Index(['name', 'host'], { unique: true })
@@ -28,6 +29,13 @@ export class Emoji {
 		length: 128, nullable: true,
 	})
 	public category: string | null;
+
+	@Index()
+	@Column({
+		...id(),
+		nullable: true,
+	})
+	public driveFileId: DriveFile['id'] | null;
 
 	@Column('varchar', {
 		length: 512,

@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { defineAsyncComponent } from 'vue';
 import * as os from '@/os';
 import copyToClipboard from '@/scripts/copy-to-clipboard';
 import { i18n } from '@/i18n';
@@ -47,9 +47,8 @@ function menu(ev) {
 		icon: 'ti ti-info-circle',
 		action: () => {
 			os.apiGet('emoji', { name: props.emoji.name }).then(res => {
-				os.alert({
-					type: 'info',
-					text: `License: ${res.license}`,
+				os.popup(defineAsyncComponent(() => import('@/components/MkEmojiInfoDialog.vue')), {
+					emoji: res,
 				});
 			});
 		},

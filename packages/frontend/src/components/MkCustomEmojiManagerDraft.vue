@@ -14,6 +14,7 @@
 						<div class="category">{{ i18n.ts.category }}:{{ emoji.category }}</div>
 						<div class="aliases">{{ i18n.ts.tags }}:{{ emoji.aliases.join(' ') }}</div>
 						<div class="license">{{ i18n.ts.license }}:{{ emoji.license }}</div>
+						<div class="user">{{ i18n.ts.username }}:<template v-if="emoji.uploadedUserName"><MkMention :username="emoji.uploadedUserName" :host="host" :external="true"/></template></div>
 					</div>
 					<div class="edit-button">
 						<button class="edit _button" @click="editDraft(emoji)">
@@ -35,7 +36,9 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref, shallowRef } from 'vue';
+import MkMention from './MkMention.vue';
 import MkPagination from '@/components/MkPagination.vue';
+import { host } from '@/config';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 
@@ -162,7 +165,7 @@ async function deleteDraft(emoji) {
 		> .info {
 			display: grid;
 			grid-row: 2;
-			grid-template-rows: 30px 30px 30px;
+			grid-template-rows: 30px 30px 30px 30px 30px;
 
 			> .name {
 				grid-row: 1;
@@ -184,6 +187,12 @@ async function deleteDraft(emoji) {
 
 			> .license {
 				grid-row: 4;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+
+			> .user {
+				grid-row: 5;
 				text-overflow: ellipsis;
 				overflow: hidden;
 			}

@@ -111,5 +111,9 @@ export const packedEmojiDetailedSchema = {
 				format: 'id',
 			},
 		},
+		uploadedUserName: {
+			type: 'string',
+			optional: false, nullable: true,
+		},
 	},
 } as const;

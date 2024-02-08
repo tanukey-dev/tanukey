@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<{
 	to: string;
 	activeClass?: null | string;
 	behavior?: null | 'window' | 'browser';
+	external?: boolean;
 }>(), {
 	activeClass: null,
 	behavior: null,
@@ -71,6 +72,11 @@ function openWindow() {
 }
 
 function nav(ev: MouseEvent) {
+	if (props.external) {
+		window.open(props.to, '_blank');
+		return;
+	}
+
 	if (props.behavior === 'browser') {
 		location.href = props.to;
 		return;

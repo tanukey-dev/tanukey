@@ -28,6 +28,7 @@
 					</div>
 				</div>
 				<MkButton rounded style="margin: 0 auto;" @click="changeImage">{{ i18n.ts.selectFile }}</MkButton>
+				<div>{{ i18n.ts.username }}:<template v-if="emoji.uploadedUserName"><MkMention :username="emoji.uploadedUserName" :host="host" :external="true"/></template></div>
 				<MkInput v-model="name" pattern="[a-z0-9_]">
 					<template #label>{{ i18n.ts.name }}</template>
 					<template #caption>{{ i18n.ts.emojiNameValidation }}</template>
@@ -81,11 +82,13 @@
 <script lang="ts" setup>
 import { computed, watch } from 'vue';
 import * as misskey from 'misskey-js';
+import MkMention from './MkMention.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkFolder from '@/components/MkFolder.vue';
+import { host } from '@/config';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { customEmojiCategories } from '@/custom-emojis';

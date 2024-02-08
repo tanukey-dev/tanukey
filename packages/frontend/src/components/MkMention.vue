@@ -1,5 +1,5 @@
 <template>
-<MkA v-user-preview="canonical" :class="[$style.root, { [$style.isMe]: isMe }]" :to="url" :style="{ background: bgCss }">
+<MkA v-user-preview="canonical" :class="[$style.root, { [$style.isMe]: isMe }]" :to="url" :style="{ background: bgCss }" :external="external">
 	<img :class="$style.icon" :src="`/avatar/@${username}@${host}`" alt="">
 	<span>
 		<span>@{{ username }}</span>
@@ -19,6 +19,7 @@ import { defaultStore } from '@/store';
 const props = defineProps<{
 	username: string;
 	host: string;
+	external?: boolean;
 }>();
 
 const canonical = props.host === localHost ? `@${props.username}` : `@${props.username}@${toUnicode(props.host)}`;
