@@ -1,12 +1,12 @@
 {
 	"name": "misskey",
-	"version": "2024.2.0-NJ-2.0.1-beta.2",
+	"version": "2024.2.0-NJ-2.0.1-beta.3",
 	"codename": "nasubi",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/TeamNijimiss/misskey.git"
 	},
-	"packageManager": "pnpm@8.12.1",
+	"packageManager": "pnpm@8.15.1",
 	"workspaces": [
 		"packages/frontend",
 		"packages/backend",
