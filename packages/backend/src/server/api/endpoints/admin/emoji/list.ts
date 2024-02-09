@@ -20,6 +20,11 @@ export const meta = {
 			type: 'object',
 			optional: false, nullable: false,
 			properties: {
+				id: {
+					type: 'string',
+					optional: false, nullable: false,
+					format: 'id',
+				},
 				aliases: {
 					type: 'array',
 					optional: false, nullable: false,
@@ -39,6 +44,11 @@ export const meta = {
 				url: {
 					type: 'string',
 					optional: false, nullable: false,
+				},
+				host: {
+					type: 'string',
+					optional: false, nullable: true,
+					description: 'The local host is represented with `null`. The field exists for compatibility with other API endpoints that return files.',
 				},
 			},
 		},

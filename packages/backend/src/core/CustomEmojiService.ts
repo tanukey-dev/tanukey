@@ -108,7 +108,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 
 	@bindThis
 	public async update(id: Emoji['id'], data: {
-		driveFile?: DriveFile;
+		driveFile: DriveFile | null;
 		name?: string;
 		category?: string | null;
 		aliases?: string[];
@@ -131,7 +131,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			draft: data.draft,
 			isSensitive: data.isSensitive,
 			localOnly: data.localOnly,
-			driveFileId: data.driveFile != null ? data.driveFile.id : null,
+			driveFileId: data.driveFile != null ? data.driveFile.id : undefined,
 			originalUrl: data.driveFile != null ? data.driveFile.url : undefined,
 			publicUrl: data.driveFile != null ? (data.driveFile.webpublicUrl ?? data.driveFile.url) : undefined,
 			type: data.driveFile != null ? (data.driveFile.webpublicType ?? data.driveFile.type) : undefined,

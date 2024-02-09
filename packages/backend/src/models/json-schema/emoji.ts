@@ -1,6 +1,11 @@
 export const packedEmojiSimpleSchema = {
 	type: 'object',
 	properties: {
+		id: {
+			type: 'string',
+			optional: false, nullable: false,
+			format: 'id',
+		},
 		aliases: {
 			type: 'array',
 			optional: false, nullable: false,
@@ -43,6 +48,11 @@ export const packedEmojiSimpleSchema = {
 				optional: false, nullable: false,
 				format: 'id',
 			},
+		},
+		host: {
+			type: 'string',
+			optional: false, nullable: true,
+			description: 'The local host is represented with `null`.',
 		},
 	},
 } as const;

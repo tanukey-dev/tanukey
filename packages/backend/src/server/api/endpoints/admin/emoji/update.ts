@@ -65,7 +65,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private customEmojiService: CustomEmojiService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			let driveFile;
+			let driveFile = null;
 
 			if (ps.fileId) {
 				driveFile = await this.driveFilesRepository.findOneBy({ id: ps.fileId });
@@ -73,7 +73,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 	
 			await this.customEmojiService.update(ps.id, {
-				driveFile,
+				driveFile: driveFile,
 				name: ps.name,
 				category: ps.category ?? null,
 				aliases: ps.aliases,

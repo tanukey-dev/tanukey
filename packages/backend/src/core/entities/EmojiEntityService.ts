@@ -27,6 +27,7 @@ export class EmojiEntityService {
 		const emoji = typeof src === 'object' ? src : await this.emojisRepository.findOneByOrFail({ id: src });
 
 		return {
+			id: emoji.id,
 			updatedAt: emoji.updatedAt ? emoji.updatedAt.toDateString() : null,
 			aliases: emoji.aliases,
 			name: emoji.name,
@@ -36,6 +37,7 @@ export class EmojiEntityService {
 			draft: emoji.draft,
 			isSensitive: emoji.isSensitive ? true : undefined,
 			roleIdsThatCanBeUsedThisEmojiAsReaction: emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length > 0 ? emoji.roleIdsThatCanBeUsedThisEmojiAsReaction : undefined,
+			host: emoji.host,
 		};
 	}
 
@@ -51,7 +53,7 @@ export class EmojiEntityService {
 		src: Emoji['id'] | Emoji,
 	): Promise<Packed<'EmojiDetailed'>> {
 		const emoji = typeof src === 'object' ? src : await this.emojisRepository.findOneByOrFail({ id: src });
-		const file = emoji.driveFileId ? await this.driveFilesRepository.findOneBy({ id: emoji.driveFileId }) : await this.driveFilesRepository.findOneBy({ webpublicUrl: emoji.publicUrl });
+		const file = emoji.driveFileId ? await this.driveFilesRepository.findOneBy({ id: emoji.driveFileId }) : null;
 		const user = file?.userId ? await this.usersRepository.findOneBy({ id: file.userId }) : null;
 
 		return {
