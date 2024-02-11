@@ -12,6 +12,10 @@
 
 -->
 
+## 13.14.2-tanu-1.46.1
+### General
+- 暫定のfullIndex apiの追加
+
 ## 13.14.2-tanu-1.46.0
 ### General
 - Meilisearch対応を廃止、OpenSearchに暫定対応
