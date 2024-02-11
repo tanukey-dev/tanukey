@@ -2,7 +2,9 @@ import { setTimeout } from 'node:timers/promises';
 import { Global, Inject, Module } from '@nestjs/common';
 import * as Redis from 'ioredis';
 import { DataSource } from 'typeorm';
-import { Client as ElasticSearch } from '@elastic/elasticsearch';
+import { defaultProvider } from '@aws-sdk/credential-provider-node';
+import { Client as OpenSearch } from '@opensearch-project/opensearch';
+import { AwsSigv4Signer } from '@opensearch-project/opensearch/aws';
 import { DI } from './di-symbols.js';
 import { Config, loadConfig } from './config.js';
 import { createPostgresDataSource } from './postgres.js';
@@ -23,17 +25,29 @@ const $db: Provider = {
 	inject: [DI.config],
 };
 
-const $elasticsearch: Provider = {
-	provide: DI.elasticsearch,
+const $opensearch: Provider = {
+	provide: DI.opensearch,
 	useFactory: (config: Config) => {
-		if (config.elasticsearch) {
-			return new ElasticSearch({
-				nodes: `${config.elasticsearch.ssl ? 'https' : 'http'}://${config.elasticsearch.host}:${config.elasticsearch.port}`,
-				auth: {
-					username: config.elasticsearch.user,
-					password: config.elasticsearch.pass,
-				},
-				//headers: {'Content-Type': 'application/json'},
+		if (config.opensearch) {
+			return new OpenSearch({
+				node: `${config.opensearch.ssl ? 'https' : 'http'}://${config.opensearch.host}:${config.opensearch.port}`,
+				// see: https://opensearch.org/docs/latest/clients/javascript/index
+				...AwsSigv4Signer({
+					region: `${config.opensearch.region}`,
+					service: 'es', // 'aoss' for OpenSearch Serverless
+					// Must return a Promise that resolve to an AWS.Credentials object.
+					// This function is used to acquire the credentials when the client start and
+					// when the credentials are expired.
+					// The Client will refresh the Credentials only when they are expired.
+					// With AWS SDK V2, Credentials.refreshPromise is used when available to refresh the credentials.
+
+					// Example with AWS SDK V3:
+					getCredentials: () => {
+						// Any other method to acquire a new Credentials object can be used.
+						const credentialsProvider = defaultProvider();
+						return credentialsProvider();
+					},
+				}),
 			});
 		} else {
 			return null;
@@ -93,8 +107,8 @@ const $redisForSub: Provider = {
 @Global()
 @Module({
 	imports: [RepositoryModule],
-	providers: [$config, $db, $elasticsearch, $redis, $redisForPub, $redisForSub],
-	exports: [$config, $db, $elasticsearch, $redis, $redisForPub, $redisForSub, RepositoryModule],
+	providers: [$config, $db, $opensearch, $redis, $redisForPub, $redisForSub],
+	exports: [$config, $db, $opensearch, $redis, $redisForPub, $redisForSub, RepositoryModule],
 })
 export class GlobalModule implements OnApplicationShutdown {
 	constructor(

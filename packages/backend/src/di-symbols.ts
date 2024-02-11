@@ -1,7 +1,7 @@
 export const DI = {
 	config: Symbol('config'),
 	db: Symbol('db'),
-	elasticsearch: Symbol('elasticsearch'),
+	opensearch: Symbol('opensearch'),
 	redis: Symbol('redis'),
 	redisForPub: Symbol('redisForPub'),
 	redisForSub: Symbol('redisForSub'),

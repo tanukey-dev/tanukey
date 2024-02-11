@@ -1,6 +1,7 @@
 import { IsNull, LessThanOrEqual, MoreThan, Brackets } from 'typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import JSON5 from 'json5';
+import { Client as OpenSearch } from '@opensearch-project/opensearch';
 import type { AdsRepository, UsersRepository } from '@/models/index.js';
 import { MAX_NOTE_TEXT_LENGTH } from '@/const.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
@@ -186,6 +187,10 @@ export const meta = {
 				type: 'boolean',
 				optional: false, nullable: false,
 			},
+			enableOpenSearch: {
+				type: 'boolean',
+				optional: false, nullable: false,
+			},
 			translatorAvailable: {
 				type: 'boolean',
 				optional: false, nullable: false,
@@ -267,6 +272,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
 
+		@Inject(DI.opensearch)
+		private opensearch: OpenSearch | null,
+
 		@Inject(DI.adsRepository)
 		private adsRepository: AdsRepository,
 
@@ -332,6 +340,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				})),
 				enableEmail: instance.enableEmail,
 				enableServiceWorker: instance.enableServiceWorker,
+				enableOpenSearch: opensearch != null,
 
 				translatorAvailable: instance.deeplAuthKey != null,
 

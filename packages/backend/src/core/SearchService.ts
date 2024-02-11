@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { In, Brackets } from 'typeorm';
-import { Client as ElasticSearch } from '@elastic/elasticsearch';
+import { Client as OpenSearch } from '@opensearch-project/opensearch';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import { bindThis } from '@/decorators.js';
@@ -52,14 +52,14 @@ function compileQuery(q: Q): string {
 
 @Injectable()
 export class SearchService {
-	private elasticsearchNoteIndex: string | null = null;
+	private opensearchNoteIndex: string | null = null;
 
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
 
-		@Inject(DI.elasticsearch)
-		private elasticsearch: ElasticSearch | null,
+		@Inject(DI.opensearch)
+		private opensearch: OpenSearch | null,
 
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
@@ -67,15 +67,15 @@ export class SearchService {
 		private queryService: QueryService,
 		private idService: IdService,
 	) {
-		if (this.elasticsearch) {
-			const indexName = `${config.elasticsearch!.index}---notes`;
-			this.elasticsearchNoteIndex = indexName;
+		if (this.opensearch) {
+			const indexName = `${config.opensearch!.index}---notes`;
+			this.opensearchNoteIndex = indexName;
 		
-			this.elasticsearch.indices.exists({
+			this.opensearch.indices.exists({
 				index: indexName,
 			}).then((indexExists: any) => {
 				if (!indexExists) {
-					this.elasticsearch?.indices.create({
+					this.opensearch?.indices.create({
 						index: indexName,
 						body: {
 							mappings: {
@@ -103,8 +103,8 @@ export class SearchService {
 				console.error(error);
 			});
 		} else {
-			console.error('Elasticsearch is not available');
-			this.elasticsearchNoteIndex = null;
+			console.error('OpenSearch is not available');
+			this.opensearchNoteIndex = null;
 		}
 	}
 
@@ -113,7 +113,7 @@ export class SearchService {
 		if (note.text == null && note.cw == null) return;
 		if (!['home', 'public'].includes(note.visibility)) return;
 
-		if (this.elasticsearch) {
+		if (this.opensearch) {
 			const body = {
 				createdAt: this.idService.parse(note.id).date.getTime(),
 				userId: note.userId,
@@ -125,10 +125,10 @@ export class SearchService {
 			};
 
 			console.log(body);
-			console.log(this.elasticsearchNoteIndex);
+			console.log(this.opensearchNoteIndex);
 
-			await this.elasticsearch.index({
-				index: this.elasticsearchNoteIndex as string,
+			await this.opensearch.index({
+				index: this.opensearchNoteIndex as string,
 				id: note.id,
 				body: body,
 			});
@@ -138,9 +138,9 @@ export class SearchService {
 	public async unindexNote(note: Note): Promise<void> {
 		if (!['home', 'public'].includes(note.visibility)) return;
 
-		if (this.elasticsearch) {
-			(this.elasticsearch.delete)({
-				index: this.elasticsearchNoteIndex as string,
+		if (this.opensearch) {
+			(this.opensearch.delete)({
+				index: this.opensearchNoteIndex as string,
 				id: note.id,
 			});
 		}
@@ -158,7 +158,7 @@ export class SearchService {
 		sinceId?: Note['id'];
 		limit?: number;
 	}): Promise<Note[]> {
-		if (this.elasticsearch) {
+		if (this.opensearch) {
 			const esFilter: any = {
 				bool: {
 					must: [],
@@ -175,42 +175,64 @@ export class SearchService {
 					esFilter.bool.must.push({ term: { userHost: opts.host } });
 				}
 			}
-			const res = await (this.elasticsearch.search)({
-				index: this.elasticsearchNoteIndex as string,
+			const res = await (this.opensearch.search)({
+				index: this.opensearchNoteIndex as string,
 				body: {
 					query: {
 						bool: {
 							must: [
-									{
+								{
 									bool: {
 										should: [
-											{ wildcard: { "text": { value: `*${q}*` }, } },
-											{ simple_query_string: { fields: ["text"], "query": q, default_operator: 'and', } },
+											{ wildcard: { 'text': { value: `*${q}*` }, } },
+											{ simple_query_string: { fields: ['text'], 'query': q, default_operator: 'and', } },
 										],
 										minimum_should_match: 1,
 									},
 								},
 								esFilter,
-							]
+							],
 						},
 					},
+					sort: [
+						{
+							createdAt: {
+								order: 'desc',
+							},
+						},
+					],
 				},
-				sort: [{ createdAt: { order: "desc" } }],
 				_source: ['id', 'createdAt'],
 				size: pagination.limit,
-				
 			});
-			const noteIds = res.hits.hits.map((hit: any) => hit._id);
+			const noteIds = res.body.hits.map((hit: any) => hit._id);
 			if (noteIds.length === 0) return [];
-			const notes = (await this.notesRepository.findBy({
-				id: In(noteIds),
-			}));
-			//TODO
-			//.filter(note => {
-			// 	if (me && isUserRelated(note, userIdsWhoBlockingMe)) return false;
-			// 	if (me && isUserRelated(note, userIdsWhoMeMuting)) return false;
-			// 	return true;
-			// });
+
+			const query = this.notesRepository.createQueryBuilder('note');
+			query.andWhereInIds(noteIds);
+
+			if (opts.checkChannelSearchable) {
+				query
+					.leftJoinAndSelect('note.channel', 'channel')
+					.andWhere(new Brackets(qb => {
+						qb.orWhere('channel.searchable IS NULL');
+						qb.orWhere('channel.searchable = true');
+					}));
+			}
+
+			query
+				.innerJoinAndSelect('note.user', 'user')
+				.leftJoinAndSelect('note.reply', 'reply')
+				.leftJoinAndSelect('note.renote', 'renote')
+				.leftJoinAndSelect('reply.user', 'replyUser')
+				.leftJoinAndSelect('renote.user', 'renoteUser');
+
+			this.queryService.generateVisibilityQuery(query, me);
+			if (me) this.queryService.generateMutedUserQuery(query, me);
+			if (me) this.queryService.generateBlockedUserQuery(query, me);
+
+			const notes = await query.take(pagination.limit).getMany();
+			
 			return notes.sort((a, b) => a.id > b.id ? -1 : 1);
 		} else {
 			const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), pagination.sinceId, pagination.untilId);

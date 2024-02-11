@@ -96,15 +96,14 @@ redis:
 #  #db: 1
 
 #   ┌───────────────────────────┐
-#───┘ ElasticSearch configuration └─────────────────────────────
+#───┘ OpenSearch configuration └─────────────────────────────
 
-#elasticsearch:
+#opensearch:
 #  host: localhost
 #  port: 9200
-#  user: ''
-#  pass: ''
 #  ssl: true
 #  index: ''
+#  region: ''
 
 #   ┌───────────────┐
 #───┘ ID generation └───────────────────────────────────────────

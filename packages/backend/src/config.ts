@@ -57,13 +57,14 @@ export type Source = {
 		db?: number;
 		prefix?: string;
 	};
-	elasticsearch?: {
+	opensearch?: {
 		host: string;
 		port: string;
 		user: string;
 		pass: string;
 		ssl?: boolean;
 		index: string;
+		region: string;
 	};
 
 	proxy?: string;

@@ -14,7 +14,7 @@
 
 ## 13.14.2-tanu-1.46.0
 ### General
-- Meilisearch対応を廃止、Elasticsearchに暫定対応
+- Meilisearch対応を廃止、OpenSearchに暫定対応
 
 ## 13.14.2-tanu-1.45.4
 ### General
