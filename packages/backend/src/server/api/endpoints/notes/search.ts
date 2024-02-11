@@ -41,10 +41,6 @@ export const paramDef = {
 		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
 		origin: { type: 'string', enum: ['local', 'remote', 'combined'], default: 'combined' },
 		offset: { type: 'integer', default: 0 },
-		host: {
-			type: 'string',
-			description: 'The local host is represented with `.`.',
-		},
 		userId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
 		channelId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
 		checkChannelSearchable: { type: 'boolean', nullable: true, default: true },
@@ -74,7 +70,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const notes = await this.searchService.searchNote(ps.query, me, {
 				userId: ps.userId,
 				channelId: ps.channelId,
-				host: ps.host,
 				origin: ps.origin,
 				checkChannelSearchable: ps.checkChannelSearchable ?? true,
 			}, {

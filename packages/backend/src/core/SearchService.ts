@@ -192,7 +192,6 @@ export class SearchService {
 	public async searchNote(q: string, me: User | null, opts: {
 		userId?: Note['userId'] | null;
 		channelId?: Note['channelId'] | null;
-		host?: string | null;
 		origin?: string;
 		checkChannelSearchable?: boolean;
 	}, pagination: {
@@ -210,13 +209,12 @@ export class SearchService {
 			if (pagination.sinceId) esFilter.bool.must.push({ range: { createdAt: { gt: this.idService.parse(pagination.sinceId).date.getTime() } } });
 			if (opts.userId) esFilter.bool.must.push({ term: { userId: opts.userId } });
 			if (opts.channelId) esFilter.bool.must.push({ term: { channelId: opts.channelId } });
-			if (opts.host) {
-				if (opts.host === '.') {
-					esFilter.bool.must.push({ bool: { must_not: [{ exists: { field: 'userHost' } }] } });
-				} else {
-					esFilter.bool.must.push({ term: { userHost: opts.host } });
-				}
+			if (opts.origin === 'local') {
+				esFilter.bool.must.push({ bool: { must_not: [{ exists: { field: 'userHost' } }] } });
+			} else if (opts.origin === 'remote') {
+				esFilter.bool.must.push({ bool: { must: [{ exists: { field: 'userHost' } }] } });
 			}
+
 			const res = await (this.opensearch.search)({
 				index: this.opensearchNoteIndex as string,
 				body: {
