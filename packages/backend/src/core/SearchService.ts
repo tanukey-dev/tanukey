@@ -233,7 +233,7 @@ export class SearchService {
 				_source: ['id', 'createdAt'],
 				size: pagination.limit,
 			});
-			const noteIds = res.body.hits.map((hit: any) => hit._id);
+			const noteIds = res.body.hits.hits.map((hit: any) => hit._id);
 			if (noteIds.length === 0) return [];
 
 			const query = this.notesRepository.createQueryBuilder('note');
