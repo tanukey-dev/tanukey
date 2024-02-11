@@ -6,7 +6,7 @@ import type { Config } from '@/config.js';
 import { bindThis } from '@/decorators.js';
 import { Note } from '@/models/entities/Note.js';
 import { User } from '@/models/index.js';
-import type { NotesRepository } from '@/models/index.js';
+import type { NotesRepository, UsersRepository } from '@/models/index.js';
 import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
 import { QueryService } from '@/core/QueryService.js';
 import { IdService } from '@/core/IdService.js';
@@ -161,6 +161,15 @@ export class SearchService {
 				body: body,
 			});
 		}
+	}
+
+	@bindThis
+	public async fullIndexNote(): Promise<void> {
+		const notes = await this.notesRepository.find();
+		notes.forEach(note => {
+			console.log(note);
+			this.indexNote(note);
+		});
 	}
 
 	public async unindexNote(note: Note): Promise<void> {

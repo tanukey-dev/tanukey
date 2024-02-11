@@ -60,8 +60,6 @@ export type Source = {
 	opensearch?: {
 		host: string;
 		port: string;
-		user: string;
-		pass: string;
 		ssl?: boolean;
 		index: string;
 		region: string;

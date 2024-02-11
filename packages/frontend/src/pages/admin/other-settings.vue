@@ -11,6 +11,8 @@
 				<MkSwitch v-model="enableChartsForFederatedInstances">
 					<template #label>{{ i18n.ts.enableChartsForFederatedInstances }}</template>
 				</MkSwitch>
+
+				<MkButton class="button" inline danger @click="fullIndex()"> Create Full Index </MkButton>
 			</div>
 		</FormSuspense>
 	</MkSpacer>
@@ -26,6 +28,7 @@ import { fetchInstance } from '@/instance';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import MkSwitch from '@/components/MkSwitch.vue';
+import MkButton from '@/components/MkButton.vue';
 
 let enableChartsForRemoteUser: boolean = $ref(false);
 let enableChartsForFederatedInstances: boolean = $ref(false);
@@ -43,6 +46,10 @@ function save() {
 	}).then(() => {
 		fetchInstance();
 	});
+}
+
+function fullIndex() {
+	os.apiWithDialog('admin/full-index');
 }
 
 const headerActions = $computed(() => [{
