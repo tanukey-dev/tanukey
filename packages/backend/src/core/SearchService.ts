@@ -152,9 +152,6 @@ export class SearchService {
 				text: note.text,
 			};
 
-			console.log(body);
-			console.log(this.opensearchNoteIndex);
-
 			await this.opensearch.index({
 				index: this.opensearchNoteIndex as string,
 				id: note.id,
@@ -167,7 +164,6 @@ export class SearchService {
 	public async fullIndexNote(): Promise<void> {
 		const notes = await this.notesRepository.find();
 		notes.forEach(note => {
-			console.log(note);
 			this.indexNote(note);
 		});
 	}
