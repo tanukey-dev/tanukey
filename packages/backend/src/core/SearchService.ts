@@ -86,7 +86,6 @@ export class SearchService {
 									userId: { type: 'keyword' },
 									userHost: { type: 'keyword' },
 									channelId: { type: 'keyword' },
-									tags: { type: 'keyword' },
 								},
 							},
 							// see: https://aws.amazon.com/jp/blogs/psa/amazon-opensearch-service-sudachi-plugin/
@@ -151,7 +150,6 @@ export class SearchService {
 				channelId: note.channelId,
 				cw: note.cw,
 				text: note.text,
-				tags: note.tags,
 			};
 
 			console.log(body);
