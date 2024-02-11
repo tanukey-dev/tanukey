@@ -89,8 +89,38 @@ export class SearchService {
 									tags: { type: 'keyword' },
 								},
 							},
+							// see: https://aws.amazon.com/jp/blogs/psa/amazon-opensearch-service-sudachi-plugin/
 							settings: {
-								//TODO: Make settings for optimization.
+								index: {
+									analysis: {
+										tokenizer: {
+											sudachi_c_tokenizer: {
+												type: 'sudachi_tokenizer',
+												additional_settings: '{\'systemDict\':\'system_core.dic\'}',
+												split_mode: 'C',
+												discard_punctuation: true,
+											},
+											sudachi_a_tokenizer: {
+												type: 'sudachi_tokenizer',
+												additional_settings: '{\'systemDict\':\'system_core.dic\'}',
+												split_mode: 'A',
+												discard_punctuation: true,
+											},
+										},
+										analyzer: {
+											c_analyzer: {
+												filter: [],
+												tokenizer: 'sudachi_c_tokenizer',
+												type: 'custom',
+											},
+											a_normalizedform_analyzer: {
+												filter: ['sudachi_normalizedform'],
+												tokenizer: 'sudachi_a_tokenizer',
+												type: 'custom',
+											},
+										},
+									},
+								},
 							},
 						},
 					}).catch((error: any) => {
