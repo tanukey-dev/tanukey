@@ -162,10 +162,19 @@ export class SearchService {
 
 	@bindThis
 	public async fullIndexNote(): Promise<void> {
-		const notes = await this.notesRepository.find();
-		notes.forEach(note => {
-			this.indexNote(note);
-		});
+		const notesCount = await this.notesRepository.count();
+		console.log(notesCount);
+		const take = 100;
+		for (let index = 0; index < notesCount; index = index + take) {
+			const notes = await this.notesRepository
+				.createQueryBuilder('note')
+				.skip(index)
+				.take(take)
+				.getMany();
+			notes.forEach(note => {
+				this.indexNote(note);
+			});
+		}
 	}
 
 	public async unindexNote(note: Note): Promise<void> {
