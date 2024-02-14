@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { In, Brackets } from 'typeorm';
+import { In, Brackets, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { Client as OpenSearch } from '@opensearch-project/opensearch';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
@@ -10,6 +10,7 @@ import type { NotesRepository, UsersRepository } from '@/models/index.js';
 import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
 import { QueryService } from '@/core/QueryService.js';
 import { IdService } from '@/core/IdService.js';
+import { openStdin } from 'node:process';
 
 type K = string;
 type V = string | number | boolean;
@@ -194,6 +195,10 @@ export class SearchService {
 		channelId?: Note['channelId'] | null;
 		origin?: string;
 		checkChannelSearchable?: boolean;
+		createAtBegin?: number;
+		createAtEnd?: number;
+		reverseOrder?: boolean;
+		hasFile?: boolean;
 	}, pagination: {
 		untilId?: Note['id'];
 		sinceId?: Note['id'];
@@ -213,6 +218,13 @@ export class SearchService {
 				esFilter.bool.must.push({ bool: { must_not: [{ exists: { field: 'userHost' } }] } });
 			} else if (opts.origin === 'remote') {
 				esFilter.bool.must.push({ bool: { must: [{ exists: { field: 'userHost' } }] } });
+			}
+			if (opts.createAtBegin && opts.createAtEnd) {
+				esFilter.bool.must.push({ range: { createdAt: { gte: opts.createAtBegin, lte: opts.createAtEnd } } });
+			} else if (opts.createAtBegin) {
+				esFilter.bool.must.push({ range: { createdAt: { gte: opts.createAtBegin } } });
+			} else if (opts.createAtEnd) {
+				esFilter.bool.must.push({ range: { createdAt: { lte: opts.createAtEnd } } });
 			}
 
 			const res = await (this.opensearch.search)({
@@ -237,7 +249,7 @@ export class SearchService {
 					sort: [
 						{
 							createdAt: {
-								order: 'desc',
+								order: opts.reverseOrder !== undefined && !opts.reverseOrder ? 'desc' : 'asc',
 							},
 						},
 					],
@@ -260,6 +272,10 @@ export class SearchService {
 					}));
 			}
 
+			if (opts.hasFile) {
+				query.andWhere('note.fileIds != \'{}\'');
+			}
+
 			query
 				.innerJoinAndSelect('note.user', 'user')
 				.leftJoinAndSelect('note.reply', 'reply')
@@ -271,9 +287,9 @@ export class SearchService {
 			if (me) this.queryService.generateMutedUserQuery(query, me);
 			if (me) this.queryService.generateBlockedUserQuery(query, me);
 
-			const notes = await query.take(pagination.limit).getMany();
-			
-			return notes.sort((a, b) => a.id > b.id ? -1 : 1);
+			query.orderBy('note.createdAt', opts.reverseOrder !== undefined && !opts.reverseOrder ? 'DESC' : 'ASC');
+
+			return await query.take(pagination.limit).getMany();
 		} else {
 			const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), pagination.sinceId, pagination.untilId);
 
@@ -298,6 +314,13 @@ export class SearchService {
 					}));
 			}
 
+			if (opts.createAtBegin) query.andWhere('note.createdAt', MoreThanOrEqual(opts.createAtBegin));
+			if (opts.createAtEnd) query.andWhere('note.createdAt', LessThanOrEqual(opts.createAtEnd));
+
+			if (opts.hasFile) {
+				query.andWhere('note.fileIds != \'{}\'');
+			}
+
 			query
 				.andWhere('note.text ILIKE :q', { q: `%${ sqlLikeEscape(q) }%` })
 				.innerJoinAndSelect('note.user', 'user')
@@ -309,6 +332,8 @@ export class SearchService {
 			this.queryService.generateVisibilityQuery(query, me);
 			if (me) this.queryService.generateMutedUserQuery(query, me);
 			if (me) this.queryService.generateBlockedUserQuery(query, me);
+
+			query.orderBy('note.createdAt', opts.reverseOrder !== undefined && !opts.reverseOrder ? 'DESC' : 'ASC');
 
 			return await query.take(pagination.limit).getMany();
 		}

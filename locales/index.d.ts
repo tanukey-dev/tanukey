@@ -8,6 +8,9 @@ export interface Locale {
     "poweredByTanukeyDescription": string;
     "monthAndDay": string;
     "search": string;
+    "olderOrder": string;
+    "startDate": string;
+    "endDate": string;
     "notifications": string;
     "username": string;
     "password": string;

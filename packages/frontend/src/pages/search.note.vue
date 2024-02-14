@@ -7,7 +7,7 @@
 		<MkFolder>
 			<template #label>{{ i18n.ts.options }}</template>
 
-			<MkFolder>
+			<MkFolder :class="$style.formContent">
 				<template #label>{{ i18n.ts.specifyUser }}</template>
 				<template v-if="user" #suffix>@{{ user.username }}</template>
 
@@ -19,11 +19,28 @@
 					</div>
 				</div>
 			</MkFolder>
+
+			<FormSplit :class="$style.formContent">
+				<MkInput v-model="createAtBegin" type="datetime-local">
+					<template #label>{{ i18n.ts.startDate }}</template>
+				</MkInput>
+				<MkInput v-model="createAtEnd" type="datetime-local">
+					<template #label>{{ i18n.ts.endDate }}</template>
+				</MkInput>
+			</FormSplit>
+
+			<MkSwitch v-model="reverseOrder" :class="$style.formContent">
+				{{ i18n.ts.olderOrder }}
+			</MkSwitch>
+
+			<MkSwitch v-model="hasFile" :class="$style.formContent">
+				{{ i18n.ts.withFileAntenna }}
+			</MkSwitch>
 		</MkFolder>
-		<MkRadios v-model="searchOrigin" @update:modelValue="search()">
-			<option value="combined">{{ i18n.ts.all }}</option>
+		<MkRadios v-model="searchOrigin">
 			<option value="local">{{ i18n.ts.local }}</option>
 			<option value="remote">{{ i18n.ts.remote }}</option>
+			<option value="combined">{{ i18n.ts.all }}</option>
 		</MkRadios>
 		<div>
 			<MkButton large primary gradate rounded style="margin: 0 auto;" @click="search">{{ i18n.ts.search }}</MkButton>
@@ -38,11 +55,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue';
+import { ref } from 'vue';
 import MkNotes from '@/components/MkNotes.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkRadios from '@/components/MkRadios.vue';
 import MkButton from '@/components/MkButton.vue';
+import MkSwitch from '@/components/MkSwitch.vue';
+import FormSplit from '@/components/form/split.vue';
 import { i18n } from '@/i18n';
 import * as os from '@/os';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
@@ -56,9 +75,17 @@ const router = useRouter();
 
 let key = $ref(0);
 let searchQuery = $ref('');
-let searchOrigin = $ref('combined');
+let searchOrigin = $ref('local');
 let notePagination = $ref();
 let user = $ref(null);
+let createAtBegin = ref(null);
+let createAtEnd = ref(null);
+let reverseOrder = $ref(false);
+let hasFile = $ref(false);
+
+// ISO形式はTZがUTCになってしまうので、TZ分ずらして時間を初期化
+const localTime = new Date();
+const localTimeDiff = localTime.getTimezoneOffset() * 60 * 1000;
 
 function selectUser() {
 	os.selectUser().then(_user => {
@@ -89,6 +116,17 @@ async function search() {
 		return;
 	}
 
+	let begin: Date|null = null;
+	let end: Date|null = null;
+	if (createAtBegin.value !== null) {
+		begin = new Date(createAtBegin.value);
+		begin.setMilliseconds(begin.getMilliseconds() - localTimeDiff);
+	}
+	if (createAtEnd.value !== null) {
+		end = new Date(createAtEnd.value);
+		end.setMilliseconds(end.getMilliseconds() - localTimeDiff);
+	}
+
 	notePagination = {
 		endpoint: 'notes/search',
 		limit: 10,
@@ -96,6 +134,10 @@ async function search() {
 			query: searchQuery,
 			userId: user ? user.id : null,
 			origin: searchOrigin,
+			createAtBegin: begin ? begin.getTime() : undefined,
+			createAtEnd: end ? end.getTime() : undefined,
+			reverseOrder: reverseOrder,
+			hasFile: hasFile,
 		},
 	};
 
@@ -103,3 +145,9 @@ async function search() {
 }
 
 </script>
+
+<style lang="scss" module>
+.formContent {
+	margin-bottom: 15px;
+}
+</style>

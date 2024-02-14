@@ -44,6 +44,10 @@ export const paramDef = {
 		userId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
 		channelId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
 		checkChannelSearchable: { type: 'boolean', nullable: true, default: true },
+		createAtBegin: { type: 'integer', nullable: true, default: null },
+		createAtEnd: { type: 'integer', nullable: true, default: null },
+		reverseOrder: { type: 'boolean', nullable: true, default: false },
+		hasFile: { type: 'boolean', nullable: true, default: false },
 	},
 	required: ['query'],
 } as const;
@@ -72,6 +76,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				channelId: ps.channelId,
 				origin: ps.origin,
 				checkChannelSearchable: ps.checkChannelSearchable ?? true,
+				createAtBegin: ps.createAtBegin ?? undefined,
+				createAtEnd: ps.createAtEnd ?? undefined,
+				reverseOrder: ps.reverseOrder ?? false,
+				hasFile: ps.hasFile ?? false,
 			}, {
 				untilId: ps.untilId,
 				sinceId: ps.sinceId,
