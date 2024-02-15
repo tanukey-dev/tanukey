@@ -96,8 +96,6 @@ function selectUser() {
 async function search() {
 	const query = searchQuery.toString().trim();
 
-	if (query == null || query === '') return;
-
 	if (query.startsWith('https://')) {
 		const promise = os.api('ap/show', {
 			uri: query,

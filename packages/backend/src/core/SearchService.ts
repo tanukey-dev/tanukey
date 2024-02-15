@@ -140,9 +140,6 @@ export class SearchService {
 
 	@bindThis
 	public async indexNote(note: Note): Promise<void> {
-		if (note.text == null && note.cw == null) return;
-		if (!['home', 'public'].includes(note.visibility)) return;
-
 		if (this.opensearch) {
 			const body = {
 				createdAt: this.idService.parse(note.id).date.getTime(),
@@ -164,7 +161,6 @@ export class SearchService {
 	@bindThis
 	public async fullIndexNote(): Promise<void> {
 		const notesCount = await this.notesRepository.count();
-		console.log(notesCount);
 		const take = 100;
 		for (let index = 0; index < notesCount; index = index + take) {
 			const notes = await this.notesRepository
@@ -205,13 +201,14 @@ export class SearchService {
 		limit?: number;
 	}): Promise<Note[]> {
 		if (this.opensearch) {
-			const esFilter: any = {
-				bool: {
-					must: [],
-				},
-			};
-			if (pagination.untilId) esFilter.bool.must.push({ range: { createdAt: { lt: this.idService.parse(pagination.untilId).date.getTime() } } });
-			if (pagination.sinceId) esFilter.bool.must.push({ range: { createdAt: { gt: this.idService.parse(pagination.sinceId).date.getTime() } } });
+			const esFilter: any = { bool: { must: [] } };
+			if (opts.reverseOrder) {
+				if (pagination.untilId) esFilter.bool.must.push({ range: { createdAt: { gt: this.idService.parse(pagination.untilId).date.getTime() } } });
+				if (pagination.sinceId) esFilter.bool.must.push({ range: { createdAt: { lt: this.idService.parse(pagination.sinceId).date.getTime() } } });
+			} else {
+				if (pagination.untilId) esFilter.bool.must.push({ range: { createdAt: { lt: this.idService.parse(pagination.untilId).date.getTime() } } });
+				if (pagination.sinceId) esFilter.bool.must.push({ range: { createdAt: { gt: this.idService.parse(pagination.sinceId).date.getTime() } } });
+			}
 			if (opts.userId) esFilter.bool.must.push({ term: { userId: opts.userId } });
 			if (opts.channelId) esFilter.bool.must.push({ term: { channelId: opts.channelId } });
 			if (opts.origin === 'local') {
@@ -227,25 +224,22 @@ export class SearchService {
 				esFilter.bool.must.push({ range: { createdAt: { lte: opts.createAtEnd } } });
 			}
 
+			if (q !== '') {
+				esFilter.bool.must.push({
+					bool: {
+						should: [
+							{ wildcard: { 'text': { value: q } } },
+							{ simple_query_string: { fields: ['text'], 'query': q, default_operator: 'and' } },
+						],
+						minimum_should_match: 1,
+					},
+				});
+			}
+
 			const res = await (this.opensearch.search)({
 				index: this.opensearchNoteIndex as string,
 				body: {
-					query: {
-						bool: {
-							must: [
-								{
-									bool: {
-										should: [
-											{ wildcard: { 'text': { value: `*${q}*` }, } },
-											{ simple_query_string: { fields: ['text'], 'query': q, default_operator: 'and', } },
-										],
-										minimum_should_match: 1,
-									},
-								},
-								esFilter,
-							],
-						},
-					},
+					query: esFilter,
 					sort: [
 						{
 							createdAt: {
@@ -291,7 +285,9 @@ export class SearchService {
 
 			return await query.take(pagination.limit).getMany();
 		} else {
-			const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), pagination.sinceId, pagination.untilId);
+			const query = opts.reverseOrder
+				? this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), pagination.untilId, pagination.sinceId)
+				: this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), pagination.sinceId, pagination.untilId);
 
 			if (opts.origin === 'local') {
 				query.andWhere('note.userHost IS NULL');
