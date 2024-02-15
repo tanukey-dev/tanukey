@@ -203,11 +203,11 @@ export class SearchService {
 		if (this.opensearch) {
 			const esFilter: any = { bool: { must: [] } };
 			if (opts.reverseOrder) {
-				if (pagination.untilId) esFilter.bool.must.push({ range: { id: { gt: pagination.untilId } } });
-				if (pagination.sinceId) esFilter.bool.must.push({ range: { id: { lt: pagination.sinceId } } });
+				if (pagination.untilId) esFilter.bool.must.push({ range: { createdAt: { gt: this.idService.parse(pagination.untilId).date.getTime() } } });
+				if (pagination.sinceId) esFilter.bool.must.push({ range: { createdAt: { lt: this.idService.parse(pagination.sinceId).date.getTime() } } });
 			} else {
-				if (pagination.untilId) esFilter.bool.must.push({ range: { id: { lt: pagination.untilId } } });
-				if (pagination.sinceId) esFilter.bool.must.push({ range: { id: { gt: pagination.sinceId } } });
+				if (pagination.untilId) esFilter.bool.must.push({ range: { createdAt: { lt: this.idService.parse(pagination.untilId).date.getTime() } } });
+				if (pagination.sinceId) esFilter.bool.must.push({ range: { createdAt: { gt: this.idService.parse(pagination.sinceId).date.getTime() } } });
 			}
 			if (opts.userId) esFilter.bool.must.push({ term: { userId: opts.userId } });
 			if (opts.channelId) esFilter.bool.must.push({ term: { channelId: opts.channelId } });
