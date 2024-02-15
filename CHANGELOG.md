@@ -12,6 +12,10 @@
 
 -->
 
+## 13.14.2-tanu-1.47.3
+### General
+- revert: OpenSearch使用時のページネーションをidで行うように修正
+
 ## 13.14.2-tanu-1.47.2
 ### General
 - OpenSearch使用時のページネーションをidで行うように修正

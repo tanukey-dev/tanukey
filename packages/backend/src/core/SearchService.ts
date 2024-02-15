@@ -165,8 +165,10 @@ export class SearchService {
 		for (let index = 0; index < notesCount; index = index + take) {
 			const notes = await this.notesRepository
 				.createQueryBuilder('note')
-				.skip(index)
+				.orderBy('note.id', 'ASC')
+				.where('note.userHost IS NULL')
 				.take(take)
+				.skip(index)
 				.getMany();
 			notes.forEach(note => {
 				this.indexNote(note);
@@ -175,8 +177,6 @@ export class SearchService {
 	}
 
 	public async unindexNote(note: Note): Promise<void> {
-		if (!['home', 'public'].includes(note.visibility)) return;
-
 		if (this.opensearch) {
 			(this.opensearch.delete)({
 				index: this.opensearchNoteIndex as string,
