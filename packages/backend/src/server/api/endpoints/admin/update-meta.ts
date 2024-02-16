@@ -47,6 +47,13 @@ export const paramDef = {
 				type: 'string',
 			},
 		},
+		allowedHosts: { type: 'array', nullable: true, items: {
+			type: 'string',
+		} },
+		enableAllowedHostsInWhiteList: { type: 'boolean', nullable: true },
+		sensitiveWords: { type: 'array', nullable: true, items: {
+			type: 'string',
+		} },
 		themeColor: { type: 'string', nullable: true, pattern: '^#[0-9a-fA-F]{6}$' },
 		mascotImageUrl: { type: 'string', nullable: true },
 		bannerUrl: { type: 'string', nullable: true },
@@ -179,6 +186,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			if (Array.isArray(ps.blockedHosts)) {
 				set.blockedHosts = ps.blockedHosts.filter(Boolean).map(x => x.toLowerCase());
+			}
+
+			if (Array.isArray(ps.allowedHosts)) {
+				set.allowedHosts = ps.allowedHosts.filter(Boolean).map(x => x.toLowerCase());
+			}
+
+			if (typeof ps.enableAllowedHostsInWhiteList === 'boolean') {
+				set.enableAllowedHostsInWhiteList = ps.enableAllowedHostsInWhiteList;
 			}
 
 			if (Array.isArray(ps.sensitiveWords)) {

@@ -71,6 +71,16 @@ export class MiMeta {
 	})
 	public blockedHosts: string[];
 
+	@Column('boolean', {
+		default: false,
+	})
+	public enableAllowedHostsInWhiteList: boolean;
+
+	@Column('varchar', {
+		length: 1024, array: true, default: '{}',
+	})
+	public allowedHosts: string[];
+
 	@Column('varchar', {
 		length: 1024, array: true, default: '{}',
 	})

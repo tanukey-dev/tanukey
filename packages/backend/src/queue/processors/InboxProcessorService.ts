@@ -61,8 +61,14 @@ export class InboxProcessorService {
 
 		const host = this.utilityService.toPuny(new URL(signature.keyId).hostname);
 
-		// ブロックしてたら中断
 		const meta = await this.metaService.fetch();
+		// 許可してなかったら中断
+		if (meta.enableAllowedHostsInWhiteList) {
+			if (!this.utilityService.isAllowedHost(meta.allowedHosts, host)) {
+				return `Blocked request: ${host}`;
+			}
+		}
+		// ブロックしてたら中断
 		if (this.utilityService.isBlockedHost(meta.blockedHosts, host)) {
 			return `Blocked request: ${host}`;
 		}
@@ -143,8 +149,14 @@ export class InboxProcessorService {
 					throw new Bull.UnrecoverableError(`skip: LD-Signature user(${authUser.user.uri}) !== activity.actor(${activity.actor})`);
 				}
 
-				// ブロックしてたら中断
 				const ldHost = this.utilityService.extractDbHost(authUser.user.uri);
+				// 許可してなかったら中断
+				if (meta.enableAllowedHostsInWhiteList) {
+					if (!this.utilityService.isAllowedHost(meta.allowedHosts, ldHost)) {
+						return `Blocked request: ${ldHost}`;
+					}
+				}
+				// ブロックしてたら中断
 				if (this.utilityService.isBlockedHost(meta.blockedHosts, ldHost)) {
 					throw new Bull.UnrecoverableError(`Blocked request: ${ldHost}`);
 				}

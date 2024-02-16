@@ -43,6 +43,12 @@ export class UtilityService {
 	}
 
 	@bindThis
+	public isAllowedHost(allowedHosts: string[], host: string | null): boolean {
+		if (host == null) return true;
+		return allowedHosts.some(x => `.${host.toLowerCase()}`.endsWith(`.${x}`));
+	}
+
+	@bindThis
 	public isKeyWordIncluded(text: string, keyWords: string[]): boolean {
 		if (keyWords.length === 0) return false;
 		if (text === '') return false;
