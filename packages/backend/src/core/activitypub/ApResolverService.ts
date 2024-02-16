@@ -95,6 +95,11 @@ export class Resolver {
 		}
 
 		const meta = await this.metaService.fetch();
+		if (meta.enableAllowedHostsInWhiteList) {
+			if (!this.utilityService.isAllowedHost(meta.allowedHosts, host)) {
+				throw new Error('Instance is blocked');
+			}
+		}
 		if (this.utilityService.isBlockedHost(meta.blockedHosts, host)) {
 			throw new Error('Instance is blocked');
 		}

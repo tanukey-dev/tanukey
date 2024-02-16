@@ -38,6 +38,16 @@ export const meta = {
 			code: 'NO_SUCH_OBJECT',
 			id: 'dc94d745-1262-4e63-a17d-fecaa57efc82',
 		},
+		serverNotAllowed: {
+			message: 'Server is not allowed. Please ask your administrator.',
+			code: 'SERVER_NOT_ALLOWED',
+			id: 'dc94d745-1263-4e63-a17d-fecaa57efc82',
+		},
+		serverBlocked: {
+			message: 'Server is blocked.',
+			code: 'SERVER_BLOCKED',
+			id: 'dc94d745-1264-4e63-a17d-fecaa57efc82',
+		},
 	},
 
 	res: {
@@ -114,7 +124,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	private async fetchAny(uri: string, me: MiLocalUser | null | undefined): Promise<SchemaType<typeof meta['res']> | null> {
 	// ブロックしてたら中断
 		const fetchedMeta = await this.metaService.fetch();
-		if (this.utilityService.isBlockedHost(fetchedMeta.blockedHosts, this.utilityService.extractDbHost(uri))) return null;
+		// 許可されてなかったら中断
+		if (fetchedMeta.enableAllowedHostsInWhiteList) {
+			if (!this.utilityService.isAllowedHost(fetchedMeta.allowedHosts, this.utilityService.extractDbHost(uri))) throw new ApiError(meta.errors.serverNotAllowed);
+		}
+		// ブロックしてたら中断
+		if (this.utilityService.isBlockedHost(fetchedMeta.blockedHosts, this.utilityService.extractDbHost(uri))) throw new ApiError(meta.errors.serverBlocked);
 
 		let local = await this.mergePack(me, ...await Promise.all([
 			this.apDbResolverService.getUserFromApId(uri),

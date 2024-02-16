@@ -317,8 +317,14 @@ export class ApNoteService {
 	public async resolveNote(value: string | IObject, options: { sentFrom?: URL, resolver?: Resolver } = {}): Promise<MiNote | null> {
 		const uri = getApId(value);
 
-		// ブロックしていたら中断
 		const meta = await this.metaService.fetch();
+		// 許可してなかったら中断
+		if (meta.enableAllowedHostsInWhiteList) {
+			if (!this.utilityService.isAllowedHost(meta.allowedHosts, this.utilityService.extractDbHost(uri))) {
+				throw new StatusError('blocked host', 451);
+			}
+		}
+		// ブロックしていたら中断
 		if (this.utilityService.isBlockedHost(meta.blockedHosts, this.utilityService.extractDbHost(uri))) {
 			throw new StatusError('blocked host', 451);
 		}

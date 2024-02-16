@@ -909,6 +909,22 @@ export interface Locale extends ILocale {
      */
     "silencedInstancesDescription": string;
     /**
+     * 許可したサーバー
+     */
+    "allowedInstances": string;
+    /**
+     * 許可したいサーバーのホストを改行で区切って設定します。許可されたサーバー以外は、このサーバーとやり取りできなくなります。サブドメインもブロックされます。
+     */
+    "allowedInstancesDescription": string;
+    /**
+     * ホワイトリスト形式で連合を許可
+     */
+    "enableAllowedHostsInWhiteList": string;
+    /**
+     * ホワイトリスト
+     */
+    "whiteList": string;
+    /**
      * ミュートとブロック
      */
     "muteAndBlock": string;

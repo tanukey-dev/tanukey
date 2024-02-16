@@ -4871,6 +4871,8 @@ export type operations = {
             pinnedUsers: string[];
             hiddenTags: string[];
             blockedHosts: string[];
+            allowedHosts?: string[];
+            enableAllowedHostsInWhiteList: boolean;
             sensitiveWords: string[];
             prohibitedWords: string[];
             bannedEmailDomains?: string[];
@@ -8823,6 +8825,8 @@ export type operations = {
           blockedHosts?: string[] | null;
           sensitiveWords?: string[] | null;
           prohibitedWords?: string[] | null;
+          allowedHosts?: string[] | null;
+          enableAllowedHostsInWhiteList?: boolean | null;
           themeColor?: string | null;
           mascotImageUrl?: string | null;
           bannerUrl?: string | null;
