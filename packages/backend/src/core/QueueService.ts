@@ -72,7 +72,7 @@ export class QueueService {
 
 	@bindThis
 	public deliver(user: ThinUser, content: IActivity | null, to: string | null, isSharedInbox: boolean) {
-		if (config.federationKillSwitch) return null;
+		if (this.config.federationKillSwitch) return null;
 		if (content == null) return null;
 		if (to == null) return null;
 
@@ -108,7 +108,7 @@ export class QueueService {
 	 */
 	@bindThis
 	public async deliverMany(user: ThinUser, content: IActivity | null, inboxes: Map<string, boolean>) {
-		if (config.federationKillSwitch) return null;
+		if (this.config.federationKillSwitch) return null;
 		if (content == null) return null;
 		const contentBody = JSON.stringify(content);
 		const digest = ApRequestCreator.createDigest(contentBody);
