@@ -92,6 +92,7 @@ type Source = {
 	perUserNotificationsMaxCount?: number;
 	deactivateAntennaThreshold?: number;
 	pidFile: string;
+	federationKillSwitch?: boolean;
 
 	stripe?: {
 		secretKey: string;
@@ -174,6 +175,7 @@ export type Config = {
 	perUserNotificationsMaxCount: number;
 	deactivateAntennaThreshold: number;
 	pidFile: string;
+	federationKillSwitch: boolean;
 
 	stripe: {
 		secretKey: string;
@@ -274,6 +276,7 @@ export function loadConfig(): Config {
 		perUserNotificationsMaxCount: config.perUserNotificationsMaxCount ?? 500,
 		deactivateAntennaThreshold: config.deactivateAntennaThreshold ?? (1000 * 60 * 60 * 24 * 7),
 		pidFile: config.pidFile,
+		federationKillSwitch: config.federationKillSwitch ?? false,
 
 		stripe: config.stripe,
 	};
