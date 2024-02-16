@@ -234,3 +234,6 @@ signToActivityPubGet: true
 
 # PID File of master process
 #pidFile: /tmp/misskey.pid
+
+# Stop the delivery of the note to the remote server
+federationKillSwitch: false

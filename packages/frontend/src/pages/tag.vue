@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: syuilo and other misskey contributors
+SPDX-FileCopyrightText: syuilo and misskey-project
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
@@ -92,10 +92,10 @@ const headerTabs = computed(() => [{
 	title: i18n.ts.withFiles,
 }]);
 
-definePageMetadata(computed(() => ({
+definePageMetadata(() => ({
 	title: props.tag,
 	icon: 'ti ti-hash',
-})));
+}));
 </script>
 
 <style lang="scss" module>

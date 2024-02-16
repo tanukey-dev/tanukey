@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: syuilo and other misskey contributors
+ * SPDX-FileCopyrightText: syuilo and misskey-project
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
@@ -290,18 +290,6 @@ export class EmailService {
 			return {
 				valid: false,
 				reason: null,
-			};
-		}
-		if (json.email_address === undefined) {
-			return {
-				valid: false,
-				reason: 'format',
-			};
-		}
-		if (json.deliverable_email !== undefined && !json.deliverable_email) {
-			return {
-				valid: false,
-				reason: 'smtp',
 			};
 		}
 		if (json.disposable) {
