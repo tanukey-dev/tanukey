@@ -53,8 +53,14 @@ export class DeliverProcessorService {
 	public async process(job: Bull.Job<DeliverJobData>): Promise<string> {
 		const { host } = new URL(job.data.to);
 
-		// ブロックしてたら中断
 		const meta = await this.metaService.fetch();
+		// 許可してなかったら中断
+		if (meta.enableAllowedHostsInWhiteList) {
+			if (!this.utilityService.isAllowedHost(meta.allowedHosts, this.utilityService.toPuny(host))) {
+				return 'skip (blocked)';
+			}
+		}
+		// ブロックしてたら中断
 		if (this.utilityService.isBlockedHost(meta.blockedHosts, this.utilityService.toPuny(host))) {
 			return 'skip (blocked)';
 		}

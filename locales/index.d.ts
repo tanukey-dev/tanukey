@@ -221,6 +221,9 @@ export interface Locale {
     "clearCachedFilesConfirm": string;
     "blockedInstances": string;
     "blockedInstancesDescription": string;
+    "allowedInstances": string;
+    "allowedInstancesDescription": string;
+    "enableAllowedHostsInWhiteList": string;
     "muteAndBlock": string;
     "mutedUsers": string;
     "blockedUsers": string;

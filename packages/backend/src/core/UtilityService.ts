@@ -31,6 +31,12 @@ export class UtilityService {
 	}
 
 	@bindThis
+	public isAllowedHost(allowedHosts: string[], host: string | null): boolean {
+		if (host == null) return true;
+		return allowedHosts.some(x => `.${host.toLowerCase()}`.endsWith(`.${x}`));
+	}
+
+	@bindThis
 	public extractDbHost(uri: string): string {
 		const url = new URL(uri);
 		return this.toPuny(url.hostname);

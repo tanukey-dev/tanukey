@@ -117,6 +117,18 @@ export const meta = {
 					optional: false, nullable: false,
 				},
 			},
+			allowedHosts: {
+				type: 'array',
+				optional: true, nullable: false,
+				items: {
+					type: 'string',
+					optional: false, nullable: false,
+				},
+			},
+			enableAllowedHostsInWhiteList: {
+				type: 'boolean',
+				optional: false, nullable: false,
+			},
 			sensitiveWords: {
 				type: 'array',
 				optional: true, nullable: false,
@@ -335,6 +347,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				pinnedUsers: instance.pinnedUsers,
 				hiddenTags: instance.hiddenTags,
 				blockedHosts: instance.blockedHosts,
+				allowedHosts: instance.allowedHosts,
+				enableAllowedHostsInWhiteList: instance.enableAllowedHostsInWhiteList,
 				sensitiveWords: instance.sensitiveWords,
 				preservedUsernames: instance.preservedUsernames,
 				pinnedLtlChannelIds: instance.pinnedLtlChannelIds,
