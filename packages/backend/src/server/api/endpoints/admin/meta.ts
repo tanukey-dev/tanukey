@@ -130,6 +130,10 @@ export const meta = {
 				type: 'boolean',
 				optional: false, nullable: false,
 			},
+			enableAllowedNotificationInLocalUserFollowed: {
+				type: 'boolean',
+				optional: false, nullable: false,
+			},
 			sensitiveWords: {
 				type: 'array',
 				optional: true, nullable: false,
@@ -366,6 +370,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				blockedHosts: instance.blockedHosts,
 				allowedHosts: instance.allowedHosts,
 				enableAllowedHostsInWhiteList: instance.enableAllowedHostsInWhiteList,
+				enableAllowedNotificationInLocalUserFollowed: instance.enableAllowedNotificationInLocalUserFollowed,
 				sensitiveWords: instance.sensitiveWords,
 				preservedUsernames: instance.preservedUsernames,
 				pinnedLtlChannelIds: instance.pinnedLtlChannelIds,

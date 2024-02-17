@@ -16,6 +16,11 @@
 				<span>{{ i18n.ts.allowedInstances }}</span>
 				<template #caption>{{ i18n.ts.allowedInstancesDescription }}</template>
 			</MkTextarea>
+
+			<MkSwitch v-model="enableAllowedNotificationInLocalUserFollowed">
+				<template #label>{{ i18n.ts.enableAllowedNotificationInLocalUserFollowed }}</template>
+			</MkSwitch>
+
 			<MkButton primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
 		</FormSuspense>
 	</MkSpacer>
@@ -37,12 +42,14 @@ import { definePageMetadata } from '@/scripts/page-metadata';
 let blockedHosts: string = $ref('');
 let allowedHosts: string = $ref('');
 let enableAllowedHostsInWhiteList: boolean = $ref(false);
+let enableAllowedNotificationInLocalUserFollowed: boolean = $ref(false);
 
 async function init() {
 	const meta = await os.api('admin/meta');
 	blockedHosts = meta.blockedHosts.join('\n');
 	allowedHosts = meta.allowedHosts.join('\n');
 	enableAllowedHostsInWhiteList = meta.enableAllowedHostsInWhiteList;
+	enableAllowedNotificationInLocalUserFollowed = meta.enableAllowedNotificationInLocalUserFollowed;
 }
 
 function save() {
@@ -50,6 +57,7 @@ function save() {
 		blockedHosts: blockedHosts.split('\n') || [],
 		allowedHosts: allowedHosts.split('\n') || [],
 		enableAllowedHostsInWhiteList: enableAllowedHostsInWhiteList,
+		enableAllowedNotificationInLocalUserFollowed: enableAllowedNotificationInLocalUserFollowed,
 	}).then(() => {
 		fetchInstance();
 	});

@@ -68,6 +68,11 @@ export class Meta {
 	})
 	public enableAllowedHostsInWhiteList: boolean;
 
+	@Column('boolean', {
+		default: false,
+	})
+	public enableAllowedNotificationInLocalUserFollowed: boolean;
+
 	@Column('varchar', {
 		length: 1024, array: true, default: '{}',
 	})

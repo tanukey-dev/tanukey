@@ -224,6 +224,7 @@ export interface Locale {
     "allowedInstances": string;
     "allowedInstancesDescription": string;
     "enableAllowedHostsInWhiteList": string;
+    "enableAllowedNotificationInLocalUserFollowed": string;
     "muteAndBlock": string;
     "mutedUsers": string;
     "blockedUsers": string;

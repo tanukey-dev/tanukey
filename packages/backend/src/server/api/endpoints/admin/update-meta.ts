@@ -31,6 +31,7 @@ export const paramDef = {
 			type: 'string',
 		} },
 		enableAllowedHostsInWhiteList: { type: 'boolean', nullable: true },
+		enableAllowedNotificationInLocalUserFollowed: { type: 'boolean', nullable: true },
 		sensitiveWords: { type: 'array', nullable: true, items: {
 			type: 'string',
 		} },
@@ -146,6 +147,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (typeof ps.enableAllowedHostsInWhiteList === 'boolean') {
 				set.enableAllowedHostsInWhiteList = ps.enableAllowedHostsInWhiteList;
+			}
+
+			if (typeof ps.enableAllowedNotificationInLocalUserFollowed === 'boolean') {
+				set.enableAllowedNotificationInLocalUserFollowed = ps.enableAllowedNotificationInLocalUserFollowed;
 			}
 
 			if (Array.isArray(ps.sensitiveWords)) {

@@ -27,10 +27,12 @@ import { RelayService } from '@/core/RelayService.js';
 import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
+import type Logger from '@/logger.js';
 import NotesChart from '@/core/chart/charts/notes.js';
 import PerUserNotesChart from '@/core/chart/charts/per-user-notes.js';
 import InstanceChart from '@/core/chart/charts/instance.js';
 import ActiveUsersChart from '@/core/chart/charts/active-users.js';
+import { LoggerService } from '@/core/LoggerService.js';
 import { GlobalEventService } from '@/core/GlobalEventService.js';
 import { NotificationService } from '@/core/NotificationService.js';
 import { WebhookService } from '@/core/WebhookService.js';
@@ -48,6 +50,7 @@ import { DB_MAX_NOTE_TEXT_LENGTH } from '@/const.js';
 import { RoleService } from '@/core/RoleService.js';
 import { MetaService } from '@/core/MetaService.js';
 import { SearchService } from '@/core/SearchService.js';
+import { IdentifiableError } from '@/misc/identifiable-error.js';
 
 const mutedWordsCache = new MemorySingleCache<{ userId: UserProfile['userId']; mutedWords: UserProfile['mutedWords']; }[]>(1000 * 60 * 5);
 
@@ -144,6 +147,7 @@ type Option = {
 
 @Injectable()
 export class NoteCreateService implements OnApplicationShutdown {
+	private logger: Logger;
 	#shutdownController = new AbortController();
 
 	constructor(
@@ -205,7 +209,10 @@ export class NoteCreateService implements OnApplicationShutdown {
 		private perUserNotesChart: PerUserNotesChart,
 		private activeUsersChart: ActiveUsersChart,
 		private instanceChart: InstanceChart,
-	) { }
+		private loggerService: LoggerService,
+	) {
+		this.logger = this.loggerService.getLogger('note:create');
+	}
 
 	@bindThis
 	public async create(user: {
@@ -215,6 +222,8 @@ export class NoteCreateService implements OnApplicationShutdown {
 		createdAt: User['createdAt'];
 		isBot: User['isBot'];
 	}, data: Option, silent = false): Promise<Note> {
+		const meta = await this.metaService.fetch();
+
 		// チャンネル外にリプライしたら対象のスコープに合わせる
 		// (クライアントサイドでやっても良い処理だと思うけどとりあえずサーバーサイドで)
 		if (data.reply && data.channel && data.reply.channelId !== data.channel.id) {
@@ -304,6 +313,20 @@ export class NoteCreateService implements OnApplicationShutdown {
 			emojis = data.apEmojis ?? extractCustomEmojisFromMfm(combinedTokens);
 
 			mentionedUsers = data.apMentions ?? await this.extractMentionedUsers(user, combinedTokens);
+		}
+
+		// ローカルユーザーへ通知が発生しうるケース
+		if (meta.enableAllowedNotificationInLocalUserFollowed) {
+			const willCauseNotification = mentionedUsers.filter(u => u.host === null).length > 0 || data.reply?.userHost === null || data.renote?.userHost === null;
+
+			// いずれかのローカルユーザーがフォローしているリモートのノートのみ通知を行う
+			if (user.host !== null && willCauseNotification) {
+				const userEntity = await this.usersRepository.findOneBy({ id: user.id });
+				if ((userEntity?.followersCount ?? 0) === 0) {
+					this.logger.error('Request rejected because user has no local followers', { user: user.id, note: data });
+					throw new IdentifiableError('e11b3a16-f543-4885-8eb1-66cad131dbfd', 'Notes including mentions, replies, or renotes from remote users are not allowed until user has at least one local follower.');
+				}
+			}
 		}
 
 		tags = tags.filter(tag => Array.from(tag ?? '').length <= 128).splice(0, 32);
