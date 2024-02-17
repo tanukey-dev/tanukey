@@ -3,6 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { HttpRequestService } from '@/core/HttpRequestService.js';
 import { bindThis } from '@/decorators.js';
 import { CONTEXTS } from './misc/contexts.js';
+import { validateContentTypeSetAsJsonLD } from './misc/validator.js';
+import type { JsonLdDocument } from 'jsonld';
+import type { JsonLd, RemoteDocument } from 'jsonld/jsonld-spec.js';
 
 // RsaSignature2017 based from https://github.com/transmute-industries/RsaSignature2017
 
@@ -124,7 +127,12 @@ class LdSignature {
 				Accept: 'application/ld+json, application/json',
 			},
 			timeout: this.loderTimeout,
-		}, { throwErrorWhenResponseNotOk: false }).then(res => {
+		},
+		{
+			throwErrorWhenResponseNotOk: false,
+			validators: [validateContentTypeSetAsJsonLD],
+		},
+		).then(res => {
 			if (!res.ok) {
 				throw new Error(`${res.status} ${res.statusText}`);
 			} else {
