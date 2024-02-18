@@ -1,6 +1,6 @@
 <template>
 <div class="_gaps_m">
-	<MkButton primary @click="generateToken">{{ i18n.ts.generateAccessToken }}</MkButton>
+	<MkButton v-if="$i && $i.policies.canCreateToken" primary @click="generateToken">{{ i18n.ts.generateAccessToken }}</MkButton>
 	<FormLink to="/settings/apps">{{ i18n.ts.manageAccessTokens }}</FormLink>
 	<FormLink to="/api-console" :behavior="isDesktop ? 'window' : null">API console</FormLink>
 </div>
@@ -12,6 +12,7 @@ import FormLink from '@/components/form/link.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
+import { $i } from '@/account';
 import { definePageMetadata } from '@/scripts/page-metadata';
 
 const isDesktop = ref(window.innerWidth >= 1100);

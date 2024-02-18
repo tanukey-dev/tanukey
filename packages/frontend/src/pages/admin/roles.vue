@@ -90,6 +90,14 @@
 							</MkSwitch>
 						</MkFolder>
 
+						<MkFolder v-if="matchQuery([i18n.ts._role._options.canCreateToken, 'canCreateToken'])">
+							<template #label>{{ i18n.ts._role._options.canCreateToken }}</template>
+							<template #suffix>{{ policies.canCreateToken ? i18n.ts.yes : i18n.ts.no }}</template>
+							<MkSwitch v-model="policies.canCreateToken">
+								<template #label>{{ i18n.ts.enable }}</template>
+							</MkSwitch>
+						</MkFolder>
+
 						<MkFolder v-if="matchQuery([i18n.ts._role._options.canSearchNotes, 'canSearchNotes'])">
 							<template #label>{{ i18n.ts._role._options.canSearchNotes }}</template>
 							<template #suffix>{{ policies.canSearchNotes ? i18n.ts.yes : i18n.ts.no }}</template>

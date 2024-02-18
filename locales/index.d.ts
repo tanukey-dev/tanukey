@@ -1521,6 +1521,7 @@ export interface Locale {
             "inviteExpirationTime": string;
             "canManageCustomEmojis": string;
             "canRequestCustomEmojis": string;
+            "canCreateToken": string;
             "additionalDriveCapacity": string;
             "driveCapacity": string;
             "alwaysMarkNsfw": string;

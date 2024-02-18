@@ -12,13 +12,14 @@
 
 -->
 
-## 13.14.2-tanu-1.49.0
+## 13.14.2-tanu-1.48.2
 ### Server
 - Enhance: ActivityPub Deliver queueでBodyを事前処理するように (#12916)
 - GHSA-qqrm-9grj-6v32 に関するパッチの取り込み
 - GHSA-3f39-6537-3cgc に関するパッチの取り込み
 - GHSA-7pxq-6xx9-xpgm に関するパッチの取り込み
 
+## 13.14.2-tanu-1.48.0
 ### General
 - 連合のホワイトリスト形式に対応
 

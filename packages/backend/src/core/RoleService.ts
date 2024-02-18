@@ -26,6 +26,7 @@ export type RolePolicies = {
 	inviteExpirationTime: number;
 	canManageCustomEmojis: boolean;
 	canRequestCustomEmojis: boolean;
+	canCreateToken: boolean;
 	canSearchNotes: boolean;
 	canCreatePrivateChannel: boolean;
 	canHideAds: boolean;
@@ -53,6 +54,7 @@ export const DEFAULT_POLICIES: RolePolicies = {
 	inviteExpirationTime: 0,
 	canManageCustomEmojis: false,
 	canRequestCustomEmojis: false,
+	canCreateToken: false,
 	canSearchNotes: false,
 	canCreatePrivateChannel: false,
 	canHideAds: false,
@@ -294,6 +296,7 @@ export class RoleService implements OnApplicationShutdown {
 			inviteExpirationTime: calc('inviteExpirationTime', vs => Math.max(...vs)),
 			canManageCustomEmojis: calc('canManageCustomEmojis', vs => vs.some(v => v === true)),
 			canRequestCustomEmojis: calc('canRequestCustomEmojis', vs => vs.some(v => v === true)),
+			canCreateToken: calc('canCreateToken', vs => vs.some(v => v === true)),
 			canSearchNotes: calc('canSearchNotes', vs => vs.some(v => v === true)),
 			canCreatePrivateChannel: calc('canCreatePrivateChannel', vs => vs.some(v => v === true)),
 			canHideAds: calc('canHideAds', vs => vs.some(v => v === true)),

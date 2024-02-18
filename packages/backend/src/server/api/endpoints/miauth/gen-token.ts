@@ -9,7 +9,7 @@ export const meta = {
 	tags: ['auth'],
 
 	requireCredential: true,
-
+	requireRolePolicy: 'canCreateToken',
 	secure: true,
 
 	res: {

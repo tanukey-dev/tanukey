@@ -1446,6 +1446,7 @@ _role:
     inviteExpirationTime: "招待コードの有効期限"
     canManageCustomEmojis: "カスタム絵文字の管理"
     canRequestCustomEmojis: "カスタム絵文字のリクエスト"
+    canCreateToken: "APIトークンの発行"
     additionalDriveCapacity: "追加ドライブ容量(積算)"
     driveCapacity: "ドライブ容量(ベース)"
     alwaysMarkNsfw: "ファイルにNSFWを常に付与"
