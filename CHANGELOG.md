@@ -16,6 +16,7 @@
 ### Server
 - Enhance: ActivityPub Deliver queueでBodyを事前処理するように (#12916)
 - GHSA-qqrm-9grj-6v32 に関するパッチの取り込み
+- GHSA-3f39-6537-3cgc に関するパッチの取り込み
 
 ### General
 - 連合のホワイトリスト形式に対応
