@@ -703,7 +703,7 @@ function deleteDraft() {
 }
 
 const diceRoll = (text: string, bold: boolean): string => {
-	return text.replace(/!(\d{1,3})?[dD](\d{1,3})(([-+])(\d+))?/g, (match, c1, c2, c3, c4, c5) => {
+	return text.replace(/!(\d{1,3})?[dD](\d{1,3})(([-+])(\d+))?/g, (match, c1, c2, c3, c4) => {
 		const dice: number = parseInt(c1 ?? 1);
 		const rolls: number[] = [];
 		let plus: number = parseInt(c3 ?? 0);
@@ -714,7 +714,9 @@ const diceRoll = (text: string, bold: boolean): string => {
 			rolls.push(Math.ceil(Math.random() * c2));
 		}
 
-		const replacedText = match + ' => ' + rolls.map(r => r + plus).reduce((sum, ele) => sum + ele) + ' [' + rolls.map(r => r + (c3 ? '(' + (r + plus) + ')' : '')).join(',') + ']';
+		const replacedText = match + ' => '
+			+ (dice === 0 ? '0' : rolls.map(r => r + plus).reduce((sum, ele) => sum + ele))
+			+ ((dice <= 1 && plus === 0) ? '' : ' [' + rolls.map(r => r + (c3 ? '(' + (r + plus) + ')' : '')).join(',') + ']');
 
 		if (bold) {
 			return '**' + replacedText + '**';
