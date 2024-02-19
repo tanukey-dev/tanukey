@@ -12,6 +12,11 @@
 
 -->
 
+## 13.14.2-tanu-1.50.2
+### General
+- verifyemail.ioの前段でdeep-email-validatorを動作させるように修正
+- ピン留めで、ローカルのみ/フォロワー限定/ダイレクトは公開しないように
+
 ## 13.14.2-tanu-1.50.1
 ### General
 - verifyemail.ioの設定結果が次の読込み時に反映されない不具合の修正
