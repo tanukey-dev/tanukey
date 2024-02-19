@@ -1,6 +1,7 @@
 import * as nodemailer from 'nodemailer';
 import { Inject, Injectable } from '@nestjs/common';
 import { validate as validateEmail } from 'deep-email-validator';
+import Redis from 'ioredis';
 import { MetaService } from '@/core/MetaService.js';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
@@ -8,17 +9,24 @@ import type Logger from '@/logger.js';
 import type { UserProfilesRepository } from '@/models/index.js';
 import { LoggerService } from '@/core/LoggerService.js';
 import { bindThis } from '@/decorators.js';
-import {URLSearchParams} from "node:url";
 import { HttpRequestService } from '@/core/HttpRequestService.js';
-import {SubOutputFormat} from "deep-email-validator/dist/output/output.js";
+import { RedisKVCache } from '@/misc/cache.js';
 
 @Injectable()
 export class EmailService {
 	private logger: Logger;
 
+	private verifymailResponseCache: RedisKVCache<{
+		valid: boolean,
+		reason?: string | null,
+	}>;
+
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
+
+		@Inject(DI.redis)
+		private redisClient: Redis,
 
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
@@ -28,6 +36,16 @@ export class EmailService {
 		private httpRequestService: HttpRequestService,
 	) {
 		this.logger = this.loggerService.getLogger('email');
+		this.verifymailResponseCache = new RedisKVCache<{
+			valid: boolean,
+			reason?: string | null,
+		}>(this.redisClient, 'verifymailResponse', {
+			lifetime: 1000 * 60 * 60 * 24 * 7, // 7d
+			memoryCacheLifetime: 1000 * 60 * 60 * 24 * 7, // 7d
+			fetcher: (key) => this.verifyMail(key),
+			toRedisConverter: (value) => JSON.stringify(value),
+			fromRedisConverter: (value) => JSON.parse(value),
+		});
 	}
 
 	@bindThis
@@ -150,7 +168,7 @@ export class EmailService {
 	@bindThis
 	public async validateEmailForAccount(emailAddress: string): Promise<{
 		available: boolean;
-		reason: null | 'used' | 'format' | 'disposable' | 'mx' | 'smtp';
+		reason: null | 'used' | 'format' | 'disposable' | 'mx' | 'smtp' | 'network' | 'blacklist';
 	}> {
 		const meta = await this.metaService.fetch();
 	
@@ -159,44 +177,64 @@ export class EmailService {
 			email: emailAddress,
 		});
 
-		let validated;
-
-		if (meta.enableActiveEmailValidation) {
-			if (meta.enableVerifymailApi && meta.verifymailAuthKey != null) {
-				validated = await this.verifyMail(emailAddress, meta.verifymailAuthKey);
-			} else {
-				validated = await validateEmail({
-					email: emailAddress,
-					validateRegex: true,
-					validateMx: true,
-					validateTypo: false, // TLDを見ているみたいだけどclubとか弾かれるので
-					validateDisposable: true, // 捨てアドかどうかチェック
-					validateSMTP: false, // 日本だと25ポートが殆どのプロバイダーで塞がれていてタイムアウトになるので
-				});
-			}
-		} else {
-			validated = { valid: true, reason: null };
+		if (exist !== 0) {
+			return {
+				available: false,
+				reason: 'used',
+			};
 		}
 
-		const available = exist === 0 && validated.valid;
-	
+		let validated: {
+			valid: boolean,
+			reason?: string | null,
+		} = { valid: true, reason: null };
+
+		if (meta.enableActiveEmailValidation) {
+			validated = await validateEmail({
+				email: emailAddress,
+				validateRegex: true,
+				validateMx: true,
+				validateTypo: false, // TLDを見ているみたいだけどclubとか弾かれるので
+				validateDisposable: true, // 捨てアドかどうかチェック
+				validateSMTP: false, // 日本だと25ポートが殆どのプロバイダーで塞がれていてタイムアウトになるので
+			});
+
+			if (validated.valid && meta.enableVerifymailApi && meta.verifymailAuthKey != null) {
+				const domain = emailAddress.split('@')[1];
+				validated = await this.verifymailResponseCache.fetch(domain);
+			}
+		}
+
+		if (!validated.valid) {
+			const formatReason: Record<string, 'format' | 'disposable' | 'mx' | 'smtp' | 'network' | 'blacklist' | undefined> = {
+				regex: 'format',
+				disposable: 'disposable',
+				mx: 'mx',
+				smtp: 'smtp',
+				network: 'network',
+				blacklist: 'blacklist',
+			};
+
+			return {
+				available: false,
+				reason: validated.reason ? formatReason[validated.reason] ?? null : null,
+			};
+		}
+
 		return {
-			available,
-			reason: available ? null :
-			exist !== 0 ? 'used' :
-			validated.reason === 'regex' ? 'format' :
-			validated.reason === 'disposable' ? 'disposable' :
-			validated.reason === 'mx' ? 'mx' :
-			validated.reason === 'smtp' ? 'smtp' :
-			null,
+			available: true,
+			reason: null,
 		};
 	}
 
-	private async verifyMail(emailAddress: string, verifymailAuthKey: string): Promise<{
+	private async verifyMail(emailAddress: string): Promise<{
 		valid: boolean;
 		reason: 'used' | 'format' | 'disposable' | 'mx' | 'smtp' | null;
 	}> {
-		const endpoint = 'https://verifymail.io/api/' + emailAddress + '?key=' + verifymailAuthKey;
+		const meta = await this.metaService.fetch();
+		if (meta.verifymailAuthKey == null) throw new Error('verifymailAuthKey is not set');
+
+		const endpoint = 'https://verifymail.io/api/' + emailAddress + '?key=' + meta.verifymailAuthKey;
 		const res = await this.httpRequestService.send(endpoint, {
 			method: 'GET',
 			headers: {
