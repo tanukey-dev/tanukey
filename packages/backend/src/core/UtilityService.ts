@@ -44,7 +44,7 @@ export class UtilityService {
 
 	@bindThis
 	public isAllowedHost(allowedHosts: string[], host: string | null): boolean {
-		if (host == null) return true;
+		if (host == null || this.isSelfHost(host)) return true;
 		return allowedHosts.some(x => `.${host.toLowerCase()}`.endsWith(`.${x}`));
 	}
 
