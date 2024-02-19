@@ -63,7 +63,7 @@
 		</div>
 	</div>
 	<MkInfo v-if="hasNotSpecifiedMentions" warn :class="$style.hasNotSpecifiedMentions">{{ i18n.ts.notSpecifiedMentionWarning }} - <button class="_textButton" @click="addMissingMention()">{{ i18n.ts.add }}</button></MkInfo>
-	<input v-show="useCw" ref="cwInputEl" v-model="cw" :class="$style.cw" :placeholder="i18n.ts.annotation" @keydown="onKeydown">
+	<textarea v-show="useCw" ref="cwInputEl" v-model="cw" :class="$style.cw" :placeholder="i18n.ts.annotation" @keydown="onKeydown"></textarea>
 	<div :class="[$style.textOuter, { [$style.withCw]: useCw }]">
 		<textarea ref="textareaEl" v-model="text" :class="[$style.text]" :disabled="posting || posted" :placeholder="placeholder" data-cy-post-form-text @keydown="onKeydown" @paste="onPaste" @compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd"/>
 		<div v-if="maxTextLength - textLength < 100" :class="['_acrylic', $style.textCount, { [$style.textOver]: textLength > maxTextLength }]">{{ maxTextLength - textLength }}</div>
@@ -175,7 +175,7 @@ let poll = $ref<{
 } | null>(null);
 let useCw = $ref(false);
 let showPreview = $ref(false);
-let cw = $ref<string | null>(null);
+let cw = $ref<string | undefined>(undefined);
 let localOnly = $ref<boolean>(props.initialLocalOnly ?? defaultStore.state.rememberNoteVisibility ? defaultStore.state.localOnly : defaultStore.state.defaultNoteLocalOnly);
 let visibility = $ref(props.initialVisibility ?? (defaultStore.state.rememberNoteVisibility ? defaultStore.state.visibility : defaultStore.state.defaultNoteVisibility) as typeof misskey.noteVisibilities[number]);
 let visibleUsers = $ref([]);
@@ -948,8 +948,8 @@ onMounted(async () => {
 			const init = props.initialNote;
 			text = init.text ? init.text : '';
 			files = init.files;
-			cw = init.cw;
-			useCw = init.cw != null;
+			cw = init.cw ?? '';
+			useCw = init.cw !== undefined && init.cw !== '';
 			if (init.poll) {
 				poll = {
 					choices: init.poll.choices.map(x => x.text),
@@ -1170,12 +1170,6 @@ defineExpose({
 	}
 }
 
-.cw {
-	z-index: 1;
-	padding-bottom: 8px;
-	border-bottom: solid 0.5px var(--divider);
-}
-
 .hashtags {
 	z-index: 1;
 	padding-top: 8px;
@@ -1202,6 +1196,16 @@ defineExpose({
 	&.withCw {
 		padding-top: 8px;
 	}
+}
+
+.cw {
+	max-width: 100%;
+	min-width: 100%;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	padding-bottom: 8px;
+	border-bottom: solid 0.5px var(--divider);
 }
 
 .text {
