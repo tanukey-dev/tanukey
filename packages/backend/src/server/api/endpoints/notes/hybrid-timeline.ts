@@ -88,6 +88,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					qb.where(`((note.userId IN (${ followingQuery.getQuery() })) OR (note.userId = :meId))`, { meId: me.id })
 						.orWhere('(note.visibility = \'public\') AND (note.userHost IS NULL)');
 				}))
+				.andWhere('note.visibility != \'specified\'')
 				.innerJoinAndSelect('note.user', 'user')
 				.leftJoinAndSelect('note.reply', 'reply')
 				.leftJoinAndSelect('note.renote', 'renote')

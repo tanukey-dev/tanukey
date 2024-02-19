@@ -52,7 +52,12 @@ class HybridTimelineChannel extends Channel {
 			(note.channelId != null && this.followingChannels.has(note.channelId))
 		)) return;
 
-		if (['followers', 'specified'].includes(note.visibility)) {
+		// DMはタイムラインに表示しない
+		if (['specified'].includes(note.visibility)) {
+			return;
+		}
+
+		if (['followers'].includes(note.visibility)) {
 			note = await this.noteEntityService.pack(note.id, this.user!, {
 				detail: true,
 			});

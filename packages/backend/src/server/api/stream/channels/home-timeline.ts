@@ -43,7 +43,12 @@ class HomeTimelineChannel extends Channel {
 		// Ignore notes from instances the user has muted
 		if (isInstanceMuted(note, new Set<string>(this.userProfile!.mutedInstances ?? []))) return;
 
-		if (['followers', 'specified'].includes(note.visibility)) {
+		// DMはタイムラインに表示しない
+		if (['specified'].includes(note.visibility)) {
+			return;
+		}
+
+		if (['followers'].includes(note.visibility)) {
 			note = await this.noteEntityService.pack(note.id, this.user!, {
 				detail: true,
 			});
