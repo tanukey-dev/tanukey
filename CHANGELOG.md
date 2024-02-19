@@ -12,6 +12,10 @@
 
 -->
 
+## 13.14.2-tanu-1.50.1
+### General
+- verifyemail.ioの設定結果が次の読込み時に反映されない不具合の修正
+
 ## 13.14.2-tanu-1.50.0
 ### General
 - verifymail.ioでのメール検証に対応
