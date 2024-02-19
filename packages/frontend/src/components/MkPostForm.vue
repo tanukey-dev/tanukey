@@ -15,16 +15,30 @@
 		</div>
 		<div :class="$style.headerRight">
 			<template v-if="postChannel == null">
-				<button ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
-					<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
-					<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
-					<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
-					<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
-					<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
-				</button>
-				<button ref="changeChannelButtonAtPublicEl" class="_button" :class="[$style.headerRightItem, $style.visibility]" @click="setChannel">
-					<span><i class="ti ti-device-tv-off"></i></span>
-				</button>
+				<template v-if="reply">
+					<button v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" disabled>
+						<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
+						<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
+						<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
+						<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
+						<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
+					</button>
+					<button v-if="visibility === 'public'" class="_button" :class="[$style.headerRightItem, $style.visibility]" disabled>
+						<span><i class="ti ti-device-tv-off"></i></span>
+					</button>
+				</template>
+				<template v-else>
+					<button ref="visibilityButton" v-click-anime v-tooltip="i18n.ts.visibility" :class="['_button', $style.headerRightItem, $style.visibility]" @click="setVisibility">
+						<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
+						<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
+						<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
+						<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
+						<span :class="$style.headerRightButtonText">{{ i18n.ts._visibility[visibility] }}</span>
+					</button>
+					<button v-if="visibility === 'public'" ref="changeChannelButtonAtPublicEl" class="_button" :class="[$style.headerRightItem, $style.visibility]" @click="setChannel">
+						<span><i class="ti ti-device-tv-off"></i></span>
+					</button>
+				</template>
 			</template>
 			<button v-else ref="changeChannelButtonAtChannelEl" v-tooltip="postChannel.name" class="_button" :class="[$style.headerRightItem, $style.visibility]" @click="setChannel">
 				<span><i class="ti ti-device-tv"></i></span>
@@ -190,7 +204,8 @@ let hasNotSpecifiedMentions = $ref(false);
 let recentHashtags = $ref(JSON.parse(miLocalStorage.getItem('hashtags') ?? '[]'));
 let imeText = $ref('');
 let showingOptions = $ref(false);
-let postChannel: WritableComputedRef<misskey.entities.Channel> = computed(defaultStore.makeGetterSetter('postChannel'));
+let postChannel: WritableComputedRef<misskey.entities.Channel | null> = computed(defaultStore.makeGetterSetter('postChannel'));
+let tmpPostChannel: misskey.entities.Channel|null = null;
 
 watch(postChannel, () => {
 	if (postChannel.value) {
@@ -334,6 +349,9 @@ if (postChannel.value) {
 
 // 公開以外へのリプライ時は元の公開範囲を引き継ぐ
 if (props.reply && ['home', 'followers', 'specified'].includes(props.reply.visibility)) {
+	tmpPostChannel = postChannel.value;
+	postChannel.value = null;
+
 	if (props.reply.visibility === 'home' && visibility === 'followers') {
 		visibility = 'followers';
 	} else if (['home', 'followers'].includes(props.reply.visibility) && visibility === 'specified') {
@@ -580,7 +598,10 @@ function clear() {
 
 function onKeydown(ev: KeyboardEvent) {
 	if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey) && canPost) post();
-	if (ev.key === 'Escape') emit('esc');
+	if (ev.key === 'Escape') {
+		restoreChannel();
+		emit('esc');
+	}
 }
 
 function onCompositionUpdate(ev: CompositionEvent) {
@@ -851,6 +872,8 @@ async function post(ev?: MouseEvent) {
 			if (m === 0 && s === 0) {
 				claimAchievement('postedAt0min0sec');
 			}
+
+			restoreChannel();
 		});
 	}).catch(err => {
 		posting = false;
@@ -861,7 +884,14 @@ async function post(ev?: MouseEvent) {
 	});
 }
 
+function restoreChannel() {
+	if (tmpPostChannel) {
+		postChannel.value = tmpPostChannel;
+	}
+}
+
 function cancel() {
+	restoreChannel();
 	emit('cancel');
 }
 
