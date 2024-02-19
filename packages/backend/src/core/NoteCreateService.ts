@@ -317,7 +317,9 @@ export class NoteCreateService implements OnApplicationShutdown {
 
 		// ローカルユーザーへ通知が発生しうるケース
 		if (meta.enableAllowedNotificationInLocalUserFollowed) {
-			const willCauseNotification = mentionedUsers.filter(u => u.host === null).length > 0 || data.reply?.userHost === null || data.renote?.userHost === null;
+			const willCauseNotification = mentionedUsers.some(u => u.host === null)
+				|| (data.visibility === 'specified' && data.visibleUsers?.some(u => u.host === null))
+				|| data.reply?.userHost === null || (this.isQuote(data) && data.renote?.userHost === null) || false;
 
 			// いずれかのローカルユーザーがフォローしているリモートのノートのみ通知を行う
 			if (user.host !== null && willCauseNotification) {
@@ -718,6 +720,12 @@ export class NoteCreateService implements OnApplicationShutdown {
 			if (matched) return true;
 		}
 		return false;
+	}
+
+	@bindThis
+	private isQuote(note: Option): note is Option & { renote: Note } {
+		// sync with misc/is-quote.ts
+		return !!note.renote && (!!note.text || !!note.cw || (!!note.files && !!note.files.length) || !!note.poll);
 	}
 
 	@bindThis
