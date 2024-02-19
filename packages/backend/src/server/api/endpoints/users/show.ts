@@ -128,7 +128,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					user = await this.usersRepository.findOneBy(q);
 				}
 
-				if (user == null || (!isModerator && user.isSuspended)) {
+				if (user == null) {
 					throw new ApiError(meta.errors.noSuchUser);
 				}
 
