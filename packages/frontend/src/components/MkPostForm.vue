@@ -397,7 +397,6 @@ if (props.specified) {
 // keep cw when reply
 if (defaultStore.state.keepCw && props.reply && props.reply.cw) {
 	useCw = true;
-	cw = props.reply.cw;
 }
 
 function watchForDraft() {
