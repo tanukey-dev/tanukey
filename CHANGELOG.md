@@ -12,6 +12,10 @@
 
 -->
 
+## 13.14.2-tanu-1.51.1
+### General
+- リアクション数がリアルタイムに反映されない、詳細表示が正しくない不具合の修正
+
 ## 13.14.2-tanu-1.51.0
 ### General
 - verifyemail.ioの前段でdeep-email-validatorを動作させるように修正
