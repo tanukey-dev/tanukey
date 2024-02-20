@@ -1,5 +1,6 @@
 <template>
 <button
+	v-if="showReaction"
 	ref="buttonEl"
 	v-ripple="canToggle"
 	class="_button"
@@ -7,12 +8,12 @@
 	@click="toggleReaction()"
 >
 	<MkReactionIcon :class="$style.icon" :reaction="reaction" :emojiUrl="note.reactionEmojis[reaction.substr(1, reaction.length - 2)]"/>
-	<span :class="$style.count">{{ count }}</span>
+	<span :class="$style.count">{{ showCount }}</span>
 </button>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, shallowRef, watch } from 'vue';
+import { computed, onMounted, shallowRef, watch, ref } from 'vue';
 import * as misskey from 'misskey-js';
 import XDetails from '@/components/MkReactionsViewer.details.vue';
 import MkReactionIcon from '@/components/MkReactionIcon.vue';
@@ -34,6 +35,8 @@ const props = defineProps<{
 const buttonEl = shallowRef<HTMLElement>();
 
 const canToggle = computed(() => !props.reaction.match(/@\w/) && $i);
+const showReaction = ref(true);
+const showCount = ref(props.count);
 
 async function toggleReaction() {
 	if (!canToggle.value) return;
@@ -88,12 +91,20 @@ onMounted(() => {
 });
 
 useTooltip(buttonEl, async (showing) => {
-	const reactions = await os.apiGet('notes/reactions', {
+	const reactions = await os.api('notes/reactions', {
 		noteId: props.note.id,
 		type: props.reaction,
 		limit: 11,
 		_cacheKey_: props.count,
 	});
+
+	// ミュートしているユーザーのリアクションがあることを隠す
+	if (reactions.length === 0) {
+		showReaction.value = false;
+		return;
+	}
+
+	showCount.value = reactions.length;
 
 	const users = reactions.map(x => x.user);
 

@@ -66,14 +66,17 @@ watch($$(tab), async () => {
 		limit: 30,
 	});
 
+	note.reactions[tab] = res.length;
 	users = res.map(x => x.user);
 });
 
 onMounted(() => {
 	os.api('notes/show', {
 		noteId: props.noteId,
-	}).then((res) => {
-		reactions = Object.keys(res.reactions);
+	}).then(async (res) => {
+		reactions = (await os.api('notes/reactions', {
+			noteId: props.noteId,
+		})).map(re => re.type);
 		tab = reactions[0];
 		note = res;
 	});

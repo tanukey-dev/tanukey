@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { NoteReactionsRepository } from '@/models/index.js';
+import type { NoteReactionsRepository, MutingsRepository } from '@/models/index.js';
 import type { NoteReaction } from '@/models/entities/NoteReaction.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { NoteReactionEntityService } from '@/core/entities/NoteReactionEntityService.js';
@@ -53,6 +53,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		@Inject(DI.noteReactionsRepository)
 		private noteReactionsRepository: NoteReactionsRepository,
 
+		@Inject(DI.mutingsRepository)
+		private mutingsRepository: MutingsRepository,
+
 		private noteReactionEntityService: NoteReactionEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
@@ -77,6 +80,20 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				},
 				relations: ['user', 'note'],
 			});
+
+			if (me) {
+				const mutings = await this.mutingsRepository.createQueryBuilder('muting')
+					.select('muting.muteeId')
+					.where('muting.muterId = :muterId', { muterId: me.id })
+					.getMany();
+
+				if (mutings.length > 0) {
+					const mutingUsers = mutings.map(muting => muting.muteeId);
+					if (mutingUsers.length > 0) {
+						return await Promise.all(reactions.filter(re => !mutingUsers.includes(re.userId)).map(reaction => this.noteReactionEntityService.pack(reaction, me)));
+					}
+				}
+			}
 
 			return await Promise.all(reactions.map(reaction => this.noteReactionEntityService.pack(reaction, me)));
 		});
