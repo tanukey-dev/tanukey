@@ -83,7 +83,10 @@ function anime() {
 }
 
 watch(() => props.count, (newCount, oldCount) => {
-	if (oldCount < newCount) anime();
+	showCount.value = newCount;
+	if (oldCount < newCount) {
+		anime();
+	}
 });
 
 onMounted(() => {

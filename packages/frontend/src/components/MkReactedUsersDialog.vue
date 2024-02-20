@@ -74,9 +74,9 @@ onMounted(() => {
 	os.api('notes/show', {
 		noteId: props.noteId,
 	}).then(async (res) => {
-		reactions = (await os.api('notes/reactions', {
+		reactions = [...new Set((await os.api('notes/reactions', {
 			noteId: props.noteId,
-		})).map(re => re.type);
+		})).map(re => re.type))];
 		tab = reactions[0];
 		note = res;
 	});
