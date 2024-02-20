@@ -40,6 +40,10 @@
 					</button>
 				</template>
 			</template>
+			<button v-else-if="reply" ref="changeChannelButtonAtChannelEl" v-tooltip="postChannel.name" class="_button" :class="[$style.headerRightItem, $style.visibility]" disabled>
+				<span><i class="ti ti-device-tv"></i></span>
+				<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
+			</button>
 			<button v-else ref="changeChannelButtonAtChannelEl" v-tooltip="postChannel.name" class="_button" :class="[$style.headerRightItem, $style.visibility]" @click="setChannel">
 				<span><i class="ti ti-device-tv"></i></span>
 				<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
@@ -375,6 +379,14 @@ if (props.reply && ['home', 'followers', 'specified'].includes(props.reply.visib
 			});
 		}
 	}
+} else if (props.reply && props.reply.channel) {
+	tmpPostChannel = postChannel.value;
+	postChannel.value = props.reply.channel;
+} else if (props.reply) {
+	tmpPostChannel = postChannel.value;
+	postChannel.value = null;
+} else {
+	tmpPostChannel = postChannel.value;
 }
 
 if (props.specified) {
@@ -885,9 +897,7 @@ async function post(ev?: MouseEvent) {
 }
 
 function restoreChannel() {
-	if (tmpPostChannel) {
-		postChannel.value = tmpPostChannel;
-	}
+	postChannel.value = tmpPostChannel;
 }
 
 function cancel() {
@@ -948,7 +958,7 @@ onMounted(async () => {
 	new Autocomplete(textareaEl, $$(text));
 	new Autocomplete(cwInputEl, $$(cw));
 	new Autocomplete(hashtagsInputEl, $$(hashtags));
-	
+
 	//チャンネル指定があった場合は書き換える
 	if (props.channel) {
 		postChannel.value = await os.api('channels/show', {
@@ -979,7 +989,7 @@ onMounted(async () => {
 			text = init.text ? init.text : '';
 			files = init.files;
 			cw = init.cw ?? '';
-			useCw = init.cw !== undefined && init.cw !== '';
+			useCw = init.cw !== null && init.cw !== '';
 			if (init.poll) {
 				poll = {
 					choices: init.poll.choices.map(x => x.text),
