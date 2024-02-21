@@ -61,7 +61,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			});
 
 			return {
-				emojis: await this.emojiEntityService.packDetailedMany(emojis),
+				emojis: await this.emojiEntityService.packSimpleMany(emojis),
 			};
 		});
 	}
