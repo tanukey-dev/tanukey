@@ -41,11 +41,6 @@
 			<XEmoji v-for="emoji in draftEmojis" :key="emoji.name" :emoji="emoji" :draft="emoji.draft"/>
 		</div>
 	</MkSpacer>
-	<MkSpacer v-if="tab === 'managed'" :contentMax="1000" :marginMin="20">
-		<div :class="$style.emojis">
-			<XEmoji v-for="emoji in managedEmojis" :key="emoji.name" :emoji="emoji" :draft="emoji.draft" :editable="true"/>
-		</div>
-	</MkSpacer>
 </MkStickyContainer>
 </template>
 
@@ -74,9 +69,6 @@ const headerTabs = $computed(() => [{
 }, {
 	key: 'draft',
 	title: i18n.ts.draftEmojis,
-}, {
-	key: 'managed',
-	title: i18n.ts.manage,
 }]);
 
 definePageMetadata(ref({}));
@@ -97,7 +89,6 @@ const newEmojis = customEmojis.value.filter(emoji => {
 	return checkDate > new Date();
 });
 const draftEmojis = customEmojis.value.filter(emoji => emoji.draft);
-const managedEmojis = customEmojis.value.filter(emoji => emoji.uploadedUserName === $i?.username);
 
 function search() {
 	if ((q === '' || q == null) && selectedTags.size === 0) {
