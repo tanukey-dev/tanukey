@@ -10,7 +10,7 @@ export type MenuLink = { type: 'link', to: string, text: string, icon?: string, 
 export type MenuA = { type: 'a', href: string, target?: string, download?: string, text: string, icon?: string, indicate?: boolean };
 export type MenuUser = { type: 'user', user: Misskey.entities.User, active?: boolean, indicate?: boolean, action: MenuAction };
 export type MenuSwitch = { type: 'switch', ref: Ref<boolean>, text: string, disabled?: boolean };
-export type MenuButton = { type?: 'button', text: string, icon?: string, indicate?: boolean, danger?: boolean, disabled?: boolean, active?: boolean, avatar?: Misskey.entities.User; action: MenuAction };
+export type MenuButton = { type?: 'button', text: string, icon?: string, indicate?: boolean, danger?: boolean, active?: boolean, avatar?: Misskey.entities.User; action: MenuAction };
 export type MenuParent = { type: 'parent', text: string, icon?: string, children: OuterMenuItem[] | (() => Promise<OuterMenuItem[]> | OuterMenuItem[]) };
 
 export type MenuPending = { type: 'pending' };
