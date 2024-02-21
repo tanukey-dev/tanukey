@@ -210,6 +210,7 @@ let imeText = $ref('');
 let showingOptions = $ref(false);
 let postChannel: WritableComputedRef<misskey.entities.Channel | null> = computed(defaultStore.makeGetterSetter('postChannel'));
 let tmpPostChannel: misskey.entities.Channel|null = null;
+let updateDraft = true;
 
 watch(postChannel, () => {
 	if (postChannel.value) {
@@ -491,6 +492,7 @@ function setChannel(): void {
 		src: postChannel.value == null ? changeChannelButtonAtPublicEl : changeChannelButtonAtChannelEl,
 	}, {
 		changeChannel: ch => {
+			deleteDraft();
 			postChannel.value = ch;
 			visibility = 'public';
 		},
@@ -610,6 +612,7 @@ function clear() {
 function onKeydown(ev: KeyboardEvent) {
 	if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey) && canPost) post();
 	if (ev.key === 'Escape') {
+		updateDraft = false;
 		restoreChannel();
 		emit('esc');
 	}
@@ -708,6 +711,8 @@ function onDrop(ev): void {
 }
 
 function saveDraft() {
+	if (!updateDraft) return;
+
 	const draftData = JSON.parse(miLocalStorage.getItem('drafts') ?? '{}');
 
 	draftData[draftKey] = {
@@ -845,6 +850,7 @@ async function post(ev?: MouseEvent) {
 			clear();
 		}
 		nextTick(() => {
+			updateDraft = false;
 			deleteDraft();
 			emit('posted');
 			if (postData.text && postData.text !== '') {
@@ -900,6 +906,7 @@ function restoreChannel() {
 }
 
 function cancel() {
+	updateDraft = false;
 	restoreChannel();
 	emit('cancel');
 }
