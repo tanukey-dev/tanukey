@@ -282,6 +282,8 @@ export type CustomEmoji = {
 	category: string;
 	aliases: string[];
 	draft: boolean;
+	license: string;
+	uploadedUserName: string;
 };
 
 export type LiteInstanceMetadata = {

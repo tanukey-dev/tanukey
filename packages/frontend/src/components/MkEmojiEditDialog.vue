@@ -114,7 +114,9 @@ let draft = $ref(props.emoji ? props.emoji.draft : false);
 let isRequest = $ref(props.isRequest);
 
 watch($$(roleIdsThatCanBeUsedThisEmojiAsReaction), async () => {
-	rolesThatCanBeUsedThisEmojiAsReaction = (await Promise.all(roleIdsThatCanBeUsedThisEmojiAsReaction.map((id) => os.api('admin/roles/show', { roleId: id }).catch(() => null)))).filter(x => x != null);
+	if (roleIdsThatCanBeUsedThisEmojiAsReaction) {
+		rolesThatCanBeUsedThisEmojiAsReaction = (await Promise.all(roleIdsThatCanBeUsedThisEmojiAsReaction?.map((id) => os.api('admin/roles/show', { roleId: id }).catch(() => null)))).filter(x => x != null);
+	}
 }, { immediate: true });
 
 const imgUrl = computed(() => file ? file.url : props.emoji ? props.emoji.url : null);
@@ -168,15 +170,17 @@ async function done() {
 	}
 
 	if (props.emoji) {
-		await os.apiWithDialog('admin/emoji/update', {
-			id: props.emoji.id,
-			name,
-			category,
-			aliases: aliases.split(' '),
-			license: license === '' ? null : license,
-			draft: draft,
-			...params,
-		});
+		if (isRequest) {
+			await os.apiWithDialog('admin/emoji/update-draft', {
+				id: props.emoji.id,
+				...params,
+			});
+		} else {
+			await os.apiWithDialog('admin/emoji/update', {
+				id: props.emoji.id,
+				...params,
+			});
+		}
 
 		emit('done', {
 			updated: {

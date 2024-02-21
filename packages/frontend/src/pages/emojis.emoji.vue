@@ -28,32 +28,72 @@ const props = defineProps<{
 		category: string;
 		url: string;
 		draft: boolean;
+		license: string;
+		uploadedUserName: string;
 	};
+	editable: boolean;
 }>();
 
-function menu(ev) {
-	os.popupMenu([{
-		type: 'label',
-		text: ':' + props.emoji.name + ':',
-	}, {
-		text: i18n.ts.copy,
-		icon: 'ti ti-copy',
-		action: () => {
-			copyToClipboard(`:${props.emoji.name}:`);
-			os.success();
-		},
-	}, {
-		text: i18n.ts.info,
-		icon: 'ti ti-info-circle',
-		action: () => {
-			os.apiGet('emoji', { name: props.emoji.name }).then(res => {
+async function menu(ev) {
+	if (props.editable) {
+		os.popupMenu([{
+			type: 'label',
+			text: ':' + props.emoji.name + ':',
+		}, {
+			text: i18n.ts.edit,
+			icon: 'ti ti-edit',
+			action: () => {
+				edit();
+			},
+		}, {
+			text: i18n.ts.copy,
+			icon: 'ti ti-copy',
+			action: () => {
+				copyToClipboard(`:${props.emoji.name}:`);
+				os.success();
+			},
+		}, {
+			text: i18n.ts.info,
+			icon: 'ti ti-info-circle',
+			action: () => {
 				os.popup(defineAsyncComponent(() => import('@/components/MkEmojiInfoDialog.vue')), {
-					emoji: res,
+					emoji: props.emoji,
 				});
-			});
-		},
-	}], ev.currentTarget ?? ev.target);
+			},
+		}], ev.currentTarget ?? ev.target);
+	} else {
+		os.popupMenu([{
+			type: 'label',
+			text: ':' + props.emoji.name + ':',
+		}, {
+			text: i18n.ts.copy,
+			icon: 'ti ti-copy',
+			action: () => {
+				copyToClipboard(`:${props.emoji.name}:`);
+				os.success();
+			},
+		}, {
+			text: i18n.ts.info,
+			icon: 'ti ti-info-circle',
+			action: () => {
+				os.popup(defineAsyncComponent(() => import('@/components/MkEmojiInfoDialog.vue')), {
+					emoji: props.emoji,
+				});
+			},
+		}], ev.currentTarget ?? ev.target);
+	}
 }
+
+const edit = () => {
+	os.popup(defineAsyncComponent(() => import('@/components/MkEmojiEditDialog.vue')), {
+		emoji: props.emoji,
+		isRequest: true,
+	}, {
+		done: result => {
+			window.location.reload();
+		},
+	}, 'closed');
+};
 </script>
 
 <style lang="scss" module>

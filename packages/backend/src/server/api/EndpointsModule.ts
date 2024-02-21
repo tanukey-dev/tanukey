@@ -21,6 +21,7 @@ import * as ep___admin_drive_showFile from './endpoints/admin/drive/show-file.js
 import * as ep___admin_emoji_addAliasesBulk from './endpoints/admin/emoji/add-aliases-bulk.js';
 import * as ep___admin_emoji_add from './endpoints/admin/emoji/add.js';
 import * as ep___admin_emoji_addDraft from './endpoints/admin/emoji/add-draft.js';
+import * as ep___admin_emoji_updateDraft from './endpoints/admin/emoji/update-draft.js';
 import * as ep___admin_emoji_copy from './endpoints/admin/emoji/copy.js';
 import * as ep___admin_emoji_deleteBulk from './endpoints/admin/emoji/delete-bulk.js';
 import * as ep___admin_emoji_delete from './endpoints/admin/emoji/delete.js';
@@ -382,6 +383,7 @@ const $admin_drive_showFile: Provider = { provide: 'ep:admin/drive/show-file', u
 const $admin_emoji_addAliasesBulk: Provider = { provide: 'ep:admin/emoji/add-aliases-bulk', useClass: ep___admin_emoji_addAliasesBulk.default };
 const $admin_emoji_add: Provider = { provide: 'ep:admin/emoji/add', useClass: ep___admin_emoji_add.default };
 const $admin_emoji_addDraft: Provider = { provide: 'ep:admin/emoji/add-draft', useClass: ep___admin_emoji_addDraft.default };
+const $admin_emoji_updateDraft: Provider = { provide: 'ep:admin/emoji/update-draft', useClass: ep___admin_emoji_updateDraft.default };
 const $admin_emoji_copy: Provider = { provide: 'ep:admin/emoji/copy', useClass: ep___admin_emoji_copy.default };
 const $admin_emoji_deleteBulk: Provider = { provide: 'ep:admin/emoji/delete-bulk', useClass: ep___admin_emoji_deleteBulk.default };
 const $admin_emoji_delete: Provider = { provide: 'ep:admin/emoji/delete', useClass: ep___admin_emoji_delete.default };
@@ -747,6 +749,7 @@ const $events_update: Provider = { provide: 'ep:events/update', useClass: ep___e
 		$admin_emoji_addAliasesBulk,
 		$admin_emoji_add,
 		$admin_emoji_addDraft,
+		$admin_emoji_updateDraft,
 		$admin_emoji_copy,
 		$admin_emoji_deleteBulk,
 		$admin_emoji_delete,
@@ -1106,6 +1109,7 @@ const $events_update: Provider = { provide: 'ep:events/update', useClass: ep___e
 		$admin_emoji_addAliasesBulk,
 		$admin_emoji_add,
 		$admin_emoji_addDraft,
+		$admin_emoji_updateDraft,
 		$admin_emoji_copy,
 		$admin_emoji_deleteBulk,
 		$admin_emoji_delete,

@@ -50,11 +50,13 @@ export type Endpoints = {
 	'admin/drive/files': { req: TODO; res: TODO; };
 	'admin/drive/show-file': { req: TODO; res: TODO; };
 	'admin/emoji/add': { req: TODO; res: TODO; };
+	'admin/emoji/add-draft': { req: TODO; res: TODO; };
 	'admin/emoji/copy': { req: TODO; res: TODO; };
 	'admin/emoji/list-remote': { req: TODO; res: TODO; };
 	'admin/emoji/list': { req: TODO; res: TODO; };
 	'admin/emoji/remove': { req: TODO; res: TODO; };
 	'admin/emoji/update': { req: TODO; res: TODO; };
+	'admin/emoji/update-draft': { req: TODO; res: TODO; };
 	'admin/federation/delete-all-files': { req: { host: string; }; res: null; };
 	'admin/federation/refresh-remote-instance-metadata': { req: TODO; res: TODO; };
 	'admin/federation/remove-all-following': { req: TODO; res: TODO; };
