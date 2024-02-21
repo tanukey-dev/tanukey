@@ -67,30 +67,32 @@
 			</button>
 		</div>
 	</header>
-	<MkNoteSimple v-if="reply" :class="$style.targetNote" :note="reply"/>
-	<MkNoteSimple v-if="renote" :class="$style.targetNote" :note="renote"/>
-	<div v-if="quoteId" :class="$style.withQuote"><i class="ti ti-quote"></i> {{ i18n.ts.quoteAttached }}<button @click="quoteId = null"><i class="ti ti-x"></i></button></div>
-	<div v-if="visibility === 'specified'" :class="$style.toSpecified">
-		<span style="margin-right: 8px;">{{ i18n.ts.recipient }}</span>
-		<div :class="$style.visibleUsers">
-			<span v-for="u in visibleUsers" :key="u.id" :class="$style.visibleUser">
-				<MkAcct :user="u"/>
-				<button class="_button" style="padding: 4px 8px;" @click="removeVisibleUser(u)"><i class="ti ti-x"></i></button>
-			</span>
-			<button class="_buttonPrimary" style="padding: 4px; border-radius: 8px;" @click="addVisibleUser"><i class="ti ti-plus ti-fw"></i></button>
+	<div :class="$style.mainContent">
+		<MkNoteSimple v-if="reply" :class="$style.targetNote" :note="reply"/>
+		<MkNoteSimple v-if="renote" :class="$style.targetNote" :note="renote"/>
+		<div v-if="quoteId" :class="$style.withQuote"><i class="ti ti-quote"></i> {{ i18n.ts.quoteAttached }}<button @click="quoteId = null"><i class="ti ti-x"></i></button></div>
+		<div v-if="visibility === 'specified'" :class="$style.toSpecified">
+			<span style="margin-right: 8px;">{{ i18n.ts.recipient }}</span>
+			<div :class="$style.visibleUsers">
+				<span v-for="u in visibleUsers" :key="u.id" :class="$style.visibleUser">
+					<MkAcct :user="u"/>
+					<button class="_button" style="padding: 4px 8px;" @click="removeVisibleUser(u)"><i class="ti ti-x"></i></button>
+				</span>
+				<button class="_buttonPrimary" style="padding: 4px; border-radius: 8px;" @click="addVisibleUser"><i class="ti ti-plus ti-fw"></i></button>
+			</div>
 		</div>
-	</div>
-	<MkInfo v-if="hasNotSpecifiedMentions" warn :class="$style.hasNotSpecifiedMentions">{{ i18n.ts.notSpecifiedMentionWarning }} - <button class="_textButton" @click="addMissingMention()">{{ i18n.ts.add }}</button></MkInfo>
-	<textarea v-show="useCw" ref="cwInputEl" v-model="cw" :class="$style.cw" :placeholder="i18n.ts.annotation" @keydown="onKeydown"></textarea>
-	<div :class="[$style.textOuter, { [$style.withCw]: useCw }]">
-		<textarea ref="textareaEl" v-model="text" :class="[$style.text]" :disabled="posting || posted" :placeholder="placeholder" data-cy-post-form-text @keydown="onKeydown" @paste="onPaste" @compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd"/>
-		<div v-if="maxTextLength - textLength < 100" :class="['_acrylic', $style.textCount, { [$style.textOver]: textLength > maxTextLength }]">{{ maxTextLength - textLength }}</div>
-	</div>
-	<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
-	<textarea v-show="withAsciiArt" ref="asciiArtTextareaEl" v-model="asciiartText" :style="aaTextAreaStyles" :class="$style.asciiart" class="asciiart" :placeholder="i18n.ts.asciiart" spellcheck="false" ></textarea>
-	<XPostFormAttaches v-model="files" :class="$style.attaches" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName"/>
-	<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
-	<div v-if="showingOptions" style="padding: 8px 16px;">
+		<MkInfo v-if="hasNotSpecifiedMentions" warn :class="$style.hasNotSpecifiedMentions">{{ i18n.ts.notSpecifiedMentionWarning }} - <button class="_textButton" @click="addMissingMention()">{{ i18n.ts.add }}</button></MkInfo>
+		<textarea v-show="useCw" ref="cwInputEl" v-model="cw" :style="textareaCwStyle" :class="$style.cw" :placeholder="i18n.ts.annotation" @keydown="onKeydown" @input="handleInputCw($event, textareaCwHeight)"></textarea>
+		<div :class="[$style.textOuter, { [$style.withCw]: useCw }]">
+			<textarea ref="textareaEl" v-model="text" :style="textareaMainStyle" :class="[$style.text]" :disabled="posting || posted" :placeholder="placeholder" data-cy-post-form-text @keydown="onKeydown" @paste="onPaste" @compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd" @input="handleInputMain($event)"/>
+			<div v-if="maxTextLength - textLength < 100" :class="['_acrylic', $style.textCount, { [$style.textOver]: textLength > maxTextLength }]">{{ maxTextLength - textLength }}</div>
+		</div>
+		<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags" :placeholder="i18n.ts.hashtags" list="hashtags">
+		<textarea v-show="withAsciiArt" ref="asciiArtTextareaEl" v-model="asciiartText" :style="textareaAAStyle" :class="$style.asciiart" class="asciiart" :placeholder="i18n.ts.asciiart" spellcheck="false" @input="handleInputAA($event)"></textarea>
+		<XPostFormAttaches v-model="files" :class="$style.attaches" @detach="detachFile" @changeSensitive="updateFileSensitive" @changeName="updateFileName"/>
+		<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
+		<div v-if="showingOptions" style="padding: 8px 16px;">
+		</div>
 	</div>
 	<footer :class="$style.footer">
 		<div :class="$style.footerLeft">
@@ -211,6 +213,31 @@ let showingOptions = $ref(false);
 let postChannel: WritableComputedRef<misskey.entities.Channel | null> = computed(defaultStore.makeGetterSetter('postChannel'));
 let tmpPostChannel: misskey.entities.Channel|null = null;
 let updateDraft = true;
+const textareaCwHeight = ref(30);
+const textareaCwStyle = computed(() => { return { height: `${textareaCwHeight.value + 2}px` }; });
+const textareaMainHeight = ref(90);
+const textareaMainStyle = computed(() => { return { height: `${textareaMainHeight.value + 2}px` }; });
+const textareaAAHeight = ref(300);
+const textareaAAStyle = computed(() => { return { height: `${textareaAAHeight.value + 2}px` }; });
+
+function handleInputCw(event: any) {
+	handleInput(event, textareaCwHeight);
+}
+
+function handleInputMain(event: any) {
+	handleInput(event, textareaMainHeight);
+}
+
+function handleInputAA(event: any) {
+	handleInput(event, textareaAAHeight);
+}
+
+function handleInput(event: any, textareaHeight: any) {
+	textareaHeight.value = 0;
+	nextTick(() => {
+		textareaHeight.value = event.target.scrollHeight;
+	});
+}
 
 watch(postChannel, () => {
 	if (postChannel.value) {
@@ -290,16 +317,6 @@ const withHashtags = $computed(defaultStore.makeGetterSetter('postFormWithHashta
 const hashtags = $computed(defaultStore.makeGetterSetter('postFormHashtags'));
 const withAsciiArt = computed(defaultStore.makeGetterSetter('postFormWithAsciiArt'));
 const asciiartText = ref('');
-
-let aaTextareaHeight = ref("300px");
-
-let aaTextAreaStyles = computed(() => {
-	return { 'height': aaTextareaHeight.value };
-});
-
-watch(asciiartText, () => {
-	aaTextareaHeight.value = asciiArtTextareaEl.scrollHeight + 2 + 'px';
-});
 
 watch($$(text), () => {
 	checkMissingMention();
@@ -1050,6 +1067,11 @@ defineExpose({
 	flex: 0 1 100px;
 }
 
+.mainContent {
+	max-height: 45vh;
+	overflow-y: auto;
+}
+
 .cancel {
 	padding: 0;
 	font-size: 1em;
@@ -1233,6 +1255,7 @@ defineExpose({
 	max-width: 100%;
 	min-width: 100%;
 	border-top: solid 0.5px var(--divider);
+	min-height: 90px;
 }
 
 .textOuter {
@@ -1248,7 +1271,7 @@ defineExpose({
 	max-width: 100%;
 	min-width: 100%;
 	width: 100%;
-	height: 100%;
+	min-height: 30px;
 	z-index: 1;
 	padding-bottom: 8px;
 	border-bottom: solid 0.5px var(--divider);
@@ -1259,7 +1282,6 @@ defineExpose({
 	min-width: 100%;
 	width: 100%;
 	min-height: 90px;
-	height: 100%;
 }
 
 .textCount {
