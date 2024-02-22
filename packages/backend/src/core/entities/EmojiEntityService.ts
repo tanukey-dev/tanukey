@@ -4,6 +4,8 @@ import type { EmojisRepository, DriveFilesRepository, UsersRepository } from '@/
 import type { Packed } from '@/misc/json-schema.js';
 import type { } from '@/models/entities/Blocking.js';
 import type { Emoji } from '@/models/entities/Emoji.js';
+import { DriveFile } from '@/models/entities/DriveFile.js';
+import { User } from '@/models/entities/User.js';
 import { bindThis } from '@/decorators.js';
 
 @Injectable()
@@ -46,6 +48,37 @@ export class EmojiEntityService {
 		emojis: any[],
 	) {
 		return Promise.all(emojis.map(x => this.packSimple(x)));
+	}
+
+	@bindThis
+	public async packAll(): Promise<Packed<'EmojiDetailed'>[]> {
+		const emojis = await this.emojisRepository.createQueryBuilder('emoji')
+			.addSelect('user.username', 'uploadedUserName')
+			.leftJoin(DriveFile, 'file', 'emoji.driveFileId = file.id')
+			.leftJoin(User, 'user', 'file.userId = user.id')
+			.andWhere('emoji.host IS NULL')
+			.orderBy('emoji.category', 'ASC')
+			.addOrderBy('emoji.name', 'ASC')
+			.getRawMany();
+		
+		return emojis.map(emoji => {
+			return {
+				id: emoji.emoji_id,
+				updatedAt: emoji.emoji_updatedAt ? emoji.emoji_updatedAt.toDateString() : null,
+				aliases: emoji.emoji_aliases,
+				name: emoji.emoji_name,
+				category: emoji.emoji_category,
+				host: emoji.emoji_host,
+				// || emoji.originalUrl してるのは後方互換性のため（publicUrlはstringなので??はだめ）
+				url: emoji.emoji_publicUrl || emoji.emoji_originalUrl,
+				license: emoji.emoji_license,
+				draft: emoji.emoji_draft,
+				isSensitive: emoji.emoji_isSensitive,
+				localOnly: emoji.emoji_localOnly,
+				roleIdsThatCanBeUsedThisEmojiAsReaction: emoji.emoji_roleIdsThatCanBeUsedThisEmojiAsReaction,
+				uploadedUserName: emoji.uploadedUserName,
+			};
+		});
 	}
 
 	@bindThis

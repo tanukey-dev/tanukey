@@ -23,7 +23,7 @@ export const meta = {
 				items: {
 					type: 'object',
 					optional: false, nullable: false,
-					ref: 'EmojiSimple',
+					ref: 'EmojiDetailed',
 				},
 			},
 		},
@@ -50,18 +50,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private emojiEntityService: EmojiEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const emojis = await this.emojisRepository.find({
-				where: {
-					host: IsNull(),
-				},
-				order: {
-					category: 'ASC',
-					name: 'ASC',
-				},
-			});
-
 			return {
-				emojis: await this.emojiEntityService.packSimpleMany(emojis),
+				emojis: await this.emojiEntityService.packAll(),
 			};
 		});
 	}

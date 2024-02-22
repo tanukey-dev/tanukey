@@ -43,7 +43,7 @@
 	</MkSpacer>
 	<MkSpacer v-if="tab === 'managed'" :contentMax="1000" :marginMin="20">
 		<div :class="$style.emojis">
-			<XEmoji v-for="emoji in managedEmojis" :key="emoji.name" :emoji="emoji" :draft="emoji.draft" :editable="true"/>
+			<XEmoji v-for="emoji in managedEmojis" :key="emoji.name" :emoji="emoji" :draft="emoji.draft"/>
 		</div>
 	</MkSpacer>
 </MkStickyContainer>

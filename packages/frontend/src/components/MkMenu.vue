@@ -39,7 +39,7 @@
 				<span>{{ item.text }}</span>
 				<span :class="$style.caret"><i class="ti ti-chevron-right ti-fw"></i></span>
 			</button>
-			<button v-else :tabindex="i" class="_button" role="menuitem" :class="[$style.item, { [$style.danger]: item.danger, [$style.active]: item.active }]" :disabled="item.active" @click="clicked(item.action, $event)" @mouseenter.passive="onItemMouseEnter(item)" @mouseleave.passive="onItemMouseLeave(item)">
+			<button v-else :tabindex="i" class="_button" role="menuitem" :class="[$style.item, { [$style.danger]: item.danger, [$style.active]: item.active }]" :disabled="item.disabled" @click="clicked(item.action, $event)" @mouseenter.passive="onItemMouseEnter(item)" @mouseleave.passive="onItemMouseLeave(item)">
 				<i v-if="item.icon" class="ti-fw" :class="[$style.icon, item.icon]"></i>
 				<MkAvatar v-if="item.avatar" :user="item.avatar" :class="$style.avatar"/>
 				<span>{{ item.text }}</span>
