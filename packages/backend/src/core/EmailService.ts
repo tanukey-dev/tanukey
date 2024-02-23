@@ -212,8 +212,7 @@ export class EmailService {
 			});
 
 			if (validated.valid && meta.enableVerifymailApi && meta.verifymailAuthKey != null) {
-				const domain = emailAddress.split('@')[1];
-				validated = await this.verifymailResponseCache.fetch(domain);
+				validated = await this.verifymailResponseCache.fetch(emailAddress);
 			}
 		}
 
