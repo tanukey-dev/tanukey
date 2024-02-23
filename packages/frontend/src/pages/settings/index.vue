@@ -136,7 +136,7 @@ const menuDef = computed(() => [{
 		icon: 'ti ti-credit-card',
 		text: i18n.ts.subscription,
 		to: '/settings/subscription',
-		active: currentPage.value?.route.name === 'subscription',
+		active: currentPage?.route.name === 'subscription',
 	}, {
 		icon: 'ti ti-badges',
 		text: i18n.ts.roles,

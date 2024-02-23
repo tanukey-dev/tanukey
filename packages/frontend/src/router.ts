@@ -184,7 +184,7 @@ export const routes = [{
 	}, {
 		path: '/subscription',
 		name: 'subscription',
-		component: iAmAdmin ? page(() => import('@/pages/admin/subscription-plans.vue')) : page(() => import('@/pages/not-found.vue')),
+		component: page(() => import('@/pages/settings/subscription.vue')),
 	}, {
 		path: '/other',
 		name: 'other',
@@ -449,6 +449,10 @@ export const routes = [{
 		path: '/roles',
 		name: 'roles',
 		component: page(() => import('./pages/admin/roles.vue')),
+	}, {
+		path: '/subscription-plans',
+		name: 'subscription-plans',
+		component: page(() => import('@/pages/admin/subscription-plans.vue')),
 	}, {
 		path: '/database',
 		name: 'database',

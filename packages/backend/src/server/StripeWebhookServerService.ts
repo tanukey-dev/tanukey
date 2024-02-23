@@ -77,28 +77,43 @@ export class StripeWebhookServerService {
 					return reply.code(400);
 				}
 
+				// イベント処理前の共通処理（例：ユーザープロファイルの取得と初期応答の設定）
+				const preprocessEvent = async (eventData: any) => {
+					const customer = eventData.customer as string;
+					const userProfile = await this.userProfilesRepository.findOneBy({ stripeCustomerId: customer });
+
+					if (!userProfile) {
+						return reply.code(400);
+					}
+					reply.code(204); // Stripeへの応答を設定
+					return { userProfile, subscription: eventData };
+				};
+
+				const { userProfile, subscription } = await preprocessEvent(event.data.object);
+
 				// Handle the event.
 				switch (event.type) {
-					case 'customer.subscription.created': {
-						// Payment is successful and the subscription is created.
-						// You should provision the subscription and save the customer ID to your database.
-						const subscription = event.data.object;
-
-						const customer = subscription.customer as string;
-						const userProfile = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer });
-
-						if (!userProfile) {
-							return reply.code(400);
-						}
-						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
-
+					case 'customer.subscription.created': { // サブスクリプションが新規に作成された場合
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
-						if (subscription.status === 'active') {
-							await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
+						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
+
+						if (user.subscriptionStatus !== 'none' && !user.stripeSubscriptionId) {
+							return; // 既にサブスクリプションが存在する場合は何もしない
 						}
+
+						if (subscription.status === 'active') {
+							await this.roleService.getUserRoles(userProfile.userId).then(async (roles) => {
+								// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
+								if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
+									await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
+								}
+							});
+						}
+
 						await this.usersRepository.update({ id: userProfile.userId }, {
 							subscriptionStatus: subscription.status,
 							subscriptionPlanId: subscriptionPlan.id,
+							stripeSubscriptionId: user.stripeSubscriptionId,
 						});
 
 						// Publish meUpdated event
@@ -109,73 +124,95 @@ export class StripeWebhookServerService {
 						return;
 					}
 
-					case 'customer.subscription.deleted': {
-						// Delete the subscription.
-						const subscription = event.data.object;
-
-						const customer = subscription.customer as string;
-						const userProfile = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer });
-
-						if (!userProfile) {
-							return reply.code(400);
-						}
-						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
-
-						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
-						await this.roleService.unassign(userProfile.userId, subscriptionPlan.roleId);
-						await this.usersRepository.update({ id: userProfile.userId }, {
-							subscriptionStatus: subscription.status,
-							subscriptionPlanId: null,
-						});
-
-						// Publish meUpdated event
-						this.globalEventService.publishMainStream(userProfile.userId, 'meUpdated', await this.userEntityService.pack(userProfile.userId, { id: userProfile.userId }, {
-							includeSecrets: true,
-						}));
-
-						return;
-					}
-
-					case 'customer.subscription.updated': {
-						// Update the subscription.
-						const subscription = event.data.object;
-
-						const customer = subscription.customer as string;
-						const userProfile = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer });
-
-						if (!userProfile) {
-							return reply.code(400);
-						}
-						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
-
+					case 'customer.subscription.updated': { // Update the subscription.
+						const previousData = event.data.previous_attributes;
 						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
 						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
-						if (!user.subscriptionPlanId) {
-							// サブスクリプションプランが新規に設定された場合
-							await this.roleService.assign(user.id, subscriptionPlan.roleId);
-							await this.usersRepository.update({ id: user.id }, {
-								subscriptionStatus: subscription.status,
-								subscriptionPlanId: subscriptionPlan.id,
-							});
-						} else if (subscriptionPlan.id !== user.subscriptionPlanId) {
-							// サブスクリプションプランが変更された場合
-							const oldSubscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ id: user.subscriptionPlanId ?? undefined });
-							await this.roleService.unassign(user.id, oldSubscriptionPlan.roleId);
 
-							await this.roleService.assign(user.id, subscriptionPlan.roleId);
-							await this.usersRepository.update({ id: user.id }, {
-								subscriptionStatus: subscription.status,
-								subscriptionPlanId: subscriptionPlan.id,
-							});
-						} else {
-							// サブスクリプションプランが変更されていない場合
-							await this.usersRepository.update({ id: user.id }, {
-								subscriptionStatus: subscription.status,
-							});
+						if (user.stripeSubscriptionId && user.stripeSubscriptionId !== subscription.id) { // 既存のサブスクリプションIDとイベントのサブスクリプションIDが一致しない場合は何もしない
+							return;
 						}
+
+						if (subscription.cancel_at_period_end) {
+							return; // キャンセルされた場合は期限切れのタイミングでcustomer.subscription.deletedイベントが発生するので、ここでは何もしない
+						} else if (!user.subscriptionPlanId) { // サブスクリプションプランが新規に設定された場合
+							if (subscription.status === 'active') {
+								const roleIds = (await this.subscriptionPlansRepository.find()).map(x => x.roleId);
+								await this.roleService.getUserRoles(user.id).then(async (roles) => {
+									for (const role of roles) {
+										if (roleIds.includes(role.id) && role.id !== subscriptionPlan.roleId) {
+											await this.roleService.unassign(user.id, role.id); // 他のサブスクリプションプランのロールが割り当てられている場合、ロールを解除する
+										}
+									}
+
+									// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
+									if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
+										await this.roleService.assign(user.id, subscriptionPlan.roleId);
+									}
+								});
+							}
+						} else if (subscriptionPlan.id !== user.subscriptionPlanId) { // サブスクリプションプランが変更された場合
+							const oldSubscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ id: user.subscriptionPlanId ?? undefined });
+							await this.roleService.getUserRoles(user.id).then(async (roles) => {
+								// 旧サブスクリプションプランのロールが割り当てられている場合、ロールを解除する
+								if (roles.some((role) => role.id === oldSubscriptionPlan.roleId)) {
+									await this.roleService.unassign(user.id, oldSubscriptionPlan.roleId);
+								}
+
+								// 新しいサブスクリプションプランのロールが割り当てられていない場合、ロールを割り当てる
+								if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
+									await this.roleService.assign(user.id, subscriptionPlan.roleId);
+								}
+							});
+						} else if (previousData && previousData.status) { // サブスクリプションステータスが変更された場合
+							if (subscription.status === 'active') {
+								await this.roleService.getUserRoles(user.id).then(async (roles) => {
+									// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
+									if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
+										await this.roleService.assign(user.id, subscriptionPlan.roleId);
+									}
+								});
+							}
+						}
+
+						// ユーザーのサブスクリプションステータスとサブスクリプションプランを更新する
+						await this.usersRepository.update({ id: user.id }, {
+							subscriptionStatus: subscription.status,
+							subscriptionPlanId: subscriptionPlan.id,
+							stripeSubscriptionId: user.stripeSubscriptionId ? undefined : subscription.id, // 既存のサブスクリプションIDがない場合のみ更新する
+						});
 
 						// Publish meUpdated event
 						this.globalEventService.publishMainStream(user.id, 'meUpdated', await this.userEntityService.pack(user.id, user, {
+							includeSecrets: true,
+						}));
+
+						return;
+					}
+
+					case 'customer.subscription.deleted': { // Delete the subscription.
+						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
+						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
+
+						if (user.stripeSubscriptionId && user.stripeSubscriptionId !== subscription.id) { // 既存のサブスクリプションIDとイベントのサブスクリプションIDが一致しない場合は何もしない
+							return;
+						}
+
+						// サブスクリプションプランのロールが割り当てられている場合、ロールを解除する
+						await this.roleService.getUserRoles(userProfile.userId).then(async (roles) => {
+							if (roles.some((role) => role.id === subscriptionPlan.roleId)) {
+								await this.roleService.unassign(userProfile.userId, subscriptionPlan.roleId);
+							}
+						});
+
+						await this.usersRepository.update({ id: userProfile.userId }, {
+							subscriptionStatus: subscription.status,
+							subscriptionPlanId: null,
+							stripeSubscriptionId: null,
+						});
+
+						// Publish meUpdated event
+						this.globalEventService.publishMainStream(userProfile.userId, 'meUpdated', await this.userEntityService.pack(userProfile.userId, { id: userProfile.userId }, {
 							includeSecrets: true,
 						}));
 
@@ -189,34 +226,8 @@ export class StripeWebhookServerService {
 					}
 
 					case 'invoice.paid': {
-						const subscription = event.data.object;
-
-						const customer = subscription.customer as string;
-						const userProfile = await this.userProfilesRepository.findOneByOrFail({ stripeCustomerId: customer });
-
-						if (!userProfile) {
-							return reply.code(400);
-						}
-						reply.code(200); // 200を返すと、Stripeからのリクエストを受け取ったとみなされる。このタイミングで200を返さないと、Stripeからのリクエストがタイムアウトしてしまう。
-
-						const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
-						const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ id: user.subscriptionPlanId ?? undefined });
-
-						if (user.subscriptionStatus === 'active') {
-							return;
-						}
-
-						await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
-						await this.usersRepository.update({ id: userProfile.userId }, {
-							subscriptionStatus: 'active',
-						});
-
-						// Publish meUpdated event
-						this.globalEventService.publishMainStream(userProfile.userId, 'meUpdated', await this.userEntityService.pack(userProfile.userId, { id: userProfile.userId }, {
-							includeSecrets: true,
-						}));
-
-						return;
+						// TODO ちゃんとcustomer.subscription.updatedを実装したら不要になるかもしれない
+						break;
 					}
 
 					case 'invoice.payment_failed':
