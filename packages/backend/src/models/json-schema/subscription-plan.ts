@@ -29,7 +29,7 @@ export const packedSubscriptionPlanSchema = {
 		},
 		stripePriceId: {
 			type: 'string',
-			optional: false, nullable: false,
+			optional: false, nullable: true,
 			example: 'price_xxxxxxxxxx',
 		},
 		roleId: {
@@ -40,7 +40,6 @@ export const packedSubscriptionPlanSchema = {
 		},
 		role: {
 			type: 'object',
-			ref: 'RoleLite',
 			optional: false, nullable: false,
 		},
 		isArchived: {

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { SubscriptionPlansRepository } from "@/models/_.js";
+import type { SubscriptionPlansRepository } from "@/models/index.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { DI } from "@/di-symbols.js";
 import { SubscriptionPlanEntityService } from "@/core/entities/SubscriptionPlanEntityService.js";

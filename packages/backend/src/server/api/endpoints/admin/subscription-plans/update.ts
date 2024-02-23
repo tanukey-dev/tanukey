@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { SubscriptionPlansRepository } from '@/models/_.js';
+import type { SubscriptionPlansRepository } from '@/models/index.js';
 import { DI } from '@/di-symbols.js';
 import { ApiError } from '@/server/api/error.js';
 import { ModerationLogService } from '@/core/ModerationLogService.js';
@@ -64,7 +64,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 			const updated = await this.subscriptionPlansRepository.findOneByOrFail({ id: ps.planId });
 
-			this.moderationLogService.log(me, 'updateSubscriptionPlan', {
+			this.moderationLogService.insertModerationLog(me, 'updateSubscriptionPlan', {
 				subscriptionPlanId: updated.id,
 				before: plan,
 				after: updated,

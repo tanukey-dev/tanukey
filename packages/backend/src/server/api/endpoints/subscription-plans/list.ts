@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Endpoint } from "@/server/api/endpoint-base.js";
-import type { RolesRepository, SubscriptionPlansRepository } from "@/models/_.js";
+import type { RolesRepository, SubscriptionPlansRepository } from "@/models/index.js";
 import { DI } from "@/di-symbols.js";
 import { SubscriptionPlanEntityService } from "@/core/entities/SubscriptionPlanEntityService.js";
 
@@ -38,7 +38,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	) {
 		super(meta, paramDef, async (ps) => {
 			const subscriptionPlans = await this.subscriptionPlansRepository.find();
-			const packed = subscriptionPlans.map(async subscriptionPlan => {
+			const packed = subscriptionPlans.map(async (subscriptionPlan: any) => {
 				const role = await this.rolesRepository.findOneByOrFail({ id: subscriptionPlan.roleId });
 				return {
 					id: subscriptionPlan.id,
