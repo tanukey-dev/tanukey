@@ -47,17 +47,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
-import * as Misskey from 'misskey-js';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkTextarea from '@/components/MkTextarea.vue';
 import * as os from '@/os.js';
-import { misskeyApi } from '@/scripts/misskey-api.js';
 import { i18n } from '@/i18n.js';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
 import MkFolder from '@/components/MkFolder.vue';
 
-const subscriptionPlans = ref<Misskey.entities.SubscriptionPlansListResponse>([]);
+const subscriptionPlans = ref<any[]>([]);
 
 function add() {
 	subscriptionPlans.value.unshift({
@@ -75,10 +73,10 @@ function add() {
 function archive(subscriptionPlan) {
 	os.confirm({
 		type: 'warning',
-		text: i18n.tsx.channelArchiveConfirmTitle({ name: subscriptionPlan.name }), // TODO: i18n 専用のを用意する
+		text: i18n.t('channelArchiveConfirmTitle', { name: subscriptionPlan.name }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
-		misskeyApi('admin/subscription-plans/archive', { planId: subscriptionPlan.id });
+		os.api('admin/subscription-plans/archive', { planId: subscriptionPlan.id });
 		load();
 	});
 }
@@ -108,7 +106,7 @@ async function save(subscriptionPlan) {
 }
 
 function load() {
-	misskeyApi('subscription-plans/list').then(_subscriptionPlans => {
+	os.api('subscription-plans/list').then(_subscriptionPlans => {
 		subscriptionPlans.value = _subscriptionPlans;
 	});
 }
