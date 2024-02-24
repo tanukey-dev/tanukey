@@ -356,6 +356,9 @@ importers:
       stringz:
         specifier: 2.1.0
         version: 2.1.0
+      stripe:
+        specifier: 14.18.0
+        version: 14.18.0
       systeminformation:
         specifier: 5.17.16
         version: 5.17.16
@@ -16697,6 +16700,14 @@ packages:
   /strip-outer@2.0.0:
     resolution: {integrity: sha512-A21Xsm1XzUkK0qK1ZrytDUvqsQWict2Cykhvi0fBQntGG5JSprESasEyV1EZ/4CiR5WB5KjzLTrP/bO37B0wPg==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dev: false
+
+  /stripe@14.18.0:
+    resolution: {integrity: sha512-yLqKPqYgGJbMxrQiE4+i2i00ZVA2NRIZbZ1rejzj5XR3F3Uc+1iy9QE133knZudhVGMw367b8vTpB8D9pYMETw==}
+    engines: {node: '>=12.*'}
+    dependencies:
+      '@types/node': 20.2.5
+      qs: 6.11.2
     dev: false
 
   /strnum@1.0.5:

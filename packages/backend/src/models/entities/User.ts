@@ -1,6 +1,8 @@
 import { Entity, Column, Index, OneToOne, JoinColumn, PrimaryColumn } from 'typeorm';
+import { subscriptionStatus } from '@/types.js';
 import { id } from '../id.js';
 import { DriveFile } from './DriveFile.js';
+import { SubscriptionPlan } from './SubscriptionPlan.js';
 
 @Entity()
 @Index(['usernameLower', 'host'], { unique: true })
@@ -188,6 +190,23 @@ export class User {
 		comment: 'Whether the User is deleted.',
 	})
 	public isDeleted: boolean;
+
+	@Column('enum', {
+		enum: subscriptionStatus,
+		default: 'none',
+	})
+	public subscriptionStatus: typeof subscriptionStatus[number];
+
+	@Column({
+		...id(),
+		nullable: true,
+	})
+	public subscriptionPlanId: SubscriptionPlan['id'] | null;
+
+	@Column('varchar', {
+		length: 128, nullable: true,
+	})
+	public stripeSubscriptionId: string | null;
 
 	@Column('varchar', {
 		length: 128, array: true, default: '{}',

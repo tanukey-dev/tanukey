@@ -300,6 +300,8 @@ export interface Locale {
     "birthday": string;
     "yearsOld": string;
     "registeredDate": string;
+    "subscription": string;
+    "subscriptionStatus": string;
     "location": string;
     "theme": string;
     "themeForLightMode": string;
@@ -1476,6 +1478,24 @@ export interface Locale {
                 "flavor": string;
             };
         };
+    };
+    "_subscription": {
+        "price": string;
+        "currency": string;
+        "stripePriceId": string;
+        "subscribe": string;
+        "manage": string;
+        "changePlan": string;
+        "confirmChangePlan": string;
+        "incomplete": string;
+        "incomplete_expired": string;
+        "trialing": string;
+        "active": string;
+        "pastDue": string;
+        "canceled": string;
+        "unpaid": string;
+        "none": string;
+        "current": string;
     };
     "_role": {
         "new": string;

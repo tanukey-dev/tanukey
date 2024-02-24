@@ -339,6 +339,7 @@ export type LiteInstanceMetadata = {
 	translatorAvailable: boolean;
 	serverRules: string[];
 	pinnedLtlChannelIds: string[];
+	enableSubscriptions: boolean;
 };
 
 export type DetailedInstanceMetadata = LiteInstanceMetadata & {

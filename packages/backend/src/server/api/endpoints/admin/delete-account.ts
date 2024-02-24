@@ -3,6 +3,7 @@ import type { UsersRepository } from '@/models/index.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { DeleteAccountService } from '@/core/DeleteAccountService.js';
 import { DI } from '@/di-symbols.js';
+import { ApiError } from "@/server/api/error.js";
 
 export const meta = {
 	tags: ['admin'],
@@ -13,6 +14,14 @@ export const meta = {
 
 	res: {
 	},
+
+	errors: {
+		subscriptionIsActive: {
+			message: 'If Subscription is active, cannot move account.',
+			code: 'SUBSCRIPTION_IS_ACTIVE',
+			id: 'f5c8b3b4-9e4d-4b7f-9f4d-9f1f0a7a3d0a',
+		},
+	}
 } as const;
 
 export const paramDef = {
@@ -34,6 +43,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	) {
 		super(meta, paramDef, async (ps) => {
 			const user = await this.usersRepository.findOneByOrFail({ id: ps.userId });
+			if (!(user.subscriptionStatus === 'unpaid' || user.subscriptionStatus === 'canceled' || user.subscriptionStatus === 'none')) {
+				throw new ApiError(meta.errors.subscriptionIsActive);
+			}
+
 			if (user.isDeleted) {
 				return;
 			}

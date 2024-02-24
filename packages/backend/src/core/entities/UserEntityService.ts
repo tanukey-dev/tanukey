@@ -435,6 +435,8 @@ export class UserEntityService implements OnModuleInit {
 				preventAiLearning: profile!.preventAiLearning,
 				isExplorable: user.isExplorable,
 				isDeleted: user.isDeleted,
+				subscriptionStatus: user.subscriptionStatus,
+				subscriptionPlanId: user.subscriptionPlanId,
 				hideOnlineStatus: user.hideOnlineStatus,
 				hasUnreadSpecifiedNotes: this.noteUnreadsRepository.count({
 					where: { userId: user.id, isSpecified: true },
@@ -474,6 +476,7 @@ export class UserEntityService implements OnModuleInit {
 						},
 					})
 					: [],
+				stripeCustomerId: profile!.stripeCustomerId,
 			} : {}),
 
 			...(relation ? {

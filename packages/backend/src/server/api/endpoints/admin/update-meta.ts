@@ -108,6 +108,7 @@ export const paramDef = {
 		bannedEmailDomains: { type: 'array', items: { type: 'string' } },
 		preservedUsernames: { type: 'array', items: { type: 'string' } },
 		pinnedLtlChannelIds: { type: 'array', items: { type: 'string' } },
+		enableSubscriptions: { type: 'boolean' },
 	},
 	required: [],
 } as const;
@@ -447,6 +448,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (ps.bannedEmailDomains !== undefined) {
 				set.bannedEmailDomains = ps.bannedEmailDomains;
+			}
+
+			if (ps.enableSubscriptions !== undefined) {
+				set.enableSubscriptions = ps.enableSubscriptions;
 			}
 
 			await this.metaService.update(set);

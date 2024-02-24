@@ -350,6 +350,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 				mediaProxy: this.config.mediaProxy,
 				pinnedLtlChannelIds: instance.pinnedLtlChannelIds,
+				enableSubscriptions: instance.enableSubscriptions,
 
 				...(ps.detail ? {
 					cacheRemoteFiles: instance.cacheRemoteFiles,

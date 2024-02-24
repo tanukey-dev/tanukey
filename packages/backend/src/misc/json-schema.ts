@@ -34,6 +34,7 @@ import { packedCircleSchema } from '@/models/json-schema/circle.js';
 import { packedEventSchema } from '@/models/json-schema/event.js';
 import { packedEventCircleSchema } from '@/models/json-schema/event-circle.js';
 import { packedAnnouncementSchema } from '@/models/json-schema/announcement.js';
+import { packedSubscriptionPlanSchema } from '@/models/json-schema/subscription-plan.js';
 
 export const refs = {
 	UserLite: packedUserLiteSchema,
@@ -72,6 +73,7 @@ export const refs = {
 	Circle: packedCircleSchema,
 	Event: packedEventSchema,
 	EventCircle: packedEventCircleSchema,
+	SubscriptionPlan: packedSubscriptionPlanSchema,
 };
 
 export type Packed<x extends keyof typeof refs> = SchemaType<typeof refs[x]>;

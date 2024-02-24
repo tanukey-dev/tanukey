@@ -5,18 +5,20 @@
 
 		<div class="items">
 			<template v-for="(item, i) in group.items">
-				<a v-if="item.type === 'a'" :href="item.href" :target="item.target" :tabindex="i" class="_button item" :class="{ danger: item.danger, active: item.active }">
-					<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
-					<span class="text">{{ item.text }}</span>
-				</a>
-				<button v-else-if="item.type === 'button'" :tabindex="i" class="_button item" :class="{ danger: item.danger, active: item.active }" :disabled="item.active" @click="ev => item.action(ev)">
-					<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
-					<span class="text">{{ item.text }}</span>
-				</button>
-				<MkA v-else :to="item.to" :tabindex="i" class="_button item" :class="{ danger: item.danger, active: item.active }">
-					<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
-					<span class="text">{{ item.text }}</span>
-				</MkA>
+				<template v-if="item">
+					<a v-if="item.type === 'a'" :href="item.href" :target="item.target" :tabindex="i" class="_button item" :class="{ danger: item.danger, active: item.active }">
+						<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
+						<span class="text">{{ item.text }}</span>
+					</a>
+					<button v-else-if="item.type === 'button'" :tabindex="i" class="_button item" :class="{ danger: item.danger, active: item.active }" :disabled="item.active" @click="ev => item.action(ev)">
+						<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
+						<span class="text">{{ item.text }}</span>
+					</button>
+					<MkA v-else :to="item.to" :tabindex="i" class="_button item" :class="{ danger: item.danger, active: item.active }">
+						<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
+						<span class="text">{{ item.text }}</span>
+					</MkA>
+				</template>
 			</template>
 		</div>
 	</div>

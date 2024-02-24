@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { EndpointsModule } from '@/server/api/EndpointsModule.js';
 import { CoreModule } from '@/core/CoreModule.js';
+import { StripeWebhookServerService } from '@/server/StripeWebhookServerService.js';
 import { ApiCallService } from './api/ApiCallService.js';
 import { FileServerService } from './FileServerService.js';
 import { NodeinfoServerService } from './NodeinfoServerService.js';
@@ -80,6 +81,7 @@ import { RoleTimelineChannelService } from './api/stream/channels/role-timeline.
 		ServerStatsChannelService,
 		UserListChannelService,
 		OpenApiServerService,
+		StripeWebhookServerService,
 	],
 	exports: [
 		ServerService,

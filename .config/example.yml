@@ -105,6 +105,12 @@ redis:
 #  index: ''
 #  region: ''
 
+#   ┌──────────────────────────────┐
+#───┘ Stripe payment configuration └─────────────────────────────
+#stripe:
+  #secretKey: sk_test_...
+  #webhookSecret: whsec_...
+
 #   ┌───────────────┐
 #───┘ ID generation └───────────────────────────────────────────
 

@@ -1,6 +1,6 @@
 import { AsyncComponentLoader, defineAsyncComponent, inject } from 'vue';
 import { Router } from '@/nirax';
-import { $i, iAmModerator } from '@/account';
+import { $i, iAmModerator, iAmAdmin } from '@/account';
 import MkLoading from '@/pages/_loading_.vue';
 import MkError from '@/pages/_error_.vue';
 
@@ -181,6 +181,10 @@ export const routes = [{
 		path: '/accounts',
 		name: 'profile',
 		component: page(() => import('./pages/settings/accounts.vue')),
+	}, {
+		path: '/subscription',
+		name: 'subscription',
+		component: page(() => import('@/pages/settings/subscription.vue')),
 	}, {
 		path: '/other',
 		name: 'other',
@@ -445,6 +449,10 @@ export const routes = [{
 		path: '/roles',
 		name: 'roles',
 		component: page(() => import('./pages/admin/roles.vue')),
+	}, {
+		path: '/subscription-plans',
+		name: 'subscription-plans',
+		component: page(() => import('@/pages/admin/subscription-plans.vue')),
 	}, {
 		path: '/database',
 		name: 'database',
