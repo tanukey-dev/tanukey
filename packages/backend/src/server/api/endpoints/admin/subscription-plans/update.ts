@@ -30,7 +30,6 @@ export const paramDef = {
 		price: { type: 'integer' },
 		currency: { type: 'string' },
 		description: { type: 'string' },
-		stripePriceId: { type: 'string' },
 		roleId: { type: 'string', format: 'misskey:id' },
 	},
 	required: ['planId'],
@@ -61,7 +60,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				currency: ps.currency,
 				description: ps.description,
 				roleId: ps.roleId,
-				stripePriceId: ps.stripePriceId,
 			});
 
 			const updated = await this.subscriptionPlansRepository.findOneByOrFail({ id: ps.planId });

@@ -30,6 +30,16 @@
 					</MkTextarea>
 
 					<FormSection>
+						<template #label>{{ i18n.ts.subscription }}</template>
+
+						<div class="_gaps_m">
+							<MkSwitch v-model="enableSubscriptions">
+								<template #label>{{ i18n.ts.subscription }}</template>
+							</MkSwitch>
+						</div>
+					</FormSection>
+
+					<FormSection>
 						<template #label>{{ i18n.ts.files }}</template>
 
 						<div class="_gaps_m">
@@ -115,6 +125,7 @@ let swPublicKey: any = $ref(null);
 let swPrivateKey: any = $ref(null);
 let deeplAuthKey: string = $ref('');
 let deeplIsPro: boolean = $ref(false);
+let enableSubscriptions: boolean = $ref(false);
 
 async function init() {
 	const meta = await os.api('admin/meta');
@@ -129,6 +140,7 @@ async function init() {
 	swPrivateKey = meta.swPrivateKey;
 	deeplAuthKey = meta.deeplAuthKey;
 	deeplIsPro = meta.deeplIsPro;
+	enableSubscriptions = meta.enableSubscriptions;
 }
 
 function save() {
@@ -144,6 +156,7 @@ function save() {
 		swPrivateKey,
 		deeplAuthKey,
 		deeplIsPro,
+		enableSubscriptions,
 	}).then(() => {
 		fetchInstance();
 	});

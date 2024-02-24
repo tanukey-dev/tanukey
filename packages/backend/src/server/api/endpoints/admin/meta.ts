@@ -307,6 +307,10 @@ export const meta = {
 				type: 'object',
 				optional: false, nullable: false,
 			},
+			enableSubscriptions: {
+				type: 'boolean',
+				optional: false, nullable: false,
+			},
 		},
 	},
 } as const;
@@ -412,6 +416,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				enableChartsForRemoteUser: instance.enableChartsForRemoteUser,
 				enableChartsForFederatedInstances: instance.enableChartsForFederatedInstances,
 				bannedEmailDomains: instance.bannedEmailDomains,
+				enableSubscriptions: instance.enableSubscriptions,
 				policies: { ...DEFAULT_POLICIES, ...instance.policies },
 			};
 		});

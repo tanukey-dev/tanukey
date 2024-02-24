@@ -53,7 +53,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const instance = await this.metaService.fetch(true);
-			if (!(instance.enableSubscriptions || this.config.stripe?.secretKey)) {
+			if (!instance.enableSubscriptions) {
+				throw new ApiError(meta.errors.unavailable);
+			}
+			if (!(this.config.stripe && this.config.stripe.secretKey)) {
 				throw new ApiError(meta.errors.unavailable);
 			}
 
@@ -67,9 +70,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				throw new ApiError(meta.errors.noSuchUser);
 			}
 
-			const stripe = new Stripe(this.config.stripe!.secretKey);
+			const stripe = new Stripe(this.config.stripe.secretKey);
 			const session = await stripe.billingPortal.sessions.create({
-				customer: userProfile.stripeCustomerId!,
+				customer: userProfile.stripeCustomerId,
 				return_url: `${this.config.url}/settings/subscription`,
 			});
 
