@@ -17,7 +17,7 @@
 			<div class="_gaps">
 				<div v-for="plan in items" :key="plan.id" class="_panel" :class="$style.plan">
 					<div :class="$style.planBody">
-						<div :class="$style.planName">{{ plan.name }}</div>
+						<div :class="$style.planName">{{ plan.name + (plan.id === currentPlan ? (' (' + i18n.ts._subscription.current + ')') : '') }}</div>
 						<div>{{ plan.description }}</div>
 						<MkKeyValue oneline>
 							<template #key>{{ i18n.ts._subscription.price }}</template>
@@ -47,6 +47,7 @@ import MkKeyValue from '@/components/MkKeyValue.vue';
 import FormPagination from '@/components/MkPagination.vue';
 import MkButton from '@/components/MkButton.vue';
 import { definePageMetadata } from '@/scripts/page-metadata.js';
+import { Sleeping } from 'matter-js';
 
 const list = ref<InstanceType<typeof FormPagination>>();
 const subscriptionStatus = computed(() => $i.subscriptionStatus);
@@ -80,8 +81,12 @@ function change(plan) {
 		if (res.canceled) return;
 		os.apiWithDialog('subscription/create', {
 			planId: plan.id,
+		}).then(() => {
+			setTimeout(() => {
+				location.reload();
+			}, 1000);
 		});
-	}); // TODO: 変更したことを通知するポップアップを表示してリロードする
+	});
 }
 
 const headerActions = computed(() => []);

@@ -1421,6 +1421,7 @@ _subscription:
   canceled: "キャンセル済み"
   unpaid: "未払い"
   none: "なし"
+  current: "現在のプラン"
 
 _role:
   new: "ロールの作成"
