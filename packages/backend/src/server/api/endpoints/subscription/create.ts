@@ -128,31 +128,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					const subscriptionItem = subscription.data
 						.filter(d => d.id === user.stripeSubscriptionId)[0].items.data
 						.filter(d => d.price.id === oldSubscription.stripePriceId)[0];
-
-					// 同期がとれておらず、サブスクリプションの状態が不正な場合
-					if (!subscriptionItem) {
-						// FIXME: 不正な状態なのでここに入るのがそもそもおかしい
-
-						// サブスクリプションプランのロールが割り当てられている場合、ロールを解除する
-						const roleIds = (await this.subscriptionPlansRepository.find()).map(x => x.roleId);
-						await this.roleService.getUserRoles(user.id).then(async (roles) => {
-							for (const role of roles) {
-								if (roleIds.includes(role.id)) {
-									await this.roleService.unassign(user.id, role.id);
-								}
-							}
-						});
-
-						// サブスクリプションの状態を削除
-						await this.usersRepository.update({ id: userProfile.userId }, {
-							subscriptionStatus: 'none',
-							subscriptionPlanId: null,
-							stripeSubscriptionId: null,
-						});
-
-						return;
-					}
-
 					await stripe.subscriptionItems.update(subscriptionItem.id, { plan: plan.stripePriceId });
 
 					return;
