@@ -24,7 +24,7 @@
 			</div>
 		</MkFoldableSection>
 		
-		<MkFoldableSection v-for="category in customEmojiCategories" v-once :key="category">
+		<MkFoldableSection v-for="category in customEmojiCategories" v-once :key="category" :expanded="false">
 			<template #header>{{ category || i18n.ts.other }}</template>
 			<div :class="$style.emojis">
 				<XEmoji v-for="emoji in customEmojis.filter(e => e.category === category && !e.draft)" :key="emoji.name" :emoji="emoji" :draft="emoji.draft"/>
