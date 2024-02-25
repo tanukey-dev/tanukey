@@ -919,6 +919,7 @@ async function post(ev?: MouseEvent) {
 }
 
 function restoreChannel() {
+	if (props.fixed) return;
 	postChannel.value = tmpPostChannel;
 }
 
