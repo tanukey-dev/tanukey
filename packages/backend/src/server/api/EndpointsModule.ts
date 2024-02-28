@@ -252,7 +252,6 @@ import * as ep___renoteMute_create from './endpoints/renote-mute/create.js';
 import * as ep___renoteMute_delete from './endpoints/renote-mute/delete.js';
 import * as ep___renoteMute_list from './endpoints/renote-mute/list.js';
 import * as ep___my_apps from './endpoints/my/apps.js';
-import * as ep___notes from './endpoints/notes.js';
 import * as ep___notes_children from './endpoints/notes/children.js';
 import * as ep___notes_clips from './endpoints/notes/clips.js';
 import * as ep___notes_conversation from './endpoints/notes/conversation.js';
@@ -621,7 +620,6 @@ const $renoteMute_create: Provider = { provide: 'ep:renote-mute/create', useClas
 const $renoteMute_delete: Provider = { provide: 'ep:renote-mute/delete', useClass: ep___renoteMute_delete.default };
 const $renoteMute_list: Provider = { provide: 'ep:renote-mute/list', useClass: ep___renoteMute_list.default };
 const $my_apps: Provider = { provide: 'ep:my/apps', useClass: ep___my_apps.default };
-const $notes: Provider = { provide: 'ep:notes', useClass: ep___notes.default };
 const $notes_children: Provider = { provide: 'ep:notes/children', useClass: ep___notes_children.default };
 const $notes_clips: Provider = { provide: 'ep:notes/clips', useClass: ep___notes_clips.default };
 const $notes_conversation: Provider = { provide: 'ep:notes/conversation', useClass: ep___notes_conversation.default };
@@ -994,7 +992,6 @@ const $events_update: Provider = { provide: 'ep:events/update', useClass: ep___e
 		$renoteMute_delete,
 		$renoteMute_list,
 		$my_apps,
-		$notes,
 		$notes_children,
 		$notes_clips,
 		$notes_conversation,
@@ -1361,7 +1358,6 @@ const $events_update: Provider = { provide: 'ep:events/update', useClass: ep___e
 		$renoteMute_delete,
 		$renoteMute_list,
 		$my_apps,
-		$notes,
 		$notes_children,
 		$notes_clips,
 		$notes_conversation,

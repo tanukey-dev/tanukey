@@ -253,7 +253,6 @@ import * as ep___renoteMute_create from './endpoints/renote-mute/create.js';
 import * as ep___renoteMute_delete from './endpoints/renote-mute/delete.js';
 import * as ep___renoteMute_list from './endpoints/renote-mute/list.js';
 import * as ep___my_apps from './endpoints/my/apps.js';
-import * as ep___notes from './endpoints/notes.js';
 import * as ep___notes_children from './endpoints/notes/children.js';
 import * as ep___notes_clips from './endpoints/notes/clips.js';
 import * as ep___notes_conversation from './endpoints/notes/conversation.js';
@@ -620,7 +619,6 @@ const eps = [
 	['renote-mute/delete', ep___renoteMute_delete],
 	['renote-mute/list', ep___renoteMute_list],
 	['my/apps', ep___my_apps],
-	['notes', ep___notes],
 	['notes/children', ep___notes_children],
 	['notes/clips', ep___notes_clips],
 	['notes/conversation', ep___notes_conversation],
