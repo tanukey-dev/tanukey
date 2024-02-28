@@ -28,6 +28,30 @@ type MfmEvents = {
 	clickEv(id: string): void;
 };
 
+const convertAozoraRuby = (text: string): string => {
+	const t1 = text.replace(/(\r\n|\n|\r)/g, '\n');
+	const res: string[] = [];
+	for (const t of t1.split('\n')) {
+		res.push('\n');
+		t.replace(/<ruby>(.+?)<rt>(.+?)<\/rt><\/ruby>/g, '\n<ruby>$1<rt>$2</rt></ruby>\n')
+			.replace(/《《(.+?)》》/g, (match, c1) => c1.replace(/(.)/g, '\n<ruby>$1<rt>・</rt></ruby>\n'))
+			.replace(/[\|｜](.+?)《(.+?)》/g, '\n<ruby>$1<rt>$2</rt></ruby>\n')
+			.replace(/([一-龠]+)《(.+?)》/g, '\n<ruby>$1<rt>$2</rt></ruby>\n')
+			.replace(/[\|｜]《(.+?)》/g, '《$1》')
+			.split('\n')
+			.forEach(t2 => {
+				const match = t2.match(/<ruby>(.+?)<rt>(.+?)<\/rt><\/ruby>/);
+				if (match !== null && match.length > 2) {
+					res.push(`$[ruby ${match[1]} ${match[2]}]`);
+				} else if (t2 !== '') {
+					res.push(t2);
+				}
+			});
+	}
+	res.shift();
+	return res.join('');
+};
+
 export default function(props: {
 	text: string;
 	plain?: boolean;
@@ -42,7 +66,7 @@ export default function(props: {
 
 	if (props.text == null || props.text === '') return;
 
-	const ast = (props.plain ? mfm.parseSimple : mfm.parse)(props.text);
+	const ast = (props.plain ? mfm.parseSimple : mfm.parse)(convertAozoraRuby(props.text));
 
 	const validTime = (t: string | null | undefined) => {
 		if (t == null) return null;
@@ -65,26 +89,11 @@ export default function(props: {
 		switch (token.type) {
 			case 'text': {
 				const text = token.props.text.replace(/(\r\n|\n|\r)/g, '\n');
-
 				if (!props.plain) {
 					const res: (VNode | string)[] = [];
 					for (const t of text.split('\n')) {
 						res.push(h('br'));
-						t.replace(/<ruby>(.+?)<rt>(.+?)<\/rt><\/ruby>/g, '\n<ruby>$1<rt>$2</rt></ruby>\n')
-							.replace(/《《(.+?)》》/g, (match, c1) => c1.replace(/(.)/g, '\n<ruby>$1<rt>・</rt></ruby>\n'))
-							.replace(/[\|｜](.+?)《(.+?)》/g, '\n<ruby>$1<rt>$2</rt></ruby>\n')
-							.replace(/([一-龠]+)《(.+?)》/g, '\n<ruby>$1<rt>$2</rt></ruby>\n')
-							.replace(/[\|｜]《(.+?)》/g, '《$1》')
-							.split('\n')
-							.forEach(t2 => {
-								const match = t2.match(/<ruby>(.+?)<rt>(.+?)<\/rt><\/ruby>/);
-								if (match !== null && match.length > 2) {
-									const rubyAlign = match[1].length < match[2].length ? 'ruby-align:center' : 'ruby-align:space-around';
-									res.push(h('ruby', { style: rubyAlign }, [match[1], h('rt', match[2])]));
-								} else if (t2 !== '') {
-									res.push(t2);
-								}
-							});
+						res.push(t);
 					}
 					res.shift();
 					return res;
