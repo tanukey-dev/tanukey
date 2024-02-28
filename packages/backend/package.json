@@ -148,6 +148,7 @@
 		"stripe": "14.18.0",
 		"systeminformation": "5.17.16",
 		"tinycolor2": "1.6.0",
+		"tfm-js": "0.24.3",
 		"tmp": "0.2.1",
 		"tsc-alias": "1.8.6",
 		"tsconfig-paths": "4.2.0",
