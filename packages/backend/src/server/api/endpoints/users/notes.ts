@@ -6,6 +6,7 @@ import { QueryService } from '@/core/QueryService.js';
 import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
 import { DI } from '@/di-symbols.js';
 import { GetterService } from '@/server/api/GetterService.js';
+import { IdService } from '@/core/IdService.js';
 import { ApiError } from '../../error.js';
 
 export const meta = {
@@ -62,6 +63,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private noteEntityService: NoteEntityService,
 		private queryService: QueryService,
 		private getterService: GetterService,
+		private idService: IdService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			// Lookup user
@@ -83,6 +85,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					qb.orWhere('channel.searchable IS NULL');
 					qb.orWhere('channel.searchable = true');
 				}));
+			
+			// 初期表示が遅くなるので10日前までで一旦区切る
+			if (ps.sinceId && !ps.untilId) {
+				query.andWhere('note.id > :minId', { minId: this.idService.genId(new Date(Date.now() - (1000 * 60 * 60 * 24 * 10))) }); // 10日前まで
+			}
 
 			this.queryService.generateVisibilityQuery(query, me);
 			if (me) {
