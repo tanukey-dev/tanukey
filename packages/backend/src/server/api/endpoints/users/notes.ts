@@ -87,8 +87,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				}));
 			
 			// 初期表示が遅くなるので10日前までで一旦区切る
-			if (ps.sinceId && !ps.untilId) {
+			if (!ps.sinceId && !ps.untilId) {
 				query.andWhere('note.id > :minId', { minId: this.idService.genId(new Date(Date.now() - (1000 * 60 * 60 * 24 * 10))) }); // 10日前まで
+			}
+			// ノートの前後の表示
+			if (ps.sinceId && !ps.untilId) {
+				query.andWhere('note.id > :minId', { minId: this.idService.genId(new Date(this.idService.parse(ps.sinceId).date.getTime() - (1000 * 60 * 60 * 24 * 10))) }); // 10日前まで
+			}
+			if (!ps.sinceId && ps.untilId) {
+				query.andWhere('note.id < :maxId', { maxId: this.idService.genId(new Date(this.idService.parse(ps.untilId).date.getTime() + (1000 * 60 * 60 * 24 * 10))) }); // 10日後まで
 			}
 
 			this.queryService.generateVisibilityQuery(query, me);
