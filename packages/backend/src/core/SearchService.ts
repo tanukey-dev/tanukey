@@ -57,6 +57,7 @@ export class SearchService {
 	private isIndexing = false;
 	private notesCount = 0;
 	private index = 0;
+	private dropIndex = 0;
 
 	constructor(
 		@Inject(DI.config)
@@ -157,36 +158,49 @@ export class SearchService {
 				index: this.opensearchNoteIndex as string,
 				id: note.id,
 				body: body,
+			}).catch(e => {
+				console.error('index error: ' + note.id);
 			});
 		}
 	}
 
 	@bindThis
-	public getFullIndexingStats(): { running: boolean, total: number, index: number } {
-		return { running: this.isIndexing, total: this.notesCount, index: this.index };
+	public getFullIndexingStats(): { running: boolean, total: number, index: number, dropIndex: number } {
+		return { running: this.isIndexing, total: this.notesCount, index: this.index, dropIndex: this.dropIndex };
 	}
 
 	@bindThis
 	public async startFullIndexNote(): Promise<void> {
 		if (!this.isIndexing) {
-			this.isIndexing = true;
-			this.notesCount = await this.notesRepository.createQueryBuilder('note')
-				.where('note.userHost IS NULL')
-				.getCount();
-			const take = 100;
-			for (this.index = 0; this.index < this.notesCount; this.index = this.index + take) {
-				const notes = await this.notesRepository
-					.createQueryBuilder('note')
-					.orderBy('note.id', 'ASC')
+			try {
+				this.isIndexing = true;
+				this.notesCount = await this.notesRepository.createQueryBuilder('note')
 					.where('note.userHost IS NULL')
-					.take(take)
-					.skip(this.index)
-					.getMany();
-				notes.forEach(note => {
-					this.indexNote(note);
-				});
+					.getCount();
+				const take = 100;
+				this.dropIndex = 0;
+				for (this.index = 0; this.index < this.notesCount; this.index = this.index + take) {
+					try {
+						const notes = await this.notesRepository
+							.createQueryBuilder('note')
+							.orderBy('note.id', 'ASC')
+							.where('note.userHost IS NULL')
+							.take(take)
+							.skip(this.index)
+							.getMany();
+						notes.forEach(note => {
+							this.indexNote(note);
+						});
+					} catch (e) {
+						console.error(`full index cycle error: ${this.index}`);
+						this.dropIndex += take;
+					}
+				}
+			} catch (e) {
+				console.error('full index error');
+			} finally {
+				this.isIndexing = false;
 			}
-			this.isIndexing = false;
 		}
 	}
 
