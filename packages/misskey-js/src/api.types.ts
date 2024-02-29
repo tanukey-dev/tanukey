@@ -26,6 +26,7 @@ export type Endpoints = {
 	'admin/resync-chart': { req: TODO; res: TODO; };
 	'admin/send-email': { req: TODO; res: TODO; };
 	'admin/full-index': { req: TODO; res: TODO; };
+	'admin/full-index-stats': { req: TODO; res: TODO; };
 	'admin/server-info': { req: TODO; res: TODO; };
 	'admin/show-moderation-logs': { req: TODO; res: TODO; };
 	'admin/show-user': { req: TODO; res: TODO; };

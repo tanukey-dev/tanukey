@@ -54,6 +54,9 @@ function compileQuery(q: Q): string {
 @Injectable()
 export class SearchService {
 	private opensearchNoteIndex: string | null = null;
+	private isIndexing = false;
+	private notesCount = 0;
+	private index = 0;
 
 	constructor(
 		@Inject(DI.config)
@@ -159,20 +162,31 @@ export class SearchService {
 	}
 
 	@bindThis
-	public async fullIndexNote(): Promise<void> {
-		const notesCount = await this.notesRepository.count();
-		const take = 100;
-		for (let index = 0; index < notesCount; index = index + take) {
-			const notes = await this.notesRepository
-				.createQueryBuilder('note')
-				.orderBy('note.id', 'ASC')
+	public getFullIndexingStats(): { running: boolean, total: number, index: number } {
+		return { running: this.isIndexing, total: this.notesCount, index: this.index };
+	}
+
+	@bindThis
+	public async startFullIndexNote(): Promise<void> {
+		if (!this.isIndexing) {
+			this.isIndexing = true;
+			this.notesCount = await this.notesRepository.createQueryBuilder('note')
 				.where('note.userHost IS NULL')
-				.take(take)
-				.skip(index)
-				.getMany();
-			notes.forEach(note => {
-				this.indexNote(note);
-			});
+				.getCount();
+			const take = 100;
+			for (this.index = 0; this.index < this.notesCount; this.index = this.index + take) {
+				const notes = await this.notesRepository
+					.createQueryBuilder('note')
+					.orderBy('note.id', 'ASC')
+					.where('note.userHost IS NULL')
+					.take(take)
+					.skip(this.index)
+					.getMany();
+				notes.forEach(note => {
+					this.indexNote(note);
+				});
+			}
+			this.isIndexing = false;
 		}
 	}
 

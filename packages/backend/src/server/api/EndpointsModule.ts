@@ -55,6 +55,7 @@ import * as ep___admin_resetPassword from './endpoints/admin/reset-password.js';
 import * as ep___admin_resolveAbuseUserReport from './endpoints/admin/resolve-abuse-user-report.js';
 import * as ep___admin_sendEmail from './endpoints/admin/send-email.js';
 import * as ep___admin_fullIndex from './endpoints/admin/full-index.js';
+import * as ep___admin_fullIndexStats from './endpoints/admin/full-index-stats.js';
 import * as ep___admin_serverInfo from './endpoints/admin/server-info.js';
 import * as ep___admin_showModerationLogs from './endpoints/admin/show-moderation-logs.js';
 import * as ep___admin_showUser from './endpoints/admin/show-user.js';
@@ -423,6 +424,7 @@ const $admin_resetPassword: Provider = { provide: 'ep:admin/reset-password', use
 const $admin_resolveAbuseUserReport: Provider = { provide: 'ep:admin/resolve-abuse-user-report', useClass: ep___admin_resolveAbuseUserReport.default };
 const $admin_sendEmail: Provider = { provide: 'ep:admin/send-email', useClass: ep___admin_sendEmail.default };
 const $admin_fullIndex: Provider = { provide: 'ep:admin/full-index', useClass: ep___admin_fullIndex.default };
+const $admin_fullIndexStats: Provider = { provide: 'ep:admin/full-index-stats', useClass: ep___admin_fullIndexStats.default };
 const $admin_serverInfo: Provider = { provide: 'ep:admin/server-info', useClass: ep___admin_serverInfo.default };
 const $admin_showModerationLogs: Provider = { provide: 'ep:admin/show-moderation-logs', useClass: ep___admin_showModerationLogs.default };
 const $admin_showUser: Provider = { provide: 'ep:admin/show-user', useClass: ep___admin_showUser.default };
@@ -795,6 +797,7 @@ const $events_update: Provider = { provide: 'ep:events/update', useClass: ep___e
 		$admin_resolveAbuseUserReport,
 		$admin_sendEmail,
 		$admin_fullIndex,
+		$admin_fullIndexStats,
 		$admin_serverInfo,
 		$admin_showModerationLogs,
 		$admin_showUser,
@@ -1161,6 +1164,7 @@ const $events_update: Provider = { provide: 'ep:events/update', useClass: ep___e
 		$admin_resolveAbuseUserReport,
 		$admin_sendEmail,
 		$admin_fullIndex,
+		$admin_fullIndexStats,
 		$admin_serverInfo,
 		$admin_showModerationLogs,
 		$admin_showUser,

@@ -24,7 +24,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private searchService: SearchService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			await this.searchService.startFullIndexNote();
+			return this.searchService.getFullIndexingStats();
 		});
 	}
 }
