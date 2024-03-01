@@ -185,8 +185,8 @@ export class SearchService {
 							.createQueryBuilder('note')
 							.orderBy('note.id', 'ASC')
 							.where('note.userHost IS NULL')
-							.take(take)
-							.skip(this.index)
+							.limit(take)
+							.offset(this.index)
 							.getMany();
 						notes.forEach(note => {
 							this.indexNote(note);
