@@ -93,9 +93,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 
 			if (ps.query) {
-				//q.andWhere('emoji.name ILIKE :q', { q: `%${ sqlLikeEscape(ps.query) }%` });
-				//const emojis = await q.take(ps.limit).getMany();
-
 				emojis = await q.getMany();
 				const queryarry = ps.query.match(/\:([a-z0-9_]*)\:/g);
 
@@ -111,7 +108,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				}
 				emojis.splice(ps.limit + 1);
 			} else {
-				emojis = await q.take(ps.limit).getMany();
+				emojis = await q.limit(ps.limit).getMany();
 			}
 
 			return this.emojiEntityService.packSimpleMany(emojis);

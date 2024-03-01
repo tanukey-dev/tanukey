@@ -311,7 +311,7 @@ export class SearchService {
 
 			query.orderBy('note.createdAt', opts.reverseOrder !== undefined && !opts.reverseOrder ? 'DESC' : 'ASC');
 
-			return await query.take(pagination.limit).getMany();
+			return await query.limit(pagination.limit).getMany();
 		} else {
 			const query = opts.reverseOrder
 				? this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), pagination.untilId, pagination.sinceId)
@@ -359,7 +359,7 @@ export class SearchService {
 
 			query.orderBy('note.createdAt', opts.reverseOrder !== undefined && !opts.reverseOrder ? 'DESC' : 'ASC');
 
-			return await query.take(pagination.limit).getMany();
+			return await query.limit(pagination.limit).getMany();
 		}
 	}
 }

@@ -54,7 +54,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					qb.orWhere('announcement.userId IS NULL');
 				}));
 
-			const announcements = await query.take(ps.limit).getMany();
+			const announcements = await query.limit(ps.limit).getMany();
 
 			return this.announcementService.packMany(announcements, me);
 		});

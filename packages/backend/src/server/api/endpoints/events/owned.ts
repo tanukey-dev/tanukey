@@ -49,7 +49,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				.andWhere('event.isArchived = FALSE');
 
 			const channels = await query
-				.take(ps.limit)
+				.limit(ps.limit)
 				.getMany();
 
 			return await Promise.all(channels.map(x => this.eventEntityService.pack(x, me)));

@@ -49,8 +49,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				query.andWhere('tag.attachedRemoteUsersCount > 0');
 			}
 
-			const hashtags = await query.take(ps.limit)
-				.skip(ps.offset)
+			const hashtags = await query.limit(ps.limit)
+				.offset(ps.offset)
 				.getMany();
 
 			return hashtags.map(tag => tag.name);

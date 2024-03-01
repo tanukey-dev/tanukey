@@ -87,7 +87,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				query.andWhere('announcement.userId IS NULL');
 			}
 
-			const announcements = await query.take(ps.limit).getMany();
+			const announcements = await query.limit(ps.limit).getMany();
 
 			const reads = new Map<Announcement, number>();
 
