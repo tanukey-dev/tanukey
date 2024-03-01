@@ -12,6 +12,10 @@
 
 -->
 
+## 13.14.2-tanu-1.54.4
+### General
+- cwも検索対象にするように修正
+
 ## 13.14.2-tanu-1.54.3
 ### General
 - パフォーマンスの問題からtake/skipをlimit/offsetに置き換え
