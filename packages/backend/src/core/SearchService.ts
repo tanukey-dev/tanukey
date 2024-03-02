@@ -10,7 +10,6 @@ import type { NotesRepository, UsersRepository } from '@/models/index.js';
 import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
 import { QueryService } from '@/core/QueryService.js';
 import { IdService } from '@/core/IdService.js';
-import { openStdin } from 'node:process';
 
 type K = string;
 type V = string | number | boolean;
@@ -169,11 +168,31 @@ export class SearchService {
 		return { running: this.isIndexing, total: this.notesCount, index: this.index, indexingError: this.indexingError };
 	}
 
+	private async stepFullIndex(lastId: string|null, take: number): Promise<string|null> {
+		const query = this.notesRepository
+			.createQueryBuilder('note')
+			.where('note.userHost IS NULL');
+		
+		if (lastId) {
+			query.andWhere('note.id > :minId', { minId: lastId });
+		}
+
+		const notes =	await query.orderBy('note.id').limit(take).getMany();
+
+		let tmplastId = null;
+		for (const note of notes) {
+			this.indexNote(note);
+			tmplastId = note.id;
+		}
+
+		return tmplastId;
+	}
+
 	@bindThis
 	public async startFullIndexNote(): Promise<void> {
 		if (!this.isIndexing) {
 			try {
-				const take = 100;
+				const take = 1000;
 				this.isIndexing = true;
 				this.indexingError = false;
 
@@ -183,20 +202,8 @@ export class SearchService {
 
 				let lastId = null;
 				for (this.index = 0; this.index < this.notesCount; this.index = this.index + take) {
-					const query = this.notesRepository
-						.createQueryBuilder('note')
-						.where('note.userHost IS NULL');
-					
-					if (lastId) {
-						query.andWhere('note.id > :minId', { minId: lastId });
-					}
-
-					const notes =	await query.orderBy('note.id').limit(take).getMany();
-
-					for (const note of notes) {
-						this.indexNote(note);
-						lastId = note.id;
-					}
+					lastId = await this.stepFullIndex(lastId, take);
+					await new Promise(r => setTimeout(r, 10)); // sleep
 				}
 			} catch (e) {
 				this.indexingError = true;
