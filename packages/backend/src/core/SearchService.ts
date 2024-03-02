@@ -192,7 +192,7 @@ export class SearchService {
 	public async startFullIndexNote(): Promise<void> {
 		if (!this.isIndexing) {
 			try {
-				const take = 1000;
+				const take = 10;
 				this.isIndexing = true;
 				this.indexingError = false;
 
@@ -203,7 +203,6 @@ export class SearchService {
 				let lastId = null;
 				for (this.index = 0; this.index < this.notesCount; this.index = this.index + take) {
 					lastId = await this.stepFullIndex(lastId, take);
-					await new Promise(r => setTimeout(r, 10)); // sleep
 				}
 			} catch (e) {
 				this.indexingError = true;
