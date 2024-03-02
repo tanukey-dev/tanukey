@@ -14,9 +14,8 @@
 
 				<MkButton class="button" inline danger @click="startFullIndex()"> Create Full Index </MkButton>
 
-				<span>Full Index: {{ running ? 'Running' : 'Finish' }}</span>
+				<span>Full Index: {{ running ? 'Running' : indexingError ? 'Error' : 'Finish' }}</span>
 				<span>{{ index > total ? total : index }} / {{ total }} ( {{ progress.toFixed(2) }} %)</span>
-				<span>Error Drop: {{ dropIndex }}</span>
 				<div class="step-progress-container">
 					<div class="step-progress" :style="('width: ' + progress + '%')"></div>	
 				</div>	
@@ -43,7 +42,7 @@ let enableChartsForFederatedInstances: boolean = $ref(false);
 const running = ref(false);
 const total = ref(0);
 const index = ref(0);
-const dropIndex = ref(0);
+const indexingError = ref(false);
 const progress = computed(() => {
 	if (index.value > total.value) return 100;
 	return (index.value / total.value) * 100; 
@@ -73,7 +72,7 @@ const getIndexStats = async () => {
 	running.value = ret.running;
 	total.value = ret.total;
 	index.value = ret.index;
-	dropIndex.value = ret.dropIndex;
+	indexingError.value = ret.indexingError;
 };
 
 useInterval(getIndexStats, 10000, {

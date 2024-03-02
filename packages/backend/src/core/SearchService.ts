@@ -57,7 +57,7 @@ export class SearchService {
 	private isIndexing = false;
 	private notesCount = 0;
 	private index = 0;
-	private dropIndex = 0;
+	private indexingError = false;
 
 	constructor(
 		@Inject(DI.config)
@@ -165,38 +165,41 @@ export class SearchService {
 	}
 
 	@bindThis
-	public getFullIndexingStats(): { running: boolean, total: number, index: number, dropIndex: number } {
-		return { running: this.isIndexing, total: this.notesCount, index: this.index, dropIndex: this.dropIndex };
+	public getFullIndexingStats(): { running: boolean, total: number, index: number, indexingError: boolean } {
+		return { running: this.isIndexing, total: this.notesCount, index: this.index, indexingError: this.indexingError };
 	}
 
 	@bindThis
 	public async startFullIndexNote(): Promise<void> {
 		if (!this.isIndexing) {
 			try {
+				const take = 100;
 				this.isIndexing = true;
+				this.indexingError = false;
+
 				this.notesCount = await this.notesRepository.createQueryBuilder('note')
 					.where('note.userHost IS NULL')
 					.getCount();
-				const take = 100;
-				this.dropIndex = 0;
+
+				let lastId = null;
 				for (this.index = 0; this.index < this.notesCount; this.index = this.index + take) {
-					try {
-						const notes = await this.notesRepository
-							.createQueryBuilder('note')
-							.orderBy('note.id', 'ASC')
-							.where('note.userHost IS NULL')
-							.limit(take)
-							.offset(this.index)
-							.getMany();
-						notes.forEach(note => {
-							this.indexNote(note);
-						});
-					} catch (e) {
-						console.error(`full index cycle error: ${this.index}`);
-						this.dropIndex += take;
+					const query = this.notesRepository
+						.createQueryBuilder('note')
+						.where('note.userHost IS NULL');
+					
+					if (lastId) {
+						query.andWhere('note.id > :minId', { minId: lastId });
+					}
+
+					const notes =	await query.orderBy('note.id').limit(take).getMany();
+
+					for (const note of notes) {
+						this.indexNote(note);
+						lastId = note.id;
 					}
 				}
 			} catch (e) {
+				this.indexingError = true;
 				console.error('full index error');
 			} finally {
 				this.isIndexing = false;
