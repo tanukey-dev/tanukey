@@ -48,6 +48,7 @@ export const DI = {
 	accessTokensRepository: Symbol('accessTokensRepository'),
 	signinsRepository: Symbol('signinsRepository'),
 	subscriptionPlansRepository: Symbol('subscriptionPlansRepository'),
+	subscriptionStatusesRepository: Symbol('subscriptionStatusesRepository'),
 	pagesRepository: Symbol('pagesRepository'),
 	pageLikesRepository: Symbol('pageLikesRepository'),
 	galleryPostsRepository: Symbol('galleryPostsRepository'),

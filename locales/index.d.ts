@@ -1495,7 +1495,6 @@ export interface Locale {
         "canceled": string;
         "unpaid": string;
         "none": string;
-        "current": string;
     };
     "_role": {
         "new": string;

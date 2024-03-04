@@ -1,14 +1,12 @@
 import ms from 'ms';
 import { Stripe } from 'stripe';
 import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, UserProfilesRepository, SubscriptionPlansRepository } from '@/models/index.js';
+import type { UsersRepository, UserProfilesRepository, SubscriptionPlansRepository, SubscriptionStatusesRepository } from '@/models/index.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { DI } from '@/di-symbols.js';
 import { MetaService } from '@/core/MetaService.js';
-import { RoleService } from '@/core/RoleService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
 import type { Config } from '@/config.js';
+import { IdService } from '@/core/IdService.js';
 import { ApiError } from '../../error.js';
 
 export const meta = {
@@ -34,6 +32,12 @@ export const meta = {
 			message: 'No such plan.',
 			code: 'NO_SUCH_PLAN',
 			id: 'd9f0d5c1-0b5b-4b7a-9d2c-1c1c5c6d1d1d',
+		},
+
+		alreadySubscribed: {
+			message: 'Already subscribed this plan.',
+			code: 'ALREADY_SUBSCRIBED',
+			id: 'd9f0d5c1-0b5b-4b7a-9d2c-2c2c5c6d1d1d',
 		},
 
 		accessDenied: {
@@ -75,7 +79,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private userProfilesRepository: UserProfilesRepository,
 		@Inject(DI.subscriptionPlansRepository)
 		private subscriptionPlansRepository: SubscriptionPlansRepository,
-		private roleService: RoleService,
+		@Inject(DI.subscriptionStatusesRepository)
+		private subscriptionStatusesRepository: SubscriptionStatusesRepository,
+		private idService: IdService,
 		private metaService: MetaService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
@@ -112,44 +118,30 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				userProfile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
 			}
 
-			const subscriptionStatus = user.subscriptionStatus;
-			if (subscriptionStatus === 'active') {
-				if (plan.id !== user.subscriptionPlanId) {
-					// サブスクリプションのプランの変更の場合
-					// 決済情報はすでにStripeにあるため、Stripeの画面には遷移しない
-					const subscription = await stripe.subscriptions.list({
-						customer: userProfile.stripeCustomerId ?? undefined,
+			const subscription = await subscriptionStatusesRepository.createQueryBuilder('status')
+				.andWhere('status.userId = :userId', { userId: user.id })
+				.andWhere('status.planId = :planId', { planId: plan.id })
+				.getOne();
+
+			// 旧実装からのデータ移行
+			if (user.subscriptionPlanId) {
+				if (subscription === null) {
+					await this.subscriptionStatusesRepository.insert({
+						id: this.idService.genId(),
+						userId: user.id,
+						planId: user.subscriptionPlanId,
+						status: user.subscriptionStatus,
 					});
-					if (subscription.data.length === 0) {
-						throw new ApiError(meta.errors.accessDenied);
-					}
-
-					const oldSubscription = await subscriptionPlansRepository.findOneByOrFail({ id: user.subscriptionPlanId ?? undefined });
-					const subscriptionItem = subscription.data
-						.filter(d => d.id === user.stripeSubscriptionId)[0].items.data
-						.filter(d => d.price.id === oldSubscription.stripePriceId)[0];
-					await stripe.subscriptionItems.update(subscriptionItem.id, { plan: plan.stripePriceId });
-
-					return;
-				} else {
-					throw new ApiError(meta.errors.accessDenied);
 				}
-			} else if (subscriptionStatus === 'incomplete' || subscriptionStatus === 'incomplete_expired' || subscriptionStatus === 'past_due' || subscriptionStatus === 'unpaid') {
-				// 決済ができていない場合
-				const session = await stripe.checkout.sessions.create({
-					customer: userProfile.stripeCustomerId ?? undefined,
-					allow_promotion_codes: true,
-					return_url: `${this.config.url}/settings/subscription`,
-				}, {});
+				await this.usersRepository.update({ id: user.id }, {
+					subscriptionPlanId: null,
+					subscriptionStatus: 'none',
+					stripeSubscriptionId: null,
+				});
+			}
 
-				return {
-					redirect: {
-						permanent: false,
-						destination: session.url,
-					},
-				};
-			} else {
-				// キャンセル、または新規の場合
+			if (subscription == null || subscription.status !== 'active') {
+				// 新規
 				const session = await stripe.checkout.sessions.create({
 					mode: 'subscription',
 					billing_address_collection: 'auto',
@@ -163,6 +155,23 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					success_url: `${this.config.url}/settings/subscription`,
 					cancel_url: `${this.config.url}/settings/subscription`,
 					customer: userProfile.stripeCustomerId ?? undefined,
+				});
+
+				return {
+					redirect: {
+						permanent: false,
+						destination: session.url,
+					},
+				};
+			} else {
+				// アクティブの場合は管理画面に遷移
+				if (!userProfile.stripeCustomerId) {
+					throw new ApiError(meta.errors.noSuchUser);
+				}
+
+				const session = await stripe.billingPortal.sessions.create({
+					customer: userProfile.stripeCustomerId,
+					return_url: `${this.config.url}/settings/subscription`,
 				});
 
 				return {

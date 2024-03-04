@@ -311,7 +311,7 @@ import * as ep___roles_show from './endpoints/roles/show.js';
 import * as ep___roles_users from './endpoints/roles/users.js';
 import * as ep___roles_notes from './endpoints/roles/notes.js';
 import * as ep___subscription_create from './endpoints/subscription/create.js';
-import * as ep___subscription_manage from './endpoints/subscription/manage.js';
+import * as ep___subscription_status from './endpoints/subscription/status.js';
 import * as ep___subscription_plans_list from './endpoints/subscription-plans/list.js';
 import * as ep___subscription_plans_show from './endpoints/subscription-plans/show.js';
 import * as ep___requestResetPassword from './endpoints/request-reset-password.js';
@@ -680,7 +680,7 @@ const $roles_show: Provider = { provide: 'ep:roles/show', useClass: ep___roles_s
 const $roles_users: Provider = { provide: 'ep:roles/users', useClass: ep___roles_users.default };
 const $roles_notes: Provider = { provide: 'ep:roles/notes', useClass: ep___roles_notes.default };
 const $subscription_create: Provider = { provide: 'ep:subscription/create', useClass: ep___subscription_create.default };
-const $subscription_manage: Provider = { provide: 'ep:subscription/manage', useClass: ep___subscription_manage.default };
+const $subscription_status: Provider = { provide: 'ep:subscription/status', useClass: ep___subscription_status.default };
 const $subscription_plans_list: Provider = { provide: 'ep:subscription-plans/list', useClass: ep___subscription_plans_list.default };
 const $subscription_plans_show: Provider = { provide: 'ep:subscription-plans/show', useClass: ep___subscription_plans_show.default };
 const $requestResetPassword: Provider = { provide: 'ep:request-reset-password', useClass: ep___requestResetPassword.default };
@@ -1053,7 +1053,7 @@ const $events_update: Provider = { provide: 'ep:events/update', useClass: ep___e
 		$roles_users,
 		$roles_notes,
 		$subscription_create,
-		$subscription_manage,
+		$subscription_status,
 		$subscription_plans_list,
 		$subscription_plans_show,
 		$requestResetPassword,
@@ -1420,7 +1420,7 @@ const $events_update: Provider = { provide: 'ep:events/update', useClass: ep___e
 		$roles_users,
 		$roles_notes,
 		$subscription_create,
-		$subscription_manage,
+		$subscription_status,
 		$subscription_plans_list,
 		$subscription_plans_show,
 		$requestResetPassword,

@@ -68,6 +68,7 @@ import { RoleAssignment } from '@/models/entities/RoleAssignment.js';
 import { Flash } from '@/models/entities/Flash.js';
 import { FlashLike } from '@/models/entities/FlashLike.js';
 import { SubscriptionPlan } from '@/models/entities/SubscriptionPlan.js';
+import { SubscriptionStatus } from '@/models/entities/SubscriptionStatus.js';
 import type { Repository } from 'typeorm';
 
 export {
@@ -141,6 +142,7 @@ export {
 	FlashLike,
 	UserMemo,
 	SubscriptionPlan,
+	SubscriptionStatus,
 };
 
 export type AbuseUserReportsRepository = Repository<AbuseUserReport>;
@@ -213,3 +215,4 @@ export type CirclesRepository = Repository<Circle>;
 export type EventsRepository = Repository<Event>;
 export type EventCirclesRepository = Repository<EventCircle>;
 export type SubscriptionPlansRepository = Repository<SubscriptionPlan>;
+export type SubscriptionStatusesRepository = Repository<SubscriptionStatus>;

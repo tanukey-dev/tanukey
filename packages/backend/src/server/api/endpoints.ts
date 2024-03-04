@@ -312,7 +312,7 @@ import * as ep___roles_show from './endpoints/roles/show.js';
 import * as ep___roles_users from './endpoints/roles/users.js';
 import * as ep___roles_notes from './endpoints/roles/notes.js';
 import * as ep___subscription_create from './endpoints/subscription/create.js';
-import * as ep___subscription_manage from './endpoints/subscription/manage.js';
+import * as ep___subscription_status from './endpoints/subscription/status.js';
 import * as ep___subscription_plans_list from './endpoints/subscription-plans/list.js';
 import * as ep___subscription_plans_show from './endpoints/subscription-plans/show.js';
 import * as ep___requestResetPassword from './endpoints/request-reset-password.js';
@@ -679,7 +679,7 @@ const eps = [
 	['roles/users', ep___roles_users],
 	['roles/notes', ep___roles_notes],
 	['subscription/create', ep___subscription_create],
-	['subscription/manage', ep___subscription_manage],
+	['subscription/status', ep___subscription_status],
 	['subscription-plans/list', ep___subscription_plans_list],
 	['subscription-plans/show', ep___subscription_plans_show],
 	['request-reset-password', ep___requestResetPassword],

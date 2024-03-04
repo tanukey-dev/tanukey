@@ -3,7 +3,6 @@ import { id } from '../id.js';
 import { Role } from './Role.js';
 
 @Entity('subscription_plan')
-
 export class SubscriptionPlan {
 	@PrimaryColumn(id())
 	public id: string;

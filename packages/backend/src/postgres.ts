@@ -76,6 +76,7 @@ import { Circle } from '@/models/entities/Circle.js';
 import { Event } from '@/models/entities/Event.js';
 import { EventCircle } from '@/models/entities/EventCircle.js';
 import { SubscriptionPlan } from '@/models/entities/SubscriptionPlan.js';
+import { SubscriptionStatus } from '@/models/entities/SubscriptionStatus.js';
 
 import { Config } from '@/config.js';
 import MisskeyLogger from '@/logger.js';
@@ -195,6 +196,7 @@ export const entities = [
 	Event,
 	EventCircle,
 	SubscriptionPlan,
+	SubscriptionStatus,
 	...charts,
 ];
 

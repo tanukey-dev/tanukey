@@ -2,11 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Stripe } from 'stripe';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
-import type { UsersRepository, UserProfilesRepository, SubscriptionPlansRepository, UserProfile } from '@/models/index.js';
+import type { UsersRepository, UserProfilesRepository, SubscriptionPlansRepository, UserProfile, SubscriptionStatusesRepository } from '@/models/index.js';
 import { RoleService } from '@/core/RoleService.js';
 import { MetaService } from '@/core/MetaService.js';
 import { bindThis } from '@/decorators.js';
 import { LoggerService } from '@/core/LoggerService.js';
+import { IdService } from '@/core/IdService.js';
 import type Logger from '@/logger.js';
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 
@@ -23,8 +24,11 @@ export class StripeWebhookServerService {
 		private userProfilesRepository: UserProfilesRepository,
 		@Inject(DI.subscriptionPlansRepository)
 		private subscriptionPlansRepository: SubscriptionPlansRepository,
+		@Inject(DI.subscriptionStatusesRepository)
+		private subscriptionStatusesRepository: SubscriptionStatusesRepository,
 		private roleService: RoleService,
 		private metaService: MetaService,
+		private idService: IdService,
 		private loggerService: LoggerService,
 	) {
 		this.logger = this.loggerService.getLogger('server', 'gray', false);
@@ -86,34 +90,34 @@ export class StripeWebhookServerService {
 
 			const { userProfile, subscription } = await preprocessEvent(event.data.object);
 
+			const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
+
+			// 旧実装からのデータ移行
+			if (user.subscriptionPlanId) {
+				if (subscription === null) {
+					await this.subscriptionStatusesRepository.insert({
+						id: this.idService.genId(),
+						userId: user.id,
+						planId: user.subscriptionPlanId,
+						status: user.subscriptionStatus,
+					});
+				}
+				await this.usersRepository.update({ id: user.id }, {
+					subscriptionPlanId: null,
+					subscriptionStatus: 'none',
+					stripeSubscriptionId: null,
+				});
+			}
+
 			// Handle the event.
 			switch (event.type) {
 				case 'customer.subscription.created': { // サブスクリプションが新規に作成された場合
-					const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
-					const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
-
-					if (subscription.status === 'active') {
-						await this.roleService.getUserRoles(userProfile.userId).then(async (roles) => {
-							// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
-							if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
-								await this.roleService.assign(userProfile.userId, subscriptionPlan.roleId);
-							}
-						});
-					}
-
-					await this.usersRepository.update({ id: userProfile.userId }, {
-						subscriptionStatus: subscription.status,
-						subscriptionPlanId: subscriptionPlan.id,
-						stripeSubscriptionId: user.stripeSubscriptionId,
-					});
-
 					reply.code(204); // Stripeへの応答を設定
 					return;
 				}
 
 				case 'customer.subscription.updated': { // Update the subscription.
 					const previousData = event.data.previous_attributes;
-					const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
 					const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
 
 					if (subscription.cancel_at_period_end) {
@@ -121,33 +125,13 @@ export class StripeWebhookServerService {
 						return; // キャンセルされた場合は期限切れのタイミングでcustomer.subscription.deletedイベントが発生するので、ここでは何もしない
 					} else if (!user.subscriptionPlanId) { // サブスクリプションプランが新規に設定された場合
 						if (subscription.status === 'active') {
-							const roleIds = (await this.subscriptionPlansRepository.find()).map(x => x.roleId);
 							await this.roleService.getUserRoles(user.id).then(async (roles) => {
-								for (const role of roles) {
-									if (roleIds.includes(role.id) && role.id !== subscriptionPlan.roleId) {
-										await this.roleService.unassign(user.id, role.id); // 他のサブスクリプションプランのロールが割り当てられている場合、ロールを解除する
-									}
-								}
-
 								// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
 								if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
 									await this.roleService.assign(user.id, subscriptionPlan.roleId);
 								}
 							});
 						}
-					} else if (subscriptionPlan.id !== user.subscriptionPlanId) { // サブスクリプションプランが変更された場合
-						const oldSubscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ id: user.subscriptionPlanId });
-						await this.roleService.getUserRoles(user.id).then(async (roles) => {
-							// 旧サブスクリプションプランのロールが割り当てられている場合、ロールを解除する
-							if (roles.some((role) => role.id === oldSubscriptionPlan.roleId)) {
-								await this.roleService.unassign(user.id, oldSubscriptionPlan.roleId);
-							}
-
-							// 新しいサブスクリプションプランのロールが割り当てられていない場合、ロールを割り当てる
-							if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
-								await this.roleService.assign(user.id, subscriptionPlan.roleId);
-							}
-						});
 					} else if (previousData && previousData.status) { // サブスクリプションステータスが変更された場合
 						if (subscription.status === 'active') {
 							await this.roleService.getUserRoles(user.id).then(async (roles) => {
@@ -160,11 +144,22 @@ export class StripeWebhookServerService {
 					}
 
 					// ユーザーのサブスクリプションステータスとサブスクリプションプランを更新する
-					await this.usersRepository.update({ id: user.id }, {
-						subscriptionStatus: subscription.status,
-						subscriptionPlanId: subscriptionPlan.id,
-						stripeSubscriptionId: user.stripeSubscriptionId ? undefined : subscription.id, // 既存のサブスクリプションIDがない場合のみ更新する
-					});
+					const status = await this.subscriptionStatusesRepository.createQueryBuilder('status')
+						.andWhere('status.userId = :userId', { userId: user.id })
+						.andWhere('status.planId = :planId', { planId: subscriptionPlan.id })
+						.getOne();
+					if (status) {
+						await this.subscriptionStatusesRepository.update({ id: status.id }, {
+							status: subscription.status,
+						});
+					} else {
+						await this.subscriptionStatusesRepository.insert({
+							id: this.idService.genId(),
+							userId: user.id,
+							planId: subscriptionPlan.id,
+							status: subscription.status,
+						});
+					}
 
 					reply.code(204); // Stripeへの応答を設定
 					return;
@@ -172,7 +167,6 @@ export class StripeWebhookServerService {
 
 				case 'customer.subscription.deleted': { // Delete the subscription.
 					const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
-					const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
 
 					// サブスクリプションプランのロールが割り当てられている場合、ロールを解除する
 					await this.roleService.getUserRoles(userProfile.userId).then(async (roles) => {
@@ -181,10 +175,13 @@ export class StripeWebhookServerService {
 						}
 					});
 
-					await this.usersRepository.update({ id: userProfile.userId }, {
-						subscriptionStatus: subscription.status,
-						subscriptionPlanId: null,
-						stripeSubscriptionId: null,
+					const status = await this.subscriptionStatusesRepository.createQueryBuilder('status')
+						.andWhere('status.userId = :userId', { userId: user.id })
+						.andWhere('status.planId = :planId', { planId: subscriptionPlan.id })
+						.getOneOrFail();
+
+					await this.subscriptionStatusesRepository.update({ id: status.id }, {
+						status: subscription.status,
 					});
 
 					reply.code(204); // Stripeへの応答を設定
