@@ -89,25 +89,7 @@ export class StripeWebhookServerService {
 			};
 
 			const { userProfile, subscription } = await preprocessEvent(event.data.object);
-
 			const user = await this.usersRepository.findOneByOrFail({ id: userProfile.userId });
-
-			// 旧実装からのデータ移行
-			if (user.subscriptionPlanId) {
-				if (subscription === null) {
-					await this.subscriptionStatusesRepository.insert({
-						id: this.idService.genId(),
-						userId: user.id,
-						planId: user.subscriptionPlanId,
-						status: user.subscriptionStatus,
-					});
-				}
-				await this.usersRepository.update({ id: user.id }, {
-					subscriptionPlanId: null,
-					subscriptionStatus: 'none',
-					stripeSubscriptionId: null,
-				});
-			}
 
 			// Handle the event.
 			switch (event.type) {
@@ -117,30 +99,20 @@ export class StripeWebhookServerService {
 				}
 
 				case 'customer.subscription.updated': { // Update the subscription.
-					const previousData = event.data.previous_attributes;
 					const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
 
 					if (subscription.cancel_at_period_end) {
 						reply.code(204); // Stripeへの応答を設定
 						return; // キャンセルされた場合は期限切れのタイミングでcustomer.subscription.deletedイベントが発生するので、ここでは何もしない
-					} else if (!user.subscriptionPlanId) { // サブスクリプションプランが新規に設定された場合
-						if (subscription.status === 'active') {
-							await this.roleService.getUserRoles(user.id).then(async (roles) => {
-								// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
-								if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
-									await this.roleService.assign(user.id, subscriptionPlan.roleId);
-								}
-							});
-						}
-					} else if (previousData && previousData.status) { // サブスクリプションステータスが変更された場合
-						if (subscription.status === 'active') {
-							await this.roleService.getUserRoles(user.id).then(async (roles) => {
-								// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
-								if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
-									await this.roleService.assign(user.id, subscriptionPlan.roleId);
-								}
-							});
-						}
+					}
+
+					if (subscription.status === 'active') {
+						await this.roleService.getUserRoles(user.id).then(async (roles) => {
+							// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
+							if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
+								await this.roleService.assign(user.id, subscriptionPlan.roleId);
+							}
+						});
 					}
 
 					// ユーザーのサブスクリプションステータスとサブスクリプションプランを更新する

@@ -65,6 +65,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					subscriptionStatus: 'none',
 					stripeSubscriptionId: null,
 				});
+				return await subscriptionStatusesRepository.createQueryBuilder('status')
+					.where('status.userId = :userId', { userId: me.id })
+					.getMany() as SubscriptionStatus[];
 			}
 
 			return statuses;

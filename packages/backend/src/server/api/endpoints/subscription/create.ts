@@ -118,7 +118,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				userProfile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
 			}
 
-			const subscription = await subscriptionStatusesRepository.createQueryBuilder('status')
+			let subscription = await subscriptionStatusesRepository.createQueryBuilder('status')
 				.andWhere('status.userId = :userId', { userId: user.id })
 				.andWhere('status.planId = :planId', { planId: plan.id })
 				.getOne();
@@ -132,6 +132,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 						planId: user.subscriptionPlanId,
 						status: user.subscriptionStatus,
 					});
+					subscription = await subscriptionStatusesRepository.createQueryBuilder('status')
+						.andWhere('status.userId = :userId', { userId: user.id })
+						.andWhere('status.planId = :planId', { planId: plan.id })
+						.getOne();
 				}
 				await this.usersRepository.update({ id: user.id }, {
 					subscriptionPlanId: null,
