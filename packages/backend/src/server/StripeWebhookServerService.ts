@@ -94,6 +94,35 @@ export class StripeWebhookServerService {
 			// Handle the event.
 			switch (event.type) {
 				case 'customer.subscription.created': { // サブスクリプションが新規に作成された場合
+					const subscriptionPlan = await this.subscriptionPlansRepository.findOneByOrFail({ stripePriceId: subscription.items.data[0].plan.id });
+
+					if (subscription.status === 'active') {
+						await this.roleService.getUserRoles(user.id).then(async (roles) => {
+							// ユーザーにロールが割り当てられていない場合、ロールを割り当てる
+							if (!roles.some((role) => role.id === subscriptionPlan.roleId)) {
+								await this.roleService.assign(user.id, subscriptionPlan.roleId);
+							}
+						});
+					}
+
+					// ユーザーのサブスクリプションステータスとサブスクリプションプランを更新する
+					const status = await this.subscriptionStatusesRepository.createQueryBuilder('status')
+						.andWhere('status.userId = :userId', { userId: user.id })
+						.andWhere('status.planId = :planId', { planId: subscriptionPlan.id })
+						.getOne();
+					if (status) {
+						await this.subscriptionStatusesRepository.update({ id: status.id }, {
+							status: subscription.status,
+						});
+					} else {
+						await this.subscriptionStatusesRepository.insert({
+							id: this.idService.genId(),
+							userId: user.id,
+							planId: subscriptionPlan.id,
+							status: subscription.status,
+						});
+					}
+
 					reply.code(204); // Stripeへの応答を設定
 					return;
 				}
