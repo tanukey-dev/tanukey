@@ -67,5 +67,15 @@ export const packedNotificationSchema = {
 			optional: true, nullable: true,
 			enum: [...pointTypes],
 		},
+		pointReceiveUserId: {
+			type: 'string',
+			optional: true, nullable: true,
+			format: 'id',
+		},
+		pointSendUserId: {
+			type: 'string',
+			optional: true, nullable: true,
+			format: 'id',
+		},
 	},
 } as const;

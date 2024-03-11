@@ -21,4 +21,6 @@ export const subscriptionStatus = [
 
 export const pointTypes = [
 	'loginBonus',
+	'sendPoints',
+	'receivePoints',
 ] as const;

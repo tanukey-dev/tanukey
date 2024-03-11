@@ -256,6 +256,11 @@ export type Notification = {
 	header?: string | null;
 	body: string;
 	icon?: string | null;
+} | {
+	type: 'point';
+	pointType: string,
+	pointReceiveUserId: User['id'] | null;
+	pointSendUserId: User['id'] | null;
 });
 
 export type MessagingMessage = {

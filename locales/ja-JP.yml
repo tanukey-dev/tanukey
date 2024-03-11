@@ -2049,6 +2049,21 @@ _exportOrImport:
 
 _points:
   title: "ポイント"
+  send: "ポイント送信"
+  sendMessage: "ポイントを送信しました"
+  target: "送信先"
+  value: "送信ポイント数"
+  sendPoints: "ポイントを送信"
+  receivePoints: "ポイントを受領"
+  loginBonusMsg: "ログインボーナス!"
+  sendPointsMsg: "ポイントを送信しました。送信先: "
+  receivePointsMsg: "ポイントを受領しました。送信元: "
+  _errors:
+    noUser: "ユーザーを指定してください"
+    noPoint: "送信ポイントを入力してください"
+    sameUser: "自分には送れません"
+    remoteUser: "リモートユーザーには送れません"
+    overPoints: "保有ポイントより多いポイントは送れません"
 
 _charts:
   federation: "連合"

@@ -24,7 +24,6 @@ export class UserPointService {
 	public async add(
 		userId: User['id'],
 		addPoint: number,
-		type: typeof pointTypes[number],
 	): Promise<void> {
 		const point = await this.userPointsRepository.createQueryBuilder('point')
 			.where('point.userId = :id', { id: userId })
@@ -35,20 +34,12 @@ export class UserPointService {
 				point: point.point + addPoint,
 				updatedAtDailyFirstNote: new Date(),
 			});
-			this.notificationService.createNotification(userId, 'point', {
-				point: addPoint,
-				pointType: type,
-			});
 		} else {
 			await this.userPointsRepository.insert({
 				id: this.idService.genId(),
 				userId: userId,
 				point: addPoint,
 				updatedAtDailyFirstNote: new Date(),
-			});
-			this.notificationService.createNotification(userId, 'point', {
-				point: addPoint,
-				pointType: type,
 			});
 		}
 	}
@@ -89,6 +80,26 @@ export class UserPointService {
 				pointType: 'loginBonus',
 			});
 		}
+	}
+
+	@bindThis
+	public async send(
+		myUserId: User['id'],
+		targetUserId: User['id'],
+		value: number,
+	): Promise<void> {
+		this.add(myUserId, -value);
+		this.add(targetUserId, value);
+		this.notificationService.createNotification(myUserId, 'point', {
+			point: value,
+			pointType: 'sendPoints',
+			pointReceiveUserId: targetUserId,
+		});
+		this.notificationService.createNotification(targetUserId, 'point', {
+			point: value,
+			pointType: 'receivePoints',
+			pointSendUserId: myUserId,
+		});
 	}
 
 	@bindThis

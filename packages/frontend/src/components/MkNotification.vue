@@ -3,7 +3,17 @@
 	<div :class="$style.head">
 		<MkAvatar v-if="notification.type === 'pollEnded'" :class="$style.icon" :user="notification.note.user" link preview/>
 		<MkAvatar v-else-if="notification.type === 'achievementEarned'" :class="$style.icon" :user="$i" link preview/>
-		<MkAvatar v-else-if="notification.type === 'point'" :class="$style.icon" :user="$i" link preview/>
+		<template v-else-if="notification.type === 'point'">
+			<template v-if="notification.pointType === 'loginBonus'">
+				<MkAvatar :class="$style.icon" :user="$i" link preview/>
+			</template>
+			<template v-else-if="notification.pointType === 'sendPoints' && user">
+				<MkAvatar :class="$style.icon" :user="user" link preview/>
+			</template>
+			<template v-else-if="notification.pointType === 'receivePoints' && user">
+				<MkAvatar :class="$style.icon" :user="user" link preview/>
+			</template>
+		</template>
 		<MkAvatar v-else-if="notification.user" :class="$style.icon" :user="notification.user" link preview/>
 		<img v-else-if="notification.icon" :class="$style.icon" :src="notification.icon" alt=""/>
 		<div
@@ -45,7 +55,17 @@
 		<header :class="$style.header">
 			<span v-if="notification.type === 'pollEnded'">{{ i18n.ts._notification.pollEnded }}</span>
 			<span v-else-if="notification.type === 'achievementEarned'">{{ i18n.ts._notification.achievementEarned }}</span>
-			<span v-else-if="notification.type === 'point'">{{ i18n.ts._notification.point }}</span>
+			<template v-else-if="notification.type === 'point'">
+				<template v-if="notification.pointType === 'loginBonus'">
+					<span>{{ i18n.ts._notification.point }}</span>
+				</template>
+				<template v-else-if="notification.pointType === 'sendPoints'">
+					<span>{{ i18n.ts._points.sendPoints }}</span>
+				</template>
+				<template v-else-if="notification.pointType === 'receivePoints'">
+					<span>{{ i18n.ts._points.receivePoints }}</span>
+				</template>
+			</template>
 			<MkA v-else-if="notification.user" v-user-preview="notification.user.id" :class="$style.headerName" :to="userPage(notification.user)"><MkUserName :user="notification.user"/></MkA>
 			<span v-else>{{ notification.header }}</span>
 			<MkTime v-if="withTime" :time="notification.createdAt" :class="$style.headerTime"/>
@@ -95,7 +115,13 @@
 			</span>
 			<template v-else-if="notification.type === 'point'">
 				<template v-if="notification.pointType === 'loginBonus'">
-					<span :class="$style.text">Login Bonus! +{{ notification.point }}</span>
+					<span :class="$style.text">{{ i18n.ts._points.loginBonusMsg }} +{{ notification.point }}p</span>
+				</template>
+				<template v-if="notification.pointType === 'sendPoints'">
+					<span :class="$style.text">{{ notification.point }} {{ i18n.ts._points.sendPointsMsg }}{{ user?.username }}</span>
+				</template>
+				<template v-if="notification.pointType === 'receivePoints'">
+					<span :class="$style.text">{{ notification.point }} {{ i18n.ts._points.receivePointsMsg }}{{ user?.username }}</span>
 				</template>
 			</template>
 		</div>
@@ -104,7 +130,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef } from 'vue';
+import { onMounted, ref, shallowRef } from 'vue';
 import * as misskey from 'misskey-js';
 import MkReactionIcon from '@/components/MkReactionIcon.vue';
 import MkFollowButton from '@/components/MkFollowButton.vue';
@@ -129,6 +155,7 @@ const props = withDefaults(defineProps<{
 
 const elRef = shallowRef<HTMLElement>(null);
 const reactionRef = ref(null);
+const user = ref<any>(null);
 
 const followRequestDone = ref(false);
 
@@ -142,6 +169,12 @@ const rejectFollowRequest = () => {
 	os.api('following/requests/reject', { userId: props.notification.user.id });
 };
 
+const getUser = async (userId) => {
+	return await os.api('users/show', {
+		userId: userId,
+	});
+};
+
 useTooltip(reactionRef, (showing) => {
 	os.popup(XReactionTooltip, {
 		showing,
@@ -150,6 +183,21 @@ useTooltip(reactionRef, (showing) => {
 		targetElement: reactionRef.value.$el,
 	}, {}, 'closed');
 });
+
+onMounted(async () => {
+	if (props.notification.type === 'point') {
+		if (props.notification.pointType === 'sendPoints') {
+			if (props.notification.pointReceiveUserId) {
+				user.value = await getUser(props.notification.pointReceiveUserId);
+			}
+		} else if (props.notification.pointType === 'receivePoints') {
+			if (props.notification.pointSendUserId) {
+				user.value = await getUser(props.notification.pointSendUserId);
+			}
+		}
+	}
+});
+
 </script>
 
 <style lang="scss" module>

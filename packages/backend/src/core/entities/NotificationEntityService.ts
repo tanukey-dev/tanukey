@@ -104,6 +104,8 @@ export class NotificationEntityService implements OnModuleInit {
 			...(notification.type === 'point' ? {
 				point: notification.point,
 				pointType: notification.pointType,
+				pointReceiveUserId: notification.pointReceiveUserId,
+				pointSendUserId: notification.pointSendUserId, 
 			} : {}),
 		});
 	}

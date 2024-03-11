@@ -43,6 +43,8 @@ export type Notification = {
 
 	point: number | null;
 	pointType: typeof pointTypes[number];
+	pointReceiveUserId: User['id'] | null;
+	pointSendUserId: User['id'] | null;
 
 	/**
 	 * アプリ通知のbody

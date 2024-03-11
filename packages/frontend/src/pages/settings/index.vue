@@ -139,7 +139,7 @@ const menuDef = computed(() => [{
 		active: currentPage?.route.name === 'subscription',
 	} : undefined, {
 		icon: 'ti ti-coin',
-		text: i18n.ts.roles,
+		text: i18n.ts.points,
 		to: '/settings/points',
 		active: currentPage?.route.name === 'points',
 	}, {

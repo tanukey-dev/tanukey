@@ -295,6 +295,7 @@ import * as ep___pages_show from './endpoints/pages/show.js';
 import * as ep___pages_unlike from './endpoints/pages/unlike.js';
 import * as ep___pages_update from './endpoints/pages/update.js';
 import * as ep___points_show from './endpoints/points/show.js';
+import * as ep___points_send from './endpoints/points/send.js';
 import * as ep___flash_create from './endpoints/flash/create.js';
 import * as ep___flash_delete from './endpoints/flash/delete.js';
 import * as ep___flash_featured from './endpoints/flash/featured.js';
@@ -665,6 +666,7 @@ const $pages_show: Provider = { provide: 'ep:pages/show', useClass: ep___pages_s
 const $pages_unlike: Provider = { provide: 'ep:pages/unlike', useClass: ep___pages_unlike.default };
 const $pages_update: Provider = { provide: 'ep:pages/update', useClass: ep___pages_update.default };
 const $points_show: Provider = { provide: 'ep:points/show', useClass: ep___points_show.default };
+const $points_send: Provider = { provide: 'ep:points/send', useClass: ep___points_send.default };
 const $flash_create: Provider = { provide: 'ep:flash/create', useClass: ep___flash_create.default };
 const $flash_delete: Provider = { provide: 'ep:flash/delete', useClass: ep___flash_delete.default };
 const $flash_featured: Provider = { provide: 'ep:flash/featured', useClass: ep___flash_featured.default };
@@ -1039,6 +1041,7 @@ const $events_update: Provider = { provide: 'ep:events/update', useClass: ep___e
 		$pages_unlike,
 		$pages_update,
 		$points_show,
+		$points_send,
 		$flash_create,
 		$flash_delete,
 		$flash_featured,
@@ -1407,6 +1410,7 @@ const $events_update: Provider = { provide: 'ep:events/update', useClass: ep___e
 		$pages_unlike,
 		$pages_update,
 		$points_show,
+		$points_send,
 		$flash_create,
 		$flash_delete,
 		$flash_featured,

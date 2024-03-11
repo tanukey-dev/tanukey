@@ -2130,6 +2130,22 @@ export interface Locale {
     };
     "_points": {
         "title": string;
+        "send": string;
+        "sendMessage": string;
+        "target": string;
+        "value": string;
+        "sendPoints": string;
+        "receivePoints": string;
+        "loginBonusMsg": string;
+        "sendPointsMsg": string;
+        "receivePointsMsg": string;
+        "_errors": {
+            "noUser": string;
+            "noPoint": string;
+            "sameUser": string;
+            "remoteUser": string;
+            "overPoints": string;
+        };
     };
     "_charts": {
         "federation": string;
