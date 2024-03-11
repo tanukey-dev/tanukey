@@ -191,18 +191,21 @@ export class User {
 	})
 	public isDeleted: boolean;
 
+	// Duplicate: SubscriptionStatusでの複数ID登録に移行
 	@Column('enum', {
 		enum: subscriptionStatus,
 		default: 'none',
 	})
 	public subscriptionStatus: typeof subscriptionStatus[number];
 
+	// Duplicate: SubscriptionStatusでの複数ID登録に移行
 	@Column({
 		...id(),
 		nullable: true,
 	})
 	public subscriptionPlanId: SubscriptionPlan['id'] | null;
 
+	// Duplicate: SubscriptionStatusでの複数ID登録に移行
 	@Column('varchar', {
 		length: 128, nullable: true,
 	})
