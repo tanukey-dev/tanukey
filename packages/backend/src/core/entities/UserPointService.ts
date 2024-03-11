@@ -32,14 +32,12 @@ export class UserPointService {
 			await this.userPointsRepository.update({ id: point.id }, {
 				userId: userId,
 				point: point.point + addPoint,
-				updatedAtDailyFirstNote: new Date(),
 			});
 		} else {
 			await this.userPointsRepository.insert({
 				id: this.idService.genId(),
 				userId: userId,
 				point: addPoint,
-				updatedAtDailyFirstNote: new Date(),
 			});
 		}
 	}
