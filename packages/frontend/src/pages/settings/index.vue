@@ -138,7 +138,7 @@ const menuDef = computed(() => [{
 		to: '/settings/subscription',
 		active: currentPage?.route.name === 'subscription',
 	} : undefined, {
-		icon: 'ti ti-coin',
+		icon: 'ti ti-parking-circle',
 		text: i18n.ts.points,
 		to: '/settings/points',
 		active: currentPage?.route.name === 'points',
