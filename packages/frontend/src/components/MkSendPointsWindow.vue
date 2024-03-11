@@ -57,6 +57,7 @@ watch(value, (newValue, oldValue) => {
 	if (newValue <= 0) {
 		value.value = 0;
 	}
+	value.value = Math.floor(newValue);
 });
 
 function selectUser() {
@@ -89,7 +90,7 @@ async function ok(): Promise<void> {
 	}
 	emit('done', {
 		target: target.value,
-		value: value.value,
+		value: Math.floor(value.value),
 	});
 	dialog.value?.close();
 }
