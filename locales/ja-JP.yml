@@ -2208,6 +2208,7 @@ _notification:
     followRequestAccepted: "フォローが受理された"
     achievementEarned: "実績の獲得"
     app: "連携アプリからの通知"
+    point: "ポイント通知"
 
   _actions:
     followBack: "フォローバック"

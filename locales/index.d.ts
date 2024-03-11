@@ -2290,6 +2290,7 @@ export interface Locale {
             "followRequestAccepted": string;
             "achievementEarned": string;
             "app": string;
+            "point": string;
         };
         "_actions": {
             "followBack": string;

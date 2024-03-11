@@ -11,6 +11,9 @@
 		<div v-else-if="tab === 'directNotes'">
 			<MkNotes :pagination="directNotesPagination"/>
 		</div>
+		<div v-else-if="tab === 'points'">
+			<XNotifications class="notifications" :includeTypes="['point']"/>
+		</div>
 	</MkSpacer>
 </MkStickyContainer>
 </template>
@@ -83,6 +86,10 @@ const headerTabs = $computed(() => [{
 	key: 'directNotes',
 	title: i18n.ts.directNotes,
 	icon: 'ti ti-mail',
+}, {
+	key: 'points',
+	title: i18n.ts.points,
+	icon: 'ti ti-parking',
 }]);
 
 definePageMetadata(computed(() => ({

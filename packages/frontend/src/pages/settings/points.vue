@@ -45,6 +45,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts._points.title,
-	icon: 'ti ti-parking-circle',
+	icon: 'ti ti-parking',
 });
 </script>
