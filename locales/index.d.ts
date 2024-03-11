@@ -302,6 +302,7 @@ export interface Locale {
     "registeredDate": string;
     "subscription": string;
     "subscriptionStatus": string;
+    "points": string;
     "location": string;
     "theme": string;
     "themeForLightMode": string;
@@ -2127,6 +2128,9 @@ export interface Locale {
         "excludeMutingUsers": string;
         "excludeInactiveUsers": string;
     };
+    "_points": {
+        "title": string;
+    };
     "_charts": {
         "federation": string;
         "apRequest": string;
@@ -2256,6 +2260,7 @@ export interface Locale {
         "unreadAntennaNote": string;
         "emptyPushNotificationMessage": string;
         "achievementEarned": string;
+        "point": string;
         "_types": {
             "all": string;
             "follow": string;

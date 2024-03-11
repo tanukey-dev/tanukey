@@ -101,6 +101,10 @@ export class NotificationEntityService implements OnModuleInit {
 				header: notification.customHeader ?? token?.name,
 				icon: notification.customIcon ?? token?.iconUrl,
 			} : {}),
+			...(notification.type === 'point' ? {
+				point: notification.point,
+				pointType: notification.pointType,
+			} : {}),
 		});
 	}
 

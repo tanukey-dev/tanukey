@@ -3,6 +3,7 @@
 	<div :class="$style.head">
 		<MkAvatar v-if="notification.type === 'pollEnded'" :class="$style.icon" :user="notification.note.user" link preview/>
 		<MkAvatar v-else-if="notification.type === 'achievementEarned'" :class="$style.icon" :user="$i" link preview/>
+		<MkAvatar v-else-if="notification.type === 'point'" :class="$style.icon" :user="$i" link preview/>
 		<MkAvatar v-else-if="notification.user" :class="$style.icon" :user="notification.user" link preview/>
 		<img v-else-if="notification.icon" :class="$style.icon" :src="notification.icon" alt=""/>
 		<div
@@ -16,6 +17,7 @@
 				[$style.t_quote]: notification.type === 'quote',
 				[$style.t_pollEnded]: notification.type === 'pollEnded',
 				[$style.t_achievementEarned]: notification.type === 'achievementEarned',
+				[$style.t_point]: notification.type === 'point',
 			}]"
 		>
 			<i v-if="notification.type === 'follow'" class="ti ti-plus"></i>
@@ -27,6 +29,7 @@
 			<i v-else-if="notification.type === 'quote'" class="ti ti-quote"></i>
 			<i v-else-if="notification.type === 'pollEnded'" class="ti ti-chart-arrows"></i>
 			<i v-else-if="notification.type === 'achievementEarned'" class="ti ti-medal"></i>
+			<i v-else-if="notification.type === 'point'" class="ti ti-coin"></i>
 			<!-- notification.reaction が null になることはまずないが、ここでoptional chaining使うと一部ブラウザで刺さるので念の為 -->
 			<MkReactionIcon
 				v-else-if="notification.type === 'reaction'"
@@ -42,6 +45,7 @@
 		<header :class="$style.header">
 			<span v-if="notification.type === 'pollEnded'">{{ i18n.ts._notification.pollEnded }}</span>
 			<span v-else-if="notification.type === 'achievementEarned'">{{ i18n.ts._notification.achievementEarned }}</span>
+			<span v-else-if="notification.type === 'point'">{{ i18n.ts._notification.point }}</span>
 			<MkA v-else-if="notification.user" v-user-preview="notification.user.id" :class="$style.headerName" :to="userPage(notification.user)"><MkUserName :user="notification.user"/></MkA>
 			<span v-else>{{ notification.header }}</span>
 			<MkTime v-if="withTime" :time="notification.createdAt" :class="$style.headerTime"/>
@@ -89,6 +93,11 @@
 			<span v-else-if="notification.type === 'app'" :class="$style.text">
 				<Mfm :text="notification.body" :nowrap="false"/>
 			</span>
+			<template v-else-if="notification.type === 'point'">
+				<template v-if="notification.pointType === 'loginBonus'">
+					<span :class="$style.text">Login Bonus! +{{ notification.point }}</span>
+				</template>
+			</template>
 		</div>
 	</div>
 </div>
@@ -228,6 +237,12 @@ useTooltip(reactionRef, (showing) => {
 }
 
 .t_achievementEarned {
+	padding: 3px;
+	background: #cb9a11;
+	pointer-events: none;
+}
+
+.t_point {
 	padding: 3px;
 	background: #cb9a11;
 	pointer-events: none;

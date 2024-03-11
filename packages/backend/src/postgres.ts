@@ -72,6 +72,7 @@ import { RoleAssignment } from '@/models/entities/RoleAssignment.js';
 import { Flash } from '@/models/entities/Flash.js';
 import { FlashLike } from '@/models/entities/FlashLike.js';
 import { UserMemo } from '@/models/entities/UserMemo.js';
+import { UserPoint } from '@/models/entities/UserPoint.js';
 import { Circle } from '@/models/entities/Circle.js';
 import { Event } from '@/models/entities/Event.js';
 import { EventCircle } from '@/models/entities/EventCircle.js';
@@ -192,6 +193,7 @@ export const entities = [
 	Flash,
 	FlashLike,
 	UserMemo,
+	UserPoint,
 	Circle,
 	Event,
 	EventCircle,

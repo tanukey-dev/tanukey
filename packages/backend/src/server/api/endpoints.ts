@@ -295,6 +295,7 @@ import * as ep___pages_search from './endpoints/pages/search.js';
 import * as ep___pages_show from './endpoints/pages/show.js';
 import * as ep___pages_unlike from './endpoints/pages/unlike.js';
 import * as ep___pages_update from './endpoints/pages/update.js';
+import * as ep___points_show from './endpoints/points/show.js';
 import * as ep___flash_create from './endpoints/flash/create.js';
 import * as ep___flash_delete from './endpoints/flash/delete.js';
 import * as ep___flash_featured from './endpoints/flash/featured.js';
@@ -662,6 +663,7 @@ const eps = [
 	['pages/show', ep___pages_show],
 	['pages/unlike', ep___pages_unlike],
 	['pages/update', ep___pages_update],
+	['points/show', ep___points_show],
 	['flash/create', ep___flash_create],
 	['flash/delete', ep___flash_delete],
 	['flash/featured', ep___flash_featured],

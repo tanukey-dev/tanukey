@@ -35,6 +35,7 @@ import ActiveUsersChart from '@/core/chart/charts/active-users.js';
 import { LoggerService } from '@/core/LoggerService.js';
 import { GlobalEventService } from '@/core/GlobalEventService.js';
 import { NotificationService } from '@/core/NotificationService.js';
+import { UserPointService } from '@/core/entities/UserPointService.js';
 import { WebhookService } from '@/core/WebhookService.js';
 import { HashtagService } from '@/core/HashtagService.js';
 import { AntennaService } from '@/core/AntennaService.js';
@@ -209,6 +210,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 		private perUserNotesChart: PerUserNotesChart,
 		private activeUsersChart: ActiveUsersChart,
 		private instanceChart: InstanceChart,
+		private userPointService: UserPointService,
 		private loggerService: LoggerService,
 	) {
 		this.logger = this.loggerService.getLogger('note:create');
@@ -499,6 +501,9 @@ export class NoteCreateService implements OnApplicationShutdown {
 
 		// Increment notes count (user)
 		this.incNotesCountOfUser(user);
+
+		// その日の初回ノートだったらポイントを付加
+		this.userPointService.addWhenDailyFirstNote(user.id, 100);
 
 		// Word mute
 		mutedWordsCache.fetch(() => this.userProfilesRepository.find({

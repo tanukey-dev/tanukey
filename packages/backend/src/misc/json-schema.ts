@@ -9,6 +9,7 @@ import {
 } from '@/models/json-schema/user.js';
 import { packedNoteSchema } from '@/models/json-schema/note.js';
 import { packedUserListSchema } from '@/models/json-schema/user-list.js';
+import { packedUserPointSchema } from '@/models/json-schema/user-point.js';
 import { packedAppSchema } from '@/models/json-schema/app.js';
 import { packedNotificationSchema } from '@/models/json-schema/notification.js';
 import { packedDriveFileSchema } from '@/models/json-schema/drive-file.js';
@@ -46,6 +47,7 @@ export const refs = {
 	User: packedUserSchema,
 
 	UserList: packedUserListSchema,
+	UserPoint: packedUserPointSchema,
 	Announcement: packedAnnouncementSchema,
 	App: packedAppSchema,
 	Note: packedNoteSchema,

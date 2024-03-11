@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DI } from '@/di-symbols.js';
-import { User, Note, Announcement, AnnouncementRead, App, NoteFavorite, NoteThreadMuting, NoteReaction, NoteUnread, Poll, PollVote, UserProfile, UserKeypair, UserPending, AttestationChallenge, UserSecurityKey, UserPublickey, UserList, UserListJoining, UserNotePining, UserIp, UsedUsername, Following, FollowRequest, Instance, Emoji, DriveFile, DriveFolder, Meta, Muting, RenoteMuting, Blocking, SwSubscription, Hashtag, AbuseUserReport, RegistrationTicket, AuthSession, AccessToken, Signin, Page, PageLike, GalleryPost, GalleryLike, ModerationLog, Clip, ClipNote, Antenna, PromoNote, PromoRead, Relay, MutedNote, Channel, ChannelFollowing, ChannelFavorite, RegistryItem, Webhook, Ad, PasswordResetRequest, RetentionAggregation, FlashLike, Flash, Role, RoleAssignment, ClipFavorite, UserMemo, UserListFavorite, Circle, Event, EventCircle, SubscriptionPlan, SubscriptionStatus } from './index.js';
+import { User, Note, Announcement, AnnouncementRead, App, NoteFavorite, NoteThreadMuting, NoteReaction, NoteUnread, Poll, PollVote, UserProfile, UserKeypair, UserPending, AttestationChallenge, UserSecurityKey, UserPublickey, UserList, UserListJoining, UserNotePining, UserIp, UsedUsername, Following, FollowRequest, Instance, Emoji, DriveFile, DriveFolder, Meta, Muting, RenoteMuting, Blocking, SwSubscription, Hashtag, AbuseUserReport, RegistrationTicket, AuthSession, AccessToken, Signin, Page, PageLike, GalleryPost, GalleryLike, ModerationLog, Clip, ClipNote, Antenna, PromoNote, PromoRead, Relay, MutedNote, Channel, ChannelFollowing, ChannelFavorite, RegistryItem, Webhook, Ad, PasswordResetRequest, RetentionAggregation, FlashLike, Flash, Role, RoleAssignment, ClipFavorite, UserMemo, UserPoint, UserListFavorite, Circle, Event, EventCircle, SubscriptionPlan, SubscriptionStatus } from './index.js';
 import type { DataSource } from 'typeorm';
 import type { Provider } from '@nestjs/common';
 
@@ -412,6 +412,12 @@ const $userMemosRepository: Provider = {
 	inject: [DI.db],
 };
 
+const $userPointsRepository: Provider = {
+	provide: DI.userPointsRepository,
+	useFactory: (db: DataSource) => db.getRepository(UserPoint),
+	inject: [DI.db],
+};
+
 const $circlesRepository: Provider = {
 	provide: DI.circlesRepository,
 	useFactory: (db: DataSource) => db.getRepository(Circle),
@@ -502,6 +508,7 @@ const $eventCirclesRepository: Provider = {
 		$flashsRepository,
 		$flashLikesRepository,
 		$userMemosRepository,
+		$userPointsRepository,
 		$circlesRepository,
 		$eventsRepository,
 		$eventCirclesRepository,
@@ -575,6 +582,7 @@ const $eventCirclesRepository: Provider = {
 		$flashsRepository,
 		$flashLikesRepository,
 		$userMemosRepository,
+		$userPointsRepository,
 		$circlesRepository,
 		$eventsRepository,
 		$eventCirclesRepository,

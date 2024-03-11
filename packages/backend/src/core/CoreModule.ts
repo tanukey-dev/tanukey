@@ -123,6 +123,7 @@ import { LoggerService } from './LoggerService.js';
 import { CircleEntityService } from './entities/CircleEntityService.js';
 import { EventEntityService } from './entities/EventEntityService.js';
 import { EventCircleEntityService } from './entities/EventCircleEntityService.js';
+import { UserPointService } from './entities/UserPointService.js';
 import type { Provider } from '@nestjs/common';
 
 //#region 文字列ベースでのinjection用(循環参照対応のため)
@@ -251,6 +252,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 const $CircleEntityService: Provider = { provide: 'CircleEntityService', useExisting: CircleEntityService };
 const $EventEntityService: Provider = { provide: 'EventEntityService', useExisting: EventEntityService };
 const $EventCircleEntityService: Provider = { provide: 'EventCircleEntityService', useExisting: EventCircleEntityService };
+const $UserPointService: Provider = { provide: 'UserPointService', useExisting: UserPointService };
 
 //#endregion
 
@@ -382,6 +384,7 @@ const $EventCircleEntityService: Provider = { provide: 'EventCircleEntityService
 		CircleEntityService,
 		EventEntityService,
 		EventCircleEntityService,
+		UserPointService,
 
 		//#region 文字列ベースでのinjection用(循環参照対応のため)
 		$LoggerService,
@@ -506,6 +509,7 @@ const $EventCircleEntityService: Provider = { provide: 'EventCircleEntityService
 		$CircleEntityService,
 		$EventEntityService,
 		$EventCircleEntityService,
+		$UserPointService,
 		//#endregion
 	],
 	exports: [
@@ -632,6 +636,7 @@ const $EventCircleEntityService: Provider = { provide: 'EventCircleEntityService
 		CircleEntityService,
 		EventEntityService,
 		EventCircleEntityService,
+		UserPointService,
 
 		//#region 文字列ベースでのinjection用(循環参照対応のため)
 		$LoggerService,
@@ -755,6 +760,7 @@ const $EventCircleEntityService: Provider = { provide: 'EventCircleEntityService
 		$CircleEntityService,
 		$EventEntityService,
 		$EventCircleEntityService,
+		$UserPointService,
 		//#endregion
 	],
 })

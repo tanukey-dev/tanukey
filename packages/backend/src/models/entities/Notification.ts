@@ -1,4 +1,4 @@
-import { notificationTypes } from '@/types.js';
+import { notificationTypes, pointTypes } from '@/types.js';
 import { User } from './User.js';
 import { Note } from './Note.js';
 import { FollowRequest } from './FollowRequest.js';
@@ -40,6 +40,9 @@ export type Notification = {
 	choice: number | null;
 
 	achievement: string | null;
+
+	point: number | null;
+	pointType: typeof pointTypes[number];
 
 	/**
 	 * アプリ通知のbody

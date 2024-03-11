@@ -1,4 +1,4 @@
-import { notificationTypes } from '@/types.js';
+import { notificationTypes, pointTypes } from '@/types.js';
 
 export const packedNotificationSchema = {
 	type: 'object',
@@ -57,6 +57,15 @@ export const packedNotificationSchema = {
 		icon: {
 			type: 'string',
 			optional: true, nullable: true,
+		},
+		point: {
+			type: 'number',
+			optional: true, nullable: true,
+		},
+		pointType: {
+			type: 'string',
+			optional: true, nullable: true,
+			enum: [...pointTypes],
 		},
 	},
 } as const;

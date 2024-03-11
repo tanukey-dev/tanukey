@@ -1,4 +1,4 @@
-export const notificationTypes = ['follow', 'mention', 'reply', 'renote', 'quote', 'reaction', 'pollEnded', 'receiveFollowRequest', 'followRequestAccepted', 'achievementEarned', 'app'] as const;
+export const notificationTypes = ['follow', 'mention', 'reply', 'renote', 'quote', 'reaction', 'pollEnded', 'receiveFollowRequest', 'followRequestAccepted', 'achievementEarned', 'app', 'point'] as const;
 export const obsoleteNotificationTypes = ['pollVote', 'groupInvited'] as const;
 
 export const noteVisibilities = ['public', 'home', 'followers', 'specified'] as const;
@@ -17,4 +17,8 @@ export const subscriptionStatus = [
 	'canceled',
 	'unpaid',
 	'none',
+] as const;
+
+export const pointTypes = [
+	'loginBonus',
 ] as const;

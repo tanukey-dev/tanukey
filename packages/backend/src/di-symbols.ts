@@ -75,6 +75,7 @@ export const DI = {
 	flashsRepository: Symbol('flashsRepository'),
 	flashLikesRepository: Symbol('flashLikesRepository'),
 	userMemosRepository: Symbol('userMemosRepository'),
+	userPointsRepository: Symbol('userPointsRepository'),
 	circlesRepository: Symbol('circlesRepository'),
 	eventsRepository: Symbol('eventsRepository'),
 	eventCirclesRepository: Symbol('eventCirclesRepository'),

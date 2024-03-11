@@ -186,6 +186,10 @@ export const routes = [{
 		name: 'subscription',
 		component: page(() => import('@/pages/settings/subscription.vue')),
 	}, {
+		path: '/points',
+		name: 'points',
+		component: page(() => import('@/pages/settings/points.vue')),
+	}, {
 		path: '/other',
 		name: 'other',
 		component: page(() => import('./pages/settings/other.vue')),

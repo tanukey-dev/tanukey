@@ -60,6 +60,7 @@ import { UserProfile } from '@/models/entities/UserProfile.js';
 import { UserPublickey } from '@/models/entities/UserPublickey.js';
 import { UserSecurityKey } from '@/models/entities/UserSecurityKey.js';
 import { UserMemo } from '@/models/entities/UserMemo.js';
+import { UserPoint } from '@/models/entities/UserPoint.js';
 import { Webhook } from '@/models/entities/Webhook.js';
 import { Channel } from '@/models/entities/Channel.js';
 import { RetentionAggregation } from '@/models/entities/RetentionAggregation.js';
@@ -141,6 +142,7 @@ export {
 	Flash,
 	FlashLike,
 	UserMemo,
+	UserPoint,
 	SubscriptionPlan,
 	SubscriptionStatus,
 };
@@ -211,6 +213,7 @@ export type RoleAssignmentsRepository = Repository<RoleAssignment>;
 export type FlashsRepository = Repository<Flash>;
 export type FlashLikesRepository = Repository<FlashLike>;
 export type UserMemoRepository = Repository<UserMemo>;
+export type UserPointsRepository = Repository<UserPoint>;
 export type CirclesRepository = Repository<Circle>;
 export type EventsRepository = Repository<Event>;
 export type EventCirclesRepository = Repository<EventCircle>;

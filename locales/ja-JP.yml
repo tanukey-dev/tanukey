@@ -299,6 +299,7 @@ yearsOld: "{age}歳"
 registeredDate: "登録日"
 subscription: "サブスクリプション"
 subscriptionStatus: "サブスクリプションの状態"
+points: "ポイント"
 location: "場所"
 theme: "テーマ"
 themeForLightMode: "ライトモードで使うテーマ"
@@ -2046,6 +2047,9 @@ _exportOrImport:
   excludeMutingUsers: "ミュートしているユーザーを除外"
   excludeInactiveUsers: "使われていないアカウントを除外"
 
+_points:
+  title: "ポイント"
+
 _charts:
   federation: "連合"
   apRequest: "リクエスト"
@@ -2174,6 +2178,7 @@ _notification:
   unreadAntennaNote: "アンテナ {name}"
   emptyPushNotificationMessage: "プッシュ通知の更新をしました"
   achievementEarned: "実績を獲得"
+  point: "ポイントを獲得"
 
   _types:
     all: "すべて"
