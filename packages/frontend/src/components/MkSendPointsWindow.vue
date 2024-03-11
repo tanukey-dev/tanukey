@@ -57,7 +57,6 @@ watch(value, (newValue, oldValue) => {
 	if (newValue <= 0) {
 		value.value = 0;
 	}
-	value.value = Math.floor(newValue);
 });
 
 function selectUser() {
@@ -88,9 +87,13 @@ async function ok(): Promise<void> {
 		error.value = i18n.ts._points._errors.overPoints;
 		return;
 	}
+	if (!Number.isInteger(value.value)) {
+		error.value = i18n.ts._points._errors.isNotInteger;
+		return;
+	}
 	emit('done', {
 		target: target.value,
-		value: Math.floor(value.value),
+		value: value.value,
 	});
 	dialog.value?.close();
 }

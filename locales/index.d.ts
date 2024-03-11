@@ -2145,6 +2145,7 @@ export interface Locale {
             "sameUser": string;
             "remoteUser": string;
             "overPoints": string;
+            "isNotInteger": string;
         };
     };
     "_charts": {

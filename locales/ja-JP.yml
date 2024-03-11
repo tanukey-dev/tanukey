@@ -2064,6 +2064,7 @@ _points:
     sameUser: "自分には送れません"
     remoteUser: "リモートユーザーには送れません"
     overPoints: "保有ポイントより多いポイントは送れません"
+    isNotInteger: "整数値を指定してください"
 
 _charts:
   federation: "連合"
