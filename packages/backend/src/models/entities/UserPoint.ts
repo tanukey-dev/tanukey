@@ -25,6 +25,8 @@ export class UserPoint {
 	})
 	public point: number;
 
-	@Column('timestamp with time zone', {})
-	public updatedAtDailyFirstNote: Date;
+	@Column('timestamp with time zone', {
+		nullable: true,
+	})
+	public updatedAtDailyFirstNote: Date | null;
 }

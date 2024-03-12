@@ -51,11 +51,13 @@ export class UserPointService {
 			.where('point.userId = :id', { id: userId })
 			.getOne();
 		if (point) {
-			const nowDate = new Date().getDate();
-			const lastDate = point.updatedAtDailyFirstNote.getDate();
-			if (nowDate === lastDate) {
-				// 前回と日付が同じだったら加算しない
-				return;
+			if (point.updatedAtDailyFirstNote) {
+				const nowDate = new Date().getDate();
+				const lastDate = point.updatedAtDailyFirstNote.getDate();
+				if (nowDate === lastDate) {
+					// 前回と日付が同じだったら加算しない
+					return;
+				}
 			}
 			await this.userPointsRepository.update({ id: point.id }, {
 				userId: userId,
