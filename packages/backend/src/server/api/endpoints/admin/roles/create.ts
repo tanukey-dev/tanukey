@@ -30,6 +30,7 @@ export const paramDef = {
 		asBadge: { type: 'boolean' },
 		canEditMembersByModerator: { type: 'boolean' },
 		displayOrder: { type: 'number' },
+		loginBonusAdditionalPoint: { type: 'number' },
 		policies: {
 			type: 'object',
 		},
@@ -47,6 +48,7 @@ export const paramDef = {
 		'asBadge',
 		'canEditMembersByModerator',
 		'displayOrder',
+		'loginBonusAdditionalPoint',
 		'policies',
 	],
 } as const;
@@ -82,6 +84,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				asBadge: ps.asBadge,
 				canEditMembersByModerator: ps.canEditMembersByModerator,
 				displayOrder: ps.displayOrder,
+				loginBonusAdditionalPoint: ps.loginBonusAdditionalPoint,
 				policies: ps.policies,
 			}).then(x => this.rolesRepository.findOneByOrFail(x.identifiers[0]));
 

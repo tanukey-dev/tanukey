@@ -1523,7 +1523,9 @@ export interface Locale {
         "isExplorable": string;
         "descriptionOfIsExplorable": string;
         "displayOrder": string;
+        "loginBonusAdditionalPoint": string;
         "descriptionOfDisplayOrder": string;
+        "descriptionOfLoginBonusAdditionalPoint": string;
         "canEditMembersByModerator": string;
         "descriptionOfCanEditMembersByModerator": string;
         "priority": string;
