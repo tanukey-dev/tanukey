@@ -1,7 +1,6 @@
 {
-	"name": "misskey",
-	"version": "2024.3.1-tanu-1.57.0",
-	"codename": "nasubi",
+	"name": "tanukey",
+	"version": "1.0.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/tanukey-dev/tanukey.git"
