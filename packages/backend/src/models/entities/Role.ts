@@ -167,11 +167,6 @@ export class Role {
 	})
 	public displayOrder: number;
 
-	@Column('integer', {
-		default: 0,
-	})
-	public loginBonusAdditionalPoint: number;
-
 	@Column('jsonb', {
 		default: { },
 	})

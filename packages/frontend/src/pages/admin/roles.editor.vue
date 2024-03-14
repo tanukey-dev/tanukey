@@ -21,11 +21,6 @@
 		<template #caption>{{ i18n.ts._role.descriptionOfDisplayOrder }}</template>
 	</MkInput>
 
-	<MkInput v-model="role.loginBonusAdditionalPoint" type="number">
-		<template #label>{{ i18n.ts._role.loginBonusAdditionalPoint }}</template>
-		<template #caption>{{ i18n.ts._role.descriptionOfLoginBonusAdditionalPoint }}</template>
-	</MkInput>
-
 	<MkSelect v-model="rolePermission" :readonly="readonly">
 		<template #label><i class="ti ti-shield-lock"></i> {{ i18n.ts._role.permission }}</template>
 		<template #caption><div v-html="i18n.ts._role.descriptionOfPermission.replaceAll('\n', '<br>')"></div></template>
@@ -636,7 +631,6 @@ const save = throttle(100, () => {
 		color: role.color === '' ? null : role.color,
 		iconUrl: role.iconUrl === '' ? null : role.iconUrl,
 		displayOrder: role.displayOrder,
-		loginBonusAdditionalPoint: role.loginBonusAdditionalPoint,
 		target: role.target,
 		condFormula: role.condFormula,
 		isAdministrator: role.isAdministrator,

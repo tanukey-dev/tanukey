@@ -7,7 +7,7 @@ import type { } from '@/models/entities/Blocking.js';
 import type { User } from '@/models/entities/User.js';
 import { bindThis } from '@/decorators.js';
 import { NotificationService } from '@/core/NotificationService.js';
-import { RoleService } from '@/core/RoleService.js';
+import { pointTypes } from '@/types';
 
 @Injectable()
 export class UserPointService {
@@ -15,7 +15,6 @@ export class UserPointService {
 		@Inject(DI.userPointsRepository)
 		private userPointsRepository: UserPointsRepository,
 
-		private roleService: RoleService,
 		private notificationService: NotificationService,
 		private idService: IdService,
 	) {
@@ -46,14 +45,11 @@ export class UserPointService {
 	@bindThis
 	public async addWhenDailyFirstNote(
 		userId: User['id'],
-		value: number,
+		addPoint: number,
 	): Promise<void> {
 		const point = await this.userPointsRepository.createQueryBuilder('point')
 			.where('point.userId = :id', { id: userId })
 			.getOne();
-		const roles = await this.roleService.getUserRoles(userId);
-		const sumPoints = roles.map(r => r.loginBonusAdditionalPoint).reduce((a, b) => a + b, 0);
-		const totalAddPoints = value + sumPoints;
 		if (point) {
 			if (point.updatedAtDailyFirstNote) {
 				const nowDate = new Date().getDate();
@@ -65,22 +61,22 @@ export class UserPointService {
 			}
 			await this.userPointsRepository.update({ id: point.id }, {
 				userId: userId,
-				point: point.point + totalAddPoints,
+				point: point.point + addPoint,
 				updatedAtDailyFirstNote: new Date(),
 			});
 			this.notificationService.createNotification(userId, 'point', {
-				point: totalAddPoints,
+				point: addPoint,
 				pointType: 'loginBonus',
 			});
 		} else {
 			await this.userPointsRepository.insert({
 				id: this.idService.genId(),
 				userId: userId,
-				point: totalAddPoints,
+				point: addPoint,
 				updatedAtDailyFirstNote: new Date(),
 			});
 			this.notificationService.createNotification(userId, 'point', {
-				point: totalAddPoints,
+				point: addPoint,
 				pointType: 'loginBonus',
 			});
 		}

@@ -63,7 +63,6 @@ export class RoleEntityService {
 			asBadge: role.asBadge,
 			canEditMembersByModerator: role.canEditMembersByModerator,
 			displayOrder: role.displayOrder,
-			loginBonusAdditionalPoint: role.loginBonusAdditionalPoint,
 			policies: policies,
 			usersCount: assignedCount,
 		});

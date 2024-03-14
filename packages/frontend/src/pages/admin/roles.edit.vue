@@ -58,7 +58,6 @@ if (props.id) {
 		asBadge: false,
 		canEditMembersByModerator: false,
 		displayOrder: 0,
-		loginBonusAdditionalPoint: 0,
 		policies: {},
 	};
 }
