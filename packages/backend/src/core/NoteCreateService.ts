@@ -502,8 +502,10 @@ export class NoteCreateService implements OnApplicationShutdown {
 		// Increment notes count (user)
 		this.incNotesCountOfUser(user);
 
-		// その日の初回ノートだったらポイントを付加
-		this.userPointService.addWhenDailyFirstNote(user.id, 100);
+		// ローカルユーザーかつその日の初回ノートだったらポイントを付加
+		if (user.host === null) {
+			this.userPointService.addWhenDailyFirstNote(user.id, 100);
+		}
 
 		// Word mute
 		mutedWordsCache.fetch(() => this.userProfilesRepository.find({
