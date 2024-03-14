@@ -83,20 +83,20 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.noSuchList);
 			}
 
+			const userListJoinings = await userListJoiningsRepository.findBy({
+				userListId: list.id,
+			});
+
+			const listUserIds = userListJoinings.map(u => u.userId);
+
 			//#region Construct query
 			const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), ps.sinceId, ps.untilId)
-				.innerJoin(this.userListJoiningsRepository.metadata.targetName, 'userListJoining', 'userListJoining.userId = note.userId')
 				.innerJoinAndSelect('note.user', 'user')
 				.leftJoinAndSelect('note.reply', 'reply')
 				.leftJoinAndSelect('note.renote', 'renote')
 				.leftJoinAndSelect('reply.user', 'replyUser')
 				.leftJoinAndSelect('renote.user', 'renoteUser')
-				.andWhere('userListJoining.userListId = :userListId', { userListId: list.id });
-
-			// 初期表示が遅くなるので10日前までで一旦区切る
-			if (!ps.untilId) {
-				query.andWhere('note.id > :minId', { minId: this.idService.genId(new Date(Date.now() - (1000 * 60 * 60 * 24 * 10))) }); // 10日前まで
-			}
+				.andWhere('note.userId IN (:...listUserIds)', { listUserIds: listUserIds });
 
 			this.queryService.generateVisibilityQuery(query, me);
 			this.queryService.generateMutedUserQuery(query, me);
