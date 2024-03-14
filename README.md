@@ -1,3 +1,3 @@
 # Tanukey
-TanukeyはNovelskey/Otoskey向けにカスタマイズしたMisskey(https://github.com/misskey-dev/misskey)のフォークです。  
-Misskeyのライセンスの関係でオープンソースとして公開していますが、外部ユーザー向けのサポートはしておりません。  
+TanukeyはNovelskey/Otoskey向けにカスタマイズしたMisskey (https://github.com/misskey-dev/misskey) のフォークです。
+AGPLライセンスの関係でオープンソースとして公開していますが、外部ユーザー向けのサポートはしておりません。
