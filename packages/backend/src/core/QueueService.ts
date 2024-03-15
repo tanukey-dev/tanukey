@@ -269,7 +269,7 @@ export class QueueService {
 			soft: opts.soft,
 		}, {
 			removeOnComplete: true,
-			removeOnFail: true,
+			removeOnFail: false,
 		});
 	}
 

@@ -58,10 +58,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					soft: true, // リモートユーザーの削除は、完全にDBから物理削除してしまうと再度連合してきてアカウントが復活する可能性があるため、soft指定する
 				});
 			}
-
-			await this.usersRepository.update(user.id, {
-				isDeleted: true,
-			});
 		});
 	}
 }

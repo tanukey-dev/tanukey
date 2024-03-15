@@ -49,69 +49,81 @@ export class DeleteAccountProcessorService {
 			return;
 		}
 
-		{ // Delete notes
-			let cursor: Note['id'] | null = null;
+		await this.usersRepository.update(user.id, {
+			isDeleted: true,
+		});
 
-			while (true) {
-				const notes = await this.notesRepository.find({
-					where: {
-						userId: user.id,
-						...(cursor ? { id: MoreThan(cursor) } : {}),
-					},
-					take: 100,
-					order: {
-						id: 1,
-					},
-				}) as Note[];
+		try {
+			{ // Delete notes
+				let cursor: Note['id'] | null = null;
 
-				if (notes.length === 0) {
-					break;
+				while (true) {
+					const notes = await this.notesRepository.find({
+						where: {
+							userId: user.id,
+							...(cursor ? { id: MoreThan(cursor) } : {}),
+						},
+						take: 10,
+						order: {
+							id: 1,
+						},
+					}) as Note[];
+
+					if (notes.length === 0) {
+						break;
+					}
+
+					cursor = notes[notes.length - 1].id;
+
+					await this.notesRepository.delete(notes.map(note => note.id));
 				}
 
-				cursor = notes[notes.length - 1].id;
-
-				await this.notesRepository.delete(notes.map(note => note.id));
+				this.logger.succ('All of notes deleted');
 			}
 
-			this.logger.succ('All of notes deleted');
-		}
+			{ // Delete files
+				let cursor: DriveFile['id'] | null = null;
 
-		{ // Delete files
-			let cursor: DriveFile['id'] | null = null;
+				while (true) {
+					const files = await this.driveFilesRepository.find({
+						where: {
+							userId: user.id,
+							...(cursor ? { id: MoreThan(cursor) } : {}),
+						},
+						take: 10,
+						order: {
+							id: 1,
+						},
+					}) as DriveFile[];
 
-			while (true) {
-				const files = await this.driveFilesRepository.find({
-					where: {
-						userId: user.id,
-						...(cursor ? { id: MoreThan(cursor) } : {}),
-					},
-					take: 10,
-					order: {
-						id: 1,
-					},
-				}) as DriveFile[];
+					if (files.length === 0) {
+						break;
+					}
 
-				if (files.length === 0) {
-					break;
+					cursor = files[files.length - 1].id;
+
+					for (const file of files) {
+						await this.driveService.deleteFileSync(file);
+					}
 				}
 
-				cursor = files[files.length - 1].id;
+				this.logger.succ('All of files deleted');
+			}
 
-				for (const file of files) {
-					await this.driveService.deleteFileSync(file);
+			{ // Send email notification
+				const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+				if (profile.email && profile.emailVerified) {
+					this.emailService.sendEmail(profile.email, 'Account deleted',
+						'Your account has been deleted.',
+						'Your account has been deleted.');
 				}
 			}
+		} catch (e) {
+			await this.usersRepository.update(user.id, {
+				isDeleted: false,
+			});
 
-			this.logger.succ('All of files deleted');
-		}
-
-		{ // Send email notification
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
-			if (profile.email && profile.emailVerified) {
-				this.emailService.sendEmail(profile.email, 'Account deleted',
-					'Your account has been deleted.',
-					'Your account has been deleted.');
-			}
+			throw e;
 		}
 
 		// soft指定されている場合は物理削除しない
