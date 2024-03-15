@@ -111,6 +111,7 @@
 		"jsonld": "8.2.0",
 		"jsrsasign": "10.8.6",
 		"mime-types": "2.1.35",
+		"misskey-js": "workspace:*",
 		"ms": "3.0.0-canary.1",
 		"nested-property": "4.0.0",
 		"node-fetch": "3.3.1",
