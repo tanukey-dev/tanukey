@@ -54,32 +54,12 @@ export class DeleteAccountProcessorService {
 		});
 
 		try {
-			{ // Delete notes
-				let cursor: Note['id'] | null = null;
-
-				while (true) {
-					const notes = await this.notesRepository.find({
-						where: {
-							userId: user.id,
-							...(cursor ? { id: MoreThan(cursor) } : {}),
-						},
-						take: 10,
-						order: {
-							id: 1,
-						},
-					}) as Note[];
-
-					if (notes.length === 0) {
-						break;
-					}
-
-					cursor = notes[notes.length - 1].id;
-
-					await this.notesRepository.delete(notes.map(note => note.id));
-				}
-
-				this.logger.succ('All of notes deleted');
-			}
+			// Delete notes
+			await this.notesRepository.createQueryBuilder('note')
+				.delete()
+				.where('userId = :id', { id: user.id })
+				.execute();
+			this.logger.succ('All of notes deleted');
 
 			{ // Delete files
 				let cursor: DriveFile['id'] | null = null;
