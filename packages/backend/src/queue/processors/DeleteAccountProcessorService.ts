@@ -55,25 +55,18 @@ export class DeleteAccountProcessorService {
 
 		try {
 			{ // Delete notes
-				let cursor: Note['id'] | null = null;
-
 				while (true) {
 					const notes = await this.notesRepository.find({
 						where: {
 							userId: user.id,
-							...(cursor ? { id: MoreThan(cursor) } : {}),
 						},
+						select: { id: true, userId: true },
 						take: 10,
-						order: {
-							id: 1,
-						},
 					}) as Note[];
 
 					if (notes.length === 0) {
 						break;
 					}
-
-					cursor = notes[notes.length - 1].id;
 
 					await this.notesRepository.delete(notes.map(note => note.id));
 				}
