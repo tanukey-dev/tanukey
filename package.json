@@ -60,8 +60,5 @@
 		"cypress": "12.13.0",
 		"eslint": "8.41.0",
 		"start-server-and-test": "2.0.0"
-	},
-	"optionalDependencies": {
-		"@tensorflow/tfjs-core": "4.4.0"
 	}
 }

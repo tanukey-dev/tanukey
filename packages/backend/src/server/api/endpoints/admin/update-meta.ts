@@ -59,10 +59,6 @@ export const paramDef = {
 		enableTurnstile: { type: 'boolean' },
 		turnstileSiteKey: { type: 'string', nullable: true },
 		turnstileSecretKey: { type: 'string', nullable: true },
-		sensitiveMediaDetection: { type: 'string', enum: ['none', 'all', 'local', 'remote'] },
-		sensitiveMediaDetectionSensitivity: { type: 'string', enum: ['medium', 'low', 'high', 'veryLow', 'veryHigh'] },
-		setSensitiveFlagAutomatically: { type: 'boolean' },
-		enableSensitiveMediaDetectionForVideos: { type: 'boolean' },
 		proxyAccountId: { type: 'string', format: 'misskey:id', nullable: true },
 		maintainerName: { type: 'string', nullable: true },
 		maintainerEmail: { type: 'string', nullable: true },
@@ -252,22 +248,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (ps.turnstileSecretKey !== undefined) {
 				set.turnstileSecretKey = ps.turnstileSecretKey;
-			}
-
-			if (ps.sensitiveMediaDetection !== undefined) {
-				set.sensitiveMediaDetection = ps.sensitiveMediaDetection;
-			}
-
-			if (ps.sensitiveMediaDetectionSensitivity !== undefined) {
-				set.sensitiveMediaDetectionSensitivity = ps.sensitiveMediaDetectionSensitivity;
-			}
-
-			if (ps.setSensitiveFlagAutomatically !== undefined) {
-				set.setSensitiveFlagAutomatically = ps.setSensitiveFlagAutomatically;
-			}
-
-			if (ps.enableSensitiveMediaDetectionForVideos !== undefined) {
-				set.enableSensitiveMediaDetectionForVideos = ps.enableSensitiveMediaDetectionForVideos;
 			}
 
 			if (ps.proxyAccountId !== undefined) {

@@ -447,20 +447,10 @@ export class DriveService {
 		requestHeaders = null,
 		ext = null,
 	}: AddFileArgs): Promise<DriveFile> {
-		let skipNsfwCheck = false;
 		const instance = await this.metaService.fetch();
 		const userRoleNSFW = user && (await this.roleService.getUserPolicies(user.id)).alwaysMarkNsfw;
-		if (user == null) {
-			skipNsfwCheck = true;
-		} else if (userRoleNSFW) {
-			skipNsfwCheck = true;
-		}
-		if (instance.sensitiveMediaDetection === 'none') skipNsfwCheck = true;
-		if (user && instance.sensitiveMediaDetection === 'local' && this.userEntityService.isRemoteUser(user)) skipNsfwCheck = true;
-		if (user && instance.sensitiveMediaDetection === 'remote' && this.userEntityService.isLocalUser(user)) skipNsfwCheck = true;
 
 		const info = await this.fileInfoService.getFileInfo(path, {
-			skipSensitiveDetection: skipNsfwCheck,
 			sensitiveThreshold: // 感度が高いほどしきい値は低くすることになる
 			instance.sensitiveMediaDetectionSensitivity === 'veryHigh' ? 0.1 :
 			instance.sensitiveMediaDetectionSensitivity === 'high' ? 0.3 :
