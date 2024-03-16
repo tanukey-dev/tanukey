@@ -1,15 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DataSource, In } from 'typeorm';
-import * as mfm from 'tfm-js';
 import { ModuleRef } from '@nestjs/core';
 import { DI } from '@/di-symbols.js';
 import type { Packed } from '@/misc/json-schema.js';
-import { nyaize } from '@/misc/nyaize.js';
 import { awaitAll } from '@/misc/prelude/await-all.js';
 import type { User } from '@/models/entities/User.js';
 import type { Note } from '@/models/entities/Note.js';
 import type { NoteReaction } from '@/models/entities/NoteReaction.js';
-import type { UsersRepository, NotesRepository, FollowingsRepository, PollsRepository, PollVotesRepository, NoteReactionsRepository, ChannelsRepository, DriveFilesRepository } from '@/models/index.js';
+import type { UsersRepository, NotesRepository, FollowingsRepository, PollsRepository, PollVotesRepository, NoteReactionsRepository, ChannelsRepository } from '@/models/index.js';
 import { bindThis } from '@/decorators.js';
 import { isNotNull } from '@/misc/is-not-null.js';
 import type { OnModuleInit } from '@nestjs/common';
@@ -51,14 +49,6 @@ export class NoteEntityService implements OnModuleInit {
 
 		@Inject(DI.channelsRepository)
 		private channelsRepository: ChannelsRepository,
-
-		@Inject(DI.driveFilesRepository)
-		private driveFilesRepository: DriveFilesRepository,
-
-		//private userEntityService: UserEntityService,
-		//private driveFileEntityService: DriveFileEntityService,
-		//private customEmojiService: CustomEmojiService,
-		//private reactionService: ReactionService,
 	) {
 	}
 
@@ -361,25 +351,6 @@ export class NoteEntityService implements OnModuleInit {
 				} : {}),
 			} : {}),
 		});
-
-		// if (packed.user.isCat && packed.text) {
-		// 	const tokens = packed.text ? mfm.parse(packed.text) : [];
-		// 	function nyaizeNode(node: mfm.MfmNode) {
-		// 		if (node.type === 'quote') return;
-		// 		if (node.type === 'text') {
-		// 			node.props.text = nyaize(node.props.text);
-		// 		}
-		// 		if (node.children) {
-		// 			for (const child of node.children) {
-		// 				nyaizeNode(child);
-		// 			}
-		// 		}
-		// 	}
-		// 	for (const node of tokens) {
-		// 		nyaizeNode(node);
-		// 	}
-		// 	packed.text = mfm.toString(tokens);
-		// }
 
 		if (!opts.skipHide) {
 			await this.hideNote(packed, meId);
