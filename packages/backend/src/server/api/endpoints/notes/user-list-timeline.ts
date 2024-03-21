@@ -100,7 +100,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			this.activeUsersChart.read(me);
 
-			return await this.noteEntityService.packMany(timeline, me, { detail: false });
+			return await this.noteEntityService.packMany(timeline, me);
 		});
 	}
 }
