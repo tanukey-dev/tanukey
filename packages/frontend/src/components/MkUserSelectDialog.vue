@@ -16,7 +16,7 @@
 					<template #label>{{ i18n.ts.username }}</template>
 					<template #prefix>@</template>
 				</MkInput>
-				<MkInput v-model="host" :datalist="[hostname]" @update:modelValue="search">
+				<MkInput v-if="!localOnly" v-model="host" :datalist="[hostname]" @update:modelValue="search">
 					<template #label>{{ i18n.ts.host }}</template>
 					<template #prefix>@</template>
 				</MkInput>
@@ -71,6 +71,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
 	includeSelf?: boolean;
+	localOnly?: boolean;
 }>();
 
 let username = $ref('');
@@ -113,6 +114,10 @@ const cancel = () => {
 };
 
 onMounted(() => {
+	if (props.localOnly) {
+		host = hostname;
+	}
+
 	os.api('users/show', {
 		userIds: defaultStore.state.recentlyUsedUsers,
 	}).then(users => {

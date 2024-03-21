@@ -60,7 +60,7 @@ watch(value, (newValue, oldValue) => {
 });
 
 function selectUser() {
-	os.selectUser({ includeSelf: false }).then(_user => {
+	os.selectUser({ includeSelf: false, localOnly: true }).then(_user => {
 		target.value = _user;
 	});
 }
