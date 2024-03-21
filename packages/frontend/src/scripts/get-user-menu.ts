@@ -10,8 +10,7 @@ import { $i, iAmModerator } from '@/account';
 import { mainRouter } from '@/router';
 import { Router } from '@/nirax';
 import { antennasCache, rolesCache, userListsCache } from '@/cache';
-
-const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
+import { sendMessage } from '@/scripts/send-message';
 
 export function getUserMenu(user: misskey.entities.UserDetailed, router: Router = mainRouter) {
 	const meId = $i ? $i.id : null;
@@ -153,9 +152,7 @@ export function getUserMenu(user: misskey.entities.UserDetailed, router: Router 
 		icon: 'ti ti-mail',
 		text: i18n.ts.sendMessage,
 		action: () => {
-			const canonical = user.host === null ? `@${user.username}` : `@${user.username}@${toUnicode(user.host)}`;
-			postChannel.value = null;
-			os.post({ specified: user, initialText: canonical, channel: null });
+			sendMessage(user);
 		},
 	}, null, {
 		icon: 'ti ti-pencil',

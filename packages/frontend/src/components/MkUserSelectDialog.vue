@@ -92,7 +92,11 @@ const search = () => {
 		limit: 10,
 		detail: false,
 	}).then(_users => {
-		users = _users;
+		if (props.includeSelf) {
+			users = _users;
+		} else {
+			users = _users?.filter(u => u.id !== $i?.id);
+		}
 	});
 };
 

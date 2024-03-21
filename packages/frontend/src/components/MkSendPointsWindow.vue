@@ -20,7 +20,7 @@
 					<div v-if="target">@{{ target.username }}</div>
 					<div>
 						<MkButton v-if="target == null" primary rounded inline @click="selectUser">{{ i18n.ts.selectUser }}</MkButton>
-						<MkButton v-else danger rounded inline @click="target = null">{{ i18n.ts.remove }}</MkButton>
+						<MkButton v-else-if="!user" danger rounded inline @click="target = null">{{ i18n.ts.remove }}</MkButton>
 					</div>
 				</div>
 			</div>
@@ -35,13 +35,17 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, watch } from 'vue';
+import { onMounted, ref, shallowRef, watch } from 'vue';
 import MkInput from './MkInput.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
 import { i18n } from '@/i18n';
 import * as os from '@/os';
 import { $i } from '@/account';
+
+const props = defineProps<{
+	user?: string;
+}>();
 
 const emit = defineEmits<{
 	(ev: 'closed'): void;
@@ -97,5 +101,11 @@ async function ok(): Promise<void> {
 	});
 	dialog.value?.close();
 }
+
+onMounted(() => {
+	if (props.user) {
+		target.value = props.user;
+	}
+});
 
 </script>

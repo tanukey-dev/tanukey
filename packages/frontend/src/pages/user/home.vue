@@ -27,6 +27,8 @@
 						<span v-if="$i && $i.id != user.id && user.isFollowed" class="followed">{{ i18n.ts.followsYou }}</span>
 						<div v-if="$i" class="actions">
 							<button class="menu _button" @click="menu"><i class="ti ti-dots"></i></button>
+							<button class="menu _button" @click="sendMessage(user)"><i class="ti ti-mail"></i></button>
+							<button v-if="user.host == null" class="menu _button" @click="sendPoints(user)"><i class="ti ti-parking"></i></button>
 							<MkFollowButton v-if="$i.id != user.id" :user="user" :inline="true" :transparent="false" :full="true" class="koudoku"/>
 						</div>
 					</div>
@@ -155,6 +157,7 @@ import MkInfo from '@/components/MkInfo.vue';
 import MkButton from '@/components/MkButton.vue';
 import { getScrollPosition } from '@/scripts/scroll';
 import { getUserMenu } from '@/scripts/get-user-menu';
+import { sendMessage } from '@/scripts/send-message';
 import number from '@/filters/number';
 import { userPage } from '@/filters/user';
 import * as os from '@/os';
@@ -259,6 +262,18 @@ async function updateMemo() {
 watch([props.user], () => {
 	memoDraft = props.user.memo;
 });
+
+function sendPoints(user): void {
+	os.popup(defineAsyncComponent(() => import('@/components/MkSendPointsWindow.vue')), { user: user }, {
+		done: async result => {
+			const { target, value } = result;
+			await os.api('points/send', {
+				userId: target.id,
+				value: value,
+			});
+		},
+	}, 'closed');
+}
 
 onMounted(() => {
 	window.requestAnimationFrame(parallaxLoop);
