@@ -27,8 +27,8 @@
 						<span v-if="$i && $i.id != user.id && user.isFollowed" class="followed">{{ i18n.ts.followsYou }}</span>
 						<div v-if="$i" class="actions">
 							<button class="menu _button" @click="menu"><i class="ti ti-dots"></i></button>
-							<button class="menu _button" @click="sendMessage(user)"><i class="ti ti-mail"></i></button>
-							<button v-if="user.host == null" class="menu _button" @click="sendPoints(user)"><i class="ti ti-parking"></i></button>
+							<button v-if="$i && $i.id != user.id" class="menu _button" @click="sendMessage(user)"><i class="ti ti-mail"></i></button>
+							<button v-if="$i && $i.id != user.id && user.host == null" class="menu _button" @click="sendPoints(user)"><i class="ti ti-parking"></i></button>
 							<MkFollowButton v-if="$i.id != user.id" :user="user" :inline="true" :transparent="false" :full="true" class="koudoku"/>
 						</div>
 					</div>
