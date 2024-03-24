@@ -127,7 +127,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				//#region Construct query
 				const query = this.notesRepository.createQueryBuilder('note')
 					.where('note.id IN (:...noteIds)', { noteIds: noteIds })
-					.andWhere('note.host IS NULL')
+					.andWhere('note.userHost IS NULL')
 					.innerJoinAndSelect('note.user', 'user')
 					.leftJoinAndSelect('note.reply', 'reply')
 					.leftJoinAndSelect('note.renote', 'renote')
