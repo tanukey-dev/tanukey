@@ -69,10 +69,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			query.andWhere(new Brackets(qb => {
 				for (const tag of ps.tags) {
 					if (!safeForSql(normalizeForSearch(tag))) continue;
-					qb.orWhere(new Brackets(qb2 => {
-						qb2.where('note.userHost IS NULL');
-						qb2.andWhere(`'{"${normalizeForSearch(tag)}"}' <@ note.tags`);
-					}));
+					qb.orWhere(`'{"${normalizeForSearch(tag)}"}' <@ channel.tags`);
 				}
 			}));
 

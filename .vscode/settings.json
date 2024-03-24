@@ -10,5 +10,6 @@
         "*.test.ts": "typescript"
     },
     "jest.jestCommandLine": "pnpm run jest",
-    "jest.autoRun": "off"
+    "jest.autoRun": "off",
+    "search.followSymlinks": false
 }

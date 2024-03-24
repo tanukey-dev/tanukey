@@ -254,7 +254,7 @@ function save() {
 		privateUserIds: privateUserIds.value.map(v => v.value),
 		moderatorUserIds: moderatorUserIds.value.map(v => v.value),
 		color: color,
-		tags: tags.replace('#', '').split(/\s+/),
+		tags: tags.trim() === '' ? [] : tags.replace('#', '').split(/\s+/),
 	};
 
 	if (props.channelId) {
