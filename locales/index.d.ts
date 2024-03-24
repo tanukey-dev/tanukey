@@ -190,6 +190,8 @@ export interface Locale {
     "federation": string;
     "channelFederation": string;
     "channelSearchable": string;
+    "channelModerators": string;
+    "channelTags": string;
     "channelTagsSetting": string;
     "isNoteCollapsed": string;
     "noteNotSearchable": string;

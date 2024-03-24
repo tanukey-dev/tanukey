@@ -20,6 +20,9 @@
 					</div>
 				</div>
 
+				<MkInfo>{{ i18n.ts.channelModerators }}: <MkMention v-for="moderator in moderators" :key="moderator.id" :username="moderator.username" :host="host"/></MkInfo>
+				<MkInfo v-if="channel.tags.length > 0">{{ i18n.ts.channelTags }}: <MkA v-for="tag in tags" :key="tag" :to="'/tags/' + tag" style="color:var(--hashtag);">#{{ tag + ' ' }}</MkA></MkInfo>
+
 				<MkFoldableSection>
 					<template #header><i class="ti ti-pin ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.pinnedNotes }}</template>
 					<div v-if="channel.pinnedNotes.length > 0" class="_gaps">
@@ -59,7 +62,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, onActivated, onDeactivated } from 'vue';
+import { computed, watch, onActivated, onDeactivated, onMounted } from 'vue';
 import MkPostForm from '@/components/MkPostForm.vue';
 import MkTimeline from '@/components/MkTimeline.vue';
 import XChannelFollowButton from '@/components/MkChannelFollowButton.vue';
@@ -71,12 +74,13 @@ import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { deviceKind } from '@/scripts/device-kind';
 import MkNotes from '@/components/MkNotes.vue';
-import { url } from '@/config';
+import { url, host } from '@/config';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import { defaultStore } from '@/store';
 import MkNote from '@/components/MkNote.vue';
 import MkInfo from '@/components/MkInfo.vue';
+import MkMention from '@/components/MkMention.vue';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
 
 const router = useRouter();
@@ -91,6 +95,7 @@ let favorited = $ref(false);
 let searchQuery = $ref('');
 let searchPagination = $ref();
 let searchKey = $ref('');
+let moderators = $ref(null);
 const featuredPagination = $computed(() => ({
 	endpoint: 'notes/featured' as const,
 	limit: 10,
@@ -99,6 +104,9 @@ const featuredPagination = $computed(() => ({
 		channelId: props.channelId,
 	},
 }));
+const tags = computed(() => {
+	return channel?.tags;
+});
 let postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 
 onActivated(async () => {
@@ -119,6 +127,17 @@ watch(() => props.channelId, async () => {
 	if (favorited || channel.isFollowing) {
 		tab = 'timeline';
 	}
+
+	let userIds: string[] = [];
+	if (channel && channel.userId) {
+		userIds.push(channel.userId);
+	}
+	if (channel && channel.moderatorUserIds.length > 0) {
+		userIds.push(...channel.moderatorUserIds);
+	}
+	moderators = await os.api('users/show', {
+		userIds: userIds,
+	});
 }, { immediate: true });
 
 function edit() {

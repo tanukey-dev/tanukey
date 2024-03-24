@@ -109,6 +109,7 @@ import * as ep___channels_favorite from './endpoints/channels/favorite.js';
 import * as ep___channels_unfavorite from './endpoints/channels/unfavorite.js';
 import * as ep___channels_myFavorites from './endpoints/channels/my-favorites.js';
 import * as ep___channels_search from './endpoints/channels/search.js';
+import * as ep___channels_searchByTags from './endpoints/channels/search-by-tags.js';
 import * as ep___charts_activeUsers from './endpoints/charts/active-users.js';
 import * as ep___charts_apRequest from './endpoints/charts/ap-request.js';
 import * as ep___charts_drive from './endpoints/charts/drive.js';
@@ -478,6 +479,7 @@ const eps = [
 	['channels/unfavorite', ep___channels_unfavorite],
 	['channels/my-favorites', ep___channels_myFavorites],
 	['channels/search', ep___channels_search],
+	['channels/search-by-tags', ep___channels_searchByTags],
 	['charts/active-users', ep___charts_activeUsers],
 	['charts/ap-request', ep___charts_apRequest],
 	['charts/drive', ep___charts_drive],
