@@ -106,6 +106,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 						if (!safeForSql(normalizeForSearch(tag))) continue;
 						qb.orWhere(new Brackets(qb2 => {
 							qb2.where('note.userHost IS NULL');
+							qb2.andWhere('note.visibility = \'public\'');
 							qb2.andWhere(`'{"${normalizeForSearch(tag)}"}' <@ note.tags`);
 						}));
 					}
