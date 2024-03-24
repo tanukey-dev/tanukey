@@ -93,7 +93,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			if (noteIdsRes.length < limit) {
 				//#region Construct query
 				const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), ps.sinceId, ps.untilId, ps.sinceDate, ps.untilDate)
-					.andWhere('note.channelId = :channelId', { channelId: channel.id })
 					.innerJoinAndSelect('note.user', 'user')
 					.leftJoinAndSelect('note.reply', 'reply')
 					.leftJoinAndSelect('note.renote', 'renote')
@@ -101,13 +100,16 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					.leftJoinAndSelect('renote.user', 'renoteUser')
 					.leftJoinAndSelect('note.channel', 'channel');
 
-				for (const tag of channel.tags) {
-					if (!safeForSql(normalizeForSearch(tag))) continue;
-					query.orWhere(new Brackets(qb => {
-						qb.where('note.userHost IS NULL');
-						qb.andWhere(`'{"${normalizeForSearch(tag)}"}' <@ note.tags`);
-					}));
-				}
+				query.andWhere(new Brackets(qb => {
+					qb.where('note.channelId = :channelId', { channelId: channel.id });
+					for (const tag of channel.tags) {
+						if (!safeForSql(normalizeForSearch(tag))) continue;
+						qb.orWhere(new Brackets(qb2 => {
+							qb2.where('note.userHost IS NULL');
+							qb2.andWhere(`'{"${normalizeForSearch(tag)}"}' <@ note.tags`);
+						}));
+					}
+				}));
 
 				if (me) {
 					this.queryService.generateMutedUserQuery(query, me);
