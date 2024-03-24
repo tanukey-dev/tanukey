@@ -362,22 +362,22 @@ export class NoteCreateService implements OnApplicationShutdown {
 				'MAXLEN', '~', '1000',
 				'*',
 				'note', note.id);
-		} else {
-			if (note.userHost == null && tags.length > 0) {
-				// タグが該当するチャンネルのタイムラインキャッシュに設定
-				const channelQuery = this.channelsRepository.createQueryBuilder('channel');
-				for (const tag of tags) {
-					if (!safeForSql(normalizeForSearch(tag))) continue;
-					channelQuery.orWhere(`'{"${normalizeForSearch(tag)}"}' <@ channel.tags`);
-				}
-				const tagsChannel = await channelQuery.getMany();
-				for (const tagCh of tagsChannel) {
-					this.redisClient.xadd(
-						`channelTimeline:${tagCh.id}`,
-						'MAXLEN', '~', '1000',
-						'*',
-						'note', note.id);
-				}
+		}
+
+		// タグが該当するチャンネルのタイムラインキャッシュに設定
+		if (note.userHost == null && tags.length > 0) {
+			const channelQuery = this.channelsRepository.createQueryBuilder('channel');
+			for (const tag of tags) {
+				if (!safeForSql(normalizeForSearch(tag))) continue;
+				channelQuery.orWhere(`'{"${normalizeForSearch(tag)}"}' <@ channel.tags`);
+			}
+			const tagsChannel = await channelQuery.getMany();
+			for (const tagCh of tagsChannel) {
+				this.redisClient.xadd(
+					`channelTimeline:${tagCh.id}`,
+					'MAXLEN', '~', '1000',
+					'*',
+					'note', note.id);
 			}
 		}
 
