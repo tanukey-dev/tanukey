@@ -165,7 +165,7 @@ async function search() {
 }
 
 const headerActions = $computed(() => {
-	if (channel && channel.userId) {
+	if (channel) {
 		const share = {
 			icon: 'ti ti-share',
 			text: i18n.ts.share,
