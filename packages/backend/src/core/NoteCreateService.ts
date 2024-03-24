@@ -20,6 +20,7 @@ import { Poll } from '@/models/entities/Poll.js';
 import { isDuplicateKeyValueError } from '@/misc/is-duplicate-key-value-error.js';
 import { checkWordMute } from '@/misc/check-word-mute.js';
 import type { Channel } from '@/models/entities/Channel.js';
+import { safeForSql } from '@/misc/safe-for-sql.js';
 import { normalizeForSearch } from '@/misc/normalize-for-search.js';
 import { MemorySingleCache } from '@/misc/cache.js';
 import type { UserProfile } from '@/models/entities/UserProfile.js';
@@ -361,6 +362,21 @@ export class NoteCreateService implements OnApplicationShutdown {
 				'MAXLEN', '~', '1000',
 				'*',
 				'note', note.id);
+		} else {
+			// タグが該当するチャンネルのタイムラインキャッシュに設定
+			const channelQuery = this.channelsRepository.createQueryBuilder('channel');
+			for (const tag of tags) {
+				if (!safeForSql(normalizeForSearch(tag))) continue;
+				channelQuery.orWhere(`'{"${normalizeForSearch(tag)}"}' <@ channel.tags`);
+			}
+			const tagsChannel = await channelQuery.getMany();
+			for (const tagCh of tagsChannel) {
+				this.redisClient.xadd(
+					`channelTimeline:${tagCh.id}`,
+					'MAXLEN', '~', '1000',
+					'*',
+					'note', note.id);
+			}
 		}
 
 		setImmediate('post created', { signal: this.#shutdownController.signal }).then(

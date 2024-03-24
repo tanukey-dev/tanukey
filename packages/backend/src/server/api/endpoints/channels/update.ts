@@ -71,6 +71,12 @@ export const paramDef = {
 			},
 		},
 		color: { type: 'string', minLength: 1, maxLength: 16 },
+		tags: {
+			type: 'array',
+			items: {
+				type: 'string',
+			},
+		},
 	},
 	required: ['channelId'],
 } as const;
@@ -131,6 +137,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				...(ps.privateUserIds !== undefined ? { privateUserIds: ps.privateUserIds } : {}),
 				...(ps.moderatorUserIds !== undefined ? { moderatorUserIds: ps.moderatorUserIds } : {}),
 				...(banner ? { bannerId: banner.id } : {}),
+				...(ps.tags !== undefined ? { tags: ps.tags } : {}),
 			});
 
 			return await this.channelEntityService.pack(channel.id, me);

@@ -120,4 +120,10 @@ export class Channel {
 		comment: 'The count of users.',
 	})
 	public usersCount: number;
+
+	@Index()
+	@Column('varchar', {
+		length: 128, array: true, default: '{}',
+	})
+	public tags: string[];
 }

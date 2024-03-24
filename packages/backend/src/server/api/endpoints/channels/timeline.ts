@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Brackets } from 'typeorm';
 import * as Redis from 'ioredis';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import type { ChannelsRepository, Note, NotesRepository } from '@/models/index.js';
@@ -7,6 +8,8 @@ import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
 import ActiveUsersChart from '@/core/chart/charts/active-users.js';
 import { DI } from '@/di-symbols.js';
 import { IdService } from '@/core/IdService.js';
+import { safeForSql } from '@/misc/safe-for-sql.js';
+import { normalizeForSearch } from '@/misc/normalize-for-search.js';
 import { ApiError } from '../../error.js';
 
 export const meta = {
@@ -97,6 +100,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					.leftJoinAndSelect('reply.user', 'replyUser')
 					.leftJoinAndSelect('renote.user', 'renoteUser')
 					.leftJoinAndSelect('note.channel', 'channel');
+
+				for (const tag of channel.tags) {
+					if (!safeForSql(normalizeForSearch(tag))) continue;
+					query.orWhere(new Brackets(qb => {
+						qb.where('note.host IS NULL');
+						qb.andWhere(`'{"${normalizeForSearch(tag)}"}' <@ note.tags`);
+					}));
+				}
 
 				if (me) {
 					this.queryService.generateMutedUserQuery(query, me);

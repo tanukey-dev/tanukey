@@ -60,6 +60,12 @@ export const paramDef = {
 				type: 'string', format: 'misskey:id',
 			},
 		},
+		tags: {
+			type: 'array',
+			items: {
+				type: 'string',
+			},
+		},
 	},
 	required: ['name'],
 } as const;
@@ -103,6 +109,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				isPrivate: ps.isPrivate ?? false,
 				privateUserIds: ps.privateUserIds ?? [],
 				moderatorUserIds: ps.moderatorUserIds ?? [],
+				tags: ps.tags,
 				...(ps.color !== undefined ? { color: ps.color } : {}),
 			} as Channel).then(x => this.channelsRepository.findOneByOrFail(x.identifiers[0]));
 

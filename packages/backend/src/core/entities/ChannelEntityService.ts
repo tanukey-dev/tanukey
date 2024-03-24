@@ -84,6 +84,7 @@ export class ChannelEntityService {
 			moderatorUserIds: channel.moderatorUserIds,
 			usersCount: channel.usersCount,
 			notesCount: channel.notesCount,
+			tags: channel.tags,
 
 			...(me ? {
 				isFollowing: following != null,

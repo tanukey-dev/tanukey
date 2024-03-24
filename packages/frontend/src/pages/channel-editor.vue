@@ -45,6 +45,10 @@
 				</div>
 			</MkFolder>
 
+			<MkInput v-model="tags">
+				<template #label>{{ i18n.ts.channelTagsSetting }}</template>
+			</MkInput>
+
 			<MkSwitch v-model="federation" :disabled="isPrivate">
 				{{ i18n.ts.channelFederation }}
 			</MkSwitch>
@@ -133,6 +137,7 @@ const props = defineProps<{
 
 let channel = $ref(null);
 let name = $ref(null);
+let tags = $ref('');
 let description = $ref(null);
 let bannerUrl = $ref<string | null>(null);
 let bannerId = $ref<string | null>(null);
@@ -183,6 +188,7 @@ async function fetchChannel() {
 	searchable.value = channel.federation ? true : channel.searchable;
 	isNoteCollapsed.value = channel.isNoteCollapsed;
 	isPrivate.value = channel.isPrivate;
+	tags = channel.tags.join(' ');
 
 	const pusers = await os.api('users/show', {
 		userIds: channel.privateUserIds,
@@ -248,6 +254,7 @@ function save() {
 		privateUserIds: privateUserIds.value.map(v => v.value),
 		moderatorUserIds: moderatorUserIds.value.map(v => v.value),
 		color: color,
+		tags: tags.replace('#', '').split(/\s+/),
 	};
 
 	if (props.channelId) {
