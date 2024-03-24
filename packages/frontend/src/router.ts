@@ -245,8 +245,6 @@ export const routes = [{
 	loginRequired: true,
 	query: {
 		q: 'query',
-		channel: 'channel',
-		type: 'type',
 		origin: 'origin',
 	},
 }, {

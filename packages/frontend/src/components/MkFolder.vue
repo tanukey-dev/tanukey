@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted } from 'vue';
+import { nextTick, onMounted, watch } from 'vue';
 import { defaultStore } from '@/store';
 
 const props = withDefaults(defineProps<{
@@ -54,6 +54,12 @@ const props = withDefaults(defineProps<{
 }>(), {
 	defaultOpen: false,
 	maxHeight: null,
+});
+
+watch(() => props.defaultOpen, () => {
+	if (props.defaultOpen) {
+		opened = props.defaultOpen;
+	}
 });
 
 const getBgColor = (el: HTMLElement) => {

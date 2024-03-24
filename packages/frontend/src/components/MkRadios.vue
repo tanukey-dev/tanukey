@@ -3,16 +3,9 @@ import { VNode, defineComponent, h, ref, watch } from 'vue';
 import MkRadio from './MkRadio.vue';
 
 export default defineComponent({
-	props: {
-		modelValue: {
-			required: false,
-		},
-	},
+	props: ['modelValue'],
+	emits: ['update:modelValue'],
 	setup(props, context) {
-		const value = ref(props.modelValue);
-		watch(value, () => {
-			context.emit('update:modelValue', value.value);
-		});
 		if (!context.slots.default) return null;
 		let options = context.slots.default();
 		const label = context.slots.label && context.slots.label();
@@ -32,8 +25,8 @@ export default defineComponent({
 			}, options.map(option => h(MkRadio, {
 				key: option.key,
 				value: option.props?.value,
-				modelValue: value.value,
-				'onUpdate:modelValue': _v => value.value = _v,
+				modelValue: props.modelValue,
+				'onUpdate:modelValue': _v => context.emit('update:modelValue', _v),
 			}, () => option.children)),
 			),
 			...(caption ? [h('div', {
