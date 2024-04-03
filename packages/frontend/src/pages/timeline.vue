@@ -102,7 +102,15 @@ function saveSrc(newSrc: 'home' | 'local' | 'social' | 'global'): void {
 	srcWhenNotSignin = newSrc;
 }
 
-const headerActions = $computed(() => []);
+const headerActions = $computed(() => [
+	{
+		icon: 'ti ti-refresh',
+		text: i18n.ts.reload,
+		handler: (): void => {
+			location.reload();
+		},
+	},
+]);
 
 const headerTabs = $computed(() => [{
 	key: 'home',
