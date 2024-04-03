@@ -40,6 +40,12 @@ export const meta = {
 	},
 
 	errors: {
+		noSuchVisibility: {
+			message: 'No such visibility.',
+			code: 'NO_SUCH_VISIBILITY',
+			id: 'b5c90186-4ab0-49c8-9bba-a1f76c285ba4',
+		},
+
 		noSuchRenoteTarget: {
 			message: 'No such renote target.',
 			code: 'NO_SUCH_RENOTE_TARGET',
@@ -180,6 +186,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private noteCreateService: NoteCreateService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
+			// フォロワー限定は新規投稿を受け付けない
+			if (ps.visibility === 'followers') {
+				throw new ApiError(meta.errors.noSuchVisibility);
+			}
+
 			let visibleUsers: User[] = [];
 			if (ps.visibleUserIds) {
 				visibleUsers = await this.usersRepository.findBy({
