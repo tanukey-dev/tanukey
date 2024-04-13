@@ -186,8 +186,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private noteCreateService: NoteCreateService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			// フォロワー限定は新規投稿を受け付けない
-			if (ps.visibility === 'followers') {
+			// フォロワー限定は新規投稿を受け付けない(リモートへの反応ができるようにリプライは許可)
+			if (ps.replyId === null && ps.visibility === 'followers') {
 				throw new ApiError(meta.errors.noSuchVisibility);
 			}
 
