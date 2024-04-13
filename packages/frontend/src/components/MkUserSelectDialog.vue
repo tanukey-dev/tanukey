@@ -69,10 +69,13 @@ const emit = defineEmits<{
 	(ev: 'closed'): void;
 }>();
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	includeSelf?: boolean;
 	localOnly?: boolean;
-}>();
+}>(), {
+	includeSelf: true,
+	localOnly: false,
+});
 
 let username = $ref('');
 let host = $ref('');
