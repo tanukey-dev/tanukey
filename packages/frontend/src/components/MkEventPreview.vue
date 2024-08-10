@@ -2,7 +2,7 @@
 <MkA :to="`/events/${event.id}`" class="eftoefju _panel" tabindex="-1">
 	<div class="name"><i class="ti ti-calendar-event"></i> {{ event.name }}</div>
 	<div class="banner">
-		<img :src="props.event.bannerUrl ?? 'https://ostanukey.tanukey.chat/assets/noImage.png'" class="bannerImage">
+		<img :src="props.event.bannerUrl ?? 'https://ostanukey.tarbin.net/assets/noImage.png'" class="bannerImage">
 	</div>
 	<article v-if="event.description">
 		<p :title="event.description">{{ event.description.length > 85 ? event.description.slice(0, 85) + '…' : event.description }}</p>

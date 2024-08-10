@@ -2,7 +2,7 @@
 <MkA :to="`/circles/${circle.id}`" class="eftoefju _panel" tabindex="-1">
 	<div class="name"><i class="ti ti-calendar-event"></i>{{ circle.name }}</div>
 	<div class="banner">
-		<img :src="circle.profileImageUrl ?? 'https://ostanukey.tanukey.chat/assets/noImage.png'" class="bannerImage">
+		<img :src="circle.profileImageUrl ?? 'https://ostanukey.tarbin.net/assets/noImage.png'" class="bannerImage">
 	</div>
 	<article v-if="circle.description">
 		<p :title="circle.description">{{ circle.description.length > 85 ? circle.description.slice(0, 85) + '…' : circle.description }}</p>
