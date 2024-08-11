@@ -82,6 +82,7 @@
 		"vuedraggable": "next"
 	},
 	"devDependencies": {
+		"@misskey-dev/summaly": "5.1.0",
 		"@testing-library/jest-dom": "5.16.5",
 		"@testing-library/vue": "7.0.0",
 		"@types/escape-regexp": "0.0.1",
@@ -119,7 +120,6 @@
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
 		"start-server-and-test": "2.0.0",
-		"summaly": "github:misskey-dev/summaly",
 		"vite-plugin-turbosnap": "1.0.2",
 		"vitest": "0.31.4",
 		"vitest-fetch-mock": "0.2.2",

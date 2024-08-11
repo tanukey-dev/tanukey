@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { summaly } from '@misskey-dev/summaly';
+import { SummalyResult } from '@misskey-dev/summaly/built/summary.js';
+import { Meta } from '@/models/entities/Meta.js';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
 import { MetaService } from '@/core/MetaService.js';
@@ -60,21 +62,11 @@ export class UrlPreviewService {
 		this.logger.info(meta.summalyProxy
 			? `(Proxy) Getting preview of ${url}@${lang} ...`
 			: `Getting preview of ${url}@${lang} ...`);
+
 		try {
-			const summary = meta.summalyProxy ?
-				await this.httpRequestService.getJson<ReturnType<typeof summaly>>(`${meta.summalyProxy}?${query({
-					url: url,
-					lang: lang ?? 'ja-JP',
-				})}`)
-				:
-				await summaly(url, {
-					followRedirects: false,
-					lang: lang ?? 'ja-JP',
-					agent: this.config.proxy ? {
-						http: this.httpRequestService.httpAgent,
-						https: this.httpRequestService.httpsAgent,
-					} : undefined,
-				});
+			const summary = meta.summalyProxy
+				? await this.fetchSummaryFromProxy(url, meta, this.config, lang)
+				: await this.fetchSummary(url, meta, this.config, lang);
 
 			this.logger.succ(`Got preview of ${url}: ${summary.title}`);
 
@@ -95,6 +87,7 @@ export class UrlPreviewService {
 			return summary;
 		} catch (err) {
 			this.logger.warn(`Failed to get preview of ${url}: ${err}`);
+
 			reply.code(422);
 			reply.header('Cache-Control', 'max-age=86400, immutable');
 			return {
@@ -105,5 +98,32 @@ export class UrlPreviewService {
 				}),
 			};
 		}
+	}
+
+	private fetchSummary(url: string, meta: Meta, config: Config, lang?: string): Promise<SummalyResult> {
+		const agent = this.config.proxy
+			? {
+				http: this.httpRequestService.httpAgent,
+				https: this.httpRequestService.httpsAgent,
+			}
+			: undefined;
+
+		return summaly(url, {
+			followRedirects: false,
+			lang: lang ?? 'ja-JP',
+			agent: agent,
+			userAgent: config.userAgent,
+		});
+	}
+
+	private fetchSummaryFromProxy(url: string, meta: Meta, config: Config, lang?: string): Promise<SummalyResult> {
+		const proxy = meta.summalyProxy;
+		const queryStr = query({
+			url: url,
+			lang: lang ?? 'ja-JP',
+			userAgent: config.userAgent,
+		});
+
+		return this.httpRequestService.getJson<SummalyResult>(`${proxy}?${queryStr}`);
 	}
 }
