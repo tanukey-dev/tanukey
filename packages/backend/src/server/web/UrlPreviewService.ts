@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { summaly } from '@misskey-dev/summaly';
-import { SummalyResult } from '@misskey-dev/summaly/built/summary.js';
+import { Summary } from 'summaly';
+import { Summaly } from 'summaly/built/summaly';
 import { Meta } from '@/models/entities/Meta.js';
 import { DI } from '@/di-symbols.js';
 import type { Config } from '@/config.js';
@@ -16,6 +16,7 @@ import type { FastifyRequest, FastifyReply } from 'fastify';
 @Injectable()
 export class UrlPreviewService {
 	private logger: Logger;
+	private summary: Summary;
 
 	constructor(
 		@Inject(DI.config)
@@ -26,6 +27,12 @@ export class UrlPreviewService {
 		private loggerService: LoggerService,
 	) {
 		this.logger = this.loggerService.getLogger('url-preview');
+		this.summary = new Summary({
+			allowedPlugins: [
+				'twitter',
+				'youtube',
+			],
+		});
 	}
 
 	@bindThis
@@ -64,9 +71,7 @@ export class UrlPreviewService {
 			: `Getting preview of ${url}@${lang} ...`);
 
 		try {
-			const summary = meta.summalyProxy
-				? await this.fetchSummaryFromProxy(url, meta, this.config, lang)
-				: await this.fetchSummary(url, meta, this.config, lang);
+			const summary = await this.fetchSummary(url, meta, this.config, lang);
 
 			this.logger.succ(`Got preview of ${url}: ${summary.title}`);
 
@@ -100,30 +105,9 @@ export class UrlPreviewService {
 		}
 	}
 
-	private fetchSummary(url: string, meta: Meta, config: Config, lang?: string): Promise<SummalyResult> {
-		const agent = this.config.proxy
-			? {
-				http: this.httpRequestService.httpAgent,
-				https: this.httpRequestService.httpsAgent,
-			}
-			: undefined;
-
-		return summaly(url, {
-			followRedirects: false,
+	private fetchSummary(url: string, meta: Meta, config: Config, lang?: string): Promise<Summaly> {
+		return this.summary.summary(url, {
 			lang: lang ?? 'ja-JP',
-			agent: agent,
-			userAgent: config.userAgent,
 		});
-	}
-
-	private fetchSummaryFromProxy(url: string, meta: Meta, config: Config, lang?: string): Promise<SummalyResult> {
-		const proxy = meta.summalyProxy;
-		const queryStr = query({
-			url: url,
-			lang: lang ?? 'ja-JP',
-			userAgent: config.userAgent,
-		});
-
-		return this.httpRequestService.getJson<SummalyResult>(`${proxy}?${queryStr}`);
 	}
 }

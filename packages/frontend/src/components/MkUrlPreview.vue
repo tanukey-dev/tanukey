@@ -32,7 +32,7 @@
 		<component :is="self ? 'MkA' : 'a'" :class="[$style.link, { [$style.compact]: compact }]"
 			:[attr]="self ? url.substring(local.length) : url" rel="nofollow noopener" :target="target" :title="url">
 			<div v-if="thumbnail && !sensitive" :class="$style.thumbnail"
-				:style="defaultStore.state.dataSaver.urlPreview ? '' : `background-image: url('${thumbnail}')`">
+				:style="defaultStore.state?.dataSaver?.urlPreview ? '' : `background-image: url('${thumbnail}')`">
 			</div>
 			<article :class="$style.body">
 				<header :class="$style.header">
