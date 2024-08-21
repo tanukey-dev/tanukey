@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Brackets } from 'typeorm';
 import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
 import type { ChannelsRepository } from '@/models/index.js';
 import { ChannelEntityService } from '@/core/entities/ChannelEntityService.js';
 import { DI } from '@/di-symbols.js';
@@ -24,10 +23,7 @@ export const meta = {
 
 export const paramDef = {
 	type: 'object',
-	properties: {
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-	},
+	properties: {},
 	required: [],
 } as const;
 
@@ -39,10 +35,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private channelsRepository: ChannelsRepository,
 
 		private channelEntityService: ChannelEntityService,
-		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const query = this.queryService.makePaginationQuery(this.channelsRepository.createQueryBuilder('channel'), ps.sinceId, ps.untilId)
+			const query = this.channelsRepository.createQueryBuilder('channel')
 				.andWhere(new Brackets(qb => { qb
 					.where('channel.isPrivate = FALSE')
 					.orWhere(new Brackets(qb2 => { qb2
