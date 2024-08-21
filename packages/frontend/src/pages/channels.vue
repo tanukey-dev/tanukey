@@ -88,11 +88,12 @@ onMounted(() => {
 
 const featuredPagination = {
 	endpoint: 'channels/featured' as const,
-	limit: 30,
+	limit: 100,
 };
 const favoritesPagination = {
 	endpoint: 'channels/my-favorites' as const,
-	limit: 30,
+	limit: 100,
+	noPaging: true,
 };
 const followingPagination = {
 	endpoint: 'channels/followed' as const,

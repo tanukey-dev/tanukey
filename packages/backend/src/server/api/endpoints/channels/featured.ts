@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Brackets } from 'typeorm';
 import { Endpoint } from '@/server/api/endpoint-base.js';
+import { QueryService } from '@/core/QueryService.js';
 import type { ChannelsRepository } from '@/models/index.js';
 import { ChannelEntityService } from '@/core/entities/ChannelEntityService.js';
 import { DI } from '@/di-symbols.js';
@@ -23,7 +24,10 @@ export const meta = {
 
 export const paramDef = {
 	type: 'object',
-	properties: {},
+	properties: {
+		sinceId: { type: 'string', format: 'misskey:id' },
+		untilId: { type: 'string', format: 'misskey:id' },
+	},
 	required: [],
 } as const;
 
@@ -35,9 +39,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private channelsRepository: ChannelsRepository,
 
 		private channelEntityService: ChannelEntityService,
+		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const query = this.channelsRepository.createQueryBuilder('channel')
+			const query = this.queryService.makePaginationQuery(this.channelsRepository.createQueryBuilder('channel'), ps.sinceId, ps.untilId)
 				.andWhere(new Brackets(qb => { qb
 					.where('channel.isPrivate = FALSE')
 					.orWhere(new Brackets(qb2 => { qb2
@@ -50,7 +55,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					}));
 				}))
 				.andWhere('channel.isArchived = FALSE')
-				.orderBy('channel.lastNotedAt', 'DESC');
+				.orderBy('channel.lastNotedAt', 'DESC', 'NULLS LAST');
 
 			const channels = await query.limit(10).getMany();
 
