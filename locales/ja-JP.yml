@@ -1631,6 +1631,10 @@ _channel:
   isPrivate: "プライベートチャンネルにする (権限が必要)"
   privateUserIds: "チャンネルにアクセス可能なユーザー"
   moderatorUserIds: "チャンネルのモデレーター(設定されたユーザーはチャンネル設定の編集が可能)"
+  threads: "スレッド"
+  title: "タイトル"
+  noteCount: "ノート数"
+  lastUpdate: "最終更新日"
 
 _event:
   create: "イベントを作成"

@@ -20,13 +20,23 @@
 			</MkFoldableSection>
 		</div>
 		<div v-if="tab === 'featured'">
+			<div style="display: flex;">
+				<div style="width: 50%;">{{ i18n.ts._channel.title }}</div>
+				<div style="width: 25%;">{{ i18n.ts._channel.noteCount }}</div>
+				<div style="width: 25%;">{{ i18n.ts._channel.lastUpdate }}</div>
+			</div>
 			<MkPagination v-slot="{items}" :pagination="featuredPagination">
-				<MkChannelPreview v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
+				<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
 			</MkPagination>
 		</div>
 		<div v-else-if="tab === 'favorites'">
+			<div style="display: flex;">
+				<div style="width: 50%;">{{ i18n.ts._channel.title }}</div>
+				<div style="width: 25%;">{{ i18n.ts._channel.noteCount }}</div>
+				<div style="width: 25%;">{{ i18n.ts._channel.lastUpdate }}</div>
+			</div>
 			<MkPagination v-slot="{items}" :pagination="favoritesPagination">
-				<MkChannelPreview v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
+				<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
 			</MkPagination>
 		</div>
 		<div v-else-if="tab === 'following'">
@@ -48,6 +58,7 @@
 import { computed, onMounted } from 'vue';
 import MkChannelPreview from '@/components/MkChannelPreview.vue';
 import MkChannelList from '@/components/MkChannelList.vue';
+import MkChannelItem from '@/components/MkChannelItem.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkRadios from '@/components/MkRadios.vue';
@@ -77,12 +88,11 @@ onMounted(() => {
 
 const featuredPagination = {
 	endpoint: 'channels/featured' as const,
-	noPaging: true,
+	limit: 30,
 };
 const favoritesPagination = {
 	endpoint: 'channels/my-favorites' as const,
-	limit: 100,
-	noPaging: true,
+	limit: 30,
 };
 const followingPagination = {
 	endpoint: 'channels/followed' as const,
@@ -128,7 +138,7 @@ const headerTabs = $computed(() => [{
 	icon: 'ti ti-search',
 }, {
 	key: 'featured',
-	title: i18n.ts._channel.featured,
+	title: i18n.ts._channel.threads,
 	icon: 'ti ti-comet',
 }, {
 	key: 'favorites',

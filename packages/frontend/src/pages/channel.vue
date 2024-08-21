@@ -89,7 +89,7 @@ const props = defineProps<{
 	channelId: string;
 }>();
 
-let tab = $ref('overview');
+let tab = $ref('timeline');
 let channel = $ref<null | misskey.entities.Channel>(null);
 let favorited = $ref(false);
 let searchQuery = $ref('');

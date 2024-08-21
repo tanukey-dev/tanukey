@@ -1710,6 +1710,10 @@ export interface Locale {
         "isPrivate": string;
         "privateUserIds": string;
         "moderatorUserIds": string;
+        "threads": string;
+        "title": string;
+        "noteCount": string;
+        "lastUpdate": string;
     };
     "_event": {
         "create": string;
