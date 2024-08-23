@@ -55,7 +55,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 						}));
 					}));
 				}))
-				.leftJoinAndSelect('favorite.channel', 'channel');
+				.leftJoinAndSelect('favorite.channel', 'channel')
+				.orderBy('channel.lastNotedAt', 'DESC', 'NULLS LAST');
 
 			const favorites = await query
 				.getMany();

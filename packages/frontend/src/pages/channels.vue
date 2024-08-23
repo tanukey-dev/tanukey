@@ -40,14 +40,19 @@
 			</MkPagination>
 		</div>
 		<div v-else-if="tab === 'following'">
+			<div style="display: flex;">
+				<div style="width: 50%;">{{ i18n.ts._channel.title }}</div>
+				<div style="width: 25%;">{{ i18n.ts._channel.noteCount }}</div>
+				<div style="width: 25%;">{{ i18n.ts._channel.lastUpdate }}</div>
+			</div>
 			<MkPagination v-slot="{items}" :pagination="followingPagination">
-				<MkChannelPreview v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
+				<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
 			</MkPagination>
 		</div>
 		<div v-else-if="tab === 'owned'">
 			<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
 			<MkPagination v-slot="{items}" :pagination="ownedPagination">
-				<MkChannelPreview v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
+				<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
 			</MkPagination>
 		</div>
 	</MkSpacer>
@@ -56,7 +61,6 @@
 
 <script lang="ts" setup>
 import { computed, onMounted } from 'vue';
-import MkChannelPreview from '@/components/MkChannelPreview.vue';
 import MkChannelList from '@/components/MkChannelList.vue';
 import MkChannelItem from '@/components/MkChannelItem.vue';
 import MkPagination from '@/components/MkPagination.vue';
@@ -88,21 +92,23 @@ onMounted(() => {
 
 const featuredPagination = {
 	endpoint: 'channels/featured' as const,
-	limit: 100,
+	limit: 10,
 	noPaging: true,
 };
 const favoritesPagination = {
 	endpoint: 'channels/my-favorites' as const,
-	limit: 100,
+	limit: 10,
 	noPaging: true,
 };
 const followingPagination = {
 	endpoint: 'channels/followed' as const,
 	limit: 10,
+	noPaging: true,
 };
 const ownedPagination = {
 	endpoint: 'channels/owned' as const,
 	limit: 10,
+	noPaging: true,
 };
 
 async function search() {

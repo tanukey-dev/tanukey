@@ -26,11 +26,7 @@ export const meta = {
 
 export const paramDef = {
 	type: 'object',
-	properties: {
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 5 },
-	},
+	properties: {},
 	required: [],
 } as const;
 
@@ -45,7 +41,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const query = this.queryService.makePaginationQuery(this.channelFollowingsRepository.createQueryBuilder('following'), ps.sinceId, ps.untilId)
+			const query = this.channelFollowingsRepository.createQueryBuilder('following')
 				.andWhere('following.followerId = :meId', { meId: me.id })
 				.andWhere(new Brackets(qb => { qb
 					.where('channel.isPrivate = FALSE')
@@ -58,10 +54,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 						}));
 					}));
 				}))
-				.leftJoinAndSelect('following.followee', 'channel');
+				.leftJoinAndSelect('following.followee', 'channel')
+				.orderBy('channel.lastNotedAt', 'DESC', 'NULLS LAST');
 
 			const followings = await query
-				.limit(ps.limit)
 				.getMany();
 
 			return await Promise.all(followings.map(x => this.channelEntityService.pack(x.followeeId, me)));

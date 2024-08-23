@@ -2,7 +2,7 @@
 <MkA :to="`/channels/${channel.id}`" class="eftoefju" tabindex="-1">
 	<div class="name">{{ channel.name }}</div>
 	<div class="count">{{ channel.notesCount }}</div>
-	<div class="time"><MkTime :time="channel.lastNotedAt ?? channel.createdAt"/></div>
+	<div class="time"><MkTime :time="channel.lastNotedAt"/></div>
 </MkA>
 </template>
 
