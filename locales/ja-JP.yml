@@ -2109,6 +2109,7 @@ _timelines:
   social: "ソーシャル"
   global: "グローバル"
   channel: "チャンネル"
+  followedChannel: "フォローチャンネル"
 
 _play:
   new: "Playの作成"

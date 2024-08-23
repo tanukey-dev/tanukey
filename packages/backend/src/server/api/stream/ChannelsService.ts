@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { bindThis } from '@/decorators.js';
 import { HybridTimelineChannelService } from './channels/hybrid-timeline.js';
+import { FollowedChannelTimelineChannelService } from './channels/followed-channel-timeline.js';
 import { LocalTimelineChannelService } from './channels/local-timeline.js';
 import { MediaTimelineChannelService } from './channels/media-timeline.js';
 import { HomeTimelineChannelService } from './channels/home-timeline.js';
@@ -24,6 +25,7 @@ export class ChannelsService {
 		private localTimelineChannelService: LocalTimelineChannelService,
 		private mediaTimelineChannelService: MediaTimelineChannelService,
 		private hybridTimelineChannelService: HybridTimelineChannelService,
+		private followedChannelTimelineChannelService: FollowedChannelTimelineChannelService,
 		private globalTimelineChannelService: GlobalTimelineChannelService,
 		private userListChannelService: UserListChannelService,
 		private hashtagChannelService: HashtagChannelService,
@@ -45,6 +47,7 @@ export class ChannelsService {
 			case 'localTimeline': return this.localTimelineChannelService;
 			case 'mediaTimeline': return this.mediaTimelineChannelService;
 			case 'hybridTimeline': return this.hybridTimelineChannelService;
+			case 'followedChannelTimeline': return this.followedChannelTimelineChannelService;
 			case 'globalTimeline': return this.globalTimelineChannelService;
 			case 'userList': return this.userListChannelService;
 			case 'hashtag': return this.hashtagChannelService;

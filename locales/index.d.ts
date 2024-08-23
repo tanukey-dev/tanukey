@@ -2191,6 +2191,7 @@ export interface Locale {
         "social": string;
         "global": string;
         "channel": string;
+        "followedChannel": string;
     };
     "_play": {
         "new": string;

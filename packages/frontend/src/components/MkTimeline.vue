@@ -112,6 +112,13 @@ if (props.src === 'antenna') {
 		withReplies: defaultStore.state.showTimelineReplies,
 	});
 	connection.on('note', prepend);
+} else if (props.src === 'followdChannel') {
+	endpoint = 'notes/followed-channel-timeline';
+	query = {
+		withReplies: defaultStore.state.showTimelineReplies,
+	};
+	connection = stream.useChannel('followedChannelTimeline', {});
+	connection.on('note', prepend);
 } else if (props.src === 'global') {
 	endpoint = 'notes/global-timeline';
 	query = {

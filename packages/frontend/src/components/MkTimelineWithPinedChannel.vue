@@ -33,12 +33,16 @@ import { defaultStore } from '@/store';
 import { deviceKind } from '@/scripts/device-kind';
 import { scrollToTop } from '@/scripts/scroll';
 
-const tabs = ref<Tab[]>([{ key: 'local', title: i18n.ts._timelines.local, icon: 'ti ti-planet' }, { key: 'social', title: i18n.ts._timelines.social, icon: 'ti ti-rocket' }]);
-const srcCh = computed(() => tab.value === 'local' ? 'local' : tab.value === 'social' ? 'social' : 'channel');
+const tabs = ref<Tab[]>([
+	{ key: 'local', title: i18n.ts._timelines.local, icon: 'ti ti-planet' },
+	{ key: 'social', title: i18n.ts._timelines.social, icon: 'ti ti-rocket' },
+	{ key: 'followdChannel', title: i18n.ts._timelines.followedChannel, icon: 'ti ti-device-tv' },
+]);
+const srcCh = computed(() => tab.value === 'local' ? 'local' : tab.value === 'social' ? 'social' : tab.value === 'followdChannel' ? 'followdChannel' : 'channel');
 const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
 const tab = ref<string|null>(null);
 const selectedTab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
-const channelId = computed(() => tab.value === 'local' ? null : tab.value === 'social' ? null : tab.value);
+const channelId = computed(() => tab.value === 'local' ? null : tab.value === 'social' ? null : tab.value === 'followdChannel' ? 'followdChannel' : tab.value);
 const disableSwipe = computed(defaultStore.makeGetterSetter('disableSwipe'));
 
 watch(tab, async () => {
@@ -48,7 +52,7 @@ watch(tab, async () => {
 		tab.value = 'local';
 	}
 
-	if (tab.value !== 'local' && tab.value !== 'social') {
+	if (tab.value !== 'local' && tab.value !== 'social' && tab.value !== 'followdChannel') {
 		let ch = await os.api('channels/show', {
 			channelId: tab.value,
 		});
