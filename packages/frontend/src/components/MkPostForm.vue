@@ -48,7 +48,7 @@
 				<span><i class="ti ti-device-tv"></i></span>
 				<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
 			</button>
-			<button v-click-anime v-tooltip="i18n.ts._visibility.disableFederation" class="_button" :class="[$style.headerRightItem, { [$style.danger]: localOnly }]" :disabled="channel != null || visibility === 'specified'" @click="toggleLocalOnly">
+			<button v-if="visibility !== 'specified'" v-click-anime v-tooltip="i18n.ts._visibility.disableFederation" class="_button" :class="[$style.headerRightItem, { [$style.danger]: localOnly }]" @click="toggleLocalOnly">
 				<span v-if="!localOnly"><i class="ti ti-rocket"></i></span>
 				<span v-else><i class="ti ti-rocket-off"></i></span>
 			</button>
@@ -196,7 +196,7 @@ let poll = $ref<{
 let useCw = $ref(false);
 let showPreview = $ref(false);
 let cw = $ref<string | undefined>(undefined);
-let localOnly = $ref<boolean>(props.initialLocalOnly ?? defaultStore.state.rememberNoteVisibility ? defaultStore.state.localOnly : defaultStore.state.defaultNoteLocalOnly);
+let localOnly = $ref<boolean>(props.initialLocalOnly ?? visibility === 'specified' ? false : defaultStore.state.rememberNoteVisibility ? defaultStore.state.localOnly : defaultStore.state.defaultNoteLocalOnly);
 let visibility = $ref(props.initialVisibility ?? (defaultStore.state.rememberNoteVisibility ? defaultStore.state.visibility : defaultStore.state.defaultNoteVisibility) as typeof misskey.noteVisibilities[number]);
 let visibleUsers = $ref([]);
 if (props.initialVisibleUsers) {
