@@ -65,7 +65,7 @@ const emit = defineEmits<{
 const defaultPermissions = Misskey.permissions.filter(p => !p.startsWith('read:admin') && !p.startsWith('write:admin'));
 const dialog = shallowRef<InstanceType<typeof MkModalWindow>>();
 const name = ref(props.initialName);
-const permissions = ref(<Record<(typeof Misskey.permissions)[number], boolean>>{});
+const permissions = $ref(<Record<(typeof Misskey.permissions)[number], boolean>>{});
 
 if (props.initialPermissions) {
 	for (const kind of props.initialPermissions) {
@@ -73,7 +73,7 @@ if (props.initialPermissions) {
 	}
 } else {
 	for (const kind of defaultPermissions) {
-		permissions.value[kind] = false;
+		permissions[kind] = false;
 	}
 }
 
