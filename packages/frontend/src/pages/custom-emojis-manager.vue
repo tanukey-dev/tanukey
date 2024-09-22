@@ -1,33 +1,31 @@
 <template>
-<div>
-	<MkStickyContainer>
-		<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-		<MkSpacer :contentMax="900">
-			<div class="ogwlenmc">
-				<div v-if="tab === 'local'" class="local">
-					<MkCustomEmojiManagerLocal/>
+	<div>
+		<MkStickyContainer>
+			<template #header>
+				<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+			</template>
+			<MkSpacer :contentMax="900">
+				<div class="ogwlenmc">
+					<div v-if="tab === 'local'" class="local">
+						<MkCustomEmojiManagerLocal />
+					</div>
+					<div v-if="tab === 'draft'" class="draft">
+						<MkCustomEmojiManagerDraft />
+					</div>
 				</div>
-				<div v-if="tab === 'draft'" class="draft">
-					<MkCustomEmojiManagerDraft/>
-				</div>
-				<div v-else-if="tab === 'remote'" class="remote">
-					<MkCustomEmojiManagerRemote/>
-				</div>
-			</div>
-		</MkSpacer>
-	</MkStickyContainer>
-</div>
+			</MkSpacer>
+		</MkStickyContainer>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref } from "vue";
 import MkCustomEmojiManagerDraft from "@/components/MkCustomEmojiManagerDraft.vue";
 import MkCustomEmojiManagerLocal from "@/components/MkCustomEmojiManagerLocal.vue";
-import MkCustomEmojiManagerRemote from "@/components/MkCustomEmojiManagerRemote.vue";
-import { selectFile } from "@/scripts/select-file";
-import * as os from "@/os";
 import { i18n } from "@/i18n";
+import * as os from "@/os";
 import { definePageMetadata } from "@/scripts/page-metadata";
+import { selectFile } from "@/scripts/select-file";
+import { computed, defineAsyncComponent, ref } from "vue";
 
 const tab = ref("draft");
 
@@ -133,5 +131,4 @@ definePageMetadata(
 );
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

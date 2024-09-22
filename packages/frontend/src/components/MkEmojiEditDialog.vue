@@ -1,119 +1,120 @@
 <template>
-<MkModalWindow
-	ref="dialog"
-	:width="400"
-	:height="isRequest ? 600 : 700"
-	@close="dialog.close()"
-	@closed="$emit('closed')"
->
-	<template v-if="emoji" #header>:{{ emoji.name }}:</template>
-	<template v-else-if="isRequest" #header>{{ i18n.ts.requestCustomEmojis }}</template>
-	<template v-else #header>New emoji</template>
+	<MkModalWindow ref="dialog" :width="400" :height="isRequest ? 600 : 700" @close="dialog.close()"
+		@closed="$emit('closed')">
+		<template v-if="emoji" #header>:{{ emoji.name }}:</template>
+		<template v-else-if="isRequest" #header>{{ i18n.ts.requestCustomEmojis }}</template>
+		<template v-else #header>New emoji</template>
 
-	<div>
-		<MkSpacer :marginMin="20" :marginMax="28">
-			<div class="_gaps_m">
-				<div v-if="imgUrl != null" :class="$style.imgs">
-					<div style="background: #000;" :class="$style.imgContainer">
-						<img :src="imgUrl" :class="$style.img"/>
-					</div>
-					<div style="background: #222;" :class="$style.imgContainer">
-						<img :src="imgUrl" :class="$style.img"/>
-					</div>
-					<div style="background: #ddd;" :class="$style.imgContainer">
-						<img :src="imgUrl" :class="$style.img"/>
-					</div>
-					<div style="background: #fff;" :class="$style.imgContainer">
-						<img :src="imgUrl" :class="$style.img"/>
-					</div>
-				</div>
-				<MkButton rounded style="margin: 0 auto;" @click="changeImage">{{ i18n.ts.selectFile }}</MkButton>
-				<MkInput v-model="name" pattern="[a-z0-9_]">
-					<template #label>{{ i18n.ts.name }}</template>
-					<template #caption>{{ i18n.ts.emojiNameValidation }}</template>
-				</MkInput>
-				<MkInput v-model="category" :datalist="customEmojiCategories">
-					<template #label>{{ i18n.ts.category }}</template>
-				</MkInput>
-				<MkInput v-model="aliases">
-					<template #label>{{ i18n.ts.tags }}</template>
-					<template #caption>{{ i18n.ts.setMultipleBySeparatingWithSpace }}</template>
-				</MkInput>
-				<MkInput v-model="license">
-					<template #label>{{ i18n.ts.license }}</template>
-				</MkInput>
-				<MkFolder v-if="!isRequest" >
-					<template #label>{{ i18n.ts.rolesThatCanBeUsedThisEmojiAsReaction }}</template>
-					<template #suffix>{{ rolesThatCanBeUsedThisEmojiAsReaction.length === 0 ? i18n.ts.all : rolesThatCanBeUsedThisEmojiAsReaction.length }}</template>
-
-					<div class="_gaps">
-						<MkButton rounded @click="addRole"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
-
-						<div v-for="role in rolesThatCanBeUsedThisEmojiAsReaction" :key="role.id" :class="$style.roleItem">
-							<MkRolePreview :class="$style.role" :role="role" :forModeration="true" :detailed="false" style="pointer-events: none;"/>
-							<button v-if="role.target === 'manual'" class="_button" :class="$style.roleUnassign" @click="removeRole(role, $event)"><i class="ti ti-x"></i></button>
-							<button v-else class="_button" :class="$style.roleUnassign" disabled><i class="ti ti-ban"></i></button>
+		<div>
+			<MkSpacer :marginMin="20" :marginMax="28">
+				<div class="_gaps_m">
+					<div v-if="imgUrl != null" :class="$style.imgs">
+						<div style="background: #000;" :class="$style.imgContainer">
+							<img :src="imgUrl" :class="$style.img" />
 						</div>
-
-						<MkInfo>{{ i18n.ts.rolesThatCanBeUsedThisEmojiAsReactionEmptyDescription }}</MkInfo>
-						<MkInfo warn>{{ i18n.ts.rolesThatCanBeUsedThisEmojiAsReactionPublicRoleWarn }}</MkInfo>
+						<div style="background: #222;" :class="$style.imgContainer">
+							<img :src="imgUrl" :class="$style.img" />
+						</div>
+						<div style="background: #ddd;" :class="$style.imgContainer">
+							<img :src="imgUrl" :class="$style.img" />
+						</div>
+						<div style="background: #fff;" :class="$style.imgContainer">
+							<img :src="imgUrl" :class="$style.img" />
+						</div>
 					</div>
-				</MkFolder>
-				<MkSwitch v-model="isSensitive">{{ i18n.ts.isSensitive }}</MkSwitch>
-				<MkSwitch v-model="localOnly">{{ i18n.ts.localOnly }}</MkSwitch>
-				<MkSwitch v-if="!isRequest" v-model="draft" :disabled="isRequest">
-					{{ i18n.ts.draft }}
-				</MkSwitch>
-				<MkButton v-if="emoji" danger @click="del()"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
-			</div>
-		</MkSpacer>
-		<div :class="$style.footer">
-			<div :class="$style.footerButtons">
-				<MkButton v-if="!isRequest" danger rounded style="margin: 0 auto;" @click="del()"><i class="ti ti-check"></i> {{ i18n.ts.delete }}</MkButton>
-				<MkButton v-if="validation" primary rounded style="margin: 0 auto;" @click="done"><i class="ti ti-check"></i> {{ props.emoji ? i18n.ts.update : i18n.ts.create }}</MkButton>
-				<MkButton v-else rounded style="margin: 0 auto;"><i class="ti ti-check"></i> {{ props.emoji ? i18n.ts.update : i18n.ts.create }}</MkButton>
+					<MkButton rounded style="margin: 0 auto;" @click="changeImage">{{ i18n.ts.selectFile }}</MkButton>
+					<MkInput v-model="name" pattern="[a-z0-9_]">
+						<template #label>{{ i18n.ts.name }}</template>
+						<template #caption>{{ i18n.ts.emojiNameValidation }}</template>
+					</MkInput>
+					<MkInput v-model="category" :datalist="customEmojiCategories">
+						<template #label>{{ i18n.ts.category }}</template>
+					</MkInput>
+					<MkInput v-model="aliases">
+						<template #label>{{ i18n.ts.tags }}</template>
+						<template #caption>{{ i18n.ts.setMultipleBySeparatingWithSpace }}</template>
+					</MkInput>
+					<MkInput v-model="license">
+						<template #label>{{ i18n.ts.license }}</template>
+					</MkInput>
+					<MkFolder v-if="!isRequest">
+						<template #label>{{ i18n.ts.rolesThatCanBeUsedThisEmojiAsReaction }}</template>
+						<template #suffix>{{ rolesThatCanBeUsedThisEmojiAsReaction.length === 0 ? i18n.ts.all :
+							rolesThatCanBeUsedThisEmojiAsReaction.length }}</template>
+
+						<div class="_gaps">
+							<MkButton rounded @click="addRole"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
+
+							<div v-for="role in rolesThatCanBeUsedThisEmojiAsReaction" :key="role.id"
+								:class="$style.roleItem">
+								<MkRolePreview :class="$style.role" :role="role" :forModeration="true" :detailed="false"
+									style="pointer-events: none;" />
+								<button v-if="role.target === 'manual'" class="_button" :class="$style.roleUnassign"
+									@click="removeRole(role, $event)"><i class="ti ti-x"></i></button>
+								<button v-else class="_button" :class="$style.roleUnassign" disabled><i
+										class="ti ti-ban"></i></button>
+							</div>
+
+							<MkInfo>{{ i18n.ts.rolesThatCanBeUsedThisEmojiAsReactionEmptyDescription }}</MkInfo>
+							<MkInfo warn>{{ i18n.ts.rolesThatCanBeUsedThisEmojiAsReactionPublicRoleWarn }}</MkInfo>
+						</div>
+					</MkFolder>
+					<MkSwitch v-model="isSensitive">{{ i18n.ts.isSensitive }}</MkSwitch>
+					<MkSwitch v-model="localOnly">{{ i18n.ts.localOnly }}</MkSwitch>
+					<MkSwitch v-if="!isRequest" v-model="draft" :disabled="isRequest">
+						{{ i18n.ts.draft }}
+					</MkSwitch>
+				</div>
+			</MkSpacer>
+			<div :class="$style.footer">
+				<div :class="$style.footerButtons">
+					<MkButton v-if="props.emoji" danger rounded style="margin: 0 auto;" @click="del()"><i
+							class="ti ti-check"></i> {{ i18n.ts.delete }}</MkButton>
+					<MkButton v-if="validation" primary rounded style="margin: 0 auto;" @click="done"><i
+							class="ti ti-check"></i> {{ props.emoji ? i18n.ts.update : i18n.ts.create }}</MkButton>
+					<MkButton v-else rounded style="margin: 0 auto;"><i class="ti ti-check"></i> {{ props.emoji ?
+						i18n.ts.update
+						: i18n.ts.create }}</MkButton>
+				</div>
 			</div>
 		</div>
-	</div>
-</MkModalWindow>
+	</MkModalWindow>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from "vue";
-import * as misskey from "misskey-js";
-import MkMention from "./MkMention.vue";
-import MkModalWindow from "@/components/MkModalWindow.vue";
 import MkButton from "@/components/MkButton.vue";
-import MkInput from "@/components/MkInput.vue";
-import MkInfo from "@/components/MkInfo.vue";
 import MkFolder from "@/components/MkFolder.vue";
-import { host } from "@/config";
-import * as os from "@/os";
-import { i18n } from "@/i18n";
-import { customEmojiCategories } from "@/custom-emojis";
-import MkSwitch from "@/components/MkSwitch.vue";
-import { selectFile } from "@/scripts/select-file";
+import MkInfo from "@/components/MkInfo.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
 import MkRolePreview from "@/components/MkRolePreview.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import { customEmojiCategories } from "@/custom-emojis";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import { selectFile } from "@/scripts/select-file";
+import * as misskey from "misskey-js";
+import { computed, watch } from "vue";
 
 const props = defineProps<{
 	emoji?: any;
 	isRequest: boolean;
 }>();
 
-let dialog = $ref(null);
+const dialog = $ref(null);
 let name: string = $ref(props.emoji ? props.emoji.name : "");
-let category: string = $ref(props.emoji ? props.emoji.category : "");
-let aliases: string = $ref(props.emoji ? props.emoji.aliases.join(" ") : "");
-let license: string = $ref(props.emoji ? (props.emoji.license ?? "") : "");
-let isSensitive = $ref(props.emoji ? props.emoji.isSensitive : false);
-let localOnly = $ref(props.emoji ? props.emoji.localOnly : false);
-let roleIdsThatCanBeUsedThisEmojiAsReaction = $ref(
+const category: string = $ref(props.emoji ? props.emoji.category : "");
+const aliases: string = $ref(props.emoji ? props.emoji.aliases.join(" ") : "");
+const license: string = $ref(props.emoji ? (props.emoji.license ?? "") : "");
+const isSensitive = $ref(props.emoji ? props.emoji.isSensitive : false);
+const localOnly = $ref(props.emoji ? props.emoji.localOnly : false);
+const roleIdsThatCanBeUsedThisEmojiAsReaction = $ref(
 	props.emoji ? props.emoji.roleIdsThatCanBeUsedThisEmojiAsReaction : [],
 );
 let rolesThatCanBeUsedThisEmojiAsReaction = $ref([]);
 let file = $ref<misskey.entities.DriveFile>();
-let draft = $ref(props.emoji ? props.emoji.draft : false);
-let isRequest = $ref(props.isRequest);
+const draft = $ref(props.emoji ? props.emoji.draft : false);
+const isRequest = $ref(props.isRequest);
 
 watch(
 	$$(roleIdsThatCanBeUsedThisEmojiAsReaction),

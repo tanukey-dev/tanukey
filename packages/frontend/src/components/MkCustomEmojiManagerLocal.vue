@@ -1,53 +1,56 @@
 <template>
-<MkInput v-model="query" :debounce="true" type="search">
-	<template #prefix><i class="ti ti-search"></i></template>
-	<template #label>{{ i18n.ts.search }}</template>
-</MkInput>
-<MkSwitch v-model="selectMode" style="margin: 8px 0;">
-	<template #label>Select mode</template>
-</MkSwitch>
-<div v-if="selectMode" class="_buttons">
-	<MkButton inline @click="selectAll">Select all</MkButton>
-	<MkButton inline @click="setCategoryBulk">Set category</MkButton>
-	<MkButton inline @click="setTagBulk">Set tag</MkButton>
-	<MkButton inline @click="addTagBulk">Add tag</MkButton>
-	<MkButton inline @click="removeTagBulk">Remove tag</MkButton>
-	<MkButton inline @click="setLisenceBulk">Set Lisence</MkButton>
-	<MkButton inline danger @click="delBulk">Delete</MkButton>
-</div>
-<MkPagination ref="emojisPaginationComponent" :pagination="pagination" :displayLimit="100">
-	<template #empty><span>{{ i18n.ts.noCustomEmojis }}</span></template>
-	<template #default="{items}">
-		<div class="ldhfsamy">
-			<div v-for="emoji in items" :key="emoji.id">
-				<button v-if="emoji.draft" class="emoji _panel _button emoji-draft" :class="{ selected: selectedEmojis.includes(emoji.id) }" @click="selectMode ? toggleSelect(emoji) : edit(emoji)">
-					<img :src="emoji.url" class="img" :alt="emoji.name"/>
-					<div class="body">
-						<div class="name _monospace">{{ emoji.name + ' (draft)' }}</div>
-						<div class="info">{{ emoji.category }}</div>
-					</div>
-				</button>
-				<button v-else class="emoji _panel _button" :class="{ selected: selectedEmojis.includes(emoji.id) }" @click="selectMode ? toggleSelect(emoji) : edit(emoji)">
-					<img :src="emoji.url" class="img" :alt="emoji.name"/>
-					<div class="body">
-						<div class="name _monospace">{{ emoji.name }}</div>
-						<div class="info">{{ emoji.category }}</div>
-					</div>
-				</button>
+	<MkInput v-model="query" :debounce="true" type="search">
+		<template #prefix><i class="ti ti-search"></i></template>
+		<template #label>{{ i18n.ts.search }}</template>
+	</MkInput>
+	<MkSwitch v-model="selectMode" style="margin: 8px 0;">
+		<template #label>Select mode</template>
+	</MkSwitch>
+	<div v-if="selectMode" class="_buttons">
+		<MkButton inline @click="selectAll">Select all</MkButton>
+		<MkButton inline @click="setCategoryBulk">Set category</MkButton>
+		<MkButton inline @click="setTagBulk">Set tag</MkButton>
+		<MkButton inline @click="addTagBulk">Add tag</MkButton>
+		<MkButton inline @click="removeTagBulk">Remove tag</MkButton>
+		<MkButton inline @click="setLisenceBulk">Set Lisence</MkButton>
+		<MkButton inline danger @click="delBulk">Delete</MkButton>
+	</div>
+	<MkPagination ref="emojisPaginationComponent" :pagination="pagination" :displayLimit="100">
+		<template #empty><span>{{ i18n.ts.noCustomEmojis }}</span></template>
+		<template #default="{ items }">
+			<div class="ldhfsamy">
+				<div v-for="emoji in items" :key="emoji.id">
+					<button v-if="emoji.draft" class="emoji _panel _button emoji-draft"
+						:class="{ selected: selectedEmojis.includes(emoji.id) }"
+						@click="selectMode ? toggleSelect(emoji) : edit(emoji)">
+						<img :src="emoji.url" class="img" :alt="emoji.name" />
+						<div class="body">
+							<div class="name _monospace">{{ emoji.name + ' (draft)' }}</div>
+							<div class="info">{{ emoji.category }}</div>
+						</div>
+					</button>
+					<button v-else class="emoji _panel _button" :class="{ selected: selectedEmojis.includes(emoji.id) }"
+						@click="selectMode ? toggleSelect(emoji) : edit(emoji)">
+						<img :src="emoji.url" class="img" :alt="emoji.name" />
+						<div class="body">
+							<div class="name _monospace">{{ emoji.name }}</div>
+							<div class="info">{{ emoji.category }}</div>
+						</div>
+					</button>
+				</div>
 			</div>
-		</div>
-	</template>
-</MkPagination>
+		</template>
+	</MkPagination>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, shallowRef } from "vue";
 import MkButton from "@/components/MkButton.vue";
 import MkInput from "@/components/MkInput.vue";
-import MkPagination from "@/components/MkPagination.vue";
+import type MkPagination from "@/components/MkPagination.vue";
 import MkSwitch from "@/components/MkSwitch.vue";
-import * as os from "@/os";
 import { i18n } from "@/i18n";
+import * as os from "@/os";
+import { computed, defineAsyncComponent, ref, shallowRef } from "vue";
 
 const emojisPaginationComponent =
 	shallowRef<InstanceType<typeof MkPagination>>();
@@ -83,7 +86,7 @@ const toggleSelect = (emoji) => {
 };
 
 const edit = (emoji) => {
-	os.apiGet("emoji", { name: emoji.name }).then((res) => {
+	os.apiGet("admin/emoji/emoji", { name: emoji.name }).then((res) => {
 		os.popup(
 			defineAsyncComponent(() => import("@/components/MkEmojiEditDialog.vue")),
 			{
@@ -192,7 +195,7 @@ const delBulk = async () => {
 	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
 	grid-gap: var(--margin);
 
-	div > .emoji {
+	div>.emoji {
 		display: flex;
 		align-items: center;
 		padding: 11px;
@@ -208,22 +211,22 @@ const delBulk = async () => {
 			border-color: var(--accent);
 		}
 
-		> .img {
+		>.img {
 			width: 42px;
 			height: 42px;
 		}
 
-		> .body {
+		>.body {
 			padding: 0 0 0 8px;
 			white-space: nowrap;
 			overflow: hidden;
 
-			> .name {
+			>.name {
 				text-overflow: ellipsis;
 				overflow: hidden;
 			}
 
-			> .info {
+			>.info {
 				opacity: 0.5;
 				text-overflow: ellipsis;
 				overflow: hidden;
@@ -233,8 +236,9 @@ const delBulk = async () => {
 }
 
 .emoji-draft {
-	--c: rgb(255 196 0 / 15%);;
-	background-image: linear-gradient(45deg,var(--c) 16.67%,transparent 16.67%,transparent 50%,var(--c) 50%,var(--c) 66.67%,transparent 66.67%,transparent 100%);
+	--c: rgb(255 196 0 / 15%);
+	;
+	background-image: linear-gradient(45deg, var(--c) 16.67%, transparent 16.67%, transparent 50%, var(--c) 50%, var(--c) 66.67%, transparent 66.67%, transparent 100%);
 	background-size: 16px 16px;
 }
 </style>
