@@ -24,42 +24,42 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import MkNotes from '@/components/MkNotes.vue';
-import MkChannelPreview from '@/components/MkChannelPreview.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
-import { defaultStore } from '@/store';
-import * as os from '@/os';
+import { computed, ref } from "vue";
+import MkNotes from "@/components/MkNotes.vue";
+import MkChannelPreview from "@/components/MkChannelPreview.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
+import { defaultStore } from "@/store";
+import * as os from "@/os";
 
 const props = defineProps<{
 	tag: string;
 }>();
 
 const pagination = {
-	endpoint: 'notes/search-by-tag' as const,
+	endpoint: "notes/search-by-tag" as const,
 	limit: 10,
 	params: computed(() => ({
 		tag: props.tag,
 	})),
 };
 const notes = ref<InstanceType<typeof MkNotes>>();
-const tab = ref('timeline');
+const tab = ref("timeline");
 
 async function post() {
-	defaultStore.set('postFormHashtags', props.tag);
-	defaultStore.set('postFormWithHashtags', true);
+	defaultStore.set("postFormHashtags", props.tag);
+	defaultStore.set("postFormWithHashtags", true);
 	await os.post();
-	defaultStore.set('postFormHashtags', '');
-	defaultStore.set('postFormWithHashtags', false);
+	defaultStore.set("postFormHashtags", "");
+	defaultStore.set("postFormWithHashtags", false);
 	notes.value?.pagingComponent?.reload();
 }
 
 const channelPagination = {
-	endpoint: 'channels/search-by-tags' as const,
+	endpoint: "channels/search-by-tags" as const,
 	limit: 10,
 	params: {
 		tags: [props.tag],
@@ -68,20 +68,25 @@ const channelPagination = {
 
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => [{
-	key: 'timeline',
-	title: i18n.ts.timeline,
-	icon: 'ti ti-home',
-}, {
-	key: 'channels',
-	title: i18n.ts.channel,
-	icon: 'ti ti-device-tv',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "timeline",
+		title: i18n.ts.timeline,
+		icon: "ti ti-home",
+	},
+	{
+		key: "channels",
+		title: i18n.ts.channel,
+		icon: "ti ti-device-tv",
+	},
+]);
 
-definePageMetadata(computed(() => ({
-	title: props.tag,
-	icon: 'ti ti-hash',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: props.tag,
+		icon: "ti ti-hash",
+	})),
+);
 </script>
 
 <style lang="scss" module>

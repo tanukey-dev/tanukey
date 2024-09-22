@@ -19,23 +19,29 @@
 </template>
 
 <script lang="ts" setup>
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import { GetFormResultType } from '@/scripts/form';
-import MkContainer from '@/components/MkContainer.vue';
-import * as os from '@/os';
-import { useInterval } from '@/scripts/use-interval';
-import { i18n } from '@/i18n';
-import MkButton from '@/components/MkButton.vue';
+import {
+	useWidgetPropsManager,
+	Widget,
+	WidgetComponentEmits,
+	WidgetComponentExpose,
+	WidgetComponentProps,
+} from "./widget";
+import { GetFormResultType } from "@/scripts/form";
+import MkContainer from "@/components/MkContainer.vue";
+import * as os from "@/os";
+import { useInterval } from "@/scripts/use-interval";
+import { i18n } from "@/i18n";
+import MkButton from "@/components/MkButton.vue";
 
-const name = 'userList';
+const name = "userList";
 
 const widgetPropsDef = {
 	showHeader: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: true,
 	},
 	listId: {
-		type: 'string' as const,
+		type: "string" as const,
 		default: null,
 		hidden: true,
 	},
@@ -46,7 +52,8 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure, save } = useWidgetPropsManager(name,
+const { widgetProps, configure, save } = useWidgetPropsManager(
+	name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -57,11 +64,12 @@ let users = $ref([]);
 let fetching = $ref(true);
 
 async function chooseList() {
-	const lists = await os.api('users/lists/list');
+	const lists = await os.api("users/lists/list");
 	const { canceled, result: list } = await os.select({
 		title: i18n.ts.selectList,
-		items: lists.map(x => ({
-			value: x, text: x.name,
+		items: lists.map((x) => ({
+			value: x,
+			text: x.name,
 		})),
 		default: widgetProps.listId,
 	});
@@ -78,13 +86,13 @@ const fetch = () => {
 		return;
 	}
 
-	os.api('users/lists/show', {
+	os.api("users/lists/show", {
 		listId: widgetProps.listId,
-	}).then(_list => {
+	}).then((_list) => {
 		list = _list;
-		os.api('users/show', {
+		os.api("users/show", {
 			userIds: list.userIds,
-		}).then(_users => {
+		}).then((_users) => {
 			users = _users;
 			fetching = false;
 		});

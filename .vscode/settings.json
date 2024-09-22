@@ -11,5 +11,10 @@
     },
     "jest.jestCommandLine": "pnpm run jest",
     "jest.autoRun": "off",
-    "search.followSymlinks": false
+    "search.followSymlinks": false,
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+	"source.organizeImports.biome": "explicit"
+    }
 }

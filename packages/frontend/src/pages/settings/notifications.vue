@@ -26,54 +26,72 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
-import FormLink from '@/components/form/link.vue';
-import FormSection from '@/components/form/section.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import * as os from '@/os';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkPushNotificationAllowButton from '@/components/MkPushNotificationAllowButton.vue';
-import { notificationTypes } from '@/const';
+import { defineAsyncComponent } from "vue";
+import FormLink from "@/components/form/link.vue";
+import FormSection from "@/components/form/section.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import * as os from "@/os";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkPushNotificationAllowButton from "@/components/MkPushNotificationAllowButton.vue";
+import { notificationTypes } from "@/const";
 
-let allowButton = $shallowRef<InstanceType<typeof MkPushNotificationAllowButton>>();
-let pushRegistrationInServer = $computed(() => allowButton?.pushRegistrationInServer);
-let sendReadMessage = $computed(() => pushRegistrationInServer?.sendReadMessage || false);
+let allowButton =
+	$shallowRef<InstanceType<typeof MkPushNotificationAllowButton>>();
+let pushRegistrationInServer = $computed(
+	() => allowButton?.pushRegistrationInServer,
+);
+let sendReadMessage = $computed(
+	() => pushRegistrationInServer?.sendReadMessage || false,
+);
 
 async function readAllUnreadNotes() {
-	await os.api('i/read-all-unread-notes');
+	await os.api("i/read-all-unread-notes");
 }
 
 async function readAllNotifications() {
-	await os.api('notifications/mark-all-as-read');
+	await os.api("notifications/mark-all-as-read");
 }
 
 function configure() {
-	const includingTypes = notificationTypes.filter(x => !$i!.mutingNotificationTypes.includes(x));
-	os.popup(defineAsyncComponent(() => import('@/components/MkNotificationSettingWindow.vue')), {
-		includingTypes,
-		showGlobalToggle: false,
-	}, {
-		done: async (res) => {
-			const { includingTypes: value } = res;
-			await os.apiWithDialog('i/update', {
-				mutingNotificationTypes: notificationTypes.filter(x => !value.includes(x)),
-			}).then(i => {
-				$i!.mutingNotificationTypes = i.mutingNotificationTypes;
-			});
+	const includingTypes = notificationTypes.filter(
+		(x) => !$i!.mutingNotificationTypes.includes(x),
+	);
+	os.popup(
+		defineAsyncComponent(
+			() => import("@/components/MkNotificationSettingWindow.vue"),
+		),
+		{
+			includingTypes,
+			showGlobalToggle: false,
 		},
-	}, 'closed');
+		{
+			done: async (res) => {
+				const { includingTypes: value } = res;
+				await os
+					.apiWithDialog("i/update", {
+						mutingNotificationTypes: notificationTypes.filter(
+							(x) => !value.includes(x),
+						),
+					})
+					.then((i) => {
+						$i!.mutingNotificationTypes = i.mutingNotificationTypes;
+					});
+			},
+		},
+		"closed",
+	);
 }
 
 function onChangeSendReadMessage(v: boolean) {
 	if (!pushRegistrationInServer) return;
 
-	os.apiWithDialog('sw/update-registration', {
+	os.apiWithDialog("sw/update-registration", {
 		endpoint: pushRegistrationInServer.endpoint,
 		sendReadMessage: v,
-	}).then(res => {
-		if (!allowButton)	return;
+	}).then((res) => {
+		if (!allowButton) return;
 		allowButton.pushRegistrationInServer = res;
 	});
 }
@@ -84,6 +102,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.notifications,
-	icon: 'ti ti-bell',
+	icon: "ti ti-bell",
 });
 </script>

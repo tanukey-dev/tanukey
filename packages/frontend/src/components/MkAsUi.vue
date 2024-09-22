@@ -48,30 +48,33 @@
 </template>
 
 <script lang="ts" setup>
-import { Ref } from 'vue';
-import * as os from '@/os';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import { AsUiComponent } from '@/scripts/aiscript/ui';
-import MkFolder from '@/components/MkFolder.vue';
+import { Ref } from "vue";
+import * as os from "@/os";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import { AsUiComponent } from "@/scripts/aiscript/ui";
+import MkFolder from "@/components/MkFolder.vue";
 
-const props = withDefaults(defineProps<{
-	component: AsUiComponent;
-	components: Ref<AsUiComponent>[];
-	size: 'small' | 'medium' | 'large';
-	align: 'left' | 'center' | 'right';
-}>(), {
-	size: 'medium',
-	align: 'left',
-});
+const props = withDefaults(
+	defineProps<{
+		component: AsUiComponent;
+		components: Ref<AsUiComponent>[];
+		size: "small" | "medium" | "large";
+		align: "left" | "center" | "right";
+	}>(),
+	{
+		size: "medium",
+		align: "left",
+	},
+);
 
 const c = props.component;
 
 function g(id) {
-	return props.components.find(x => x.value.id === id).value;
+	return props.components.find((x) => x.value.id === id).value;
 }
 
 let valueForSwitch = $ref(c.default ?? false);

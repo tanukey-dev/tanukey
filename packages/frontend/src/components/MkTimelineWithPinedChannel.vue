@@ -23,37 +23,63 @@
 </MkStickyContainer>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch, defineAsyncComponent } from 'vue';
-import { Tab } from './global/MkPageHeader.tabs.vue';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import * as os from '@/os';
-import MkTimelineWithScroll from '@/components/MkTimelineWithScroll.vue';
-import { defaultStore } from '@/store';
-import { deviceKind } from '@/scripts/device-kind';
-import { scrollToTop } from '@/scripts/scroll';
+import { computed, onMounted, ref, watch, defineAsyncComponent } from "vue";
+import { Tab } from "./global/MkPageHeader.tabs.vue";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
+import * as os from "@/os";
+import MkTimelineWithScroll from "@/components/MkTimelineWithScroll.vue";
+import { defaultStore } from "@/store";
+import { deviceKind } from "@/scripts/device-kind";
+import { scrollToTop } from "@/scripts/scroll";
 
 const tabs = ref<Tab[]>([
-	{ key: 'local', title: i18n.ts._timelines.local, icon: 'ti ti-planet' },
-	{ key: 'social', title: i18n.ts._timelines.social, icon: 'ti ti-rocket' },
-	{ key: 'followdChannel', title: i18n.ts._timelines.followedChannel, icon: 'ti ti-device-tv' },
+	{ key: "local", title: i18n.ts._timelines.local, icon: "ti ti-planet" },
+	{ key: "social", title: i18n.ts._timelines.social, icon: "ti ti-rocket" },
+	{
+		key: "followdChannel",
+		title: i18n.ts._timelines.followedChannel,
+		icon: "ti ti-device-tv",
+	},
 ]);
-const srcCh = computed(() => tab.value === 'local' ? 'local' : tab.value === 'social' ? 'social' : tab.value === 'followdChannel' ? 'followdChannel' : 'channel');
-const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
-const tab = ref<string|null>(null);
-const selectedTab = computed(defaultStore.makeGetterSetter('selectedChannelTab'));
-const channelId = computed(() => tab.value === 'local' ? null : tab.value === 'social' ? null : tab.value === 'followdChannel' ? 'followdChannel' : tab.value);
-const disableSwipe = computed(defaultStore.makeGetterSetter('disableSwipe'));
+const srcCh = computed(() =>
+	tab.value === "local"
+		? "local"
+		: tab.value === "social"
+			? "social"
+			: tab.value === "followdChannel"
+				? "followdChannel"
+				: "channel",
+);
+const postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
+const tab = ref<string | null>(null);
+const selectedTab = computed(
+	defaultStore.makeGetterSetter("selectedChannelTab"),
+);
+const channelId = computed(() =>
+	tab.value === "local"
+		? null
+		: tab.value === "social"
+			? null
+			: tab.value === "followdChannel"
+				? "followdChannel"
+				: tab.value,
+);
+const disableSwipe = computed(defaultStore.makeGetterSetter("disableSwipe"));
 
 watch(tab, async () => {
 	selectedTab.value = tab.value;
 
 	if (tab.value == null) {
-		tab.value = 'local';
+		tab.value = "local";
 	}
 
-	if (tab.value !== 'local' && tab.value !== 'social' && tab.value !== 'followdChannel') {
-		let ch = await os.api('channels/show', {
+	if (
+		tab.value !== "local" &&
+		tab.value !== "social" &&
+		tab.value !== "followdChannel"
+	) {
+		let ch = await os.api("channels/show", {
 			channelId: tab.value,
 		});
 		postChannel.value = ch;
@@ -72,14 +98,14 @@ onMounted(async () => {
 		ids.push(id);
 	}
 
-	let pinnedChs = await os.api('channels/show', {
+	let pinnedChs = await os.api("channels/show", {
 		channelIds: ids,
 	});
 
 	if (pinnedChs) {
 		for (let ch of pinnedChs) {
 			if (ch != null) {
-				t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv' });
+				t.push({ key: ch.id, title: ch.name, icon: "ti ti-device-tv" });
 			}
 		}
 	}
@@ -87,7 +113,7 @@ onMounted(async () => {
 	tabs.value.push(...t);
 
 	if (selectedTab.value == null) {
-		tab.value = 'local';
+		tab.value = "local";
 	} else {
 		tab.value = selectedTab.value;
 	}
@@ -95,7 +121,7 @@ onMounted(async () => {
 
 const onSwipeLeft = (): void => {
 	//モバイル環境のみ
-	if (deviceKind === 'desktop') {
+	if (deviceKind === "desktop") {
 		return;
 	}
 	//AAなどスクロールが必要な場合は無効化
@@ -103,7 +129,7 @@ const onSwipeLeft = (): void => {
 		disableSwipe.value = false;
 		return;
 	}
-	const index = tabs.value.findIndex(x => x.key === tab.value);
+	const index = tabs.value.findIndex((x) => x.key === tab.value);
 	if (index < tabs.value.length - 1) {
 		tab.value = tabs.value[index + 1].key;
 	} else {
@@ -113,7 +139,7 @@ const onSwipeLeft = (): void => {
 
 const onSwipeRight = (): void => {
 	//モバイル環境のみ
-	if (deviceKind === 'desktop') {
+	if (deviceKind === "desktop") {
 		return;
 	}
 	//AAなどスクロールが必要な場合は無効化
@@ -123,7 +149,7 @@ const onSwipeRight = (): void => {
 	}
 	//右スワイプで左のタブに移動
 	//左端までいったら最終ページに移動
-	const index = tabs.value.findIndex(x => x.key === tab.value);
+	const index = tabs.value.findIndex((x) => x.key === tab.value);
 	if (index !== 0) {
 		tab.value = tabs.value[index - 1].key;
 	} else {
@@ -131,12 +157,14 @@ const onSwipeRight = (): void => {
 	}
 };
 
-const headerActions = computed(() => [{
-	icon: 'ti ti-caret-down',
-	text: i18n.ts.menu,
-	handler: dropDownMenu,
-	refHandler: getRef,
-}]);
+const headerActions = computed(() => [
+	{
+		icon: "ti ti-caret-down",
+		text: i18n.ts.menu,
+		handler: dropDownMenu,
+		refHandler: getRef,
+	},
+]);
 
 let el: any = null;
 
@@ -145,17 +173,21 @@ const getRef = (ref) => {
 };
 
 const dropDownMenu = (ev) => {
-	os.popup(defineAsyncComponent(() => import('@/components/MkChannelTabPicker.vue')), {
-		currentKey: tab.value,
-		tabs: tabs,
-		src: el,
-	}, {
-		changeKey: key => {
-			tab.value = key;
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkChannelTabPicker.vue")),
+		{
+			currentKey: tab.value,
+			tabs: tabs,
+			src: el,
 		},
-	}, 'closed');
+		{
+			changeKey: (key) => {
+				tab.value = key;
+			},
+		},
+		"closed",
+	);
 };
-
 </script>
 
 <style lang="scss" module>

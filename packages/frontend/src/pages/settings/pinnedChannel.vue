@@ -34,36 +34,51 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, defineAsyncComponent } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import FormSlot from '@/components/form/slot.vue';
-import { defaultStore } from '@/store';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import { computed, ref, defineAsyncComponent } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import FormSlot from "@/components/form/slot.vue";
+import { defaultStore } from "@/store";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
-const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
+const Sortable = defineAsyncComponent(() =>
+	import("vuedraggable").then((x) => x.default),
+);
 
-const pinnedLtlChannelIds = computed(defaultStore.makeGetterSetter('userPinnedLtlChannelIds'));
-const fields = ref(pinnedLtlChannelIds.value.map(ch => ({ id: Math.random().toString(), name: ch.label, value: ch.value })) ?? []);
-const fieldSet = computed(() => new Set(fields.value.map(ch => ch.value)));
+const pinnedLtlChannelIds = computed(
+	defaultStore.makeGetterSetter("userPinnedLtlChannelIds"),
+);
+const fields = ref(
+	pinnedLtlChannelIds.value.map((ch) => ({
+		id: Math.random().toString(),
+		name: ch.label,
+		value: ch.value,
+	})) ?? [],
+);
+const fieldSet = computed(() => new Set(fields.value.map((ch) => ch.value)));
 const fieldEditMode = ref(false);
 
 function addField() {
-	os.popup(defineAsyncComponent(() => import('@/components/MkChannelDialog.vue')), {}, {
-		done: values => {
-			if (values !== null && values !== undefined) {
-				for (const value of values) {
-					if (!fieldSet.value.has(value.value)) {
-						fields.value.push({
-							id: Math.random().toString(),
-							name: value.label,
-							value: value.value,
-						});
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkChannelDialog.vue")),
+		{},
+		{
+			done: (values) => {
+				if (values !== null && values !== undefined) {
+					for (const value of values) {
+						if (!fieldSet.value.has(value.value)) {
+							fields.value.push({
+								id: Math.random().toString(),
+								name: value.label,
+								value: value.value,
+							});
+						}
 					}
 				}
-			}
+			},
 		},
-	}, 'closed');
+		"closed",
+	);
 }
 
 function deleteField(index: number) {
@@ -71,10 +86,10 @@ function deleteField(index: number) {
 }
 
 function saveFields() {
-	pinnedLtlChannelIds.value = fields.value.map(ch => ({ value: ch.value, label: ch.name })) ?? [];
+	pinnedLtlChannelIds.value =
+		fields.value.map((ch) => ({ value: ch.value, label: ch.name })) ?? [];
 	os.success();
 }
-
 </script>
 
 <style lang="scss" module>

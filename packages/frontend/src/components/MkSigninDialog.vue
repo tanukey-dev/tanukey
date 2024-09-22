@@ -15,34 +15,37 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import MkSignin from '@/components/MkSignin.vue';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import MkSignin from "@/components/MkSignin.vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import { i18n } from "@/i18n";
 
-withDefaults(defineProps<{
-	autoSet?: boolean;
-	message?: string,
-}>(), {
-	autoSet: false,
-	message: '',
-});
+withDefaults(
+	defineProps<{
+		autoSet?: boolean;
+		message?: string;
+	}>(),
+	{
+		autoSet: false,
+		message: "",
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'done', v: any): void;
-	(ev: 'closed'): void;
-	(ev: 'cancelled'): void;
+	(ev: "done", v: any): void;
+	(ev: "closed"): void;
+	(ev: "cancelled"): void;
 }>();
 
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
 
 function onClose() {
-	emit('cancelled');
+	emit("cancelled");
 	if (dialog) dialog.close();
 }
 
 function onLogin(res) {
-	emit('done', res);
+	emit("done", res);
 	if (dialog) dialog.close();
 }
 </script>

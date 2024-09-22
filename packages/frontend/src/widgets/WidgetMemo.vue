@@ -11,22 +11,28 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import { GetFormResultType } from '@/scripts/form';
-import MkContainer from '@/components/MkContainer.vue';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
+import { ref, watch } from "vue";
+import {
+	useWidgetPropsManager,
+	Widget,
+	WidgetComponentEmits,
+	WidgetComponentExpose,
+	WidgetComponentProps,
+} from "./widget";
+import { GetFormResultType } from "@/scripts/form";
+import MkContainer from "@/components/MkContainer.vue";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
 
-const name = 'memo';
+const name = "memo";
 
 const widgetPropsDef = {
 	showHeader: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: true,
 	},
 	height: {
-		type: 'number' as const,
+		type: "number" as const,
 		default: 100,
 	},
 };
@@ -36,7 +42,8 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const { widgetProps, configure } = useWidgetPropsManager(
+	name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -47,7 +54,7 @@ const changed = ref(false);
 let timeoutId;
 
 const saveMemo = () => {
-	defaultStore.set('memo', text.value);
+	defaultStore.set("memo", text.value);
 	changed.value = false;
 };
 
@@ -57,9 +64,12 @@ const onChange = () => {
 	timeoutId = window.setTimeout(saveMemo, 1000);
 };
 
-watch(() => defaultStore.reactiveState.memo, newText => {
-	text.value = newText.value;
-});
+watch(
+	() => defaultStore.reactiveState.memo,
+	(newText) => {
+		text.value = newText.value;
+	},
+);
 
 defineExpose<WidgetComponentExpose>({
 	name,

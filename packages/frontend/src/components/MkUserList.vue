@@ -16,18 +16,21 @@
 </template>
 
 <script lang="ts" setup>
-import MkUserInfo from '@/components/MkUserInfo.vue';
-import MkPagination, { Paging } from '@/components/MkPagination.vue';
-import { i18n } from '@/i18n';
-import { infoImageUrl } from '@/instance';
+import MkUserInfo from "@/components/MkUserInfo.vue";
+import MkPagination, { Paging } from "@/components/MkPagination.vue";
+import { i18n } from "@/i18n";
+import { infoImageUrl } from "@/instance";
 
-const props = withDefaults(defineProps<{
-	pagination: Paging;
-	noGap?: boolean;
-	extractor?: (item: any) => any;
-}>(), {
-	extractor: (item) => item,
-});
+const props = withDefaults(
+	defineProps<{
+		pagination: Paging;
+		noGap?: boolean;
+		extractor?: (item: any) => any;
+	}>(),
+	{
+		extractor: (item) => item,
+	},
+);
 </script>
 
 <style lang="scss" module>

@@ -1,4 +1,4 @@
-import Dexie from 'dexie';
+import Dexie from "dexie";
 
 const SCHEMA_VERSION = 2;
 
@@ -12,19 +12,19 @@ export class ReadNote {
 }
 
 interface ReadNoteDb extends Dexie {
-	readNote: Dexie.Table<ReadNote, string> 
+	readNote: Dexie.Table<ReadNote, string>;
 }
 
-const dexieDb = new Dexie('readNote-database') as ReadNoteDb;
+const dexieDb = new Dexie("readNote-database") as ReadNoteDb;
 dexieDb.version(SCHEMA_VERSION).stores({
-	readNote: 'key',
+	readNote: "key",
 });
 
 export class ReadNoteCache {
 	async claerOldData(): Promise<void> {
 		//1ヶ月たったデータはクリア
 		dexieDb.readNote
-			.filter(rn => {
+			.filter((rn) => {
 				const clearDate = rn.lastShowDate;
 				clearDate.setMonth(clearDate.getMonth() + 1);
 				return new Date() > clearDate;

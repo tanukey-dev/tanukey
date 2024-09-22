@@ -8,9 +8,9 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import MkTooltip from './MkTooltip.vue';
-import MkReactionIcon from '@/components/MkReactionIcon.vue';
+import {} from "vue";
+import MkTooltip from "./MkTooltip.vue";
+import MkReactionIcon from "@/components/MkReactionIcon.vue";
 
 defineProps<{
 	showing: boolean;
@@ -19,7 +19,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+	(ev: "closed"): void;
 }>();
 </script>
 

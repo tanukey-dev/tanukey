@@ -30,40 +30,55 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, provide, ref } from 'vue';
-import type { Tab } from '@/components/global/MkPageHeader.tabs.vue';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import { $i } from '@/account';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { defineAsyncComponent, computed, provide, ref } from "vue";
+import type { Tab } from "@/components/global/MkPageHeader.tabs.vue";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
+import { $i } from "@/account";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
-provide('shouldOmitHeaderTitle', true);
+provide("shouldOmitHeaderTitle", true);
 
-const XCommonTimeline = defineAsyncComponent(() => import('@/components/MkTimelineWithScroll.vue'));
-const MkTimelineWithPinedChannel = defineAsyncComponent(() => import('@/components/MkTimelineWithPinedChannel.vue'));
-const MkTimelineWithUserPinedChannel = defineAsyncComponent(() => import('@/components/MkTimelineWithUserPinedChannel.vue'));
+const XCommonTimeline = defineAsyncComponent(
+	() => import("@/components/MkTimelineWithScroll.vue"),
+);
+const MkTimelineWithPinedChannel = defineAsyncComponent(
+	() => import("@/components/MkTimelineWithPinedChannel.vue"),
+);
+const MkTimelineWithUserPinedChannel = defineAsyncComponent(
+	() => import("@/components/MkTimelineWithUserPinedChannel.vue"),
+);
 
 function isNeedPinnedChannels(): boolean {
-	return src === 'feed';
+	return src === "feed";
 }
 
 function isNeedUserPinnedChannels(): boolean {
-	return src === 'channel';
+	return src === "channel";
 }
 
-const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable);
-const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
-const userPinnedLtlChannelIds = defaultStore.makeGetterSetter('userPinnedLtlChannelIds');
+const isLocalTimelineAvailable =
+	($i == null && instance.policies.ltlAvailable) ||
+	($i != null && $i.policies.ltlAvailable);
+const isGlobalTimelineAvailable =
+	($i == null && instance.policies.gtlAvailable) ||
+	($i != null && $i.policies.gtlAvailable);
+const userPinnedLtlChannelIds = defaultStore.makeGetterSetter(
+	"userPinnedLtlChannelIds",
+);
 
-let srcWhenNotSignin = $ref(isLocalTimelineAvailable ? 'local' : 'global');
-const src = $computed({ get: () => ($i ? defaultStore.reactiveState.tl.value.src : srcWhenNotSignin), set: (x) => saveSrc(x) });
+let srcWhenNotSignin = $ref(isLocalTimelineAvailable ? "local" : "global");
+const src = $computed({
+	get: () => ($i ? defaultStore.reactiveState.tl.value.src : srcWhenNotSignin),
+	set: (x) => saveSrc(x),
+});
 
 async function chooseList(ev: MouseEvent): Promise<void> {
-	const lists = await os.api('users/lists/list');
-	const items = lists.map(list => ({
-		type: 'link' as const,
+	const lists = await os.api("users/lists/list");
+	const items = lists.map((list) => ({
+		type: "link" as const,
 		text: list.name,
 		to: `/timeline/list/${list.id}`,
 	}));
@@ -71,9 +86,9 @@ async function chooseList(ev: MouseEvent): Promise<void> {
 }
 
 async function chooseAntenna(ev: MouseEvent): Promise<void> {
-	const antennas = await os.api('antennas/list');
-	const items = antennas.map(antenna => ({
-		type: 'link' as const,
+	const antennas = await os.api("antennas/list");
+	const items = antennas.map((antenna) => ({
+		type: "link" as const,
 		text: antenna.name,
 		indicate: antenna.hasUnreadNote,
 		to: `/timeline/antenna/${antenna.id}`,
@@ -82,11 +97,11 @@ async function chooseAntenna(ev: MouseEvent): Promise<void> {
 }
 
 async function chooseChannel(ev: MouseEvent): Promise<void> {
-	const channels = await os.api('channels/my-favorites', {
+	const channels = await os.api("channels/my-favorites", {
 		limit: 100,
 	});
-	const items = channels.map(channel => ({
-		type: 'link' as const,
+	const items = channels.map((channel) => ({
+		type: "link" as const,
 		text: channel.name,
 		indicate: channel.hasUnreadNote,
 		to: `/channels/${channel.id}`,
@@ -94,8 +109,8 @@ async function chooseChannel(ev: MouseEvent): Promise<void> {
 	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
-function saveSrc(newSrc: 'home' | 'local' | 'social' | 'global'): void {
-	defaultStore.set('tl', {
+function saveSrc(newSrc: "home" | "local" | "social" | "global"): void {
+	defaultStore.set("tl", {
 		...defaultStore.state.tl,
 		src: newSrc,
 	});
@@ -104,7 +119,7 @@ function saveSrc(newSrc: 'home' | 'local' | 'social' | 'global'): void {
 
 const headerActions = $computed(() => [
 	{
-		icon: 'ti ti-refresh',
+		icon: "ti ti-refresh",
 		text: i18n.ts.reload,
 		handler: (): void => {
 			location.reload();
@@ -112,67 +127,111 @@ const headerActions = $computed(() => [
 	},
 ]);
 
-const headerTabs = $computed(() => [{
-	key: 'home',
-	title: i18n.ts._timelines.home,
-	icon: 'ti ti-home',
-	iconOnly: true,
-}, ...(isLocalTimelineAvailable ? [{
-	key: 'feed',
-	title: i18n.ts._timelines.feed,
-	icon: 'ti ti-timeline',
-	iconOnly: true,
-}, ...(userPinnedLtlChannelIds.get().length > 0 ? [{
-	key: 'channel',
-	title: i18n.ts._timelines.channel,
-	icon: 'ti ti-device-tv-old',
-	iconOnly: true,
-}] : []), {
-	key: 'media',
-	title: i18n.ts._timelines.media,
-	icon: 'ti ti-photo',
-	iconOnly: true,
-}] : []), ...(isGlobalTimelineAvailable ? [{
-	key: 'global',
-	title: i18n.ts._timelines.global,
-	icon: 'ti ti-whirl',
-	iconOnly: true,
-}] : []), {
-	icon: 'ti ti-list',
-	title: i18n.ts.lists,
-	iconOnly: true,
-	onClick: chooseList,
-}, {
-	icon: 'ti ti-antenna',
-	title: i18n.ts.antennas,
-	iconOnly: true,
-	onClick: chooseAntenna,
-}, {
-	icon: 'ti ti-device-tv',
-	title: i18n.ts.channel,
-	iconOnly: true,
-	onClick: chooseChannel,
-}] as Tab[]);
+const headerTabs = $computed(
+	() =>
+		[
+			{
+				key: "home",
+				title: i18n.ts._timelines.home,
+				icon: "ti ti-home",
+				iconOnly: true,
+			},
+			...(isLocalTimelineAvailable
+				? [
+						{
+							key: "feed",
+							title: i18n.ts._timelines.feed,
+							icon: "ti ti-timeline",
+							iconOnly: true,
+						},
+						...(userPinnedLtlChannelIds.get().length > 0
+							? [
+									{
+										key: "channel",
+										title: i18n.ts._timelines.channel,
+										icon: "ti ti-device-tv-old",
+										iconOnly: true,
+									},
+								]
+							: []),
+						{
+							key: "media",
+							title: i18n.ts._timelines.media,
+							icon: "ti ti-photo",
+							iconOnly: true,
+						},
+					]
+				: []),
+			...(isGlobalTimelineAvailable
+				? [
+						{
+							key: "global",
+							title: i18n.ts._timelines.global,
+							icon: "ti ti-whirl",
+							iconOnly: true,
+						},
+					]
+				: []),
+			{
+				icon: "ti ti-list",
+				title: i18n.ts.lists,
+				iconOnly: true,
+				onClick: chooseList,
+			},
+			{
+				icon: "ti ti-antenna",
+				title: i18n.ts.antennas,
+				iconOnly: true,
+				onClick: chooseAntenna,
+			},
+			{
+				icon: "ti ti-device-tv",
+				title: i18n.ts.channel,
+				iconOnly: true,
+				onClick: chooseChannel,
+			},
+		] as Tab[],
+);
 
-const headerTabsWhenNotLogin = $computed(() => [
-	...(isLocalTimelineAvailable ? [{
-		key: 'local',
-		title: i18n.ts._timelines.local,
-		icon: 'ti ti-planet',
-		iconOnly: true,
-	}] : []),
-	...(isGlobalTimelineAvailable ? [{
-		key: 'global',
-		title: i18n.ts._timelines.global,
-		icon: 'ti ti-whirl',
-		iconOnly: true,
-	}] : []),
-] as Tab[]);
+const headerTabsWhenNotLogin = $computed(
+	() =>
+		[
+			...(isLocalTimelineAvailable
+				? [
+						{
+							key: "local",
+							title: i18n.ts._timelines.local,
+							icon: "ti ti-planet",
+							iconOnly: true,
+						},
+					]
+				: []),
+			...(isGlobalTimelineAvailable
+				? [
+						{
+							key: "global",
+							title: i18n.ts._timelines.global,
+							icon: "ti ti-whirl",
+							iconOnly: true,
+						},
+					]
+				: []),
+		] as Tab[],
+);
 
-definePageMetadata(computed(() => ({
-	title: i18n.ts.timeline,
-	icon: src === 'local' ? 'ti ti-planet' : src === 'social' ? 'ti ti-rocket' : src === 'global' ? 'ti ti-whirl' : 'ti ti-home',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: i18n.ts.timeline,
+		icon:
+			src === "local"
+				? "ti ti-planet"
+				: src === "social"
+					? "ti ti-rocket"
+					: src === "global"
+						? "ti ti-whirl"
+						: "ti ti-home",
+	})),
+);
 </script>
 
 <style lang="scss" module>

@@ -23,27 +23,39 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, shallowRef, watch } from 'vue';
-import tinycolor from 'tinycolor2';
-import { miLocalStorage } from '@/local-storage';
-import { defaultStore } from '@/store';
+import { onMounted, ref, shallowRef, watch } from "vue";
+import tinycolor from "tinycolor2";
+import { miLocalStorage } from "@/local-storage";
+import { defaultStore } from "@/store";
 
-const miLocalStoragePrefix = 'ui:folder:' as const;
+const miLocalStoragePrefix = "ui:folder:" as const;
 
-const props = withDefaults(defineProps<{
-	expanded?: boolean;
-	persistKey?: string;
-}>(), {
-	expanded: true,
-});
+const props = withDefaults(
+	defineProps<{
+		expanded?: boolean;
+		persistKey?: string;
+	}>(),
+	{
+		expanded: true,
+	},
+);
 
 const el = shallowRef<HTMLDivElement>();
 const bg = ref<string | null>(null);
-const showBody = ref((props.persistKey && miLocalStorage.getItem(`${miLocalStoragePrefix}${props.persistKey}`)) ? (miLocalStorage.getItem(`${miLocalStoragePrefix}${props.persistKey}`) === 't') : props.expanded);
+const showBody = ref(
+	props.persistKey &&
+		miLocalStorage.getItem(`${miLocalStoragePrefix}${props.persistKey}`)
+		? miLocalStorage.getItem(`${miLocalStoragePrefix}${props.persistKey}`) ===
+				"t"
+		: props.expanded,
+);
 
 watch(showBody, () => {
 	if (props.persistKey) {
-		miLocalStorage.setItem(`${miLocalStoragePrefix}${props.persistKey}`, showBody.value ? 't' : 'f');
+		miLocalStorage.setItem(
+			`${miLocalStoragePrefix}${props.persistKey}`,
+			showBody.value ? "t" : "f",
+		);
 	}
 });
 
@@ -51,7 +63,7 @@ function enter(el: Element) {
 	const elementHeight = el.getBoundingClientRect().height;
 	el.style.height = 0;
 	el.offsetHeight; // reflow
-	el.style.height = elementHeight + 'px';
+	el.style.height = elementHeight + "px";
 }
 
 function afterEnter(el: Element) {
@@ -60,7 +72,7 @@ function afterEnter(el: Element) {
 
 function leave(el: Element) {
 	const elementHeight = el.getBoundingClientRect().height;
-	el.style.height = elementHeight + 'px';
+	el.style.height = elementHeight + "px";
 	el.offsetHeight; // reflow
 	el.style.height = 0;
 }
@@ -71,7 +83,7 @@ function afterLeave(el: Element) {
 
 onMounted(() => {
 	function getParentBg(el: HTMLElement | null): string {
-		if (el == null || el.tagName === 'BODY') return 'var(--bg)';
+		if (el == null || el.tagName === "BODY") return "var(--bg)";
 		const bg = el.style.background || el.style.backgroundColor;
 		if (bg) {
 			return bg;
@@ -80,7 +92,13 @@ onMounted(() => {
 		}
 	}
 	const rawBg = getParentBg(el.value);
-	const _bg = tinycolor(rawBg.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(rawBg.slice(4, -1)) : rawBg);
+	const _bg = tinycolor(
+		rawBg.startsWith("var(")
+			? getComputedStyle(document.documentElement).getPropertyValue(
+					rawBg.slice(4, -1),
+				)
+			: rawBg,
+	);
 	_bg.setAlpha(0.85);
 	bg.value = _bg.toRgbString();
 });

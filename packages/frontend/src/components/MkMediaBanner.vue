@@ -28,21 +28,23 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import * as misskey from 'misskey-js';
-import { soundConfigStore } from '@/scripts/sound';
-import { i18n } from '@/i18n';
+import { onMounted } from "vue";
+import * as misskey from "misskey-js";
+import { soundConfigStore } from "@/scripts/sound";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	media: misskey.entities.DriveFile;
-}>(), {
-});
+const props = withDefaults(
+	defineProps<{
+		media: misskey.entities.DriveFile;
+	}>(),
+	{},
+);
 
 const audioEl = $shallowRef<HTMLAudioElement | null>();
 let hide = $ref(true);
 
 function volumechange() {
-	if (audioEl) soundConfigStore.set('mediaVolume', audioEl.volume);
+	if (audioEl) soundConfigStore.set("mediaVolume", audioEl.volume);
 }
 
 onMounted(() => {

@@ -13,17 +13,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, shallowRef, watch, ref } from 'vue';
-import * as misskey from 'misskey-js';
-import XDetails from '@/components/MkReactionsViewer.details.vue';
-import MkReactionIcon from '@/components/MkReactionIcon.vue';
-import * as os from '@/os';
-import { useTooltip } from '@/scripts/use-tooltip';
-import { $i } from '@/account';
-import MkReactionEffect from '@/components/MkReactionEffect.vue';
-import { claimAchievement } from '@/scripts/achievements';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
+import { computed, onMounted, shallowRef, watch, ref } from "vue";
+import * as misskey from "misskey-js";
+import XDetails from "@/components/MkReactionsViewer.details.vue";
+import MkReactionIcon from "@/components/MkReactionIcon.vue";
+import * as os from "@/os";
+import { useTooltip } from "@/scripts/use-tooltip";
+import { $i } from "@/account";
+import MkReactionEffect from "@/components/MkReactionEffect.vue";
+import { claimAchievement } from "@/scripts/achievements";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	reaction: string;
@@ -46,28 +46,35 @@ async function toggleReaction() {
 	const oldReaction = props.note.myReaction;
 	if (oldReaction) {
 		const confirm = await os.confirm({
-			type: 'warning',
-			text: oldReaction !== props.reaction ? i18n.ts.changeReactionConfirm : i18n.ts.cancelReactionConfirm,
+			type: "warning",
+			text:
+				oldReaction !== props.reaction
+					? i18n.ts.changeReactionConfirm
+					: i18n.ts.cancelReactionConfirm,
 		});
 		if (confirm.canceled) return;
 
-		os.api('notes/reactions/delete', {
+		os.api("notes/reactions/delete", {
 			noteId: props.note.id,
 		}).then(() => {
 			if (oldReaction !== props.reaction) {
-				os.api('notes/reactions/create', {
+				os.api("notes/reactions/create", {
 					noteId: props.note.id,
 					reaction: props.reaction,
 				});
 			}
 		});
 	} else {
-		os.api('notes/reactions/create', {
+		os.api("notes/reactions/create", {
 			noteId: props.note.id,
 			reaction: props.reaction,
 		});
-		if (props.note.text && props.note.text.length > 100 && (Date.now() - new Date(props.note.createdAt).getTime() < 1000 * 3)) {
-			claimAchievement('reactWithoutRead');
+		if (
+			props.note.text &&
+			props.note.text.length > 100 &&
+			Date.now() - new Date(props.note.createdAt).getTime() < 1000 * 3
+		) {
+			claimAchievement("reactWithoutRead");
 		}
 	}
 }
@@ -78,47 +85,59 @@ function anime() {
 
 	const rect = buttonEl.value.getBoundingClientRect();
 	const x = rect.left + 16;
-	const y = rect.top + (buttonEl.value.offsetHeight / 2);
-	os.popup(MkReactionEffect, { reaction: props.reaction, x, y }, {}, 'end');
+	const y = rect.top + buttonEl.value.offsetHeight / 2;
+	os.popup(MkReactionEffect, { reaction: props.reaction, x, y }, {}, "end");
 }
 
-watch(() => props.count, (newCount, oldCount) => {
-	showCount.value = newCount;
-	if (oldCount < newCount) {
-		anime();
-	}
-});
+watch(
+	() => props.count,
+	(newCount, oldCount) => {
+		showCount.value = newCount;
+		if (oldCount < newCount) {
+			anime();
+		}
+	},
+);
 
 onMounted(() => {
 	if (!props.isInitial) anime();
 });
 
-useTooltip(buttonEl, async (showing) => {
-	const reactions = await os.api('notes/reactions', {
-		noteId: props.note.id,
-		type: props.reaction,
-		limit: 11,
-		_cacheKey_: props.count,
-	});
+useTooltip(
+	buttonEl,
+	async (showing) => {
+		const reactions = await os.api("notes/reactions", {
+			noteId: props.note.id,
+			type: props.reaction,
+			limit: 11,
+			_cacheKey_: props.count,
+		});
 
-	// ミュートしているユーザーのリアクションがあることを隠す
-	if (reactions.length === 0) {
-		showReaction.value = false;
-		return;
-	}
+		// ミュートしているユーザーのリアクションがあることを隠す
+		if (reactions.length === 0) {
+			showReaction.value = false;
+			return;
+		}
 
-	showCount.value = reactions.length;
+		showCount.value = reactions.length;
 
-	const users = reactions.map(x => x.user);
+		const users = reactions.map((x) => x.user);
 
-	os.popup(XDetails, {
-		showing,
-		reaction: props.reaction,
-		users,
-		count: props.count,
-		targetElement: buttonEl.value,
-	}, {}, 'closed');
-}, 100);
+		os.popup(
+			XDetails,
+			{
+				showing,
+				reaction: props.reaction,
+				users,
+				count: props.count,
+				targetElement: buttonEl.value,
+			},
+			{},
+			"closed",
+		);
+	},
+	100,
+);
 </script>
 
 <style lang="scss" module>

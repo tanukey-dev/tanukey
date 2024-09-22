@@ -18,15 +18,15 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
-import * as Misskey from 'misskey-js';
+import { defineAsyncComponent } from "vue";
+import * as Misskey from "misskey-js";
 
-const XBlock = defineAsyncComponent(() => import('./page.block.vue'));
+const XBlock = defineAsyncComponent(() => import("./page.block.vue"));
 
 defineProps<{
-	block: Misskey.entities.SectionBlock,
-	h: number,
-	page: Misskey.entities.Page,
+	block: Misskey.entities.SectionBlock;
+	h: number;
+	page: Misskey.entities.Page;
 }>();
 </script>
 

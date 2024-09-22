@@ -17,25 +17,31 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted, ref } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import { GetFormResultType } from '@/scripts/form';
-import { useStream } from '@/stream';
-import { getStaticImageUrl } from '@/scripts/media-proxy';
-import * as os from '@/os';
-import MkContainer from '@/components/MkContainer.vue';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
+import { onUnmounted, ref } from "vue";
+import {
+	useWidgetPropsManager,
+	Widget,
+	WidgetComponentEmits,
+	WidgetComponentExpose,
+	WidgetComponentProps,
+} from "./widget";
+import { GetFormResultType } from "@/scripts/form";
+import { useStream } from "@/stream";
+import { getStaticImageUrl } from "@/scripts/media-proxy";
+import * as os from "@/os";
+import MkContainer from "@/components/MkContainer.vue";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
 
-const name = 'photos';
+const name = "photos";
 
 const widgetPropsDef = {
 	showHeader: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: true,
 	},
 	transparent: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: false,
 	},
 };
@@ -45,13 +51,14 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const { widgetProps, configure } = useWidgetPropsManager(
+	name,
 	widgetPropsDef,
 	props,
 	emit,
 );
 
-const connection = useStream().useChannel('main');
+const connection = useStream().useChannel("main");
 const images = ref([]);
 const fetching = ref(true);
 
@@ -68,15 +75,15 @@ const thumbnail = (image: any): string => {
 		: image.thumbnailUrl;
 };
 
-os.api('drive/stream', {
-	type: 'image/*',
+os.api("drive/stream", {
+	type: "image/*",
 	limit: 9,
-}).then(res => {
+}).then((res) => {
 	images.value = res;
 	fetching.value = false;
 });
 
-connection.on('driveFileCreated', onDriveFileCreated);
+connection.on("driveFileCreated", onDriveFileCreated);
 onUnmounted(() => {
 	connection.dispose();
 });

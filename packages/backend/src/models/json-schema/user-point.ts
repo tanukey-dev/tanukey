@@ -1,14 +1,16 @@
 export const packedUserPointSchema = {
-	type: 'object',
+	type: "object",
 	properties: {
 		point: {
-			type: 'number',
-			optional: false, nullable: false,
+			type: "number",
+			optional: false,
+			nullable: false,
 		},
 		updatedAtDailyFirstNote: {
-			type: 'string',
-			optional: false, nullable: true,
-			format: 'date-time',
+			type: "string",
+			optional: false,
+			nullable: true,
+			format: "date-time",
 		},
 	},
 } as const;

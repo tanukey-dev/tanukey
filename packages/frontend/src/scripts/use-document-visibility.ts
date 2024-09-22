@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref, Ref } from 'vue';
+import { onMounted, onUnmounted, ref, Ref } from "vue";
 
 export function useDocumentVisibility(): Ref<DocumentVisibilityState> {
 	const visibility = ref(document.visibilityState);
@@ -8,11 +8,11 @@ export function useDocumentVisibility(): Ref<DocumentVisibilityState> {
 	};
 
 	onMounted(() => {
-		document.addEventListener('visibilitychange', onChange);
+		document.addEventListener("visibilitychange", onChange);
 	});
 
 	onUnmounted(() => {
-		document.removeEventListener('visibilitychange', onChange);
+		document.removeEventListener("visibilitychange", onChange);
 	});
 
 	return visibility;

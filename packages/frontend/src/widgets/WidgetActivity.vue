@@ -15,29 +15,35 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import XCalendar from './WidgetActivity.calendar.vue';
-import XChart from './WidgetActivity.chart.vue';
-import { GetFormResultType } from '@/scripts/form';
-import * as os from '@/os';
-import MkContainer from '@/components/MkContainer.vue';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
+import { ref } from "vue";
+import {
+	useWidgetPropsManager,
+	Widget,
+	WidgetComponentEmits,
+	WidgetComponentExpose,
+	WidgetComponentProps,
+} from "./widget";
+import XCalendar from "./WidgetActivity.calendar.vue";
+import XChart from "./WidgetActivity.chart.vue";
+import { GetFormResultType } from "@/scripts/form";
+import * as os from "@/os";
+import MkContainer from "@/components/MkContainer.vue";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
 
-const name = 'activity';
+const name = "activity";
 
 const widgetPropsDef = {
 	showHeader: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: true,
 	},
 	transparent: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: false,
 	},
 	view: {
-		type: 'number' as const,
+		type: "number" as const,
 		default: 0,
 		hidden: true,
 	},
@@ -48,7 +54,8 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure, save } = useWidgetPropsManager(name,
+const { widgetProps, configure, save } = useWidgetPropsManager(
+	name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -66,11 +73,11 @@ const toggleView = () => {
 	save();
 };
 
-os.apiGet('charts/user/notes', {
+os.apiGet("charts/user/notes", {
 	userId: $i.id,
-	span: 'day',
+	span: "day",
 	limit: 7 * 21,
-}).then(res => {
+}).then((res) => {
 	activity.value = res.diffs.normal.map((_, i) => ({
 		total: res.diffs.normal[i] + res.diffs.reply[i] + res.diffs.renote[i],
 		notes: res.diffs.normal[i],

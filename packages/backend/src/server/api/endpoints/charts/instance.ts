@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { getJsonSchema } from '@/core/chart/core.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import InstanceChart from '@/core/chart/charts/instance.js';
-import { schema } from '@/core/chart/charts/entities/instance.js';
+import { Injectable } from "@nestjs/common";
+import { getJsonSchema } from "@/core/chart/core.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import InstanceChart from "@/core/chart/charts/instance.js";
+import { schema } from "@/core/chart/charts/entities/instance.js";
 
 export const meta = {
-	tags: ['charts'],
+	tags: ["charts"],
 
 	res: getJsonSchema(schema),
 
@@ -14,24 +14,27 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		span: { type: 'string', enum: ['day', 'hour'] },
-		limit: { type: 'integer', minimum: 1, maximum: 500, default: 30 },
-		offset: { type: 'integer', nullable: true, default: null },
-		host: { type: 'string' },
+		span: { type: "string", enum: ["day", "hour"] },
+		limit: { type: "integer", minimum: 1, maximum: 500, default: 30 },
+		offset: { type: "integer", nullable: true, default: null },
+		host: { type: "string" },
 	},
-	required: ['span', 'host'],
+	required: ["span", "host"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor(
-		private instanceChart: InstanceChart,
-	) {
+	constructor(private instanceChart: InstanceChart) {
 		super(meta, paramDef, async (ps, me) => {
-			return await this.instanceChart.getChart(ps.span, ps.limit, ps.offset ? new Date(ps.offset) : null, ps.host);
+			return await this.instanceChart.getChart(
+				ps.span,
+				ps.limit,
+				ps.offset ? new Date(ps.offset) : null,
+				ps.host,
+			);
 		});
 	}
 }

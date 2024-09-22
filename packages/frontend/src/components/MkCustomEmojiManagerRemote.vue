@@ -25,40 +25,49 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import MkInput from '@/components/MkInput.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import FormSplit from '@/components/form/split.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import { computed, ref } from "vue";
+import MkInput from "@/components/MkInput.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import FormSplit from "@/components/form/split.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
 const queryRemote = ref(null);
 const host = ref(null);
 
 const remotePagination = {
-	endpoint: 'admin/emoji/list-remote' as const,
+	endpoint: "admin/emoji/list-remote" as const,
 	limit: 30,
 	params: computed(() => ({
-		query: (queryRemote.value && queryRemote.value !== '') ? queryRemote.value : null,
-		host: (host.value && host.value !== '') ? host.value : null,
+		query:
+			queryRemote.value && queryRemote.value !== "" ? queryRemote.value : null,
+		host: host.value && host.value !== "" ? host.value : null,
 	})),
 };
 
 const im = (emoji) => {
-	os.apiWithDialog('admin/emoji/copy', {
+	os.apiWithDialog("admin/emoji/copy", {
 		emojiId: emoji.id,
 	});
 };
 
 const remoteMenu = (emoji, ev: MouseEvent) => {
-	os.popupMenu([{
-		type: 'label',
-		text: ':' + emoji.name + ':',
-	}, {
-		text: i18n.ts.import,
-		icon: 'ti ti-plus',
-		action: () => { im(emoji); },
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				type: "label",
+				text: ":" + emoji.name + ":",
+			},
+			{
+				text: i18n.ts.import,
+				icon: "ti ti-plus",
+				action: () => {
+					im(emoji);
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 };
 </script>
 

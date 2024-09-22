@@ -5,24 +5,23 @@
 </template>
 
 <script lang="ts" setup>
-import MkTabButton from '@/components/MkTabButton.vue';
+import MkTabButton from "@/components/MkTabButton.vue";
 
 const props = defineProps<{
-	modelValue: string|null,
-	tabs: Array<{ value: string, label: string }>,
+	modelValue: string | null;
+	tabs: Array<{ value: string; label: string }>;
 }>();
 
 // eslint-disable-next-line id-denylist
-const emits = defineEmits<{(e: 'update:modelValue', text: string): void}>();
+const emits = defineEmits<{ (e: "update:modelValue", text: string): void }>();
 
 const isActive = (tab: any): boolean => {
 	return tab.value === props.modelValue;
 };
 
 const onClick = (value: string): void => {
-	emits('update:modelValue', value);
+	emits("update:modelValue", value);
 };
-
 </script>
 
 <style lang="scss">

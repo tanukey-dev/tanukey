@@ -1,5 +1,5 @@
-import Redis from 'ioredis';
-import { loadConfig } from './built/config.js';
+import Redis from "ioredis";
+import { loadConfig } from "./built/config.js";
 
 const config = loadConfig();
 const redis = new Redis({
@@ -11,7 +11,7 @@ const redis = new Redis({
 	db: config.redis.db ?? 0,
 });
 
-redis.on('connect', () => redis.disconnect());
-redis.on('error', (e) => {
+redis.on("connect", () => redis.disconnect());
+redis.on("error", (e) => {
 	throw e;
 });

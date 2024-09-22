@@ -17,16 +17,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { v4 as uuid } from 'uuid';
-import XHeader from './_header_.vue';
-import XEditor from './roles.editor.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { useRouter } from '@/router';
-import MkButton from '@/components/MkButton.vue';
-import { rolesCache } from '@/cache';
+import { computed } from "vue";
+import { v4 as uuid } from "uuid";
+import XHeader from "./_header_.vue";
+import XEditor from "./roles.editor.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { useRouter } from "@/router";
+import MkButton from "@/components/MkButton.vue";
+import { rolesCache } from "@/cache";
 
 const router = useRouter();
 
@@ -38,21 +38,21 @@ let role = $ref(null);
 let data = $ref(null);
 
 if (props.id) {
-	role = await os.api('admin/roles/show', {
+	role = await os.api("admin/roles/show", {
 		roleId: props.id,
 	});
 
 	data = role;
 } else {
 	data = {
-		name: 'New Role',
-		description: '',
+		name: "New Role",
+		description: "",
 		isAdministrator: false,
 		isModerator: false,
 		color: null,
 		iconUrl: null,
-		target: 'manual',
-		condFormula: { id: uuid(), type: 'isRemote' },
+		target: "manual",
+		condFormula: { id: uuid(), type: "isRemote" },
 		isPublic: false,
 		isExplorable: false,
 		asBadge: false,
@@ -65,28 +65,34 @@ if (props.id) {
 async function save() {
 	rolesCache.delete();
 	if (role) {
-		os.apiWithDialog('admin/roles/update', {
+		os.apiWithDialog("admin/roles/update", {
 			roleId: role.id,
 			...data,
 		});
-		router.push('/admin/roles/' + role.id);
+		router.push("/admin/roles/" + role.id);
 	} else {
-		const created = await os.apiWithDialog('admin/roles/create', {
+		const created = await os.apiWithDialog("admin/roles/create", {
 			...data,
 		});
-		router.push('/admin/roles/' + created.id);
+		router.push("/admin/roles/" + created.id);
 	}
 }
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => role ? {
-	title: i18n.ts._role.edit + ': ' + role.name,
-	icon: 'ti ti-badge',
-} : {
-	title: i18n.ts._role.new,
-	icon: 'ti ti-badge',
-}));
+definePageMetadata(
+	computed(() =>
+		role
+			? {
+					title: i18n.ts._role.edit + ": " + role.name,
+					icon: "ti ti-badge",
+				}
+			: {
+					title: i18n.ts._role.new,
+					icon: "ti ti-badge",
+				},
+	),
+);
 </script>
 
 <style lang="scss" module>

@@ -20,12 +20,12 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from 'misskey-js';
-import { ref } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
-import * as os from '@/os';
+import * as misskey from "misskey-js";
+import { ref } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
+import * as os from "@/os";
 
 const props = defineProps<{
 	user: misskey.entities.UserDetailed;
@@ -35,7 +35,7 @@ const isFollowing = ref(false);
 
 async function follow() {
 	isFollowing.value = true;
-	os.api('following/create', {
+	os.api("following/create", {
 		userId: props.user.id,
 	});
 }

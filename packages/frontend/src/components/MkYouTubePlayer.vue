@@ -19,17 +19,18 @@
 </template>
 
 <script lang="ts" setup>
-import MkWindow from '@/components/MkWindow.vue';
-import { versatileLang } from '@/scripts/intl-const';
-import { defaultStore } from '@/store';
-import { transformPlayerUrl } from '@/scripts/player-url-transform.js';
+import MkWindow from "@/components/MkWindow.vue";
+import { versatileLang } from "@/scripts/intl-const";
+import { defaultStore } from "@/store";
+import { transformPlayerUrl } from "@/scripts/player-url-transform.js";
 
 const props = defineProps<{
 	url: string;
 }>();
 
 const requestUrl = new URL(props.url);
-if (!['http:', 'https:'].includes(requestUrl.protocol)) throw new Error('invalid url');
+if (!["http:", "https:"].includes(requestUrl.protocol))
+	throw new Error("invalid url");
 
 let fetching = $ref(true);
 let title = $ref<string | null>(null);
@@ -41,18 +42,21 @@ let player = $ref({
 
 const ytFetch = (): void => {
 	fetching = true;
-	window.fetch(`/url?url=${encodeURIComponent(requestUrl.href)}&lang=${versatileLang}`).then(res => {
-		res.json().then(info => {
-			if (info.url == null) return;
-			title = info.title;
-			fetching = false;
-			player = info.player;
+	window
+		.fetch(
+			`/url?url=${encodeURIComponent(requestUrl.href)}&lang=${versatileLang}`,
+		)
+		.then((res) => {
+			res.json().then((info) => {
+				if (info.url == null) return;
+				title = info.title;
+				fetching = false;
+				player = info.player;
+			});
 		});
-	});
 };
 
 ytFetch();
-
 </script>
 
 <style lang="scss">

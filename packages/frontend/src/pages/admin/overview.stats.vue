@@ -56,13 +56,13 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import * as os from '@/os';
-import MkNumberDiff from '@/components/MkNumberDiff.vue';
-import MkNumber from '@/components/MkNumber.vue';
-import { i18n } from '@/i18n';
-import { customEmojis } from '@/custom-emojis';
-import { defaultStore } from '@/store';
+import { onMounted } from "vue";
+import * as os from "@/os";
+import MkNumberDiff from "@/components/MkNumberDiff.vue";
+import MkNumber from "@/components/MkNumber.vue";
+import { i18n } from "@/i18n";
+import { customEmojis } from "@/custom-emojis";
+import { defaultStore } from "@/store";
 
 let stats: any = $ref(null);
 let usersComparedToThePrevDay = $ref<number>();
@@ -72,17 +72,17 @@ let fetching = $ref(true);
 
 onMounted(async () => {
 	const [_stats, _onlineUsersCount] = await Promise.all([
-		os.api('stats', {}),
-		os.api('get-online-users-count').then(res => res.count),
+		os.api("stats", {}),
+		os.api("get-online-users-count").then((res) => res.count),
 	]);
 	stats = _stats;
 	onlineUsersCount = _onlineUsersCount;
 
-	os.apiGet('charts/users', { limit: 2, span: 'day' }).then(chart => {
+	os.apiGet("charts/users", { limit: 2, span: "day" }).then((chart) => {
 		usersComparedToThePrevDay = stats.originalUsersCount - chart.local.total[1];
 	});
 
-	os.apiGet('charts/notes', { limit: 2, span: 'day' }).then(chart => {
+	os.apiGet("charts/notes", { limit: 2, span: "day" }).then((chart) => {
 		notesComparedToThePrevDay = stats.originalNotesCount - chart.local.total[1];
 	});
 

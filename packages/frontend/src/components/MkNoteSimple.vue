@@ -17,12 +17,12 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import * as misskey from 'misskey-js';
-import MkNoteHeader from '@/components/MkNoteHeader.vue';
-import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
-import MkCwButton from '@/components/MkCwButton.vue';
-import { $i } from '@/account';
+import {} from "vue";
+import * as misskey from "misskey-js";
+import MkNoteHeader from "@/components/MkNoteHeader.vue";
+import MkSubNoteContent from "@/components/MkSubNoteContent.vue";
+import MkCwButton from "@/components/MkCwButton.vue";
+import { $i } from "@/account";
 
 const props = defineProps<{
 	note: misskey.entities.Note;

@@ -57,26 +57,41 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { focusPrev, focusNext } from '@/scripts/focus';
-import MkSwitchButton from '@/components/MkSwitch.button.vue';
-import { MenuItem, InnerMenuItem, OuterMenuItem, MenuPending, MenuAction, MenuSwitch, MenuParent } from '@/types/menu';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import {
+	defineAsyncComponent,
+	nextTick,
+	onBeforeUnmount,
+	onMounted,
+	ref,
+	watch,
+} from "vue";
+import { focusPrev, focusNext } from "@/scripts/focus";
+import MkSwitchButton from "@/components/MkSwitch.button.vue";
+import {
+	MenuItem,
+	InnerMenuItem,
+	OuterMenuItem,
+	MenuPending,
+	MenuAction,
+	MenuSwitch,
+	MenuParent,
+} from "@/types/menu";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
-const XChild = defineAsyncComponent(() => import('./MkMenu.child.vue'));
+const XChild = defineAsyncComponent(() => import("./MkMenu.child.vue"));
 
 const props = defineProps<{
 	items: MenuItem[];
 	viaKeyboard?: boolean;
 	asDrawer?: boolean;
-	align?: 'center' | string;
+	align?: "center" | string;
 	width?: number;
 	maxHeight?: number;
 }>();
 
 const emit = defineEmits<{
-	(ev: 'close', actioned?: boolean): void;
+	(ev: "close", actioned?: boolean): void;
 }>();
 
 let itemsEl = $shallowRef<HTMLDivElement>();
@@ -86,31 +101,38 @@ let items2: InnerMenuItem[] = $ref([]);
 let child = $shallowRef<InstanceType<typeof XChild>>();
 
 let keymap = $computed(() => ({
-	'up|k|shift+tab': focusUp,
-	'down|j|tab': focusDown,
-	'esc': close,
+	"up|k|shift+tab": focusUp,
+	"down|j|tab": focusDown,
+	esc: close,
 }));
 
 let childShowingItem = $ref<MenuItem | null>();
 
-watch(() => props.items, () => {
-	const items: (MenuItem | MenuPending)[] = [...props.items].filter(item => item !== undefined);
+watch(
+	() => props.items,
+	() => {
+		const items: (MenuItem | MenuPending)[] = [...props.items].filter(
+			(item) => item !== undefined,
+		);
 
-	for (let i = 0; i < items.length; i++) {
-		const item = items[i];
+		for (let i = 0; i < items.length; i++) {
+			const item = items[i];
 
-		if (item && 'then' in item) { // if item is Promise
-			items[i] = { type: 'pending' };
-			item.then(actualItem => {
-				items2[i] = actualItem;
-			});
+			if (item && "then" in item) {
+				// if item is Promise
+				items[i] = { type: "pending" };
+				item.then((actualItem) => {
+					items2[i] = actualItem;
+				});
+			}
 		}
-	}
 
-	items2 = items as InnerMenuItem[];
-}, {
-	immediate: true,
-});
+		items2 = items as InnerMenuItem[];
+	},
+	{
+		immediate: true,
+	},
+);
 
 let childMenu = ref<MenuItem[] | null>();
 let childTarget = $shallowRef<HTMLElement | null>();
@@ -126,7 +148,11 @@ function childActioned() {
 }
 
 function onGlobalMousedown(event: MouseEvent) {
-	if (childTarget && (event.target === childTarget || childTarget.contains(event.target))) return;
+	if (
+		childTarget &&
+		(event.target === childTarget || childTarget.contains(event.target))
+	)
+		return;
 	if (child && child.checkHit(event)) return;
 	closeChild();
 }
@@ -147,11 +173,13 @@ async function showChildren(item: MenuParent, ev: MouseEvent) {
 	if (childrenCache.has(item)) {
 		children.value = childrenCache.get(item)!;
 	} else {
-		if (typeof item.children === 'function') {
-			children.value = [{
-				type: 'pending',
-			}];
-			Promise.resolve(item.children()).then(x => {
+		if (typeof item.children === "function") {
+			children.value = [
+				{
+					type: "pending",
+				},
+			];
+			Promise.resolve(item.children()).then((x) => {
 				children.value = x;
 				childrenCache.set(item, x);
 			});
@@ -176,7 +204,7 @@ function clicked(fn: MenuAction, ev: MouseEvent) {
 }
 
 function close(actioned = false) {
-	emit('close', actioned);
+	emit("close", actioned);
 }
 
 function focusUp() {
@@ -202,11 +230,11 @@ onMounted(() => {
 	// TODO: アクティブな要素までスクロール
 	//itemsEl.scrollTo();
 
-	document.addEventListener('mousedown', onGlobalMousedown, { passive: true });
+	document.addEventListener("mousedown", onGlobalMousedown, { passive: true });
 });
 
 onBeforeUnmount(() => {
-	document.removeEventListener('mousedown', onGlobalMousedown);
+	document.removeEventListener("mousedown", onGlobalMousedown);
 });
 </script>
 

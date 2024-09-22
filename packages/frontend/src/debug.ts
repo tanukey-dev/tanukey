@@ -1,4 +1,4 @@
-import { type ComponentInternalInstance, getCurrentInstance } from 'vue';
+import { type ComponentInternalInstance, getCurrentInstance } from "vue";
 
 export function isDebuggerEnabled(id: number): boolean {
 	try {
@@ -10,7 +10,7 @@ export function isDebuggerEnabled(id: number): boolean {
 
 export function switchDebuggerEnabled(id: number, enabled: boolean): void {
 	if (enabled) {
-		localStorage.setItem(`DEBUG_${id}`, '');
+		localStorage.setItem(`DEBUG_${id}`, "");
 	} else {
 		localStorage.removeItem(`DEBUG_${id}`);
 	}

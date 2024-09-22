@@ -1,16 +1,16 @@
-import * as os from 'node:os';
-import si from 'systeminformation';
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
+import * as os from "node:os";
+import si from "systeminformation";
+import { Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
 
 export const meta = {
 	requireCredential: false,
 
-	tags: ['meta'],
+	tags: ["meta"],
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;
@@ -18,8 +18,7 @@ export const paramDef = {
 // eslint-disable-next-line import/no-default-export
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor(
-	) {
+	constructor() {
 		super(meta, paramDef, async () => {
 			const memStats = await si.mem();
 			const fsStats = await si.fsSize();

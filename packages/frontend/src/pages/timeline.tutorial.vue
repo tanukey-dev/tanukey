@@ -42,18 +42,22 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import { host } from '@/config';
+import { computed } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
+import { host } from "@/config";
 
 const tutorialsNumber = 4;
 
 const tutorial = computed({
-	get() { return defaultStore.reactiveState.timelineTutorial.value || 0; },
-	set(value) { defaultStore.set('timelineTutorial', value); },
+	get() {
+		return defaultStore.reactiveState.timelineTutorial.value || 0;
+	},
+	set(value) {
+		defaultStore.set("timelineTutorial", value);
+	},
 });
 </script>
 

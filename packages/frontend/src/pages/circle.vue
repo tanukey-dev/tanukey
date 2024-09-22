@@ -18,15 +18,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
-import * as misskey from 'misskey-js';
-import * as os from '@/os';
-import XPage from '@/components/page/page.vue';
-import { useRouter } from '@/router';
-import { $i, iAmModerator } from '@/account';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { url } from '@/config';
+import { computed, watch } from "vue";
+import * as misskey from "misskey-js";
+import * as os from "@/os";
+import XPage from "@/components/page/page.vue";
+import { useRouter } from "@/router";
+import { $i, iAmModerator } from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { url } from "@/config";
 
 const router = useRouter();
 
@@ -34,19 +34,23 @@ const props = defineProps<{
 	circleId: string;
 }>();
 
-let tab = $ref('overview');
+let tab = $ref("overview");
 let circle = $ref<null | misskey.entities.Channel>(null);
 let page = $ref(null);
 
-watch(() => props.circleId, async () => {
-	circle = await os.api('circles/show', {
-		circleId: props.circleId,
-	});
+watch(
+	() => props.circleId,
+	async () => {
+		circle = await os.api("circles/show", {
+			circleId: props.circleId,
+		});
 
-	page = await os.api('pages/show', {
-		pageId: circle.pageId,
-	});
-}, { immediate: true });
+		page = await os.api("pages/show", {
+			pageId: circle.pageId,
+		});
+	},
+	{ immediate: true },
+);
 
 function edit() {
 	router.push(`/circles/${circle.id}/edit`);
@@ -55,7 +59,7 @@ function edit() {
 const headerActions = $computed(() => {
 	if (circle && circle.userId) {
 		const share = {
-			icon: 'ti ti-share',
+			icon: "ti ti-share",
 			text: i18n.ts.share,
 			handler: async (): Promise<void> => {
 				navigator.share({
@@ -66,27 +70,40 @@ const headerActions = $computed(() => {
 			},
 		};
 
-		const canEdit = $i && $i.id === circle.userId || iAmModerator;
-		return canEdit ? [share, {
-			icon: 'ti ti-settings',
-			text: i18n.ts.edit,
-			handler: edit,
-		}] : [share];
+		const canEdit = ($i && $i.id === circle.userId) || iAmModerator;
+		return canEdit
+			? [
+					share,
+					{
+						icon: "ti ti-settings",
+						text: i18n.ts.edit,
+						handler: edit,
+					},
+				]
+			: [share];
 	} else {
 		return null;
 	}
 });
 
-const headerTabs = $computed(() => [{
-	key: 'overview',
-	title: i18n.ts.overview,
-	icon: 'ti ti-info-circle',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "overview",
+		title: i18n.ts.overview,
+		icon: "ti ti-info-circle",
+	},
+]);
 
-definePageMetadata(computed(() => circle ? {
-	title: circle.name,
-	icon: 'ti ti-circles-relation',
-} : null));
+definePageMetadata(
+	computed(() =>
+		circle
+			? {
+					title: circle.name,
+					icon: "ti ti-circles-relation",
+				}
+			: null,
+	),
+);
 </script>
 
 <style lang="scss" module>

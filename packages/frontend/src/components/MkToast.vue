@@ -17,19 +17,19 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
+import { onMounted } from "vue";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
 
 defineProps<{
 	message: string;
 }>();
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+	(ev: "closed"): void;
 }>();
 
-const zIndex = os.claimZIndex('high');
+const zIndex = os.claimZIndex("high");
 let showing = $ref(true);
 
 onMounted(() => {

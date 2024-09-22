@@ -20,39 +20,49 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import MkModal from '@/components/MkModal.vue';
-import { navbarItemDef } from '@/navbar';
-import { defaultStore } from '@/store';
-import { deviceKind } from '@/scripts/device-kind';
+import {} from "vue";
+import MkModal from "@/components/MkModal.vue";
+import { navbarItemDef } from "@/navbar";
+import { defaultStore } from "@/store";
+import { deviceKind } from "@/scripts/device-kind";
 
-const props = withDefaults(defineProps<{
-	src?: HTMLElement;
-	anchor?: { x: string; y: string; };
-}>(), {
-	anchor: () => ({ x: 'right', y: 'center' }),
-});
+const props = withDefaults(
+	defineProps<{
+		src?: HTMLElement;
+		anchor?: { x: string; y: string };
+	}>(),
+	{
+		anchor: () => ({ x: "right", y: "center" }),
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+	(ev: "closed"): void;
 }>();
 
-const preferedModalType = (deviceKind === 'desktop' && props.src != null) ? 'popup' :
-	deviceKind === 'smartphone' ? 'drawer' :
-	'dialog';
+const preferedModalType =
+	deviceKind === "desktop" && props.src != null
+		? "popup"
+		: deviceKind === "smartphone"
+			? "drawer"
+			: "dialog";
 
 const modal = $shallowRef<InstanceType<typeof MkModal>>();
 
 const menu = defaultStore.state.menu;
 
-const items = Object.keys(navbarItemDef).filter(k => !menu.includes(k)).map(k => navbarItemDef[k]).filter(def => def.show == null ? true : def.show).map(def => ({
-	type: def.to ? 'link' : 'button',
-	text: def.title,
-	icon: def.icon,
-	to: def.to,
-	action: def.action,
-	indicate: def.indicated,
-}));
+const items = Object.keys(navbarItemDef)
+	.filter((k) => !menu.includes(k))
+	.map((k) => navbarItemDef[k])
+	.filter((def) => (def.show == null ? true : def.show))
+	.map((def) => ({
+		type: def.to ? "link" : "button",
+		text: def.title,
+		icon: def.icon,
+		to: def.to,
+		action: def.action,
+		indicate: def.indicated,
+	}));
 
 function close() {
 	modal.close();

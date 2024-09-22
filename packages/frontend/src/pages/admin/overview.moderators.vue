@@ -12,17 +12,17 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
+import { onMounted } from "vue";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
 
 let moderators: any = $ref(null);
 let fetching = $ref(true);
 
 onMounted(async () => {
-	moderators = await os.api('admin/show-users', {
-		sort: '+lastActiveDate',
-		state: 'adminOrModerator',
+	moderators = await os.api("admin/show-users", {
+		sort: "+lastActiveDate",
+		state: "adminOrModerator",
 		limit: 30,
 	});
 

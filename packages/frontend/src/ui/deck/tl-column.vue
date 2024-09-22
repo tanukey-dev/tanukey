@@ -21,14 +21,14 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import XColumn from './column.vue';
-import { removeColumn, updateColumn, Column } from './deck-store';
-import MkTimeline from '@/components/MkTimeline.vue';
-import * as os from '@/os';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
+import { onMounted } from "vue";
+import XColumn from "./column.vue";
+import { removeColumn, updateColumn, Column } from "./deck-store";
+import MkTimeline from "@/components/MkTimeline.vue";
+import * as os from "@/os";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
 
 const props = defineProps<{
 	column: Column;
@@ -37,33 +37,50 @@ const props = defineProps<{
 
 let disabled = $ref(false);
 
-const isLocalTimelineAvailable = (($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable));
-const isGlobalTimelineAvailable = (($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable));
+const isLocalTimelineAvailable =
+	($i == null && instance.policies.ltlAvailable) ||
+	($i != null && $i.policies.ltlAvailable);
+const isGlobalTimelineAvailable =
+	($i == null && instance.policies.gtlAvailable) ||
+	($i != null && $i.policies.gtlAvailable);
 
 onMounted(() => {
 	if (props.column.tl == null) {
 		setType();
 	} else if ($i) {
-		disabled = (
-			(!((instance.policies.ltlAvailable) || ($i.policies.ltlAvailable)) && ['local', 'social'].includes(props.column.tl)) ||
-			(!((instance.policies.gtlAvailable) || ($i.policies.gtlAvailable)) && ['global'].includes(props.column.tl)));
+		disabled =
+			(!(instance.policies.ltlAvailable || $i.policies.ltlAvailable) &&
+				["local", "social"].includes(props.column.tl)) ||
+			(!(instance.policies.gtlAvailable || $i.policies.gtlAvailable) &&
+				["global"].includes(props.column.tl));
 	}
 });
 
 async function setType() {
 	const { canceled, result: src } = await os.select({
 		title: i18n.ts.timeline,
-		items: [{
-			value: 'home' as const, text: i18n.ts._timelines.home,
-		}, {
-			value: 'local' as const, text: i18n.ts._timelines.local,
-		}, {
-			value: 'media' as const, text: i18n.ts._timelines.media,
-		}, {
-			value: 'social' as const, text: i18n.ts._timelines.social,
-		}, {
-			value: 'global' as const, text: i18n.ts._timelines.global,
-		}],
+		items: [
+			{
+				value: "home" as const,
+				text: i18n.ts._timelines.home,
+			},
+			{
+				value: "local" as const,
+				text: i18n.ts._timelines.local,
+			},
+			{
+				value: "media" as const,
+				text: i18n.ts._timelines.media,
+			},
+			{
+				value: "social" as const,
+				text: i18n.ts._timelines.social,
+			},
+			{
+				value: "global" as const,
+				text: i18n.ts._timelines.global,
+			},
+		],
 	});
 	if (canceled) {
 		if (props.column.tl == null) {
@@ -76,11 +93,13 @@ async function setType() {
 	});
 }
 
-const menu = [{
-	icon: 'ti ti-pencil',
-	text: i18n.ts.timeline,
-	action: setType,
-}];
+const menu = [
+	{
+		icon: "ti ti-pencil",
+		text: i18n.ts.timeline,
+		action: setType,
+	},
+];
 </script>
 
 <style lang="scss" module>

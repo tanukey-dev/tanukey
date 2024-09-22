@@ -3,15 +3,15 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef } from 'vue';
-import { Chart } from 'chart.js';
-import tinycolor from 'tinycolor2';
-import { defaultStore } from '@/store';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip';
-import { chartVLine } from '@/scripts/chart-vline';
-import { alpha } from '@/scripts/color';
-import { initChart } from '@/scripts/init-chart';
-import * as os from '@/os';
+import { onMounted, shallowRef } from "vue";
+import { Chart } from "chart.js";
+import tinycolor from "tinycolor2";
+import { defaultStore } from "@/store";
+import { useChartTooltip } from "@/scripts/use-chart-tooltip";
+import { chartVLine } from "@/scripts/chart-vline";
+import { alpha } from "@/scripts/color";
+import { initChart } from "@/scripts/init-chart";
+import * as os from "@/os";
 
 initChart();
 
@@ -22,47 +22,59 @@ const { handler: externalTooltipHandler } = useChartTooltip();
 let chartInstance: Chart;
 
 const getYYYYMMDD = (date: Date) => {
-	const y = date.getFullYear().toString().padStart(2, '0');
-	const m = (date.getMonth() + 1).toString().padStart(2, '0');
-	const d = date.getDate().toString().padStart(2, '0');
+	const y = date.getFullYear().toString().padStart(2, "0");
+	const m = (date.getMonth() + 1).toString().padStart(2, "0");
+	const d = date.getDate().toString().padStart(2, "0");
 	return `${y}/${m}/${d}`;
 };
 
 const getDate = (ymd: string) => {
-	const [y, m, d] = ymd.split('-').map(x => parseInt(x, 10));
+	const [y, m, d] = ymd.split("-").map((x) => parseInt(x, 10));
 	const date = new Date(y, m + 1, d, 0, 0, 0, 0);
 	return date;
 };
 
 onMounted(async () => {
-	let raw = await os.api('retention', { });
+	let raw = await os.api("retention", {});
 
-	const vLineColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)';
+	const vLineColor = defaultStore.state.darkMode
+		? "rgba(255, 255, 255, 0.2)"
+		: "rgba(0, 0, 0, 0.2)";
 
-	const accent = tinycolor(getComputedStyle(document.documentElement).getPropertyValue('--accent'));
+	const accent = tinycolor(
+		getComputedStyle(document.documentElement).getPropertyValue("--accent"),
+	);
 	const color = accent.toHex();
 
 	chartInstance = new Chart(chartEl.value, {
-		type: 'line',
+		type: "line",
 		data: {
 			labels: [],
 			datasets: raw.map((record, i) => ({
 				label: getYYYYMMDD(new Date(record.createdAt)),
 				pointRadius: 0,
 				borderWidth: 2,
-				borderJoinStyle: 'round',
-				borderColor: alpha(color, Math.min(1, (raw.length - (i - 1)) / raw.length)),
+				borderJoinStyle: "round",
+				borderColor: alpha(
+					color,
+					Math.min(1, (raw.length - (i - 1)) / raw.length),
+				),
 				fill: false,
 				tension: 0.4,
-				data: [{
-					x: '0',
-					y: 100,
-					d: getYYYYMMDD(new Date(record.createdAt)),
-				}, ...Object.entries(record.data).sort((a, b) => getDate(a[0]) > getDate(b[0]) ? 1 : -1).map(([k, v], i) => ({
-					x: (i + 1).toString(),
-					y: (v / record.users) * 100,
-					d: getYYYYMMDD(new Date(record.createdAt)),
-				}))],
+				data: [
+					{
+						x: "0",
+						y: 100,
+						d: getYYYYMMDD(new Date(record.createdAt)),
+					},
+					...Object.entries(record.data)
+						.sort((a, b) => (getDate(a[0]) > getDate(b[0]) ? 1 : -1))
+						.map(([k, v], i) => ({
+							x: (i + 1).toString(),
+							y: (v / record.users) * 100,
+							d: getYYYYMMDD(new Date(record.createdAt)),
+						})),
+				],
 			})),
 		},
 		options: {
@@ -79,16 +91,16 @@ onMounted(async () => {
 				x: {
 					title: {
 						display: true,
-						text: 'Days later',
+						text: "Days later",
 					},
 				},
 				y: {
 					title: {
 						display: true,
-						text: 'Rate (%)',
+						text: "Rate (%)",
 					},
 					ticks: {
-						callback: (value, index, values) => value + '%',
+						callback: (value, index, values) => value + "%",
 					},
 				},
 			},
@@ -108,11 +120,11 @@ onMounted(async () => {
 						},
 						label(context) {
 							const v = context.dataset.data[context.dataIndex];
-							const p = Math.round(v.y) + '%';
+							const p = Math.round(v.y) + "%";
 							return `${v.d} ${p}`;
 						},
 					},
-					mode: 'index',
+					mode: "index",
 					animation: {
 						duration: 0,
 					},

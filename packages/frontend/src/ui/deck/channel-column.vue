@@ -14,13 +14,13 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from 'misskey-js';
-import XColumn from './column.vue';
-import { updateColumn, Column } from './deck-store';
-import MkTimeline from '@/components/MkTimeline.vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import * as misskey from "misskey-js";
+import XColumn from "./column.vue";
+import { updateColumn, Column } from "./deck-store";
+import MkTimeline from "@/components/MkTimeline.vue";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	column: Column;
@@ -35,13 +35,14 @@ if (props.column.channelId == null) {
 }
 
 async function setChannel() {
-	const channels = await os.api('channels/my-favorites', {
+	const channels = await os.api("channels/my-favorites", {
 		limit: 100,
 	});
 	const { canceled, result: channel } = await os.select({
 		title: i18n.ts.selectChannel,
-		items: channels.map(x => ({
-			value: x, text: x.name,
+		items: channels.map((x) => ({
+			value: x,
+			text: x.name,
 		})),
 		default: props.column.channelId,
 	});
@@ -54,7 +55,7 @@ async function setChannel() {
 
 async function post() {
 	if (!channel || channel.id !== props.column.channelId) {
-		channel = await os.api('channels/show', {
+		channel = await os.api("channels/show", {
 			channelId: props.column.channelId,
 		});
 	}
@@ -64,9 +65,11 @@ async function post() {
 	});
 }
 
-const menu = [{
-	icon: 'ti ti-pencil',
-	text: i18n.ts.selectChannel,
-	action: setChannel,
-}];
+const menu = [
+	{
+		icon: "ti ti-pencil",
+		text: i18n.ts.selectChannel,
+		action: setChannel,
+	},
+];
 </script>

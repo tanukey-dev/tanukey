@@ -5,11 +5,11 @@
 </template>
 
 <script lang="ts" setup>
-import * as Misskey from 'misskey-js';
-import XBlock from './page.block.vue';
+import * as Misskey from "misskey-js";
+import XBlock from "./page.block.vue";
 
 defineProps<{
-	page: Misskey.entities.Page,
+	page: Misskey.entities.Page;
 }>();
 </script>
 

@@ -22,27 +22,29 @@
 </template>
 
 <script lang="ts" setup>
-import { Note } from 'misskey-js/built/entities';
-import { onUpdated } from 'vue';
-import MkReactionsViewer from '@/components/MkReactionsViewer.vue';
-import MkMediaList from '@/components/MkMediaList.vue';
-import MkPoll from '@/components/MkPoll.vue';
-import * as os from '@/os';
-import { getScrollContainer } from '@/scripts/scroll';
-import { $i } from '@/account';
+import { Note } from "misskey-js/built/entities";
+import { onUpdated } from "vue";
+import MkReactionsViewer from "@/components/MkReactionsViewer.vue";
+import MkMediaList from "@/components/MkMediaList.vue";
+import MkPoll from "@/components/MkPoll.vue";
+import * as os from "@/os";
+import { getScrollContainer } from "@/scripts/scroll";
+import { $i } from "@/account";
 
 let notes = $ref<Note[]>([]);
 let isScrolling = $ref(false);
 let scrollEl = $shallowRef<HTMLElement>();
 
-os.apiGet('notes/featured').then(_notes => {
+os.apiGet("notes/featured").then((_notes) => {
 	notes = _notes;
 });
 
 onUpdated(() => {
 	if (!scrollEl) return;
 	const container = getScrollContainer(scrollEl);
-	const containerHeight = container ? container.clientHeight : window.innerHeight;
+	const containerHeight = container
+		? container.clientHeight
+		: window.innerHeight;
 	if (scrollEl.offsetHeight > containerHeight) {
 		isScrolling = true;
 	}

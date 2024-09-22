@@ -28,29 +28,29 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
-import JSON5 from 'json5';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import FormLink from '@/components/form/link.vue';
-import FormSection from '@/components/form/section.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import FormSplit from '@/components/form/split.vue';
+import { watch } from "vue";
+import JSON5 from "json5";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import FormLink from "@/components/form/link.vue";
+import FormSection from "@/components/form/section.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import FormSplit from "@/components/form/split.vue";
 
 const props = defineProps<{
 	path: string;
 }>();
 
-const scope = $computed(() => props.path.split('/'));
+const scope = $computed(() => props.path.split("/"));
 
 let keys = $ref(null);
 
 function fetchKeys() {
-	os.api('i/registry/keys-with-type', {
+	os.api("i/registry/keys-with-type", {
 		scope: scope,
-	}).then(res => {
+	}).then((res) => {
 		keys = Object.entries(res).sort((a, b) => a[0].localeCompare(b[0]));
 	});
 }
@@ -58,23 +58,23 @@ function fetchKeys() {
 async function createKey() {
 	const { canceled, result } = await os.form(i18n.ts._registry.createKey, {
 		key: {
-			type: 'string',
+			type: "string",
 			label: i18n.ts._registry.key,
 		},
 		value: {
-			type: 'string',
+			type: "string",
 			multiline: true,
 			label: i18n.ts.value,
 		},
 		scope: {
-			type: 'string',
+			type: "string",
 			label: i18n.ts._registry.scope,
-			default: scope.join('/'),
+			default: scope.join("/"),
 		},
 	});
 	if (canceled) return;
-	os.apiWithDialog('i/registry/set', {
-		scope: result.scope.split('/'),
+	os.apiWithDialog("i/registry/set", {
+		scope: result.scope.split("/"),
 		key: result.key,
 		value: JSON5.parse(result.value),
 	}).then(() => {
@@ -90,6 +90,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.registry,
-	icon: 'ti ti-adjustments',
+	icon: "ti ti-adjustments",
 });
 </script>

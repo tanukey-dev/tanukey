@@ -9,11 +9,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { defaultStore } from '@/store';
+import { computed } from "vue";
+import { defaultStore } from "@/store";
 
-const disableSwipe = computed(defaultStore.makeGetterSetter('disableSwipe'));
-const asciiArtDarkMode = computed(defaultStore.makeGetterSetter('asciiArtDarkMode'));
+const disableSwipe = computed(defaultStore.makeGetterSetter("disableSwipe"));
+const asciiArtDarkMode = computed(
+	defaultStore.makeGetterSetter("asciiArtDarkMode"),
+);
 
 defineProps<{
 	text: string;
@@ -22,7 +24,6 @@ defineProps<{
 const onTouchTap = (): void => {
 	disableSwipe.value = true;
 };
-
 </script>
 
 <style lang="scss" module>

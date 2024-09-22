@@ -15,22 +15,28 @@
 </template>
 
 <script lang="ts" setup>
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import { GetFormResultType } from '@/scripts/form';
-import { host } from '@/config';
-import { instance } from '@/instance';
+import {
+	useWidgetPropsManager,
+	Widget,
+	WidgetComponentEmits,
+	WidgetComponentExpose,
+	WidgetComponentProps,
+} from "./widget";
+import { GetFormResultType } from "@/scripts/form";
+import { host } from "@/config";
+import { instance } from "@/instance";
 
-const name = 'instanceInfo';
+const name = "instanceInfo";
 
-const widgetPropsDef = {
-};
+const widgetPropsDef = {};
 
 type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const { widgetProps, configure } = useWidgetPropsManager(
+	name,
 	widgetPropsDef,
 	props,
 	emit,

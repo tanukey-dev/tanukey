@@ -68,42 +68,44 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onBeforeUnmount } from 'vue';
-import { version } from '@/config';
-import FormLink from '@/components/form/link.vue';
-import FormSection from '@/components/form/section.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkLink from '@/components/MkLink.vue';
-import { physics } from '@/scripts/physics';
-import { i18n } from '@/i18n';
-import { defaultStore } from '@/store';
-import * as os from '@/os';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { claimAchievement, claimedAchievements } from '@/scripts/achievements';
-import { $i } from '@/account';
+import { nextTick, onBeforeUnmount } from "vue";
+import { version } from "@/config";
+import FormLink from "@/components/form/link.vue";
+import FormSection from "@/components/form/section.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkLink from "@/components/MkLink.vue";
+import { physics } from "@/scripts/physics";
+import { i18n } from "@/i18n";
+import { defaultStore } from "@/store";
+import * as os from "@/os";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { claimAchievement, claimedAchievements } from "@/scripts/achievements";
+import { $i } from "@/account";
 
 const patronsWithIcon = [];
 
 const patrons = [
-	{ name: '峰岸', url: 'https://novelskey.tarbin.net/@minegishi_0' },
-	{ name: '倭', url: 'https://novelskey.tarbin.net/@toyama_waon' },
-	{ name: '虚影庵', url: 'http://kyoeian.vis.ne.jp' },
-	{ name: '=Hatze=', url: 'https://cobbitria.net/' },
-	{ name: 'にいさ', url: 'https://novelskey.tarbin.net/@0323_0323' },
-	{ name: '熊楠', url: '#' },
-	{ name: 'のーら', url: '#' },
-	{ name: '鹿', url: '#' },
-	{ name: 'あまがっぱ', url: 'https://novelskey.tarbin.net/@amagappa1220' },
-	{ name: 'のーら', url: '#' },
-	{ name: '萩オス', url: 'https://hagios0.net' },
-	{ name: 'カリウム', url: 'https://twitter.com/contents_conten' },
-	{ name: '鈍兵夢芽', url: 'https://novelskey.tarbin.net/@yume_dombay' },
-	{ name: 'にゃりつぃん', url: 'https://novelskey.tarbin.net/@nyaritsin' },
-	{ name: 'キサラギ職員', url: 'https://twitter.com/DSnohito' },
-	{ name: '沼崎', url: '#' },
+	{ name: "峰岸", url: "https://novelskey.tarbin.net/@minegishi_0" },
+	{ name: "倭", url: "https://novelskey.tarbin.net/@toyama_waon" },
+	{ name: "虚影庵", url: "http://kyoeian.vis.ne.jp" },
+	{ name: "=Hatze=", url: "https://cobbitria.net/" },
+	{ name: "にいさ", url: "https://novelskey.tarbin.net/@0323_0323" },
+	{ name: "熊楠", url: "#" },
+	{ name: "のーら", url: "#" },
+	{ name: "鹿", url: "#" },
+	{ name: "あまがっぱ", url: "https://novelskey.tarbin.net/@amagappa1220" },
+	{ name: "のーら", url: "#" },
+	{ name: "萩オス", url: "https://hagios0.net" },
+	{ name: "カリウム", url: "https://twitter.com/contents_conten" },
+	{ name: "鈍兵夢芽", url: "https://novelskey.tarbin.net/@yume_dombay" },
+	{ name: "にゃりつぃん", url: "https://novelskey.tarbin.net/@nyaritsin" },
+	{ name: "キサラギ職員", url: "https://twitter.com/DSnohito" },
+	{ name: "沼崎", url: "#" },
 ];
 
-let thereIsTreasure = $ref($i && !claimedAchievements.includes('foundTreasure'));
+let thereIsTreasure = $ref(
+	$i && !claimedAchievements.includes("foundTreasure"),
+);
 
 let easterEggReady = false;
 let easterEggEmojis = $ref([]);
@@ -116,8 +118,8 @@ function iconLoaded() {
 	for (let i = 0; i < 32; i++) {
 		easterEggEmojis.push({
 			id: i.toString(),
-			top: -(128 + (Math.random() * 256)),
-			left: (Math.random() * containerWidth),
+			top: -(128 + Math.random() * 256),
+			left: Math.random() * containerWidth,
 			emoji: emojis[Math.floor(Math.random() * emojis.length)],
 		});
 	}
@@ -135,14 +137,14 @@ function gravity() {
 
 function iLoveTanukey() {
 	os.post({
-		initialText: 'I $[jelly ❤] #Tanukey',
+		initialText: "I $[jelly ❤] #Tanukey",
 		instant: true,
 	});
 }
 
 function getTreasure() {
 	thereIsTreasure = false;
-	claimAchievement('foundTreasure');
+	claimAchievement("foundTreasure");
 }
 
 onBeforeUnmount(() => {

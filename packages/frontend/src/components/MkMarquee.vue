@@ -1,8 +1,8 @@
 <script lang="ts">
-import { h, onMounted, onUnmounted, ref, watch } from 'vue';
+import { h, onMounted, onUnmounted, ref, watch } from "vue";
 
 export default {
-	name: 'MarqueeText',
+	name: "MarqueeText",
 	props: {
 		duration: {
 			type: Number,
@@ -38,37 +38,33 @@ export default {
 			calc();
 		});
 
-		onUnmounted(() => {
-		});
+		onUnmounted(() => {});
 
 		return {
 			contentEl,
 		};
 	},
-	render({
-		$slots, $style, $props: {
-			duration, repeat, paused, reverse,
-		},
-	}) {
-		return h('div', { class: [$style.wrap] }, [
-			h('span', {
-				ref: 'contentEl',
-				class: [
-					paused
-						? $style.paused
-						: undefined,
-					$style.content,
-				],
-			}, Array(repeat).fill(
-				h('span', {
-					class: $style.text,
-					style: {
-						animationDirection: reverse
-							? 'reverse'
-							: undefined,
-					},
-				}, $slots.default()),
-			)),
+	render({ $slots, $style, $props: { duration, repeat, paused, reverse } }) {
+		return h("div", { class: [$style.wrap] }, [
+			h(
+				"span",
+				{
+					ref: "contentEl",
+					class: [paused ? $style.paused : undefined, $style.content],
+				},
+				Array(repeat).fill(
+					h(
+						"span",
+						{
+							class: $style.text,
+							style: {
+								animationDirection: reverse ? "reverse" : undefined,
+							},
+						},
+						$slots.default(),
+					),
+				),
+			),
 		]);
 	},
 };

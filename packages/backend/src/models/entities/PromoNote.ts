@@ -1,28 +1,35 @@
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, OneToOne } from 'typeorm';
-import { id } from '../id.js';
-import { Note } from './Note.js';
-import type { User } from './User.js';
+import {
+	PrimaryColumn,
+	Entity,
+	Index,
+	JoinColumn,
+	Column,
+	OneToOne,
+} from "typeorm";
+import { id } from "../id.js";
+import { Note } from "./Note.js";
+import type { User } from "./User.js";
 
 @Entity()
 export class PromoNote {
 	@PrimaryColumn(id())
-	public noteId: Note['id'];
+	public noteId: Note["id"];
 
-	@OneToOne(type => Note, {
-		onDelete: 'CASCADE',
+	@OneToOne((type) => Note, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public note: Note | null;
 
-	@Column('timestamp with time zone')
+	@Column("timestamp with time zone")
 	public expiresAt: Date;
 
 	//#region Denormalized fields
 	@Index()
 	@Column({
 		...id(),
-		comment: '[Denormalized]',
+		comment: "[Denormalized]",
 	})
-	public userId: User['id'];
+	public userId: User["id"];
 	//#endregion
 }

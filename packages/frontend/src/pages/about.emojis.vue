@@ -50,41 +50,46 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, defineAsyncComponent, ref, computed } from 'vue';
-import * as Misskey from 'misskey-js';
-import XEmoji from './emojis.emoji.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import { customEmojis, customEmojiCategories } from '@/custom-emojis';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import { $i } from '@/account';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { watch, defineAsyncComponent, ref, computed } from "vue";
+import * as Misskey from "misskey-js";
+import XEmoji from "./emojis.emoji.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import { customEmojis, customEmojiCategories } from "@/custom-emojis";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import { $i } from "@/account";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
-let tab = $ref('emojis');
+let tab = $ref("emojis");
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => [{
-	key: 'emojis',
-	title: i18n.ts.list,
-}, {
-	key: 'new',
-	title: i18n.ts.newEmojis,
-}, {
-	key: 'draft',
-	title: i18n.ts.draftEmojis,
-}, {
-	key: 'managed',
-	title: i18n.ts.manage,
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "emojis",
+		title: i18n.ts.list,
+	},
+	{
+		key: "new",
+		title: i18n.ts.newEmojis,
+	},
+	{
+		key: "draft",
+		title: i18n.ts.draftEmojis,
+	},
+	{
+		key: "managed",
+		title: i18n.ts.manage,
+	},
+]);
 
 definePageMetadata(ref({}));
 
-let q = $ref('');
+let q = $ref("");
 let searchEmojis = $ref<Misskey.entities.CustomEmoji[]>(null);
 let selectedTags = $ref(new Set());
-const newEmojis = customEmojis.value.filter(emoji => {
+const newEmojis = customEmojis.value.filter((emoji) => {
 	if (emoji.updatedAt === null) {
 		return false;
 	}
@@ -96,11 +101,13 @@ const newEmojis = customEmojis.value.filter(emoji => {
 	checkDate.setDate(checkDate.getDate() + 3);
 	return checkDate > new Date();
 });
-const draftEmojis = customEmojis.value.filter(emoji => emoji.draft);
-const managedEmojis = customEmojis.value.filter(emoji => emoji.uploadedUserName === $i?.username);
+const draftEmojis = customEmojis.value.filter((emoji) => emoji.draft);
+const managedEmojis = customEmojis.value.filter(
+	(emoji) => emoji.uploadedUserName === $i?.username,
+);
 
 function search() {
-	if ((q === '' || q == null) && selectedTags.size === 0) {
+	if ((q === "" || q == null) && selectedTags.size === 0) {
 		searchEmojis = null;
 		return;
 	}
@@ -109,34 +116,49 @@ function search() {
 		const queryarry = q.match(/\:([a-z0-9_]*)\:/g);
 
 		if (queryarry) {
-			searchEmojis = customEmojis.value.filter(emoji => 
+			searchEmojis = customEmojis.value.filter((emoji) =>
 				queryarry.includes(`:${emoji.name}:`),
 			);
 		} else {
-			searchEmojis = customEmojis.value.filter(emoji => emoji.name.includes(q) || emoji.aliases.includes(q));
+			searchEmojis = customEmojis.value.filter(
+				(emoji) => emoji.name.includes(q) || emoji.aliases.includes(q),
+			);
 		}
 	} else {
-		searchEmojis = customEmojis.value.filter(emoji => (emoji.name.includes(q) || emoji.aliases.includes(q)) && [...selectedTags].every(t => emoji.aliases.includes(t)));
+		searchEmojis = customEmojis.value.filter(
+			(emoji) =>
+				(emoji.name.includes(q) || emoji.aliases.includes(q)) &&
+				[...selectedTags].every((t) => emoji.aliases.includes(t)),
+		);
 	}
 }
 
 const edit = () => {
-	os.popup(defineAsyncComponent(() => import('@/components/MkEmojiEditDialog.vue')), {
-		isRequest: true,
-	}, {
-		done: result => {
-			window.location.reload();
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkEmojiEditDialog.vue")),
+		{
+			isRequest: true,
 		},
-	}, 'closed');
+		{
+			done: (result) => {
+				window.location.reload();
+			},
+		},
+		"closed",
+	);
 };
 
 watch($$(q), () => {
 	search();
 });
 
-watch($$(selectedTags), () => {
-	search();
-}, { deep: true });
+watch(
+	$$(selectedTags),
+	() => {
+		search();
+	},
+	{ deep: true },
+);
 </script>
 
 <style lang="scss" module>

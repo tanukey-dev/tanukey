@@ -41,25 +41,26 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, shallowRef } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import { computed, defineAsyncComponent, ref, shallowRef } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
-const emojisPaginationComponent = shallowRef<InstanceType<typeof MkPagination>>();
+const emojisPaginationComponent =
+	shallowRef<InstanceType<typeof MkPagination>>();
 
 const query = ref(null);
 const selectMode = ref(false);
 const selectedEmojis = ref<string[]>([]);
 
 const pagination = {
-	endpoint: 'admin/emoji/list' as const,
+	endpoint: "admin/emoji/list" as const,
 	limit: 30,
 	params: computed(() => ({
-		query: (query.value && query.value !== '') ? query.value : null,
+		query: query.value && query.value !== "" ? query.value : null,
 	})),
 };
 
@@ -67,45 +68,57 @@ const selectAll = () => {
 	if (selectedEmojis.value.length > 0) {
 		selectedEmojis.value = [];
 	} else {
-		selectedEmojis.value = emojisPaginationComponent.value.items.map(item => item.id);
+		selectedEmojis.value = emojisPaginationComponent.value.items.map(
+			(item) => item.id,
+		);
 	}
 };
 
 const toggleSelect = (emoji) => {
 	if (selectedEmojis.value.includes(emoji.id)) {
-		selectedEmojis.value = selectedEmojis.value.filter(x => x !== emoji.id);
+		selectedEmojis.value = selectedEmojis.value.filter((x) => x !== emoji.id);
 	} else {
 		selectedEmojis.value.push(emoji.id);
 	}
 };
 
 const edit = (emoji) => {
-	os.apiGet('emoji', { name: emoji.name }).then(res => {
-		os.popup(defineAsyncComponent(() => import('@/components/MkEmojiEditDialog.vue')), {
-			emoji: res,
-			isRequest: false,
-		}, {
-			done: result => {
-				if (result.updated) {
-					emojisPaginationComponent.value.updateItem(result.updated.id, (oldEmoji: any) => ({
-						...oldEmoji,
-						...result.updated,
-					}));
-					emojisPaginationComponent.value.reload();
-				} else if (result.deleted) {
-					emojisPaginationComponent.value.removeItem((item) => item.id === emoji.id);
-				}
+	os.apiGet("emoji", { name: emoji.name }).then((res) => {
+		os.popup(
+			defineAsyncComponent(() => import("@/components/MkEmojiEditDialog.vue")),
+			{
+				emoji: res,
+				isRequest: false,
 			},
-		}, 'closed');
+			{
+				done: (result) => {
+					if (result.updated) {
+						emojisPaginationComponent.value.updateItem(
+							result.updated.id,
+							(oldEmoji: any) => ({
+								...oldEmoji,
+								...result.updated,
+							}),
+						);
+						emojisPaginationComponent.value.reload();
+					} else if (result.deleted) {
+						emojisPaginationComponent.value.removeItem(
+							(item) => item.id === emoji.id,
+						);
+					}
+				},
+			},
+			"closed",
+		);
 	});
 };
 
 const setCategoryBulk = async () => {
 	const { canceled, result } = await os.inputText({
-		title: 'Category',
+		title: "Category",
 	});
 	if (canceled) return;
-	await os.apiWithDialog('admin/emoji/set-category-bulk', {
+	await os.apiWithDialog("admin/emoji/set-category-bulk", {
 		ids: selectedEmojis.value,
 		category: result,
 	});
@@ -114,10 +127,10 @@ const setCategoryBulk = async () => {
 
 const setLisenceBulk = async () => {
 	const { canceled, result } = await os.inputText({
-		title: 'License',
+		title: "License",
 	});
 	if (canceled) return;
-	await os.apiWithDialog('admin/emoji/set-license-bulk', {
+	await os.apiWithDialog("admin/emoji/set-license-bulk", {
 		ids: selectedEmojis.value,
 		license: result,
 	});
@@ -126,47 +139,47 @@ const setLisenceBulk = async () => {
 
 const addTagBulk = async () => {
 	const { canceled, result } = await os.inputText({
-		title: 'Tag',
+		title: "Tag",
 	});
 	if (canceled) return;
-	await os.apiWithDialog('admin/emoji/add-aliases-bulk', {
+	await os.apiWithDialog("admin/emoji/add-aliases-bulk", {
 		ids: selectedEmojis.value,
-		aliases: result.split(' '),
+		aliases: result.split(" "),
 	});
 	emojisPaginationComponent.value.reload();
 };
 
 const removeTagBulk = async () => {
 	const { canceled, result } = await os.inputText({
-		title: 'Tag',
+		title: "Tag",
 	});
 	if (canceled) return;
-	await os.apiWithDialog('admin/emoji/remove-aliases-bulk', {
+	await os.apiWithDialog("admin/emoji/remove-aliases-bulk", {
 		ids: selectedEmojis.value,
-		aliases: result.split(' '),
+		aliases: result.split(" "),
 	});
 	emojisPaginationComponent.value.reload();
 };
 
 const setTagBulk = async () => {
 	const { canceled, result } = await os.inputText({
-		title: 'Tag',
+		title: "Tag",
 	});
 	if (canceled) return;
-	await os.apiWithDialog('admin/emoji/set-aliases-bulk', {
+	await os.apiWithDialog("admin/emoji/set-aliases-bulk", {
 		ids: selectedEmojis.value,
-		aliases: result.split(' '),
+		aliases: result.split(" "),
 	});
 	emojisPaginationComponent.value.reload();
 };
 
 const delBulk = async () => {
 	const { canceled } = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		text: i18n.ts.deleteConfirm,
 	});
 	if (canceled) return;
-	await os.apiWithDialog('admin/emoji/delete-bulk', {
+	await os.apiWithDialog("admin/emoji/delete-bulk", {
 		ids: selectedEmojis.value,
 	});
 	emojisPaginationComponent.value.reload();

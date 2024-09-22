@@ -3,9 +3,4 @@
 	"path-intellisense.mappings": {
 		"@": "${workspaceRoot}/packages/frontend/src/"
 	},
-	"eslint.validate": [
-		"javascript",
-		"javascriptreact",
-		"vue"
-	]
 }

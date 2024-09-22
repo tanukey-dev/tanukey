@@ -8,14 +8,14 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import { Chart } from 'chart.js';
-import gradient from 'chartjs-plugin-gradient';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip';
-import { chartVLine } from '@/scripts/chart-vline';
-import { initChart } from '@/scripts/init-chart';
+import { onMounted } from "vue";
+import { Chart } from "chart.js";
+import gradient from "chartjs-plugin-gradient";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
+import { useChartTooltip } from "@/scripts/use-chart-tooltip";
+import { chartVLine } from "@/scripts/chart-vline";
+import { initChart } from "@/scripts/init-chart";
 
 initChart();
 
@@ -47,43 +47,51 @@ async function renderChart() {
 		}));
 	};
 
-	const raw = await os.api('charts/active-users', { limit: chartLimit, span: 'day' });
+	const raw = await os.api("charts/active-users", {
+		limit: chartLimit,
+		span: "day",
+	});
 
-	const vLineColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)';
+	const vLineColor = defaultStore.state.darkMode
+		? "rgba(255, 255, 255, 0.2)"
+		: "rgba(0, 0, 0, 0.2)";
 
-	const colorRead = '#3498db';
-	const colorWrite = '#2ecc71';
+	const colorRead = "#3498db";
+	const colorWrite = "#2ecc71";
 
 	const max = Math.max(...raw.read);
 
 	chartInstance = new Chart(chartEl, {
-		type: 'bar',
+		type: "bar",
 		data: {
-			datasets: [{
-				parsing: false,
-				label: 'Read',
-				data: format(raw.read).slice().reverse(),
-				pointRadius: 0,
-				borderWidth: 0,
-				borderJoinStyle: 'round',
-				borderRadius: 4,
-				backgroundColor: colorRead,
-				barPercentage: 0.7,
-				categoryPercentage: 0.5,
-				fill: true,
-			}, {
-				parsing: false,
-				label: 'Write',
-				data: format(raw.write).slice().reverse(),
-				pointRadius: 0,
-				borderWidth: 0,
-				borderJoinStyle: 'round',
-				borderRadius: 4,
-				backgroundColor: colorWrite,
-				barPercentage: 0.7,
-				categoryPercentage: 0.5,
-				fill: true,
-			}],
+			datasets: [
+				{
+					parsing: false,
+					label: "Read",
+					data: format(raw.read).slice().reverse(),
+					pointRadius: 0,
+					borderWidth: 0,
+					borderJoinStyle: "round",
+					borderRadius: 4,
+					backgroundColor: colorRead,
+					barPercentage: 0.7,
+					categoryPercentage: 0.5,
+					fill: true,
+				},
+				{
+					parsing: false,
+					label: "Write",
+					data: format(raw.write).slice().reverse(),
+					pointRadius: 0,
+					borderWidth: 0,
+					borderJoinStyle: "round",
+					borderRadius: 4,
+					backgroundColor: colorWrite,
+					barPercentage: 0.7,
+					categoryPercentage: 0.5,
+					fill: true,
+				},
+			],
 		},
 		options: {
 			aspectRatio: 2.5,
@@ -97,14 +105,14 @@ async function renderChart() {
 			},
 			scales: {
 				x: {
-					type: 'time',
+					type: "time",
 					offset: true,
 					time: {
 						stepSize: 1,
-						unit: 'day',
+						unit: "day",
 						displayFormats: {
-							day: 'M/d',
-							month: 'Y/M',
+							day: "M/d",
+							month: "Y/M",
 						},
 					},
 					grid: {
@@ -117,7 +125,7 @@ async function renderChart() {
 					},
 				},
 				y: {
-					position: 'left',
+					position: "left",
 					suggestedMax: 10,
 					grid: {
 						display: true,
@@ -130,7 +138,7 @@ async function renderChart() {
 			},
 			interaction: {
 				intersect: false,
-				mode: 'index',
+				mode: "index",
 			},
 			plugins: {
 				legend: {
@@ -138,7 +146,7 @@ async function renderChart() {
 				},
 				tooltip: {
 					enabled: false,
-					mode: 'index',
+					mode: "index",
 					animation: {
 						duration: 0,
 					},

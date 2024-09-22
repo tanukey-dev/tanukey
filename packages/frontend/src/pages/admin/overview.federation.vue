@@ -41,13 +41,13 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import XPie from './overview.pie.vue';
-import * as os from '@/os';
-import number from '@/filters/number';
-import MkNumberDiff from '@/components/MkNumberDiff.vue';
-import { i18n } from '@/i18n';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip';
+import { onMounted } from "vue";
+import XPie from "./overview.pie.vue";
+import * as os from "@/os";
+import number from "@/filters/number";
+import MkNumberDiff from "@/components/MkNumberDiff.vue";
+import { i18n } from "@/i18n";
+import { useChartTooltip } from "@/scripts/use-chart-tooltip";
 
 let topSubInstancesForPie: any = $ref(null);
 let topPubInstancesForPie: any = $ref(null);
@@ -58,31 +58,39 @@ let federationSubActiveDiff = $ref<number | null>(null);
 let fetching = $ref(true);
 
 const { handler: externalTooltipHandler } = useChartTooltip();
-	
+
 onMounted(async () => {
-	const chart = await os.apiGet('charts/federation', { limit: 2, span: 'day' });
+	const chart = await os.apiGet("charts/federation", { limit: 2, span: "day" });
 	federationPubActive = chart.pubActive[0];
 	federationPubActiveDiff = chart.pubActive[0] - chart.pubActive[1];
 	federationSubActive = chart.subActive[0];
 	federationSubActiveDiff = chart.subActive[0] - chart.subActive[1];
 
-	os.apiGet('federation/stats', { limit: 10 }).then(res => {
-		topSubInstancesForPie = res.topSubInstances.map(x => ({
-			name: x.host,
-			color: x.themeColor,
-			value: x.followersCount,
-			onClick: () => {
-				os.pageWindow(`/instance-info/${x.host}`);
-			},
-		})).concat([{ name: '(other)', color: '#80808080', value: res.otherFollowersCount }]);
-		topPubInstancesForPie = res.topPubInstances.map(x => ({
-			name: x.host,
-			color: x.themeColor,
-			value: x.followingCount,
-			onClick: () => {
-				os.pageWindow(`/instance-info/${x.host}`);
-			},
-		})).concat([{ name: '(other)', color: '#80808080', value: res.otherFollowingCount }]);
+	os.apiGet("federation/stats", { limit: 10 }).then((res) => {
+		topSubInstancesForPie = res.topSubInstances
+			.map((x) => ({
+				name: x.host,
+				color: x.themeColor,
+				value: x.followersCount,
+				onClick: () => {
+					os.pageWindow(`/instance-info/${x.host}`);
+				},
+			}))
+			.concat([
+				{ name: "(other)", color: "#80808080", value: res.otherFollowersCount },
+			]);
+		topPubInstancesForPie = res.topPubInstances
+			.map((x) => ({
+				name: x.host,
+				color: x.themeColor,
+				value: x.followingCount,
+				onClick: () => {
+					os.pageWindow(`/instance-info/${x.host}`);
+				},
+			}))
+			.concat([
+				{ name: "(other)", color: "#80808080", value: res.otherFollowingCount },
+			]);
 	});
 
 	fetching = false;

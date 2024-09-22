@@ -22,15 +22,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import MarqueeText from '@/components/MkMarquee.vue';
-import { useInterval } from '@/scripts/use-interval';
-import { shuffle } from '@/scripts/shuffle';
+import { ref } from "vue";
+import MarqueeText from "@/components/MkMarquee.vue";
+import { useInterval } from "@/scripts/use-interval";
+import { shuffle } from "@/scripts/shuffle";
 
 const props = defineProps<{
 	url?: string;
 	shuffle?: boolean;
-	display?: 'marquee' | 'oneByOne';
+	display?: "marquee" | "oneByOne";
 	marqueeDuration?: number;
 	marqueeReverse?: boolean;
 	oneByOneInterval?: number;
@@ -42,8 +42,8 @@ const fetching = ref(true);
 let key = $ref(0);
 
 const tick = () => {
-	window.fetch(`/api/fetch-rss?url=${props.url}`, {}).then(res => {
-		res.json().then(feed => {
+	window.fetch(`/api/fetch-rss?url=${props.url}`, {}).then((res) => {
+		res.json().then((feed) => {
 			if (props.shuffle) {
 				shuffle(feed.items);
 			}

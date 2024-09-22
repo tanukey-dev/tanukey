@@ -7,10 +7,10 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import MkUrlPreview from '@/components/MkUrlPreview.vue';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
+import { onMounted } from "vue";
+import MkUrlPreview from "@/components/MkUrlPreview.vue";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
 
 const props = defineProps<{
 	showing: boolean;
@@ -19,16 +19,18 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+	(ev: "closed"): void;
 }>();
 
-const zIndex = os.claimZIndex('middle');
+const zIndex = os.claimZIndex("middle");
 let top = $ref(0);
 let left = $ref(0);
 
 onMounted(() => {
 	const rect = props.source.getBoundingClientRect();
-	const x = Math.max((rect.left + (props.source.offsetWidth / 2)) - (300 / 2), 6) + window.pageXOffset;
+	const x =
+		Math.max(rect.left + props.source.offsetWidth / 2 - 300 / 2, 6) +
+		window.pageXOffset;
 	const y = rect.top + props.source.offsetHeight + window.pageYOffset;
 
 	top = y;

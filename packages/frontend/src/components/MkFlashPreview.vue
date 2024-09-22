@@ -14,8 +14,8 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import { userName } from '@/filters/user';
+import {} from "vue";
+import { userName } from "@/filters/user";
 
 const props = defineProps<{
 	//flash: misskey.entities.Flash;

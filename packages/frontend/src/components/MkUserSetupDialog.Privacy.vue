@@ -39,14 +39,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
-import { instance } from '@/instance';
-import { i18n } from '@/i18n';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import * as os from '@/os';
-import { $i } from '@/account';
+import { computed, ref, watch } from "vue";
+import { instance } from "@/instance";
+import { i18n } from "@/i18n";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import * as os from "@/os";
+import { $i } from "@/account";
 
 let isLocked = ref(false);
 let hideOnlineStatus = ref(false);
@@ -54,7 +54,7 @@ let noCrawle = ref(false);
 let preventAiLearning = ref(true);
 
 watch([isLocked, hideOnlineStatus, noCrawle, preventAiLearning], () => {
-	os.api('i/update', {
+	os.api("i/update", {
 		isLocked: !!isLocked.value,
 		hideOnlineStatus: !!hideOnlineStatus.value,
 		noCrawle: !!noCrawle.value,

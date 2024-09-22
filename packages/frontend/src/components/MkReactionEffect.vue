@@ -7,24 +7,26 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import * as os from '@/os';
-import MkReactionIcon from '@/components/MkReactionIcon.vue';
+import { onMounted } from "vue";
+import * as os from "@/os";
+import MkReactionIcon from "@/components/MkReactionIcon.vue";
 
-const props = withDefaults(defineProps<{
-	reaction: string;
-	x: number;
-	y: number;
-}>(), {
-});
+const props = withDefaults(
+	defineProps<{
+		reaction: string;
+		x: number;
+		y: number;
+	}>(),
+	{},
+);
 
 const emit = defineEmits<{
-	(ev: 'end'): void;
+	(ev: "end"): void;
 }>();
 
 let up = $ref(false);
-const zIndex = os.claimZIndex('middle');
-const angle = (90 - (Math.random() * 180)) + 'deg';
+const zIndex = os.claimZIndex("middle");
+const angle = 90 - Math.random() * 180 + "deg";
 
 onMounted(() => {
 	window.setTimeout(() => {
@@ -32,7 +34,7 @@ onMounted(() => {
 	}, 10);
 
 	window.setTimeout(() => {
-		emit('end');
+		emit("end");
 	}, 1100);
 });
 </script>

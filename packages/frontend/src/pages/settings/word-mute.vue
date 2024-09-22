@@ -26,39 +26,42 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import MkTab from '@/components/MkTab.vue';
-import * as os from '@/os';
-import number from '@/filters/number';
-import { defaultStore } from '@/store';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { ref, watch } from "vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import MkTab from "@/components/MkTab.vue";
+import * as os from "@/os";
+import number from "@/filters/number";
+import { defaultStore } from "@/store";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
-const render = (mutedWords) => mutedWords.map(x => {
-	if (Array.isArray(x)) {
-		return x.join(' ');
-	} else {
-		return x;
-	}
-}).join('\n');
+const render = (mutedWords) =>
+	mutedWords
+		.map((x) => {
+			if (Array.isArray(x)) {
+				return x.join(" ");
+			} else {
+				return x;
+			}
+		})
+		.join("\n");
 
-const tab = ref('soft');
+const tab = ref("soft");
 const softMutedWords = ref(render(defaultStore.state.mutedWords));
 const hardMutedWords = ref(render($i!.mutedWords));
 const hardWordMutedNotesCount = ref(null);
 const changed = ref(false);
 const tabs = ref([
 	{ value: null, label: i18n.ts.notes },
-	{ value: 'soft', label: i18n.ts._wordMute.soft },
-	{ value: 'hard', label: i18n.ts._wordMute.hard },
+	{ value: "soft", label: i18n.ts._wordMute.soft },
+	{ value: "hard", label: i18n.ts._wordMute.hard },
 ]);
 
-os.api('i/get-word-muted-notes-count', {}).then(response => {
+os.api("i/get-word-muted-notes-count", {}).then((response) => {
 	hardWordMutedNotesCount.value = response?.count;
 });
 
@@ -73,7 +76,11 @@ watch(hardMutedWords, () => {
 async function save() {
 	const parseMutes = (mutes, tab) => {
 		// split into lines, remove empty lines and unnecessary whitespace
-		let lines = mutes.trim().split('\n').map(line => line.trim()).filter(line => line !== '');
+		let lines = mutes
+			.trim()
+			.split("\n")
+			.map((line) => line.trim())
+			.filter((line) => line !== "");
 
 		// check each line if it is a RegExp or not
 		for (let i = 0; i < lines.length; i++) {
@@ -87,15 +94,18 @@ async function save() {
 				} catch (err: any) {
 					// invalid syntax: do not save, do not reset changed flag
 					os.alert({
-						type: 'error',
+						type: "error",
 						title: i18n.ts.regexpError,
-						text: i18n.t('regexpErrorDescription', { tab, line: i + 1 }) + '\n' + err.toString(),
+						text:
+							i18n.t("regexpErrorDescription", { tab, line: i + 1 }) +
+							"\n" +
+							err.toString(),
 					});
 					// re-throw error so these invalid settings are not saved
 					throw err;
 				}
 			} else {
-				lines[i] = line.split(' ');
+				lines[i] = line.split(" ");
 			}
 		}
 
@@ -111,8 +121,8 @@ async function save() {
 		return;
 	}
 
-	defaultStore.set('mutedWords', softMutes);
-	await os.api('i/update', {
+	defaultStore.set("mutedWords", softMutes);
+	await os.api("i/update", {
 		mutedWords: hardMutes,
 	});
 
@@ -125,6 +135,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.wordMute,
-	icon: 'ti ti-message-off',
+	icon: "ti ti-message-off",
 });
 </script>

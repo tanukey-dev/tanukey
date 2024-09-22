@@ -565,24 +565,24 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
-import { throttle } from 'throttle-debounce';
-import RolesEditorFormula from './RolesEditorFormula.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkColorInput from '@/components/MkColorInput.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkRange from '@/components/MkRange.vue';
-import FormSlot from '@/components/form/slot.vue';
-import { i18n } from '@/i18n';
-import { ROLE_POLICIES } from '@/const';
-import { instance } from '@/instance';
-import { deepClone } from '@/scripts/clone';
+import { watch } from "vue";
+import { throttle } from "throttle-debounce";
+import RolesEditorFormula from "./RolesEditorFormula.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkColorInput from "@/components/MkColorInput.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkRange from "@/components/MkRange.vue";
+import FormSlot from "@/components/form/slot.vue";
+import { i18n } from "@/i18n";
+import { ROLE_POLICIES } from "@/const";
+import { instance } from "@/instance";
+import { deepClone } from "@/scripts/clone";
 
 const emit = defineEmits<{
-	(ev: 'update:modelValue', v: any): void;
+	(ev: "update:modelValue", v: any): void;
 }>();
 
 const props = defineProps<{
@@ -604,32 +604,39 @@ for (const ROLE_POLICY of ROLE_POLICIES) {
 }
 
 let rolePermission = $computed({
-	get: () => role.isAdministrator ? 'administrator' : role.isModerator ? 'moderator' : 'normal',
+	get: () =>
+		role.isAdministrator
+			? "administrator"
+			: role.isModerator
+				? "moderator"
+				: "normal",
 	set: (val) => {
-		role.isAdministrator = val === 'administrator';
-		role.isModerator = val === 'moderator';
+		role.isAdministrator = val === "administrator";
+		role.isModerator = val === "moderator";
 	},
 });
 
-let q = $ref('');
+let q = $ref("");
 
 function getPriorityIcon(option) {
-	if (option.priority === 2) return 'ti ti-arrows-up';
-	if (option.priority === 1) return 'ti ti-arrow-narrow-up';
-	return 'ti ti-point';
+	if (option.priority === 2) return "ti ti-arrows-up";
+	if (option.priority === 1) return "ti ti-arrow-narrow-up";
+	return "ti ti-point";
 }
 
 function matchQuery(keywords: string[]): boolean {
 	if (q.trim().length === 0) return true;
-	return keywords.some(keyword => keyword.toLowerCase().includes(q.toLowerCase()));
+	return keywords.some((keyword) =>
+		keyword.toLowerCase().includes(q.toLowerCase()),
+	);
 }
 
 const save = throttle(100, () => {
 	const data = {
 		name: role.name,
 		description: role.description,
-		color: role.color === '' ? null : role.color,
-		iconUrl: role.iconUrl === '' ? null : role.iconUrl,
+		color: role.color === "" ? null : role.color,
+		iconUrl: role.iconUrl === "" ? null : role.iconUrl,
 		displayOrder: role.displayOrder,
 		target: role.target,
 		condFormula: role.condFormula,
@@ -642,7 +649,7 @@ const save = throttle(100, () => {
 		policies: role.policies,
 	};
 
-	emit('update:modelValue', data);
+	emit("update:modelValue", data);
 });
 
 watch($$(role), save, { deep: true });

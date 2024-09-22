@@ -79,36 +79,41 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onDeactivated, onUnmounted, ref } from 'vue';
-import type { summaly } from '@misskey-dev/summaly';
-import { url as local } from '@/config.js';
-import { i18n } from '@/i18n.js';
-import * as os from '@/os.js';
-import { deviceKind } from '@/scripts/device-kind.js';
-import MkButton from '@/components/MkButton.vue';
-import { versatileLang } from '@/scripts/intl-const.js';
-import { transformPlayerUrl } from '@/scripts/player-url-transform.js';
-import { defaultStore } from '@/store.js';
+import { defineAsyncComponent, onDeactivated, onUnmounted, ref } from "vue";
+import type { summaly } from "@misskey-dev/summaly";
+import { url as local } from "@/config.js";
+import { i18n } from "@/i18n.js";
+import * as os from "@/os.js";
+import { deviceKind } from "@/scripts/device-kind.js";
+import MkButton from "@/components/MkButton.vue";
+import { versatileLang } from "@/scripts/intl-const.js";
+import { transformPlayerUrl } from "@/scripts/player-url-transform.js";
+import { defaultStore } from "@/store.js";
 
 type SummalyResult = Awaited<ReturnType<typeof summaly>>;
 
-const props = withDefaults(defineProps<{
-	url: string;
-	detail?: boolean;
-	compact?: boolean;
-	showActions?: boolean;
-}>(), {
-	detail: false,
-	compact: false,
-	showActions: true,
-});
+const props = withDefaults(
+	defineProps<{
+		url: string;
+		detail?: boolean;
+		compact?: boolean;
+		showActions?: boolean;
+	}>(),
+	{
+		detail: false,
+		compact: false,
+		showActions: true,
+	},
+);
 
 const MOBILE_THRESHOLD = 500;
-const isMobile = ref(deviceKind === 'smartphone' || window.innerWidth <= MOBILE_THRESHOLD);
+const isMobile = ref(
+	deviceKind === "smartphone" || window.innerWidth <= MOBILE_THRESHOLD,
+);
 
 const self = props.url.startsWith(local);
-const attr = self ? 'to' : 'href';
-const target = self ? null : '_blank';
+const attr = self ? "to" : "href";
+const target = self ? null : "_blank";
 const fetching = ref(true);
 const title = ref<string | null>(null);
 const description = ref<string | null>(null);
@@ -120,11 +125,11 @@ const player = ref({
 	url: null,
 	width: null,
 	height: null,
-} as SummalyResult['player']);
+} as SummalyResult["player"]);
 const playerEnabled = ref(false);
 const tweetId = ref<string | null>(null);
 const tweetExpanded = ref(props.detail);
-const embedId = `embed${Math.random().toString().replace(/\D/, '')}`;
+const embedId = `embed${Math.random().toString().replace(/\D/, "")}`;
 const tweetHeight = ref(150);
 const unknownUrl = ref(false);
 
@@ -133,21 +138,33 @@ onDeactivated(() => {
 });
 
 const requestUrl = new URL(props.url);
-if (!['http:', 'https:'].includes(requestUrl.protocol)) throw new Error('invalid url');
+if (!["http:", "https:"].includes(requestUrl.protocol))
+	throw new Error("invalid url");
 
-if (requestUrl.hostname === 'twitter.com' || requestUrl.hostname === 'mobile.twitter.com' || requestUrl.hostname === 'x.com' || requestUrl.hostname === 'mobile.x.com') {
+if (
+	requestUrl.hostname === "twitter.com" ||
+	requestUrl.hostname === "mobile.twitter.com" ||
+	requestUrl.hostname === "x.com" ||
+	requestUrl.hostname === "mobile.x.com"
+) {
 	const m = requestUrl.pathname.match(/^\/.+\/status(?:es)?\/(\d+)/);
 	if (m) tweetId.value = m[1];
 }
 
-if (requestUrl.hostname === 'music.youtube.com' && requestUrl.pathname.match('^/(?:watch|channel)')) {
-	requestUrl.hostname = 'www.youtube.com';
+if (
+	requestUrl.hostname === "music.youtube.com" &&
+	requestUrl.pathname.match("^/(?:watch|channel)")
+) {
+	requestUrl.hostname = "www.youtube.com";
 }
 
-requestUrl.hash = '';
+requestUrl.hash = "";
 
-window.fetch(`/url?url=${encodeURIComponent(requestUrl.href)}&lang=${versatileLang}`)
-	.then(res => {
+window
+	.fetch(
+		`/url?url=${encodeURIComponent(requestUrl.href)}&lang=${versatileLang}`,
+	)
+	.then((res) => {
 		if (!res.ok) {
 			if (_DEV_) {
 				console.warn(`[HTTP${res.status}] Failed to fetch url preview`);
@@ -177,26 +194,30 @@ window.fetch(`/url?url=${encodeURIComponent(requestUrl.href)}&lang=${versatileLa
 	});
 
 function adjustTweetHeight(message: any) {
-	if (message.origin !== 'https://platform.twitter.com') return;
-	const embed = message.data?.['twttr.embed'];
-	if (embed?.method !== 'twttr.private.resize') return;
+	if (message.origin !== "https://platform.twitter.com") return;
+	const embed = message.data?.["twttr.embed"];
+	if (embed?.method !== "twttr.private.resize") return;
 	if (embed?.id !== embedId) return;
 	const height = embed?.params[0]?.height;
 	if (height) tweetHeight.value = height;
 }
 
 function openPlayer(): void {
-	const { dispose } = os.popup(defineAsyncComponent(() => import('@/components/MkYouTubePlayer.vue')), {
-		url: requestUrl.href,
-	}, {
-		// TODO
-	});
+	const { dispose } = os.popup(
+		defineAsyncComponent(() => import("@/components/MkYouTubePlayer.vue")),
+		{
+			url: requestUrl.href,
+		},
+		{
+			// TODO
+		},
+	);
 }
 
-(window as any).addEventListener('message', adjustTweetHeight);
+(window as any).addEventListener("message", adjustTweetHeight);
 
 onUnmounted(() => {
-	(window as any).removeEventListener('message', adjustTweetHeight);
+	(window as any).removeEventListener("message", adjustTweetHeight);
 });
 </script>
 

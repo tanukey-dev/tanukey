@@ -1,40 +1,41 @@
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { RelayService } from '@/core/RelayService.js';
+import { Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { RelayService } from "@/core/RelayService.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'read:admin:relays',
+	kind: "read:admin:relays",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
+			type: "object",
+			optional: false,
+			nullable: false,
 			properties: {
 				id: {
-					type: 'string',
-					optional: false, nullable: false,
-					format: 'id',
+					type: "string",
+					optional: false,
+					nullable: false,
+					format: "id",
 				},
 				inbox: {
-					type: 'string',
-					optional: false, nullable: false,
-					format: 'url',
+					type: "string",
+					optional: false,
+					nullable: false,
+					format: "url",
 				},
 				status: {
-					type: 'string',
-					optional: false, nullable: false,
-					default: 'requesting',
-					enum: [
-						'requesting',
-						'accepted',
-						'rejected',
-					],
+					type: "string",
+					optional: false,
+					nullable: false,
+					default: "requesting",
+					enum: ["requesting", "accepted", "rejected"],
 				},
 			},
 		},
@@ -42,7 +43,7 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;
@@ -50,9 +51,7 @@ export const paramDef = {
 // eslint-disable-next-line import/no-default-export
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor(
-		private relayService: RelayService,
-	) {
+	constructor(private relayService: RelayService) {
 		super(meta, paramDef, async (ps, me) => {
 			return await this.relayService.listRelay();
 		});

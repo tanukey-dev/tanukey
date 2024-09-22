@@ -1,4 +1,4 @@
-import { Ref } from 'vue';
+import { Ref } from "vue";
 
 export function useLeaveGuard(enabled: Ref<boolean>) {
 	/* TODO
@@ -28,7 +28,6 @@ export function useLeaveGuard(enabled: Ref<boolean>) {
 		});
 	}
 	*/
-
 	/*
 	function onBeforeLeave(ev: BeforeUnloadEvent) {
 		if (enabled.value) {

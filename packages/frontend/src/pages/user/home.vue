@@ -144,41 +144,51 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
-import calcAge from 's-age';
-import * as misskey from 'misskey-js';
-import MkNote from '@/components/MkNote.vue';
-import MkFollowButton from '@/components/MkFollowButton.vue';
-import MkAccountMoved from '@/components/MkAccountMoved.vue';
-import MkRemoteCaution from '@/components/MkRemoteCaution.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkOmit from '@/components/MkOmit.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import MkButton from '@/components/MkButton.vue';
-import { getScrollPosition } from '@/scripts/scroll';
-import { getUserMenu } from '@/scripts/get-user-menu';
-import { sendMessage } from '@/scripts/send-message';
-import number from '@/filters/number';
-import { userPage } from '@/filters/user';
-import * as os from '@/os';
-import { useRouter } from '@/router';
-import { i18n } from '@/i18n';
-import { $i, iAmModerator } from '@/account';
-import { dateString } from '@/filters/date';
-import { confetti } from '@/scripts/confetti';
-import { api } from '@/os';
+import {
+	defineAsyncComponent,
+	computed,
+	onMounted,
+	onUnmounted,
+	nextTick,
+	watch,
+} from "vue";
+import calcAge from "s-age";
+import * as misskey from "misskey-js";
+import MkNote from "@/components/MkNote.vue";
+import MkFollowButton from "@/components/MkFollowButton.vue";
+import MkAccountMoved from "@/components/MkAccountMoved.vue";
+import MkRemoteCaution from "@/components/MkRemoteCaution.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkOmit from "@/components/MkOmit.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import MkButton from "@/components/MkButton.vue";
+import { getScrollPosition } from "@/scripts/scroll";
+import { getUserMenu } from "@/scripts/get-user-menu";
+import { sendMessage } from "@/scripts/send-message";
+import number from "@/filters/number";
+import { userPage } from "@/filters/user";
+import * as os from "@/os";
+import { useRouter } from "@/router";
+import { i18n } from "@/i18n";
+import { $i, iAmModerator } from "@/account";
+import { dateString } from "@/filters/date";
+import { confetti } from "@/scripts/confetti";
+import { api } from "@/os";
 
-const XPhotos = defineAsyncComponent(() => import('./index.photos.vue'));
-const XActivity = defineAsyncComponent(() => import('./index.activity.vue'));
-const XTimeline = defineAsyncComponent(() => import('./index.timeline.vue'));
+const XPhotos = defineAsyncComponent(() => import("./index.photos.vue"));
+const XActivity = defineAsyncComponent(() => import("./index.activity.vue"));
+const XTimeline = defineAsyncComponent(() => import("./index.timeline.vue"));
 
-const props = withDefaults(defineProps<{
-	user: misskey.entities.UserDetailed;
-	/** Test only; MkNotes currently causes problems in vitest */
-	disableNotes: boolean;
-}>(), {
-	disableNotes: false,
-});
+const props = withDefaults(
+	defineProps<{
+		user: misskey.entities.UserDetailed;
+		/** Test only; MkNotes currently causes problems in vitest */
+		disableNotes: boolean;
+	}>(),
+	{
+		disableNotes: false,
+	},
+);
 
 const router = useRouter();
 
@@ -193,11 +203,14 @@ let moderationNote = $ref(props.user.moderationNote);
 let editModerationNote = $ref(false);
 
 watch($$(moderationNote), async () => {
-	await os.api('admin/update-user-note', { userId: props.user.id, text: moderationNote });
+	await os.api("admin/update-user-note", {
+		userId: props.user.id,
+		text: moderationNote,
+	});
 });
 
 const pagination = {
-	endpoint: 'users/notes' as const,
+	endpoint: "users/notes" as const,
 	limit: 10,
 	params: computed(() => ({
 		userId: props.user.id,
@@ -207,7 +220,7 @@ const pagination = {
 const style = $computed(() => {
 	if (props.user.bannerUrl == null) return {};
 	return {
-		backgroundImage: `url(${ props.user.bannerUrl })`,
+		backgroundImage: `url(${props.user.bannerUrl})`,
 	};
 });
 
@@ -247,12 +260,12 @@ function showMemoTextarea() {
 
 function adjustMemoTextarea() {
 	if (!memoTextareaEl) return;
-	memoTextareaEl.style.height = '0px';
+	memoTextareaEl.style.height = "0px";
 	memoTextareaEl.style.height = `${memoTextareaEl.scrollHeight}px`;
 }
 
 async function updateMemo() {
-	await api('users/update-memo', {
+	await api("users/update-memo", {
 		memo: memoDraft,
 		userId: props.user.id,
 	});
@@ -264,15 +277,20 @@ watch([props.user], () => {
 });
 
 function sendPoints(user): void {
-	os.popup(defineAsyncComponent(() => import('@/components/MkSendPointsWindow.vue')), { user: user }, {
-		done: async result => {
-			const { target, value } = result;
-			await os.api('points/send', {
-				userId: target.id,
-				value: value,
-			});
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkSendPointsWindow.vue")),
+		{ user: user },
+		{
+			done: async (result) => {
+				const { target, value } = result;
+				await os.api("points/send", {
+					userId: target.id,
+					value: value,
+				});
+			},
 		},
-	}, 'closed');
+		"closed",
+	);
 }
 
 onMounted(() => {
@@ -282,8 +300,8 @@ onMounted(() => {
 	if (props.user.birthday) {
 		const m = new Date().getMonth() + 1;
 		const d = new Date().getDate();
-		const bm = parseInt(props.user.birthday.split('-')[1]);
-		const bd = parseInt(props.user.birthday.split('-')[2]);
+		const bm = parseInt(props.user.birthday.split("-")[1]);
+		const bd = parseInt(props.user.birthday.split("-")[2]);
 		if (m === bm && d === bd) {
 			confetti({
 				duration: 1000 * 4,

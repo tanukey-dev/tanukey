@@ -1,5 +1,5 @@
-declare module '@peertube/http-signature' {
-	import type { IncomingMessage, ClientRequest } from 'node:http';
+declare module "@peertube/http-signature" {
+	import type { IncomingMessage, ClientRequest } from "node:http";
 
 	interface ISignature {
 		keyId: string;
@@ -28,8 +28,8 @@ declare module '@peertube/http-signature' {
 	}
 
 	type RequestSignerConstructorOptions =
-		IRequestSignerConstructorOptionsFromProperties |
-		IRequestSignerConstructorOptionsFromFunction;
+		| IRequestSignerConstructorOptionsFromProperties
+		| IRequestSignerConstructorOptionsFromFunction;
 
 	interface IRequestSignerConstructorOptionsFromProperties {
 		keyId: string;
@@ -59,11 +59,23 @@ declare module '@peertube/http-signature' {
 		httpVersion?: string;
 	}
 
-	export function parse(request: IncomingMessage, options?: IParseRequestOptions): IParsedSignature;
-	export function parseRequest(request: IncomingMessage, options?: IParseRequestOptions): IParsedSignature;
+	export function parse(
+		request: IncomingMessage,
+		options?: IParseRequestOptions,
+	): IParsedSignature;
+	export function parseRequest(
+		request: IncomingMessage,
+		options?: IParseRequestOptions,
+	): IParsedSignature;
 
-	export function sign(request: ClientRequest, options: ISignRequestOptions): boolean;
-	export function signRequest(request: ClientRequest, options: ISignRequestOptions): boolean;
+	export function sign(
+		request: ClientRequest,
+		options: ISignRequestOptions,
+	): boolean;
+	export function signRequest(
+		request: ClientRequest,
+		options: ISignRequestOptions,
+	): boolean;
 	export function createSigner(): RequestSigner;
 	export function isSigner(obj: any): obj is RequestSigner;
 
@@ -71,7 +83,16 @@ declare module '@peertube/http-signature' {
 	export function sshKeyFingerprint(key: string): string;
 	export function pemToRsaSSHKey(pem: string, comment: string): string;
 
-	export function verify(parsedSignature: IParsedSignature, pubkey: string | Buffer): boolean;
-	export function verifySignature(parsedSignature: IParsedSignature, pubkey: string | Buffer): boolean;
-	export function verifyHMAC(parsedSignature: IParsedSignature, secret: string): boolean;
+	export function verify(
+		parsedSignature: IParsedSignature,
+		pubkey: string | Buffer,
+	): boolean;
+	export function verifySignature(
+		parsedSignature: IParsedSignature,
+		pubkey: string | Buffer,
+	): boolean;
+	export function verifyHMAC(
+		parsedSignature: IParsedSignature,
+		secret: string,
+	): boolean;
 }

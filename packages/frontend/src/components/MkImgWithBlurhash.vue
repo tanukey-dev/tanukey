@@ -16,30 +16,30 @@
 </template>
 
 <script lang="ts">
-import { $ref } from 'vue/macros';
-import DrawBlurhash from '@/workers/draw-blurhash?worker';
-import TestWebGL2 from '@/workers/test-webgl2?worker';
-import { WorkerMultiDispatch } from '@/scripts/worker-multi-dispatch';
-import { extractAvgColorFromBlurhash } from '@/scripts/extract-avg-color-from-blurhash';
+import { $ref } from "vue/macros";
+import DrawBlurhash from "@/workers/draw-blurhash?worker";
+import TestWebGL2 from "@/workers/test-webgl2?worker";
+import { WorkerMultiDispatch } from "@/scripts/worker-multi-dispatch";
+import { extractAvgColorFromBlurhash } from "@/scripts/extract-avg-color-from-blurhash";
 
-const workerPromise = new Promise<WorkerMultiDispatch | null>(resolve => {
+const workerPromise = new Promise<WorkerMultiDispatch | null>((resolve) => {
 	// テスト環境で Web Worker インスタンスは作成できない
-	if (import.meta.env.MODE === 'test') {
+	if (import.meta.env.MODE === "test") {
 		resolve(null);
 		return;
 	}
 	const testWorker = new TestWebGL2();
-	testWorker.addEventListener('message', event => {
+	testWorker.addEventListener("message", (event) => {
 		if (event.data.result) {
 			const workers = new WorkerMultiDispatch(
 				() => new DrawBlurhash(),
 				Math.min(navigator.hardwareConcurrency - 1, 4),
 			);
 			resolve(workers);
-			if (_DEV_) console.log('WebGL2 in worker is supported!');
+			if (_DEV_) console.log("WebGL2 in worker is supported!");
 		} else {
 			resolve(null);
-			if (_DEV_) console.log('WebGL2 in worker is not supported...');
+			if (_DEV_) console.log("WebGL2 in worker is not supported...");
 		}
 		testWorker.terminate();
 	});

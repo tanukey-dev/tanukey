@@ -41,31 +41,35 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, watch } from 'vue';
-import MkRadios from '@/components/MkRadios.vue';
-import MkButton from '@/components/MkButton.vue';
-import FormSlot from '@/components/form/slot.vue';
-import MkContainer from '@/components/MkContainer.vue';
-import * as os from '@/os';
-import { navbarItemDef } from '@/navbar';
-import { defaultStore } from '@/store';
-import { unisonReload } from '@/scripts/unison-reload';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { deepClone } from '@/scripts/clone';
+import { computed, defineAsyncComponent, ref, watch } from "vue";
+import MkRadios from "@/components/MkRadios.vue";
+import MkButton from "@/components/MkButton.vue";
+import FormSlot from "@/components/form/slot.vue";
+import MkContainer from "@/components/MkContainer.vue";
+import * as os from "@/os";
+import { navbarItemDef } from "@/navbar";
+import { defaultStore } from "@/store";
+import { unisonReload } from "@/scripts/unison-reload";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { deepClone } from "@/scripts/clone";
 
-const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
+const Sortable = defineAsyncComponent(() =>
+	import("vuedraggable").then((x) => x.default),
+);
 
-const items = ref(defaultStore.state.menu.map(x => ({
-	id: Math.random().toString(),
-	type: x,
-})));
+const items = ref(
+	defaultStore.state.menu.map((x) => ({
+		id: Math.random().toString(),
+		type: x,
+	})),
+);
 
-const menuDisplay = computed(defaultStore.makeGetterSetter('menuDisplay'));
+const menuDisplay = computed(defaultStore.makeGetterSetter("menuDisplay"));
 
 async function reloadAsk() {
 	const { canceled } = await os.confirm({
-		type: 'info',
+		type: "info",
 		text: i18n.ts.reloadToApplySetting,
 	});
 	if (canceled) return;
@@ -74,20 +78,30 @@ async function reloadAsk() {
 }
 
 async function addItem() {
-	const menu = Object.keys(navbarItemDef).filter(k => !defaultStore.state.menu.includes(k));
+	const menu = Object.keys(navbarItemDef).filter(
+		(k) => !defaultStore.state.menu.includes(k),
+	);
 	const { canceled, result: item } = await os.select({
 		title: i18n.ts.addItem,
-		items: [...menu.map(k => ({
-			value: k, text: navbarItemDef[k].title,
-		})), {
-			value: '-', text: i18n.ts.divider,
-		}],
+		items: [
+			...menu.map((k) => ({
+				value: k,
+				text: navbarItemDef[k].title,
+			})),
+			{
+				value: "-",
+				text: i18n.ts.divider,
+			},
+		],
 	});
 	if (canceled) return;
-	items.value = [...items.value, {
-		id: Math.random().toString(),
-		type: item,
-	}];
+	items.value = [
+		...items.value,
+		{
+			id: Math.random().toString(),
+			type: item,
+		},
+	];
 }
 
 function removeItem(index: number) {
@@ -95,12 +109,15 @@ function removeItem(index: number) {
 }
 
 async function save() {
-	defaultStore.set('menu', items.value.map(x => x.type));
+	defaultStore.set(
+		"menu",
+		items.value.map((x) => x.type),
+	);
 	await reloadAsk();
 }
 
 function reset() {
-	items.value = defaultStore.def.menu.default.map(x => ({
+	items.value = defaultStore.def.menu.default.map((x) => ({
 		id: Math.random().toString(),
 		type: x,
 	}));
@@ -116,7 +133,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.navbar,
-	icon: 'ti ti-list',
+	icon: "ti ti-list",
 });
 </script>
 

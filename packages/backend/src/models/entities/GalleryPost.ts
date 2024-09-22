@@ -1,7 +1,14 @@
-import { Entity, Index, JoinColumn, Column, PrimaryColumn, ManyToOne } from 'typeorm';
-import { id } from '../id.js';
-import { User } from './User.js';
-import type { DriveFile } from './DriveFile.js';
+import {
+	Entity,
+	Index,
+	JoinColumn,
+	Column,
+	PrimaryColumn,
+	ManyToOne,
+} from "typeorm";
+import { id } from "../id.js";
+import { User } from "./User.js";
+import type { DriveFile } from "./DriveFile.js";
 
 @Entity()
 export class GalleryPost {
@@ -9,36 +16,37 @@ export class GalleryPost {
 	public id: string;
 
 	@Index()
-	@Column('timestamp with time zone', {
-		comment: 'The created date of the GalleryPost.',
+	@Column("timestamp with time zone", {
+		comment: "The created date of the GalleryPost.",
 	})
 	public createdAt: Date;
 
 	@Index()
-	@Column('timestamp with time zone', {
-		comment: 'The updated date of the GalleryPost.',
+	@Column("timestamp with time zone", {
+		comment: "The updated date of the GalleryPost.",
 	})
 	public updatedAt: Date;
 
-	@Column('varchar', {
+	@Column("varchar", {
 		length: 256,
 	})
 	public title: string;
 
-	@Column('varchar', {
-		length: 2048, nullable: true,
+	@Column("varchar", {
+		length: 2048,
+		nullable: true,
 	})
 	public description: string | null;
 
 	@Index()
 	@Column({
 		...id(),
-		comment: 'The ID of author.',
+		comment: "The ID of author.",
 	})
-	public userId: User['id'];
+	public userId: User["id"];
 
-	@ManyToOne(type => User, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => User, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public user: User | null;
@@ -46,26 +54,29 @@ export class GalleryPost {
 	@Index()
 	@Column({
 		...id(),
-		array: true, default: '{}',
+		array: true,
+		default: "{}",
 	})
-	public fileIds: DriveFile['id'][];
+	public fileIds: DriveFile["id"][];
 
 	@Index()
-	@Column('boolean', {
+	@Column("boolean", {
 		default: false,
-		comment: 'Whether the post is sensitive.',
+		comment: "Whether the post is sensitive.",
 	})
 	public isSensitive: boolean;
 
 	@Index()
-	@Column('integer', {
+	@Column("integer", {
 		default: 0,
 	})
 	public likedCount: number;
 
 	@Index()
-	@Column('varchar', {
-		length: 128, array: true, default: '{}',
+	@Column("varchar", {
+		length: 128,
+		array: true,
+		default: "{}",
 	})
 	public tags: string[];
 

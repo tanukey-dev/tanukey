@@ -19,23 +19,26 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { toRefs, Ref } from 'vue';
-import { i18n } from '@/i18n';
+import { toRefs, Ref } from "vue";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	checked: boolean | Ref<boolean>;
-	disabled?: boolean;
-}>(), {
-	disabled: false,
-});
+const props = withDefaults(
+	defineProps<{
+		checked: boolean | Ref<boolean>;
+		disabled?: boolean;
+	}>(),
+	{
+		disabled: false,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'toggle'): void;
+	(ev: "toggle"): void;
 }>();
 
 const checked = toRefs(props).checked;
 const toggle = () => {
-	emit('toggle');
+	emit("toggle");
 };
 </script>
 

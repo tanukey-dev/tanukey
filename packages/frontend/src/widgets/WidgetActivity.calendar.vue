@@ -31,13 +31,13 @@
 
 <script lang="ts" setup>
 const props = defineProps<{
-	activity: any[]
+	activity: any[];
 }>();
 
 for (const d of props.activity) {
 	d.total = d.notes + d.replies + d.renotes;
 }
-const peak = Math.max(...props.activity.map(d => d.total));
+const peak = Math.max(...props.activity.map((d) => d.total));
 
 const now = new Date();
 const year = now.getFullYear();
@@ -60,7 +60,7 @@ props.activity.slice().forEach((d, i) => {
 	if (d.v > 1) d.v = 1;
 	const ch = d.date.weekday === 0 || d.date.weekday === 6 ? 275 : 170;
 	const cs = d.v * 100;
-	const cl = 15 + ((1 - d.v) * 80);
+	const cl = 15 + (1 - d.v) * 80;
 	d.color = `hsl(${ch}, ${cs}%, ${cl}%)`;
 
 	if (d.date.weekday === 0) x--;

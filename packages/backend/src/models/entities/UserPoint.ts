@@ -1,6 +1,13 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { id } from '../id.js';
-import { User } from './User.js';
+import {
+	Column,
+	Entity,
+	Index,
+	JoinColumn,
+	ManyToOne,
+	PrimaryColumn,
+} from "typeorm";
+import { id } from "../id.js";
+import { User } from "./User.js";
 
 @Entity()
 export class UserPoint {
@@ -10,22 +17,22 @@ export class UserPoint {
 	@Index()
 	@Column({
 		...id(),
-		comment: 'The ID of author.',
+		comment: "The ID of author.",
 	})
-	public userId: User['id'];
+	public userId: User["id"];
 
-	@ManyToOne(type => User, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => User, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public user: User | null;
 
-	@Column('integer', {
+	@Column("integer", {
 		default: 0,
 	})
 	public point: number;
 
-	@Column('timestamp with time zone', {
+	@Column("timestamp with time zone", {
 		nullable: true,
 	})
 	public updatedAtDailyFirstNote: Date | null;

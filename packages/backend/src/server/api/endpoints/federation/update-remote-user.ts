@@ -1,20 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ApPersonService } from '@/core/activitypub/models/ApPersonService.js';
-import { GetterService } from '@/server/api/GetterService.js';
+import { Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { ApPersonService } from "@/core/activitypub/models/ApPersonService.js";
+import { GetterService } from "@/server/api/GetterService.js";
 
 export const meta = {
-	tags: ['federation'],
+	tags: ["federation"],
 
 	requireCredential: false,
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: { type: "string", format: "misskey:id" },
 	},
-	required: ['userId'],
+	required: ["userId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

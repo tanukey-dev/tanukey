@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import MkRetentionHeatmap from '@/components/MkRetentionHeatmap.vue';
+import MkRetentionHeatmap from "@/components/MkRetentionHeatmap.vue";
 </script>
 
 <style lang="scss" module>

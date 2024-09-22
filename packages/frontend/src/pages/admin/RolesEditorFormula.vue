@@ -50,19 +50,21 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, watch } from 'vue';
-import { v4 as uuid } from 'uuid';
-import MkInput from '@/components/MkInput.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n';
-import { deepClone } from '@/scripts/clone';
+import { computed, defineAsyncComponent, ref, watch } from "vue";
+import { v4 as uuid } from "uuid";
+import MkInput from "@/components/MkInput.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import MkButton from "@/components/MkButton.vue";
+import { i18n } from "@/i18n";
+import { deepClone } from "@/scripts/clone";
 
-const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
+const Sortable = defineAsyncComponent(() =>
+	import("vuedraggable").then((x) => x.default),
+);
 
 const emit = defineEmits<{
-	(ev: 'update:modelValue', value: any): void;
-	(ev: 'remove'): void;
+	(ev: "update:modelValue", value: any): void;
+	(ev: "remove"): void;
 }>();
 
 const props = defineProps<{
@@ -72,48 +74,56 @@ const props = defineProps<{
 
 const v = ref(deepClone(props.modelValue));
 
-watch(() => props.modelValue, () => {
-	if (JSON.stringify(props.modelValue) === JSON.stringify(v.value)) return;
-	v.value = deepClone(props.modelValue);
-}, { deep: true });
+watch(
+	() => props.modelValue,
+	() => {
+		if (JSON.stringify(props.modelValue) === JSON.stringify(v.value)) return;
+		v.value = deepClone(props.modelValue);
+	},
+	{ deep: true },
+);
 
-watch(v, () => {
-	emit('update:modelValue', v.value);
-}, { deep: true });
+watch(
+	v,
+	() => {
+		emit("update:modelValue", v.value);
+	},
+	{ deep: true },
+);
 
 const type = computed({
 	get: () => v.value.type,
 	set: (t) => {
-		if (t === 'and') v.value.values = [];
-		if (t === 'or') v.value.values = [];
-		if (t === 'not') v.value.value = { id: uuid(), type: 'isRemote' };
-		if (t === 'createdLessThan') v.value.sec = 86400;
-		if (t === 'createdMoreThan') v.value.sec = 86400;
-		if (t === 'followersLessThanOrEq') v.value.value = 10;
-		if (t === 'followersMoreThanOrEq') v.value.value = 10;
-		if (t === 'followingLessThanOrEq') v.value.value = 10;
-		if (t === 'followingMoreThanOrEq') v.value.value = 10;
-		if (t === 'notesLessThanOrEq') v.value.value = 10;
-		if (t === 'notesMoreThanOrEq') v.value.value = 10;
+		if (t === "and") v.value.values = [];
+		if (t === "or") v.value.values = [];
+		if (t === "not") v.value.value = { id: uuid(), type: "isRemote" };
+		if (t === "createdLessThan") v.value.sec = 86400;
+		if (t === "createdMoreThan") v.value.sec = 86400;
+		if (t === "followersLessThanOrEq") v.value.value = 10;
+		if (t === "followersMoreThanOrEq") v.value.value = 10;
+		if (t === "followingLessThanOrEq") v.value.value = 10;
+		if (t === "followingMoreThanOrEq") v.value.value = 10;
+		if (t === "notesLessThanOrEq") v.value.value = 10;
+		if (t === "notesMoreThanOrEq") v.value.value = 10;
 		v.value.type = t;
 	},
 });
 
 function addValue() {
-	v.value.values.push({ id: uuid(), type: 'isRemote' });
+	v.value.values.push({ id: uuid(), type: "isRemote" });
 }
 
 function valuesItemUpdated(item) {
-	const i = v.value.values.findIndex(_item => _item.id === item.id);
+	const i = v.value.values.findIndex((_item) => _item.id === item.id);
 	v.value.values[i] = item;
 }
 
 function removeItem(item) {
-	v.value.values = v.value.values.filter(_item => _item.id !== item.id);
+	v.value.values = v.value.values.filter((_item) => _item.id !== item.id);
 }
 
 function removeSelf() {
-	emit('remove');
+	emit("remove");
 }
 </script>
 

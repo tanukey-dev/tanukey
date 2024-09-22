@@ -1,6 +1,14 @@
-import { PrimaryColumn, Entity, Index, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
-import { id } from '../id.js';
-import { User } from './User.js';
+import {
+	PrimaryColumn,
+	Entity,
+	Index,
+	Column,
+	ManyToOne,
+	JoinColumn,
+	OneToOne,
+} from "typeorm";
+import { id } from "../id.js";
+import { User } from "./User.js";
 
 @Entity()
 export class RegistrationTicket {
@@ -8,21 +16,21 @@ export class RegistrationTicket {
 	public id: string;
 
 	@Index({ unique: true })
-	@Column('varchar', {
+	@Column("varchar", {
 		length: 64,
 	})
 	public code: string;
 
-	@Column('timestamp with time zone', {
+	@Column("timestamp with time zone", {
 		nullable: true,
 	})
 	public expiresAt: Date | null;
 
-	@Column('timestamp with time zone')
+	@Column("timestamp with time zone")
 	public createdAt: Date;
 
-	@ManyToOne(type => User, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => User, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public createdBy: User | null;
@@ -32,10 +40,10 @@ export class RegistrationTicket {
 		...id(),
 		nullable: true,
 	})
-	public createdById: User['id'] | null;
+	public createdById: User["id"] | null;
 
-	@OneToOne(type => User, {
-		onDelete: 'CASCADE',
+	@OneToOne((type) => User, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public usedBy: User | null;
@@ -45,14 +53,14 @@ export class RegistrationTicket {
 		...id(),
 		nullable: true,
 	})
-	public usedById: User['id'] | null;
+	public usedById: User["id"] | null;
 
-	@Column('timestamp with time zone', {
+	@Column("timestamp with time zone", {
 		nullable: true,
 	})
 	public usedAt: Date | null;
 
-	@Column('varchar', {
+	@Column("varchar", {
 		length: 32,
 		nullable: true,
 	})

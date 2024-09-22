@@ -12,18 +12,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import * as os from '@/os';
-import { useInterval } from '@/scripts/use-interval';
-import MkInstanceCardMini from '@/components/MkInstanceCardMini.vue';
-import { defaultStore } from '@/store';
+import { ref } from "vue";
+import * as os from "@/os";
+import { useInterval } from "@/scripts/use-interval";
+import MkInstanceCardMini from "@/components/MkInstanceCardMini.vue";
+import { defaultStore } from "@/store";
 
 const instances = ref([]);
 const fetching = ref(true);
 
 const fetch = async () => {
-	const fetchedInstances = await os.api('federation/instances', {
-		sort: '+latestRequestReceivedAt',
+	const fetchedInstances = await os.api("federation/instances", {
+		sort: "+latestRequestReceivedAt",
 		limit: 6,
 	});
 	instances.value = fetchedInstances;

@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import number from '@/filters/number';
+import { computed } from "vue";
+import number from "@/filters/number";
 
 const props = defineProps<{
 	value: number;

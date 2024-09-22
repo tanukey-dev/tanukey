@@ -9,22 +9,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import FormInfo from '@/components/MkInfo.vue';
-import * as os from '@/os';
-import { unisonReload } from '@/scripts/unison-reload';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { miLocalStorage } from '@/local-storage';
+import { ref, watch } from "vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import FormInfo from "@/components/MkInfo.vue";
+import * as os from "@/os";
+import { unisonReload } from "@/scripts/unison-reload";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { miLocalStorage } from "@/local-storage";
 
-const localCustomCss = ref(miLocalStorage.getItem('customCss') ?? '');
+const localCustomCss = ref(miLocalStorage.getItem("customCss") ?? "");
 
 async function apply() {
-	miLocalStorage.setItem('customCss', localCustomCss.value);
+	miLocalStorage.setItem("customCss", localCustomCss.value);
 
 	const { canceled } = await os.confirm({
-		type: 'info',
+		type: "info",
 		text: i18n.ts.reloadToApplySetting,
 	});
 	if (canceled) return;
@@ -42,6 +42,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.customCss,
-	icon: 'ti ti-code',
+	icon: "ti ti-code",
 });
 </script>

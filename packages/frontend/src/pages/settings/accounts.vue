@@ -14,81 +14,115 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref } from 'vue';
-import type * as Misskey from 'misskey-js';
-import FormSuspense from '@/components/form/suspense.vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { getAccounts, addAccount as addAccounts, removeAccount as _removeAccount, login, $i } from '@/account';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkUserCardMini from '@/components/MkUserCardMini.vue';
+import { defineAsyncComponent, ref } from "vue";
+import type * as Misskey from "misskey-js";
+import FormSuspense from "@/components/form/suspense.vue";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import {
+	getAccounts,
+	addAccount as addAccounts,
+	removeAccount as _removeAccount,
+	login,
+	$i,
+} from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkUserCardMini from "@/components/MkUserCardMini.vue";
 
 const storedAccounts = ref<any>(null);
 const accounts = ref<Misskey.entities.UserDetailed[]>([]);
 
 const init = async () => {
-	getAccounts().then(accounts => {
-		storedAccounts.value = accounts.filter(x => x.id !== $i!.id);
+	getAccounts()
+		.then((accounts) => {
+			storedAccounts.value = accounts.filter((x) => x.id !== $i!.id);
 
-		return os.api('users/show', {
-			userIds: storedAccounts.value.map(x => x.id),
+			return os.api("users/show", {
+				userIds: storedAccounts.value.map((x) => x.id),
+			});
+		})
+		.then((response) => {
+			accounts.value = response;
 		});
-	}).then(response => {
-		accounts.value = response;
-	});
 };
 
 function menu(account, ev) {
-	os.popupMenu([{
-		text: i18n.ts.switch,
-		icon: 'ti ti-switch-horizontal',
-		action: () => switchAccount(account),
-	}, {
-		text: i18n.ts.logout,
-		icon: 'ti ti-trash',
-		danger: true,
-		action: () => removeAccount(account),
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.switch,
+				icon: "ti ti-switch-horizontal",
+				action: () => switchAccount(account),
+			},
+			{
+				text: i18n.ts.logout,
+				icon: "ti ti-trash",
+				danger: true,
+				action: () => removeAccount(account),
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 function addAccount(ev) {
-	os.popupMenu([{
-		text: i18n.ts.existingAccount,
-		action: () => { addExistingAccount(); },
-	}, {
-		text: i18n.ts.createAccount,
-		action: () => { createAccount(); },
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.existingAccount,
+				action: () => {
+					addExistingAccount();
+				},
+			},
+			{
+				text: i18n.ts.createAccount,
+				action: () => {
+					createAccount();
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 async function removeAccount(account) {
 	await _removeAccount(account.id);
-	accounts.value = accounts.value.filter(x => x.id !== account.id);
+	accounts.value = accounts.value.filter((x) => x.id !== account.id);
 }
 
 function addExistingAccount() {
-	os.popup(defineAsyncComponent(() => import('@/components/MkSigninDialog.vue')), {}, {
-		done: async res => {
-			await addAccounts(res.id, res.i);
-			os.success();
-			init();
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkSigninDialog.vue")),
+		{},
+		{
+			done: async (res) => {
+				await addAccounts(res.id, res.i);
+				os.success();
+				init();
+			},
 		},
-	}, 'closed');
+		"closed",
+	);
 }
 
 function createAccount() {
-	os.popup(defineAsyncComponent(() => import('@/components/MkSignupDialog.vue')), {}, {
-		done: async res => {
-			await addAccounts(res.id, res.i);
-			switchAccountWithToken(res.i);
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkSignupDialog.vue")),
+		{},
+		{
+			done: async (res) => {
+				await addAccounts(res.id, res.i);
+				switchAccountWithToken(res.i);
+			},
 		},
-	}, 'closed');
+		"closed",
+	);
 }
 
 async function switchAccount(account: any) {
 	const fetchedAccounts: any[] = await getAccounts();
-	const token = fetchedAccounts.find(x => x.id === account.id).token;
+	const token = fetchedAccounts.find((x) => x.id === account.id).token;
 	switchAccountWithToken(token);
 }
 
@@ -102,7 +136,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.accounts,
-	icon: 'ti ti-users',
+	icon: "ti ti-users",
 });
 </script>
 

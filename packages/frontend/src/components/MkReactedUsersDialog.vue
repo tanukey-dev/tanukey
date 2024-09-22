@@ -34,22 +34,22 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch } from 'vue';
-import * as misskey from 'misskey-js';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import MkReactionIcon from '@/components/MkReactionIcon.vue';
-import MkUserCardMini from '@/components/MkUserCardMini.vue';
-import { userPage } from '@/filters/user';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import { infoImageUrl } from '@/instance';
+import { onMounted, watch } from "vue";
+import * as misskey from "misskey-js";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import MkReactionIcon from "@/components/MkReactionIcon.vue";
+import MkUserCardMini from "@/components/MkUserCardMini.vue";
+import { userPage } from "@/filters/user";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import { infoImageUrl } from "@/instance";
 
 const emit = defineEmits<{
-	(ev: 'closed'): void,
+	(ev: "closed"): void;
 }>();
 
 const props = defineProps<{
-	noteId: misskey.entities.Note['id'];
+	noteId: misskey.entities.Note["id"];
 }>();
 
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
@@ -60,23 +60,29 @@ let reactions = $ref<string[]>();
 let users = $ref();
 
 watch($$(tab), async () => {
-	const res = await os.api('notes/reactions', {
+	const res = await os.api("notes/reactions", {
 		noteId: props.noteId,
 		type: tab,
 		limit: 30,
 	});
 
 	note.reactions[tab] = res.length;
-	users = res.map(x => x.user);
+	users = res.map((x) => x.user);
 });
 
 onMounted(() => {
-	os.api('notes/show', {
+	os.api("notes/show", {
 		noteId: props.noteId,
 	}).then(async (res) => {
-		reactions = [...new Set((await os.api('notes/reactions', {
-			noteId: props.noteId,
-		})).map(re => re.type))];
+		reactions = [
+			...new Set(
+				(
+					await os.api("notes/reactions", {
+						noteId: props.noteId,
+					})
+				).map((re) => re.type),
+			),
+		];
 		tab = reactions[0];
 		note = res;
 	});

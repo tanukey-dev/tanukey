@@ -21,21 +21,31 @@
 </template>
 
 <script lang="ts" setup>
-import { Ref, computed, ref } from 'vue';
-import XSound from './sounds.sound.vue';
-import MkRange from '@/components/MkRange.vue';
-import MkButton from '@/components/MkButton.vue';
-import FormSection from '@/components/form/section.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import { soundConfigStore } from '@/scripts/sound';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { Ref, computed, ref } from "vue";
+import XSound from "./sounds.sound.vue";
+import MkRange from "@/components/MkRange.vue";
+import MkButton from "@/components/MkButton.vue";
+import FormSection from "@/components/form/section.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import { soundConfigStore } from "@/scripts/sound";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
-const masterVolume = computed(soundConfigStore.makeGetterSetter('sound_masterVolume'));
+const masterVolume = computed(
+	soundConfigStore.makeGetterSetter("sound_masterVolume"),
+);
 
-const soundsKeys = ['note', 'noteMy', 'notification', 'chat', 'chatBg', 'antenna', 'channel'] as const;
+const soundsKeys = [
+	"note",
+	"noteMy",
+	"notification",
+	"chat",
+	"chatBg",
+	"antenna",
+	"channel",
+] as const;
 
-const sounds = ref<Record<typeof soundsKeys[number], Ref<any>>>({
+const sounds = ref<Record<(typeof soundsKeys)[number], Ref<any>>>({
 	note: soundConfigStore.reactiveState.sound_note,
 	noteMy: soundConfigStore.reactiveState.sound_noteMy,
 	notification: soundConfigStore.reactiveState.sound_notification,
@@ -56,7 +66,9 @@ async function updated(type: keyof typeof sounds.value, sound) {
 }
 
 function reset() {
-	for (const sound of Object.keys(sounds.value) as Array<keyof typeof sounds.value>) {
+	for (const sound of Object.keys(sounds.value) as Array<
+		keyof typeof sounds.value
+	>) {
 		const v = soundConfigStore.def[`sound_${sound}`].default;
 		soundConfigStore.set(`sound_${sound}`, v);
 		sounds.value[sound] = v;
@@ -69,6 +81,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.sounds,
-	icon: 'ti ti-music',
+	icon: "ti ti-music",
 });
 </script>

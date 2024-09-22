@@ -41,24 +41,48 @@
 </template>
 	
 <script lang="ts">
-import { computed, ComputedRef, isRef, nextTick, onActivated, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue';
-import * as misskey from 'misskey-js';
-import * as os from '@/os';
-import { onScrollTop, isTopVisible, getBodyScrollHeight, getScrollContainer, onScrollBottom, scrollToBottom, scroll, isBottomVisible } from '@/scripts/scroll';
-import { useDocumentVisibility } from '@/scripts/use-document-visibility';
-import MkButton from '@/components/MkButton.vue';
-import { defaultStore } from '@/store';
-import { MisskeyEntity } from '@/types/date-separated-list';
-import { i18n } from '@/i18n';
+import {
+	computed,
+	ComputedRef,
+	isRef,
+	nextTick,
+	onActivated,
+	onBeforeUnmount,
+	onDeactivated,
+	onMounted,
+	ref,
+	watch,
+} from "vue";
+import * as misskey from "misskey-js";
+import * as os from "@/os";
+import {
+	onScrollTop,
+	isTopVisible,
+	getBodyScrollHeight,
+	getScrollContainer,
+	onScrollBottom,
+	scrollToBottom,
+	scroll,
+	isBottomVisible,
+} from "@/scripts/scroll";
+import { useDocumentVisibility } from "@/scripts/use-document-visibility";
+import MkButton from "@/components/MkButton.vue";
+import { defaultStore } from "@/store";
+import { MisskeyEntity } from "@/types/date-separated-list";
+import { i18n } from "@/i18n";
 
 const SECOND_FETCH_LIMIT = 30;
 const TOLERANCE = 16;
 const APPEAR_MINIMUM_INTERVAL = 600;
 
-export type Paging<E extends keyof misskey.Endpoints = keyof misskey.Endpoints> = {
+export type Paging<
+	E extends keyof misskey.Endpoints = keyof misskey.Endpoints,
+> = {
 	endpoint: E;
 	limit: number;
-	params?: misskey.Endpoints[E]['req'] | ComputedRef<misskey.Endpoints[E]['req']>;
+	params?:
+		| misskey.Endpoints[E]["req"]
+		| ComputedRef<misskey.Endpoints[E]["req"]>;
 
 	/**
 	 * 検索APIのような、ページング不可なエンドポイントを利用する場合
@@ -79,10 +103,13 @@ export type Paging<E extends keyof misskey.Endpoints = keyof misskey.Endpoints> 
 type MisskeyEntityMap = Map<string, MisskeyEntity>;
 
 function arrayToEntries(entities: MisskeyEntity[]): [string, MisskeyEntity][] {
-	return entities.map(en => [en.id, en]);
+	return entities.map((en) => [en.id, en]);
 }
 
-function concatMapWithArray(map: MisskeyEntityMap, entities: MisskeyEntity[]): MisskeyEntityMap {
+function concatMapWithArray(
+	map: MisskeyEntityMap,
+	entities: MisskeyEntity[],
+): MisskeyEntityMap {
 	return new Map([...map, ...arrayToEntries(entities)]);
 }
 </script>

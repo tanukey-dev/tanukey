@@ -32,16 +32,16 @@
 </template>
 
 <script lang="ts" setup>
-import * as Acct from 'misskey-js/built/acct';
-import MkPagination from '@/components/MkPagination.vue';
-import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
-import bytes from '@/filters/bytes';
-import { i18n } from '@/i18n';
-import { dateString } from '@/filters/date';
+import * as Acct from "misskey-js/built/acct";
+import MkPagination from "@/components/MkPagination.vue";
+import MkDriveFileThumbnail from "@/components/MkDriveFileThumbnail.vue";
+import bytes from "@/filters/bytes";
+import { i18n } from "@/i18n";
+import { dateString } from "@/filters/date";
 
 const props = defineProps<{
 	pagination: any;
-	viewMode: 'grid' | 'list';
+	viewMode: "grid" | "list";
 }>();
 </script>
 

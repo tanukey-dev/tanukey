@@ -33,43 +33,56 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, Ref } from 'vue';
-import MkSwitch from './MkSwitch.vue';
-import MkInfo from './MkInfo.vue';
-import MkButton from './MkButton.vue';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import { notificationTypes } from '@/const';
-import { i18n } from '@/i18n';
+import { ref, Ref } from "vue";
+import MkSwitch from "./MkSwitch.vue";
+import MkInfo from "./MkInfo.vue";
+import MkButton from "./MkButton.vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import { notificationTypes } from "@/const";
+import { i18n } from "@/i18n";
 
-type TypesMap = Record<typeof notificationTypes[number], Ref<boolean>>
+type TypesMap = Record<(typeof notificationTypes)[number], Ref<boolean>>;
 
 const emit = defineEmits<{
-	(ev: 'done', v: { includingTypes: string[] | null }): void,
-	(ev: 'closed'): void,
+	(ev: "done", v: { includingTypes: string[] | null }): void;
+	(ev: "closed"): void;
 }>();
 
-const props = withDefaults(defineProps<{
-	includingTypes?: typeof notificationTypes[number][] | null;
-	showGlobalToggle?: boolean;
-}>(), {
-	includingTypes: () => [],
-	showGlobalToggle: true,
-});
+const props = withDefaults(
+	defineProps<{
+		includingTypes?: (typeof notificationTypes)[number][] | null;
+		showGlobalToggle?: boolean;
+	}>(),
+	{
+		includingTypes: () => [],
+		showGlobalToggle: true,
+	},
+);
 
-let includingTypes = $computed(() => props.includingTypes?.filter(x => notificationTypes.includes(x)) ?? []);
+let includingTypes = $computed(
+	() =>
+		props.includingTypes?.filter((x) => notificationTypes.includes(x)) ?? [],
+);
 
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
 
-const typesMap: TypesMap = notificationTypes.reduce((p, t) => ({ ...p, [t]: ref<boolean>(includingTypes.includes(t)) }), {} as any);
-let useGlobalSetting = $ref((includingTypes === null || includingTypes.length === 0) && props.showGlobalToggle);
+const typesMap: TypesMap = notificationTypes.reduce(
+	(p, t) => ({ ...p, [t]: ref<boolean>(includingTypes.includes(t)) }),
+	{} as any,
+);
+let useGlobalSetting = $ref(
+	(includingTypes === null || includingTypes.length === 0) &&
+		props.showGlobalToggle,
+);
 
 function ok() {
 	if (useGlobalSetting) {
-		emit('done', { includingTypes: null });
+		emit("done", { includingTypes: null });
 	} else {
-		emit('done', {
-			includingTypes: (Object.keys(typesMap) as typeof notificationTypes[number][])
-				.filter(type => typesMap[type].value),
+		emit("done", {
+			includingTypes: (
+				Object.keys(typesMap) as (typeof notificationTypes)[number][]
+			).filter((type) => typesMap[type].value),
 		});
 	}
 

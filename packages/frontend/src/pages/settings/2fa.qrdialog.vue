@@ -34,10 +34,10 @@
 </template>
 
 <script lang="ts" setup>
-import MkButton from '@/components/MkButton.vue';
-import MkModal from '@/components/MkModal.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import { i18n } from '@/i18n';
+import MkButton from "@/components/MkButton.vue";
+import MkModal from "@/components/MkModal.vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import { i18n } from "@/i18n";
 
 defineProps<{
 	twoFactorData: {
@@ -47,19 +47,19 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'ok'): void;
-	(ev: 'cancel'): void;
-	(ev: 'closed'): void;
+	(ev: "ok"): void;
+	(ev: "cancel"): void;
+	(ev: "closed"): void;
 }>();
 
 const cancel = () => {
-	emit('cancel');
-	emit('closed');
+	emit("cancel");
+	emit("closed");
 };
 
 const ok = () => {
-	emit('ok');
-	emit('closed');
+	emit("ok");
+	emit("closed");
 };
 </script>
 

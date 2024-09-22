@@ -56,59 +56,64 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { toString } from 'misskey-js/built/acct';
-import { UserDetailed } from 'misskey-js/built/entities';
-import FormInfo from '@/components/MkInfo.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import MkUserInfo from '@/components/MkUserInfo.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { $i } from '@/account';
-import { unisonReload } from '@/scripts/unison-reload';
+import { ref } from "vue";
+import { toString } from "misskey-js/built/acct";
+import { UserDetailed } from "misskey-js/built/entities";
+import FormInfo from "@/components/MkInfo.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import MkUserInfo from "@/components/MkUserInfo.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { $i } from "@/account";
+import { unisonReload } from "@/scripts/unison-reload";
 
-const moveToAccount = ref('');
+const moveToAccount = ref("");
 const movedTo = ref<UserDetailed>();
-const accountAliases = ref(['']);
+const accountAliases = ref([""]);
 
 async function init() {
 	if ($i?.movedTo) {
-		movedTo.value = await os.api('users/show', { userId: $i.movedTo });
+		movedTo.value = await os.api("users/show", { userId: $i.movedTo });
 	} else {
-		moveToAccount.value = '';
+		moveToAccount.value = "";
 	}
 
 	if ($i?.alsoKnownAs && $i.alsoKnownAs.length > 0) {
-		const alsoKnownAs = await os.api('users/show', { userIds: $i.alsoKnownAs });
-		accountAliases.value = (alsoKnownAs && alsoKnownAs.length > 0) ? alsoKnownAs.map(user => `@${toString(user)}`) : [''];
+		const alsoKnownAs = await os.api("users/show", { userIds: $i.alsoKnownAs });
+		accountAliases.value =
+			alsoKnownAs && alsoKnownAs.length > 0
+				? alsoKnownAs.map((user) => `@${toString(user)}`)
+				: [""];
 	} else {
-		accountAliases.value = [''];
+		accountAliases.value = [""];
 	}
 }
 
 async function move(): Promise<void> {
 	const account = moveToAccount.value;
 	const confirm = await os.confirm({
-		type: 'warning',
-		text: i18n.t('_accountMigration.migrationConfirm', { account }),
+		type: "warning",
+		text: i18n.t("_accountMigration.migrationConfirm", { account }),
 	});
 	if (confirm.canceled) return;
-	await os.apiWithDialog('i/move', {
+	await os.apiWithDialog("i/move", {
 		moveToAccount: account,
 	});
 	unisonReload();
 }
 
 function add(): void {
-	accountAliases.value.push('');
+	accountAliases.value.push("");
 }
 
 async function save(): Promise<void> {
-	const alsoKnownAs = accountAliases.value.map(alias => alias.trim()).filter(alias => alias !== '');
-	const i = await os.apiWithDialog('i/update', {
+	const alsoKnownAs = accountAliases.value
+		.map((alias) => alias.trim())
+		.filter((alias) => alias !== "");
+	const i = await os.apiWithDialog("i/update", {
 		alsoKnownAs,
 	});
 	$i.alsoKnownAs = i.alsoKnownAs;
@@ -119,7 +124,7 @@ init();
 
 definePageMetadata({
 	title: i18n.ts.accountMigration,
-	icon: 'ti ti-plane',
+	icon: "ti ti-plane",
 });
 </script>
 

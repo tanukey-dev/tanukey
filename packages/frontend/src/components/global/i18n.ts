@@ -1,11 +1,14 @@
-import { h } from 'vue';
+import { h } from "vue";
 
-export default function(props: { src: string; tag?: string; textTag?: string; }, { slots }) {
+export default function (
+	props: { src: string; tag?: string; textTag?: string },
+	{ slots },
+) {
 	let str = props.src;
-	const parsed = [] as (string | { arg: string; })[];
+	const parsed = [] as (string | { arg: string })[];
 	while (true) {
-		const nextBracketOpen = str.indexOf('{');
-		const nextBracketClose = str.indexOf('}');
+		const nextBracketOpen = str.indexOf("{");
+		const nextBracketClose = str.indexOf("}");
 
 		if (nextBracketOpen === -1) {
 			parsed.push(str);
@@ -20,5 +23,14 @@ export default function(props: { src: string; tag?: string; textTag?: string; },
 		str = str.substr(nextBracketClose + 1);
 	}
 
-	return h(props.tag ?? 'span', parsed.map(x => typeof x === 'string' ? (props.textTag ? h(props.textTag, x) : x) : slots[x.arg]()));
+	return h(
+		props.tag ?? "span",
+		parsed.map((x) =>
+			typeof x === "string"
+				? props.textTag
+					? h(props.textTag, x)
+					: x
+				: slots[x.arg](),
+		),
+	);
 }

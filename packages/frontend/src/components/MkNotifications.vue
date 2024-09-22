@@ -17,25 +17,25 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted, onMounted, computed, shallowRef } from 'vue';
-import MkPagination, { Paging } from '@/components/MkPagination.vue';
-import XNotification from '@/components/MkNotification.vue';
-import MkDateSeparatedList from '@/components/MkDateSeparatedList.vue';
-import MkNote from '@/components/MkNote.vue';
-import { useStream } from '@/stream';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
-import { notificationTypes } from '@/const';
-import { infoImageUrl } from '@/instance';
+import { onUnmounted, onMounted, computed, shallowRef } from "vue";
+import MkPagination, { Paging } from "@/components/MkPagination.vue";
+import XNotification from "@/components/MkNotification.vue";
+import MkDateSeparatedList from "@/components/MkDateSeparatedList.vue";
+import MkNote from "@/components/MkNote.vue";
+import { useStream } from "@/stream";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
+import { notificationTypes } from "@/const";
+import { infoImageUrl } from "@/instance";
 
 const props = defineProps<{
-	includeTypes?: typeof notificationTypes[number][];
+	includeTypes?: (typeof notificationTypes)[number][];
 }>();
 
 const pagingComponent = shallowRef<InstanceType<typeof MkPagination>>();
 
 const pagination: Paging = {
-	endpoint: 'i/notifications' as const,
+	endpoint: "i/notifications" as const,
 	limit: 10,
 	params: computed(() => ({
 		includeTypes: props.includeTypes ?? undefined,
@@ -44,9 +44,11 @@ const pagination: Paging = {
 };
 
 const onNotification = (notification) => {
-	const isMuted = props.includeTypes ? !props.includeTypes.includes(notification.type) : $i.mutingNotificationTypes.includes(notification.type);
-	if (isMuted || document.visibilityState === 'visible') {
-		useStream().send('readNotification');
+	const isMuted = props.includeTypes
+		? !props.includeTypes.includes(notification.type)
+		: $i.mutingNotificationTypes.includes(notification.type);
+	if (isMuted || document.visibilityState === "visible") {
+		useStream().send("readNotification");
 	}
 
 	if (!isMuted) {
@@ -57,8 +59,8 @@ const onNotification = (notification) => {
 let connection;
 
 onMounted(() => {
-	connection = useStream().useChannel('main');
-	connection.on('notification', onNotification);
+	connection = useStream().useChannel("main");
+	connection.on("notification", onNotification);
 });
 
 onUnmounted(() => {

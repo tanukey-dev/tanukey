@@ -9,18 +9,20 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import * as misskey from 'misskey-js';
-import MkGalleryPostPreview from '@/components/MkGalleryPostPreview.vue';
-import MkPagination from '@/components/MkPagination.vue';
+import { computed } from "vue";
+import * as misskey from "misskey-js";
+import MkGalleryPostPreview from "@/components/MkGalleryPostPreview.vue";
+import MkPagination from "@/components/MkPagination.vue";
 
-const props = withDefaults(defineProps<{
-	user: misskey.entities.User;
-}>(), {
-});
+const props = withDefaults(
+	defineProps<{
+		user: misskey.entities.User;
+	}>(),
+	{},
+);
 
 const pagination = {
-	endpoint: 'users/gallery/posts' as const,
+	endpoint: "users/gallery/posts" as const,
 	limit: 6,
 	params: computed(() => ({
 		userId: props.user.id,

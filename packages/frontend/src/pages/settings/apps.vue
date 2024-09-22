@@ -40,28 +40,28 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import FormPagination from '@/components/MkPagination.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import MkButton from '@/components/MkButton.vue';
-import { infoImageUrl } from '@/instance';
+import { ref } from "vue";
+import FormPagination from "@/components/MkPagination.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import MkButton from "@/components/MkButton.vue";
+import { infoImageUrl } from "@/instance";
 
 const list = ref<any>(null);
 
 const pagination = {
-	endpoint: 'i/apps' as const,
+	endpoint: "i/apps" as const,
 	limit: 100,
 	noPaging: true,
 	params: {
-		sort: '+lastUsedAt',
+		sort: "+lastUsedAt",
 	},
 };
 
 function revoke(token) {
-	os.api('i/revoke-token', { tokenId: token.id }).then(() => {
+	os.api("i/revoke-token", { tokenId: token.id }).then(() => {
 		list.value.reload();
 	});
 }
@@ -72,7 +72,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.installedApps,
-	icon: 'ti ti-plug',
+	icon: "ti ti-plug",
 });
 </script>
 

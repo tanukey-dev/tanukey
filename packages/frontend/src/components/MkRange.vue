@@ -17,26 +17,37 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted, onUnmounted, ref, watch, shallowRef } from 'vue';
-import * as os from '@/os';
+import {
+	computed,
+	defineAsyncComponent,
+	onMounted,
+	onUnmounted,
+	ref,
+	watch,
+	shallowRef,
+} from "vue";
+import * as os from "@/os";
 
-const props = withDefaults(defineProps<{
-	modelValue: number;
-	disabled?: boolean;
-	min: number;
-	max: number;
-	step?: number;
-	textConverter?: (value: number) => string,
-	showTicks?: boolean;
-	easing?: boolean;
-}>(), {
-	step: 1,
-	textConverter: (v) => v.toString(),
-	easing: false,
-});
+const props = withDefaults(
+	defineProps<{
+		modelValue: number;
+		disabled?: boolean;
+		min: number;
+		max: number;
+		step?: number;
+		textConverter?: (value: number) => string;
+		showTicks?: boolean;
+		easing?: boolean;
+	}>(),
+	{
+		step: 1,
+		textConverter: (v) => v.toString(),
+		easing: false,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'update:modelValue', value: number): void;
+	(ev: "update:modelValue", value: number): void;
 }>();
 
 const containerEl = shallowRef<HTMLElement>();
@@ -46,16 +57,18 @@ const rawValue = ref((props.modelValue - props.min) / (props.max - props.min));
 const steppedRawValue = computed(() => {
 	if (props.step) {
 		const step = props.step / (props.max - props.min);
-		return (step * Math.round(rawValue.value / step));
+		return step * Math.round(rawValue.value / step);
 	} else {
 		return rawValue.value;
 	}
 });
 const finalValue = computed(() => {
 	if (Number.isInteger(props.step)) {
-		return Math.round((steppedRawValue.value * (props.max - props.min)) + props.min);
+		return Math.round(
+			steppedRawValue.value * (props.max - props.min) + props.min,
+		);
 	} else {
-		return (steppedRawValue.value * (props.max - props.min)) + props.min;
+		return steppedRawValue.value * (props.max - props.min) + props.min;
 	}
 });
 
@@ -68,7 +81,8 @@ const calcThumbPosition = () => {
 	if (containerEl.value == null) {
 		thumbPosition.value = 0;
 	} else {
-		thumbPosition.value = (containerEl.value.offsetWidth - getThumbWidth()) * steppedRawValue.value;
+		thumbPosition.value =
+			(containerEl.value.offsetWidth - getThumbWidth()) * steppedRawValue.value;
 	}
 };
 watch([steppedRawValue, containerEl], calcThumbPosition);
@@ -98,16 +112,25 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 	ev.preventDefault();
 
 	const tooltipShowing = ref(true);
-	os.popup(defineAsyncComponent(() => import('@/components/MkTooltip.vue')), {
-		showing: tooltipShowing,
-		text: computed(() => {
-			return props.textConverter(finalValue.value);
-		}),
-		targetElement: thumbEl,
-	}, {}, 'closed');
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkTooltip.vue")),
+		{
+			showing: tooltipShowing,
+			text: computed(() => {
+				return props.textConverter(finalValue.value);
+			}),
+			targetElement: thumbEl,
+		},
+		{},
+		"closed",
+	);
 
-	const style = document.createElement('style');
-	style.appendChild(document.createTextNode('* { cursor: grabbing !important; } body * { pointer-events: none !important; }'));
+	const style = document.createElement("style");
+	style.appendChild(
+		document.createTextNode(
+			"* { cursor: grabbing !important; } body * { pointer-events: none !important; }",
+		),
+	);
 	document.head.appendChild(style);
 
 	const thumbWidth = getThumbWidth();
@@ -115,9 +138,18 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 	const onDrag = (ev: MouseEvent | TouchEvent) => {
 		ev.preventDefault();
 		const containerRect = containerEl.value!.getBoundingClientRect();
-		const pointerX = ev.touches && ev.touches.length > 0 ? ev.touches[0].clientX : ev.clientX;
-		const pointerPositionOnContainer = pointerX - (containerRect.left + (thumbWidth / 2));
-		rawValue.value = Math.min(1, Math.max(0, pointerPositionOnContainer / (containerEl.value!.offsetWidth - thumbWidth)));
+		const pointerX =
+			ev.touches && ev.touches.length > 0 ? ev.touches[0].clientX : ev.clientX;
+		const pointerPositionOnContainer =
+			pointerX - (containerRect.left + thumbWidth / 2);
+		rawValue.value = Math.min(
+			1,
+			Math.max(
+				0,
+				pointerPositionOnContainer /
+					(containerEl.value!.offsetWidth - thumbWidth),
+			),
+		);
 	};
 
 	let beforeValue = finalValue.value;
@@ -125,21 +157,21 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 	const onMouseup = () => {
 		document.head.removeChild(style);
 		tooltipShowing.value = false;
-		window.removeEventListener('mousemove', onDrag);
-		window.removeEventListener('touchmove', onDrag);
-		window.removeEventListener('mouseup', onMouseup);
-		window.removeEventListener('touchend', onMouseup);
+		window.removeEventListener("mousemove", onDrag);
+		window.removeEventListener("touchmove", onDrag);
+		window.removeEventListener("mouseup", onMouseup);
+		window.removeEventListener("touchend", onMouseup);
 
 		// 値が変わってたら通知
 		if (beforeValue !== finalValue.value) {
-			emit('update:modelValue', finalValue.value);
+			emit("update:modelValue", finalValue.value);
 		}
 	};
 
-	window.addEventListener('mousemove', onDrag);
-	window.addEventListener('touchmove', onDrag);
-	window.addEventListener('mouseup', onMouseup, { once: true });
-	window.addEventListener('touchend', onMouseup, { once: true });
+	window.addEventListener("mousemove", onDrag);
+	window.addEventListener("touchmove", onDrag);
+	window.addEventListener("mouseup", onMouseup, { once: true });
+	window.addEventListener("touchend", onMouseup, { once: true });
 };
 </script>
 

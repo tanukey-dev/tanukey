@@ -5,13 +5,16 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from "vue";
 
-const props = withDefaults(defineProps<{
-	static?: boolean;
-}>(), {
-	static: false,
-});
+const props = withDefaults(
+	defineProps<{
+		static?: boolean;
+	}>(),
+	{
+		static: false,
+	},
+);
 </script>
 
 <style lang="scss" module>

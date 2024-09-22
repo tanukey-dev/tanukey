@@ -33,17 +33,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import { selectFiles } from '@/scripts/select-file';
-import * as os from '@/os';
-import { useRouter } from '@/router';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
+import { computed, watch } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import { selectFiles } from "@/scripts/select-file";
+import * as os from "@/os";
+import { useRouter } from "@/router";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
 
 const router = useRouter();
 
@@ -58,30 +58,30 @@ let title = $ref(null);
 let isSensitive = $ref(false);
 
 function selectFile(evt) {
-	selectFiles(evt.currentTarget ?? evt.target, null).then(selected => {
+	selectFiles(evt.currentTarget ?? evt.target, null).then((selected) => {
 		files = files.concat(selected);
 	});
 }
 
 function remove(file) {
-	files = files.filter(f => f.id !== file.id);
+	files = files.filter((f) => f.id !== file.id);
 }
 
 async function save() {
 	if (props.postId) {
-		await os.apiWithDialog('gallery/posts/update', {
+		await os.apiWithDialog("gallery/posts/update", {
 			postId: props.postId,
 			title: title,
 			description: description,
-			fileIds: files.map(file => file.id),
+			fileIds: files.map((file) => file.id),
 			isSensitive: isSensitive,
 		});
 		router.push(`/gallery/${props.postId}`);
 	} else {
-		const created = await os.apiWithDialog('gallery/posts/create', {
+		const created = await os.apiWithDialog("gallery/posts/create", {
 			title: title,
 			description: description,
-			fileIds: files.map(file => file.id),
+			fileIds: files.map((file) => file.id),
 			isSensitive: isSensitive,
 		});
 		router.push(`/gallery/${created.id}`);
@@ -90,38 +90,53 @@ async function save() {
 
 async function del() {
 	const { canceled } = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		text: i18n.ts.deleteConfirm,
 	});
 	if (canceled) return;
-	await os.apiWithDialog('gallery/posts/delete', {
+	await os.apiWithDialog("gallery/posts/delete", {
 		postId: props.postId,
 	});
-	router.push('/gallery');
+	router.push("/gallery");
 }
 
-watch(() => props.postId, () => {
-	init = () => props.postId ? os.api('gallery/posts/show', {
-		postId: props.postId,
-	}).then(post => {
-		files = post.files;
-		title = post.title;
-		description = post.description;
-		isSensitive = post.isSensitive;
-	}) : Promise.resolve(null);
-}, { immediate: true });
+watch(
+	() => props.postId,
+	() => {
+		init = () =>
+			props.postId
+				? os
+						.api("gallery/posts/show", {
+							postId: props.postId,
+						})
+						.then((post) => {
+							files = post.files;
+							title = post.title;
+							description = post.description;
+							isSensitive = post.isSensitive;
+						})
+				: Promise.resolve(null);
+	},
+	{ immediate: true },
+);
 
 const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => props.postId ? {
-	title: i18n.ts.edit,
-	icon: 'ti ti-pencil',
-} : {
-	title: i18n.ts.postToGallery,
-	icon: 'ti ti-pencil',
-}));
+definePageMetadata(
+	computed(() =>
+		props.postId
+			? {
+					title: i18n.ts.edit,
+					icon: "ti ti-pencil",
+				}
+			: {
+					title: i18n.ts.postToGallery,
+					icon: "ti ti-pencil",
+				},
+	),
+);
 </script>
 
 <style lang="scss" scoped>

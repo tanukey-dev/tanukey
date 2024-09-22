@@ -14,19 +14,19 @@
 </template>
 
 <script lang="ts" setup>
-import {} from 'vue';
-import * as misskey from 'misskey-js';
-import MkPagination from '@/components/MkPagination.vue';
-import MkStickyContainer from '@/components/global/MkStickyContainer.vue';
-import MkSpacer from '@/components/global/MkSpacer.vue';
-import MkAvatars from '@/components/MkAvatars.vue';
+import {} from "vue";
+import * as misskey from "misskey-js";
+import MkPagination from "@/components/MkPagination.vue";
+import MkStickyContainer from "@/components/global/MkStickyContainer.vue";
+import MkSpacer from "@/components/global/MkSpacer.vue";
+import MkAvatars from "@/components/MkAvatars.vue";
 
 const props = defineProps<{
 	user: misskey.entities.UserDetailed;
 }>();
 
 const pagination = {
-	endpoint: 'users/lists/list' as const,
+	endpoint: "users/lists/list" as const,
 	noPaging: true,
 	limit: 10,
 	params: {

@@ -39,11 +39,11 @@ export type Tab = {
 			iconOnly?: false;
 			title: string;
 			icon?: string;
-		}
+	  }
 	| {
 			iconOnly: true;
 			icon: string;
-		}
+	  }
 );
 </script>
 

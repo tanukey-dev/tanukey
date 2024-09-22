@@ -17,22 +17,28 @@
 </template>
 
 <script lang="ts" setup>
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import { GetFormResultType } from '@/scripts/form';
-import { $i } from '@/account';
-import { userPage } from '@/filters/user';
+import {
+	useWidgetPropsManager,
+	Widget,
+	WidgetComponentEmits,
+	WidgetComponentExpose,
+	WidgetComponentProps,
+} from "./widget";
+import { GetFormResultType } from "@/scripts/form";
+import { $i } from "@/account";
+import { userPage } from "@/filters/user";
 
-const name = 'profile';
+const name = "profile";
 
-const widgetPropsDef = {
-};
+const widgetPropsDef = {};
 
 type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const { widgetProps, configure } = useWidgetPropsManager(
+	name,
 	widgetPropsDef,
 	props,
 	emit,

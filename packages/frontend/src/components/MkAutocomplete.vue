@@ -34,38 +34,56 @@
 </template>
 
 <script lang="ts">
-import { markRaw, ref, shallowRef, computed, onUpdated, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
-import sanitizeHtml from 'sanitize-html';
-import contains from '@/scripts/contains';
-import { char2twemojiFilePath, char2fluentEmojiFilePath } from '@/scripts/emoji-base';
-import { acct } from '@/filters/user';
-import * as os from '@/os';
-import { MFM_TAGS } from '@/const.js';
-import { defaultStore } from '@/store';
-import { emojilist } from '@/scripts/emojilist';
-import { i18n } from '@/i18n';
-import { miLocalStorage } from '@/local-storage';
-import { customEmojis } from '@/custom-emojis';
+import {
+	markRaw,
+	ref,
+	shallowRef,
+	computed,
+	onUpdated,
+	onMounted,
+	onBeforeUnmount,
+	nextTick,
+	watch,
+} from "vue";
+import sanitizeHtml from "sanitize-html";
+import contains from "@/scripts/contains";
+import {
+	char2twemojiFilePath,
+	char2fluentEmojiFilePath,
+} from "@/scripts/emoji-base";
+import { acct } from "@/filters/user";
+import * as os from "@/os";
+import { MFM_TAGS } from "@/const.js";
+import { defaultStore } from "@/store";
+import { emojilist } from "@/scripts/emojilist";
+import { i18n } from "@/i18n";
+import { miLocalStorage } from "@/local-storage";
+import { customEmojis } from "@/custom-emojis";
 
-type EmojiDef = {
-	emoji: string;
-	name: string;
-	url: string;
-	aliasOf?: string;
-} | {
-	emoji: string;
-	name: string;
-	aliasOf?: string;
-	isCustomEmoji?: true;
-};
+type EmojiDef =
+	| {
+			emoji: string;
+			name: string;
+			url: string;
+			aliasOf?: string;
+	  }
+	| {
+			emoji: string;
+			name: string;
+			aliasOf?: string;
+			isCustomEmoji?: true;
+	  };
 
-const lib = emojilist.filter(x => x.category !== 'flags');
+const lib = emojilist.filter((x) => x.category !== "flags");
 
 const emojiDb = computed(() => {
 	//#region Unicode Emoji
-	const char2path = defaultStore.reactiveState.emojiStyle.value === 'twemoji' ? char2twemojiFilePath : char2fluentEmojiFilePath;
+	const char2path =
+		defaultStore.reactiveState.emojiStyle.value === "twemoji"
+			? char2twemojiFilePath
+			: char2fluentEmojiFilePath;
 
-	const unicodeEmojiDB: EmojiDef[] = lib.map(x => ({
+	const unicodeEmojiDB: EmojiDef[] = lib.map((x) => ({
 		emoji: x.char,
 		name: x.name,
 		url: char2path(x.char),

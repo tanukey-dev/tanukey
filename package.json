@@ -32,7 +32,7 @@
 		"jest-and-coverage": "cd packages/backend && pnpm jest-and-coverage",
 		"test": "pnpm -r test",
 		"test-and-coverage": "pnpm -r test-and-coverage",
-		"format": "pnpm exec gulp format",
+		"format": "npx @biomejs/biome format --write packages",
 		"clean": "node ./scripts/clean.js",
 		"clean-all": "node ./scripts/clean-all.js",
 		"cleanall": "pnpm clean-all"
@@ -52,13 +52,11 @@
 		"typescript": "5.1.3"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "1.9.2",
 		"@types/gulp": "4.0.10",
 		"@types/gulp-rename": "2.0.1",
-		"@typescript-eslint/eslint-plugin": "6.4.0",
-		"@typescript-eslint/parser": "6.4.0",
 		"cross-env": "7.0.3",
 		"cypress": "12.13.0",
-		"eslint": "8.41.0",
 		"start-server-and-test": "2.0.0"
 	}
 }

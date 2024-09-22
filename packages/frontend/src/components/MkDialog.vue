@@ -51,15 +51,24 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
-import MkModal from '@/components/MkModal.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import { i18n } from '@/i18n';
+import { onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
+import MkModal from "@/components/MkModal.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import { i18n } from "@/i18n";
 
 type Input = {
-	type: 'text' | 'number' | 'password' | 'email' | 'url' | 'date' | 'time' | 'search' | 'datetime-local';
+	type:
+		| "text"
+		| "number"
+		| "password"
+		| "email"
+		| "url"
+		| "date"
+		| "time"
+		| "search"
+		| "datetime-local";
 	placeholder?: string | null;
 	autocomplete?: string;
 	default: string | number | null;
@@ -82,34 +91,37 @@ type Select = {
 	default: string | null;
 };
 
-const props = withDefaults(defineProps<{
-	type?: 'success' | 'error' | 'warning' | 'info' | 'question' | 'waiting';
-	title: string;
-	text?: string;
-	input?: Input;
-	select?: Select;
-	icon?: string;
-	actions?: {
-		text: string;
-		primary?: boolean,
-		danger?: boolean,
-		callback: (...args: any[]) => void;
-	}[];
-	showOkButton?: boolean;
-	showCancelButton?: boolean;
-	cancelableByBgClick?: boolean;
-	okText?: string;
-	cancelText?: string;
-}>(), {
-	type: 'info',
-	showOkButton: true,
-	showCancelButton: false,
-	cancelableByBgClick: true,
-});
+const props = withDefaults(
+	defineProps<{
+		type?: "success" | "error" | "warning" | "info" | "question" | "waiting";
+		title: string;
+		text?: string;
+		input?: Input;
+		select?: Select;
+		icon?: string;
+		actions?: {
+			text: string;
+			primary?: boolean;
+			danger?: boolean;
+			callback: (...args: any[]) => void;
+		}[];
+		showOkButton?: boolean;
+		showCancelButton?: boolean;
+		cancelableByBgClick?: boolean;
+		okText?: string;
+		cancelText?: string;
+	}>(),
+	{
+		type: "info",
+		showOkButton: true,
+		showCancelButton: false,
+		cancelableByBgClick: true,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'done', v: { canceled: boolean; result: any }): void;
-	(ev: 'closed'): void;
+	(ev: "done", v: { canceled: boolean; result: any }): void;
+	(ev: "closed"): void;
 }>();
 
 const modal = shallowRef<InstanceType<typeof MkModal>>();
@@ -117,18 +129,26 @@ const modal = shallowRef<InstanceType<typeof MkModal>>();
 const inputValue = ref<string | number | null>(props.input?.default ?? null);
 const selectedValue = ref(props.select?.default ?? null);
 
-let disabledReason = $ref<null | 'charactersExceeded' | 'charactersBelow'>(null);
+let disabledReason = $ref<null | "charactersExceeded" | "charactersBelow">(
+	null,
+);
 const okButtonDisabled = $computed<boolean>(() => {
 	if (props.input) {
 		if (props.input.minLength) {
-			if ((inputValue.value || inputValue.value === '') && (inputValue.value as string).length < props.input.minLength) {
-				disabledReason = 'charactersBelow';
+			if (
+				(inputValue.value || inputValue.value === "") &&
+				(inputValue.value as string).length < props.input.minLength
+			) {
+				disabledReason = "charactersBelow";
 				return true;
 			}
 		}
 		if (props.input.maxLength) {
-			if (inputValue.value && (inputValue.value as string).length > props.input.maxLength) {
-				disabledReason = 'charactersExceeded';
+			if (
+				inputValue.value &&
+				(inputValue.value as string).length > props.input.maxLength
+			) {
+				disabledReason = "charactersExceeded";
 				return true;
 			}
 		}
@@ -138,17 +158,18 @@ const okButtonDisabled = $computed<boolean>(() => {
 });
 
 function done(canceled: boolean, result?) {
-	emit('done', { canceled, result });
+	emit("done", { canceled, result });
 	modal.value?.close();
 }
 
 async function ok() {
 	if (!props.showOkButton) return;
 
-	const result =
-		props.input ? inputValue.value :
-		props.select ? selectedValue.value :
-		true;
+	const result = props.input
+		? inputValue.value
+		: props.select
+			? selectedValue.value
+			: true;
 	done(false, result);
 }
 
@@ -161,11 +182,11 @@ function onBgClick() {
 }
 */
 function onKeydown(evt: KeyboardEvent) {
-	if (evt.key === 'Escape') cancel();
+	if (evt.key === "Escape") cancel();
 }
 
 function onInputKeydown(evt: KeyboardEvent) {
-	if (evt.key === 'Enter') {
+	if (evt.key === "Enter") {
 		evt.preventDefault();
 		evt.stopPropagation();
 		ok();
@@ -173,11 +194,11 @@ function onInputKeydown(evt: KeyboardEvent) {
 }
 
 onMounted(() => {
-	document.addEventListener('keydown', onKeydown);
+	document.addEventListener("keydown", onKeydown);
 });
 
 onBeforeUnmount(() => {
-	document.removeEventListener('keydown', onKeydown);
+	document.removeEventListener("keydown", onKeydown);
 });
 </script>
 

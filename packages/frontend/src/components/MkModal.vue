@@ -37,94 +37,110 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, normalizeClass, onMounted, onUnmounted, provide, watch } from 'vue';
-import * as os from '@/os';
-import { isTouchUsing } from '@/scripts/touch';
-import { defaultStore } from '@/store';
-import { deviceKind } from '@/scripts/device-kind';
+import {
+	nextTick,
+	normalizeClass,
+	onMounted,
+	onUnmounted,
+	provide,
+	watch,
+} from "vue";
+import * as os from "@/os";
+import { isTouchUsing } from "@/scripts/touch";
+import { defaultStore } from "@/store";
+import { deviceKind } from "@/scripts/device-kind";
 
 function getFixedContainer(el: Element | null): Element | null {
-	if (el == null || el.tagName === 'BODY') return null;
-	const position = window.getComputedStyle(el).getPropertyValue('position');
-	if (position === 'fixed') {
+	if (el == null || el.tagName === "BODY") return null;
+	const position = window.getComputedStyle(el).getPropertyValue("position");
+	if (position === "fixed") {
 		return el;
 	} else {
 		return getFixedContainer(el.parentElement);
 	}
 }
 
-type ModalTypes = 'popup' | 'dialog' | 'drawer';
+type ModalTypes = "popup" | "dialog" | "drawer";
 
-const props = withDefaults(defineProps<{
-	manualShowing?: boolean | null;
-	anchor?: { x: string; y: string; };
-	src?: HTMLElement | null;
-	preferType?: ModalTypes | 'auto';
-	zPriority?: 'low' | 'middle' | 'high';
-	noOverlap?: boolean;
-	transparentBg?: boolean;
-}>(), {
-	manualShowing: null,
-	src: null,
-	anchor: () => ({ x: 'center', y: 'bottom' }),
-	preferType: 'auto',
-	zPriority: 'low',
-	noOverlap: true,
-	transparentBg: false,
-});
+const props = withDefaults(
+	defineProps<{
+		manualShowing?: boolean | null;
+		anchor?: { x: string; y: string };
+		src?: HTMLElement | null;
+		preferType?: ModalTypes | "auto";
+		zPriority?: "low" | "middle" | "high";
+		noOverlap?: boolean;
+		transparentBg?: boolean;
+	}>(),
+	{
+		manualShowing: null,
+		src: null,
+		anchor: () => ({ x: "center", y: "bottom" }),
+		preferType: "auto",
+		zPriority: "low",
+		noOverlap: true,
+		transparentBg: false,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'opening'): void;
-	(ev: 'opened'): void;
-	(ev: 'click'): void;
-	(ev: 'esc'): void;
-	(ev: 'close'): void;
-	(ev: 'closed'): void;
+	(ev: "opening"): void;
+	(ev: "opened"): void;
+	(ev: "click"): void;
+	(ev: "esc"): void;
+	(ev: "close"): void;
+	(ev: "closed"): void;
 }>();
 
-provide('modal', true);
+provide("modal", true);
 
 let maxHeight = $ref<number>();
 let fixed = $ref(false);
-let transformOrigin = $ref('center');
+let transformOrigin = $ref("center");
 let showing = $ref(true);
 let content = $shallowRef<HTMLElement>();
 const zIndex = os.claimZIndex(props.zPriority);
 let useSendAnime = $ref(false);
 const type = $computed<ModalTypes>(() => {
-	if (props.preferType === 'auto') {
-		if (!defaultStore.state.disableDrawer && isTouchUsing && deviceKind === 'smartphone') {
-			return 'drawer';
+	if (props.preferType === "auto") {
+		if (
+			!defaultStore.state.disableDrawer &&
+			isTouchUsing &&
+			deviceKind === "smartphone"
+		) {
+			return "drawer";
 		} else {
-			return props.src != null ? 'popup' : 'dialog';
+			return props.src != null ? "popup" : "dialog";
 		}
 	} else {
 		return props.preferType!;
 	}
 });
-const isEnableBgTransparent = $computed(() => props.transparentBg && (type === 'popup'));
-let transitionName = $computed((() =>
+const isEnableBgTransparent = $computed(
+	() => props.transparentBg && type === "popup",
+);
+let transitionName = $computed(() =>
 	defaultStore.state.animation
 		? useSendAnime
-			? 'send'
-			: type === 'drawer'
-				? 'modal-drawer'
-				: type === 'popup'
-					? 'modal-popup'
-					: 'modal'
-		: ''
-));
-let transitionDuration = $computed((() =>
-	transitionName === 'send'
+			? "send"
+			: type === "drawer"
+				? "modal-drawer"
+				: type === "popup"
+					? "modal-popup"
+					: "modal"
+		: "",
+);
+let transitionDuration = $computed(() =>
+	transitionName === "send"
 		? 400
-		: transitionName === 'modal-popup'
+		: transitionName === "modal-popup"
 			? 100
-			: transitionName === 'modal'
+			: transitionName === "modal"
 				? 200
-				: transitionName === 'modal-drawer'
+				: transitionName === "modal-drawer"
 					? 200
-					: 0
-));
+					: 0,
+);
 
 let contentClicking = false;
 
@@ -134,22 +150,22 @@ function close(opts: { useSendAnimation?: boolean } = {}) {
 	}
 
 	// eslint-disable-next-line vue/no-mutating-props
-	if (props.src) props.src.style.pointerEvents = 'auto';
+	if (props.src) props.src.style.pointerEvents = "auto";
 	showing = false;
-	emit('close');
+	emit("close");
 }
 
 function onBgClick() {
 	if (contentClicking) return;
-	emit('click');
+	emit("click");
 }
 
-if (type === 'drawer') {
+if (type === "drawer") {
 	maxHeight = window.innerHeight / 1.5;
 }
 
 const keymap = {
-	'esc': () => emit('esc'),
+	esc: () => emit("esc"),
 };
 
 const MARGIN = 16;
@@ -157,8 +173,8 @@ const SCROLLBAR_THICKNESS = 16;
 
 const align = () => {
 	if (props.src == null) return;
-	if (type === 'drawer') return;
-	if (type === 'dialog') return;
+	if (type === "drawer") return;
+	if (type === "dialog") return;
 
 	if (content == null) return;
 
@@ -173,66 +189,87 @@ const align = () => {
 	const x = srcRect.left + (fixed ? 0 : window.pageXOffset);
 	const y = srcRect.top + (fixed ? 0 : window.pageYOffset);
 
-	if (props.anchor.x === 'center') {
-		left = x + (props.src.offsetWidth / 2) - (width / 2);
-	} else if (props.anchor.x === 'left') {
+	if (props.anchor.x === "center") {
+		left = x + props.src.offsetWidth / 2 - width / 2;
+	} else if (props.anchor.x === "left") {
 		// TODO
-	} else if (props.anchor.x === 'right') {
+	} else if (props.anchor.x === "right") {
 		left = x + props.src.offsetWidth;
 	}
 
-	if (props.anchor.y === 'center') {
-		top = (y - (height / 2));
-	} else if (props.anchor.y === 'top') {
+	if (props.anchor.y === "center") {
+		top = y - height / 2;
+	} else if (props.anchor.y === "top") {
 		// TODO
-	} else if (props.anchor.y === 'bottom') {
+	} else if (props.anchor.y === "bottom") {
 		top = y + props.src.offsetHeight;
 	}
 
 	if (fixed) {
 		// 画面から横にはみ出る場合
-		if (left + width > (window.innerWidth - SCROLLBAR_THICKNESS)) {
-			left = (window.innerWidth - SCROLLBAR_THICKNESS) - width;
+		if (left + width > window.innerWidth - SCROLLBAR_THICKNESS) {
+			left = window.innerWidth - SCROLLBAR_THICKNESS - width;
 		}
 
-		const underSpace = ((window.innerHeight - SCROLLBAR_THICKNESS) - MARGIN) - top;
-		const upperSpace = (srcRect.top - MARGIN);
+		const underSpace = window.innerHeight - SCROLLBAR_THICKNESS - MARGIN - top;
+		const upperSpace = srcRect.top - MARGIN;
 
 		// 画面から縦にはみ出る場合
-		if (top + height > ((window.innerHeight - SCROLLBAR_THICKNESS) - MARGIN)) {
-			if (props.noOverlap && props.anchor.x === 'center') {
-				if (underSpace >= (upperSpace / 3)) {
+		if (top + height > window.innerHeight - SCROLLBAR_THICKNESS - MARGIN) {
+			if (props.noOverlap && props.anchor.x === "center") {
+				if (underSpace >= upperSpace / 3) {
 					maxHeight = underSpace;
 				} else {
 					maxHeight = upperSpace;
-					top = (upperSpace + MARGIN) - height;
+					top = upperSpace + MARGIN - height;
 				}
 			} else {
-				top = ((window.innerHeight - SCROLLBAR_THICKNESS) - MARGIN) - height;
+				top = window.innerHeight - SCROLLBAR_THICKNESS - MARGIN - height;
 			}
 		} else {
 			maxHeight = underSpace;
 		}
 	} else {
 		// 画面から横にはみ出る場合
-		if (left + width - window.pageXOffset > (window.innerWidth - SCROLLBAR_THICKNESS)) {
-			left = (window.innerWidth - SCROLLBAR_THICKNESS) - width + window.pageXOffset - 1;
+		if (
+			left + width - window.pageXOffset >
+			window.innerWidth - SCROLLBAR_THICKNESS
+		) {
+			left =
+				window.innerWidth -
+				SCROLLBAR_THICKNESS -
+				width +
+				window.pageXOffset -
+				1;
 		}
 
-		const underSpace = ((window.innerHeight - SCROLLBAR_THICKNESS) - MARGIN) - (top - window.pageYOffset);
-		const upperSpace = (srcRect.top - MARGIN);
+		const underSpace =
+			window.innerHeight -
+			SCROLLBAR_THICKNESS -
+			MARGIN -
+			(top - window.pageYOffset);
+		const upperSpace = srcRect.top - MARGIN;
 
 		// 画面から縦にはみ出る場合
-		if (top + height - window.pageYOffset > ((window.innerHeight - SCROLLBAR_THICKNESS) - MARGIN)) {
-			if (props.noOverlap && props.anchor.x === 'center') {
-				if (underSpace >= (upperSpace / 3)) {
+		if (
+			top + height - window.pageYOffset >
+			window.innerHeight - SCROLLBAR_THICKNESS - MARGIN
+		) {
+			if (props.noOverlap && props.anchor.x === "center") {
+				if (underSpace >= upperSpace / 3) {
 					maxHeight = underSpace;
 				} else {
 					maxHeight = upperSpace;
-					top = window.pageYOffset + ((upperSpace + MARGIN) - height);
+					top = window.pageYOffset + (upperSpace + MARGIN - height);
 				}
 			} else {
-				top = ((window.innerHeight - SCROLLBAR_THICKNESS) - MARGIN) - height + window.pageYOffset - 1;
+				top =
+					window.innerHeight -
+					SCROLLBAR_THICKNESS -
+					MARGIN -
+					height +
+					window.pageYOffset -
+					1;
 			}
 		} else {
 			maxHeight = underSpace;
@@ -247,41 +284,55 @@ const align = () => {
 		left = 0;
 	}
 
-	let transformOriginX = 'center';
-	let transformOriginY = 'center';
+	let transformOriginX = "center";
+	let transformOriginY = "center";
 
-	if (top >= srcRect.top + props.src.offsetHeight + (fixed ? 0 : window.pageYOffset)) {
-		transformOriginY = 'top';
-	} else if ((top + height) <= srcRect.top + (fixed ? 0 : window.pageYOffset)) {
-		transformOriginY = 'bottom';
+	if (
+		top >=
+		srcRect.top + props.src.offsetHeight + (fixed ? 0 : window.pageYOffset)
+	) {
+		transformOriginY = "top";
+	} else if (top + height <= srcRect.top + (fixed ? 0 : window.pageYOffset)) {
+		transformOriginY = "bottom";
 	}
 
-	if (left >= srcRect.left + props.src.offsetWidth + (fixed ? 0 : window.pageXOffset)) {
-		transformOriginX = 'left';
-	} else if ((left + width) <= srcRect.left + (fixed ? 0 : window.pageXOffset)) {
-		transformOriginX = 'right';
+	if (
+		left >=
+		srcRect.left + props.src.offsetWidth + (fixed ? 0 : window.pageXOffset)
+	) {
+		transformOriginX = "left";
+	} else if (left + width <= srcRect.left + (fixed ? 0 : window.pageXOffset)) {
+		transformOriginX = "right";
 	}
 
 	transformOrigin = `${transformOriginX} ${transformOriginY}`;
 
-	content.style.left = left + 'px';
-	content.style.top = top + 'px';
+	content.style.left = left + "px";
+	content.style.top = top + "px";
 };
 
 const onOpened = () => {
-	emit('opened');
+	emit("opened");
 
 	// モーダルコンテンツにマウスボタンが押され、コンテンツ外でマウスボタンが離されたときにモーダルバックグラウンドクリックと判定させないためにマウスイベントを監視しフラグ管理する
 	const el = content!.children[0];
-	el.addEventListener('mousedown', ev => {
-		contentClicking = true;
-		window.addEventListener('mouseup', ev => {
-			// click イベントより先に mouseup イベントが発生するかもしれないのでちょっと待つ
-			window.setTimeout(() => {
-				contentClicking = false;
-			}, 100);
-		}, { passive: true, once: true });
-	}, { passive: true });
+	el.addEventListener(
+		"mousedown",
+		(ev) => {
+			contentClicking = true;
+			window.addEventListener(
+				"mouseup",
+				(ev) => {
+					// click イベントより先に mouseup イベントが発生するかもしれないのでちょっと待つ
+					window.setTimeout(() => {
+						contentClicking = false;
+					}, 100);
+				},
+				{ passive: true, once: true },
+			);
+		},
+		{ passive: true },
+	);
 };
 
 const alignObserver = new ResizeObserver((entries, observer) => {
@@ -289,17 +340,21 @@ const alignObserver = new ResizeObserver((entries, observer) => {
 });
 
 onMounted(() => {
-	watch(() => props.src, async () => {
-		if (props.src) {
-			// eslint-disable-next-line vue/no-mutating-props
-			props.src.style.pointerEvents = 'none';
-		}
-		fixed = (type === 'drawer') || (getFixedContainer(props.src) != null);
+	watch(
+		() => props.src,
+		async () => {
+			if (props.src) {
+				// eslint-disable-next-line vue/no-mutating-props
+				props.src.style.pointerEvents = "none";
+			}
+			fixed = type === "drawer" || getFixedContainer(props.src) != null;
 
-		await nextTick();
+			await nextTick();
 
-		align();
-	}, { immediate: true });
+			align();
+		},
+		{ immediate: true },
+	);
 
 	nextTick(() => {
 		alignObserver.observe(content!);

@@ -43,21 +43,21 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue';
-import FormSection from '@/components/form/section.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import * as os from '@/os';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { instance } from '@/instance';
+import { onMounted, ref, watch } from "vue";
+import FormSection from "@/components/form/section.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import * as os from "@/os";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { instance } from "@/instance";
 
 const emailAddress = ref($i!.email);
 
 const onChangeReceiveAnnouncementEmail = (v) => {
-	os.api('i/update', {
+	os.api("i/update", {
 		receiveAnnouncementEmail: v,
 	});
 };
@@ -65,37 +65,60 @@ const onChangeReceiveAnnouncementEmail = (v) => {
 const saveEmailAddress = () => {
 	os.inputText({
 		title: i18n.ts.password,
-		type: 'password',
+		type: "password",
 	}).then(({ canceled, result: password }) => {
 		if (canceled) return;
-		os.apiWithDialog('i/update-email', {
+		os.apiWithDialog("i/update-email", {
 			password: password,
 			email: emailAddress.value,
 		});
 	});
 };
 
-const emailNotification_mention = ref($i!.emailNotificationTypes.includes('mention'));
-const emailNotification_reply = ref($i!.emailNotificationTypes.includes('reply'));
-const emailNotification_quote = ref($i!.emailNotificationTypes.includes('quote'));
-const emailNotification_follow = ref($i!.emailNotificationTypes.includes('follow'));
-const emailNotification_receiveFollowRequest = ref($i!.emailNotificationTypes.includes('receiveFollowRequest'));
+const emailNotification_mention = ref(
+	$i!.emailNotificationTypes.includes("mention"),
+);
+const emailNotification_reply = ref(
+	$i!.emailNotificationTypes.includes("reply"),
+);
+const emailNotification_quote = ref(
+	$i!.emailNotificationTypes.includes("quote"),
+);
+const emailNotification_follow = ref(
+	$i!.emailNotificationTypes.includes("follow"),
+);
+const emailNotification_receiveFollowRequest = ref(
+	$i!.emailNotificationTypes.includes("receiveFollowRequest"),
+);
 
 const saveNotificationSettings = () => {
-	os.api('i/update', {
+	os.api("i/update", {
 		emailNotificationTypes: [
-			...[emailNotification_mention.value ? 'mention' : null],
-			...[emailNotification_reply.value ? 'reply' : null],
-			...[emailNotification_quote.value ? 'quote' : null],
-			...[emailNotification_follow.value ? 'follow' : null],
-			...[emailNotification_receiveFollowRequest.value ? 'receiveFollowRequest' : null],
-		].filter(x => x != null),
+			...[emailNotification_mention.value ? "mention" : null],
+			...[emailNotification_reply.value ? "reply" : null],
+			...[emailNotification_quote.value ? "quote" : null],
+			...[emailNotification_follow.value ? "follow" : null],
+			...[
+				emailNotification_receiveFollowRequest.value
+					? "receiveFollowRequest"
+					: null,
+			],
+		].filter((x) => x != null),
 	});
 };
 
-watch([emailNotification_mention, emailNotification_reply, emailNotification_quote, emailNotification_follow, emailNotification_receiveFollowRequest], () => {
-	saveNotificationSettings();
-});
+watch(
+	[
+		emailNotification_mention,
+		emailNotification_reply,
+		emailNotification_quote,
+		emailNotification_follow,
+		emailNotification_receiveFollowRequest,
+	],
+	() => {
+		saveNotificationSettings();
+	},
+);
 
 onMounted(() => {
 	watch(emailAddress, () => {
@@ -109,6 +132,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.email,
-	icon: 'ti ti-mail',
+	icon: "ti ti-mail",
 });
 </script>

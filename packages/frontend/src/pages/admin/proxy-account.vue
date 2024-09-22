@@ -16,29 +16,29 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import * as os from '@/os';
-import { fetchInstance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import {} from "vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import * as os from "@/os";
+import { fetchInstance } from "@/instance";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
 let proxyAccount: any = $ref(null);
 let proxyAccountId: any = $ref(null);
 
 async function init() {
-	const meta = await os.api('admin/meta');
+	const meta = await os.api("admin/meta");
 	proxyAccountId = meta.proxyAccountId;
 	if (proxyAccountId) {
-		proxyAccount = await os.api('users/show', { userId: proxyAccountId });
+		proxyAccount = await os.api("users/show", { userId: proxyAccountId });
 	}
 }
 
 function chooseProxyAccount() {
-	os.selectUser().then(user => {
+	os.selectUser().then((user) => {
 		proxyAccount = user;
 		proxyAccountId = user.id;
 		save();
@@ -46,7 +46,7 @@ function chooseProxyAccount() {
 }
 
 function save() {
-	os.apiWithDialog('admin/update-meta', {
+	os.apiWithDialog("admin/update-meta", {
 		proxyAccountId: proxyAccountId,
 	}).then(() => {
 		fetchInstance();
@@ -59,6 +59,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.proxyAccount,
-	icon: 'ti ti-ghost',
+	icon: "ti ti-ghost",
 });
 </script>

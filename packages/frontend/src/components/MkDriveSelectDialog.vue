@@ -19,23 +19,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef } from 'vue';
-import * as Misskey from 'misskey-js';
-import XDrive from '@/components/MkDrive.vue';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import number from '@/filters/number';
-import { i18n } from '@/i18n';
+import { ref, shallowRef } from "vue";
+import * as Misskey from "misskey-js";
+import XDrive from "@/components/MkDrive.vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import number from "@/filters/number";
+import { i18n } from "@/i18n";
 
-withDefaults(defineProps<{
-	type?: 'file' | 'folder';
-	multiple: boolean;
-}>(), {
-	type: 'file',
-});
+withDefaults(
+	defineProps<{
+		type?: "file" | "folder";
+		multiple: boolean;
+	}>(),
+	{
+		type: "file",
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'done', r?: Misskey.entities.DriveFile[]): void;
-	(ev: 'closed'): void;
+	(ev: "done", r?: Misskey.entities.DriveFile[]): void;
+	(ev: "closed"): void;
 }>();
 
 const dialog = shallowRef<InstanceType<typeof MkModalWindow>>();
@@ -43,12 +46,12 @@ const dialog = shallowRef<InstanceType<typeof MkModalWindow>>();
 const selected = ref<Misskey.entities.DriveFile[]>([]);
 
 function ok() {
-	emit('done', selected.value);
+	emit("done", selected.value);
 	dialog.value?.close();
 }
 
 function cancel() {
-	emit('done');
+	emit("done");
 	dialog.value?.close();
 }
 

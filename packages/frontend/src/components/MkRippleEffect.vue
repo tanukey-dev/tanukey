@@ -57,37 +57,40 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import * as os from '@/os';
+import { onMounted } from "vue";
+import * as os from "@/os";
 
-const props = withDefaults(defineProps<{
-	x: number;
-	y: number;
-	particle?: boolean;
-}>(), {
-	particle: true,
-});
+const props = withDefaults(
+	defineProps<{
+		x: number;
+		y: number;
+		particle?: boolean;
+	}>(),
+	{
+		particle: true,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'end'): void;
+	(ev: "end"): void;
 }>();
 
 const particles = [];
 const origin = 64;
-const colors = ['#FF1493', '#00FFFF', '#FFE202'];
-const zIndex = os.claimZIndex('high');
+const colors = ["#FF1493", "#00FFFF", "#FFE202"];
+const zIndex = os.claimZIndex("high");
 
 if (props.particle) {
 	for (let i = 0; i < 12; i++) {
 		const angle = Math.random() * (Math.PI * 2);
 		const pos = Math.random() * 16;
-		const velocity = 16 + (Math.random() * 48);
+		const velocity = 16 + Math.random() * 48;
 		particles.push({
-			size: 4 + (Math.random() * 8),
-			xA: origin + (Math.sin(angle) * pos),
-			yA: origin + (Math.cos(angle) * pos),
-			xB: origin + (Math.sin(angle) * (pos + velocity)),
-			yB: origin + (Math.cos(angle) * (pos + velocity)),
+			size: 4 + Math.random() * 8,
+			xA: origin + Math.sin(angle) * pos,
+			yA: origin + Math.cos(angle) * pos,
+			xB: origin + Math.sin(angle) * (pos + velocity),
+			yB: origin + Math.cos(angle) * (pos + velocity),
 			color: colors[Math.floor(Math.random() * colors.length)],
 		});
 	}
@@ -95,7 +98,7 @@ if (props.particle) {
 
 onMounted(() => {
 	window.setTimeout(() => {
-		emit('end');
+		emit("end");
 	}, 1100);
 });
 </script>

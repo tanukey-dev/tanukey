@@ -11,28 +11,28 @@
 
 <script lang="ts" setup>
 /* eslint-disable vue/no-mutating-props */
-import { watch, onMounted } from 'vue';
-import XContainer from '../page-editor.container.vue';
-import { Autocomplete } from '@/scripts/autocomplete';
-import { i18n } from '@/i18n';
+import { watch, onMounted } from "vue";
+import XContainer from "../page-editor.container.vue";
+import { Autocomplete } from "@/scripts/autocomplete";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
-	modelValue: any
+	modelValue: any;
 }>();
 
 const emit = defineEmits<{
-	(ev: 'update:modelValue', value: any): void;
+	(ev: "update:modelValue", value: any): void;
 }>();
 
 const textareaEl = $shallowRef<HTMLTextAreaElement | null>(null);
-const text = $ref(props.modelValue.text ?? '');
+const text = $ref(props.modelValue.text ?? "");
 
 onMounted(() => {
 	new Autocomplete(textareaEl, $$(text));
 });
 
 watch($$(text), () => {
-	emit('update:modelValue', {
+	emit("update:modelValue", {
 		...props.modelValue,
 		text,
 	});

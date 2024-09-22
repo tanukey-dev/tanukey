@@ -64,24 +64,24 @@
 </template>
 
 <script lang="ts" setup>
-import { ComputedRef, onMounted, provide } from 'vue';
-import XCommon from './_common_/common.vue';
-import { host, instanceName } from '@/config';
-import * as os from '@/os';
-import { instance } from '@/instance';
-import XSigninDialog from '@/components/MkSigninDialog.vue';
-import XSignupDialog from '@/components/MkSignupDialog.vue';
-import { ColdDeviceStorage, defaultStore } from '@/store';
-import { mainRouter } from '@/router';
-import { PageMetadata, provideMetadataReceiver } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
-import MkVisitorDashboard from '@/components/MkVisitorDashboard.vue';
+import { ComputedRef, onMounted, provide } from "vue";
+import XCommon from "./_common_/common.vue";
+import { host, instanceName } from "@/config";
+import * as os from "@/os";
+import { instance } from "@/instance";
+import XSigninDialog from "@/components/MkSigninDialog.vue";
+import XSignupDialog from "@/components/MkSignupDialog.vue";
+import { ColdDeviceStorage, defaultStore } from "@/store";
+import { mainRouter } from "@/router";
+import { PageMetadata, provideMetadataReceiver } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
+import MkVisitorDashboard from "@/components/MkVisitorDashboard.vue";
 
 const DESKTOP_THRESHOLD = 1100;
 
 let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
 
-provide('router', mainRouter);
+provide("router", mainRouter);
 provideMetadataReceiver((info) => {
 	pageMetadata = info;
 	if (pageMetadata.value) {
@@ -90,11 +90,13 @@ provideMetadataReceiver((info) => {
 });
 
 const announcements = {
-	endpoint: 'announcements',
+	endpoint: "announcements",
 	limit: 10,
 };
 
-const isTimelineAvailable = $ref(instance.policies?.ltlAvailable || instance.policies?.gtlAvailable);
+const isTimelineAvailable = $ref(
+	instance.policies?.ltlAvailable || instance.policies?.gtlAvailable,
+);
 
 let showMenu = $ref(false);
 let isDesktop = $ref(window.innerWidth >= DESKTOP_THRESHOLD);
@@ -103,39 +105,53 @@ let meta = $ref();
 
 const keymap = $computed(() => {
 	return {
-		'd': () => {
-			if (ColdDeviceStorage.get('syncDeviceDarkMode')) return;
-			defaultStore.set('darkMode', !defaultStore.state.darkMode);
+		d: () => {
+			if (ColdDeviceStorage.get("syncDeviceDarkMode")) return;
+			defaultStore.set("darkMode", !defaultStore.state.darkMode);
 		},
-		's': () => {
-			mainRouter.push('/search');
+		s: () => {
+			mainRouter.push("/search");
 		},
 	};
 });
 
-const root = $computed(() => mainRouter.currentRoute.value.name === 'index');
+const root = $computed(() => mainRouter.currentRoute.value.name === "index");
 
-os.api('meta', { detail: true }).then(res => {
+os.api("meta", { detail: true }).then((res) => {
 	meta = res;
 });
 
 function signin() {
-	os.popup(XSigninDialog, {
-		autoSet: true,
-	}, {}, 'closed');
+	os.popup(
+		XSigninDialog,
+		{
+			autoSet: true,
+		},
+		{},
+		"closed",
+	);
 }
 
 function signup() {
-	os.popup(XSignupDialog, {
-		autoSet: true,
-	}, {}, 'closed');
+	os.popup(
+		XSignupDialog,
+		{
+			autoSet: true,
+		},
+		{},
+		"closed",
+	);
 }
 
 onMounted(() => {
 	if (!isDesktop) {
-		window.addEventListener('resize', () => {
-			if (window.innerWidth >= DESKTOP_THRESHOLD) isDesktop = true;
-		}, { passive: true });
+		window.addEventListener(
+			"resize",
+			() => {
+				if (window.innerWidth >= DESKTOP_THRESHOLD) isDesktop = true;
+			},
+			{ passive: true },
+		);
 	}
 });
 

@@ -35,27 +35,27 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, shallowRef, watch } from 'vue';
-import MkInput from './MkInput.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import { $i } from '@/account';
+import { onMounted, ref, shallowRef, watch } from "vue";
+import MkInput from "./MkInput.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import { $i } from "@/account";
 
 const props = defineProps<{
 	user?: string;
 }>();
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
-	(ev: 'done', result: { target: string | null, value: number }): void;
+	(ev: "closed"): void;
+	(ev: "done", result: { target: string | null; value: number }): void;
 }>();
 
 const dialog = shallowRef<InstanceType<typeof MkModalWindow>>();
 const target = ref<any>(null);
 const value = ref(0);
-const error = ref<string|null>(null);
+const error = ref<string | null>(null);
 
 watch(value, (newValue, oldValue) => {
 	if (newValue <= 0) {
@@ -64,7 +64,7 @@ watch(value, (newValue, oldValue) => {
 });
 
 function selectUser() {
-	os.selectUser({ includeSelf: false, localOnly: true }).then(_user => {
+	os.selectUser({ includeSelf: false, localOnly: true }).then((_user) => {
 		target.value = _user;
 	});
 }
@@ -86,7 +86,7 @@ async function ok(): Promise<void> {
 		error.value = i18n.ts._points._errors.remoteUser;
 		return;
 	}
-	const point = await os.api('points/show');
+	const point = await os.api("points/show");
 	if (value.value > point.point) {
 		error.value = i18n.ts._points._errors.overPoints;
 		return;
@@ -95,7 +95,7 @@ async function ok(): Promise<void> {
 		error.value = i18n.ts._points._errors.isNotInteger;
 		return;
 	}
-	emit('done', {
+	emit("done", {
 		target: target.value,
 		value: value.value,
 	});
@@ -107,5 +107,4 @@ onMounted(() => {
 		target.value = props.user;
 	}
 });
-
 </script>

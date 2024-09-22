@@ -7,27 +7,27 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import MkNotes from '@/components/MkNotes.vue';
-import MkTab from '@/components/MkTab.vue';
-import { i18n } from '@/i18n';
+import { ref } from "vue";
+import MkNotes from "@/components/MkNotes.vue";
+import MkTab from "@/components/MkTab.vue";
+import { i18n } from "@/i18n";
 
 const tabs = ref([
-	{ value: 'notes', label: i18n.ts.notes },
-	{ value: 'polls', label: i18n.ts.poll },
+	{ value: "notes", label: i18n.ts.notes },
+	{ value: "polls", label: i18n.ts.poll },
 ]);
 
 const paginationForNotes = {
-	endpoint: 'notes/featured' as const,
+	endpoint: "notes/featured" as const,
 	limit: 10,
 	offsetMode: true,
 };
 
 const paginationForPolls = {
-	endpoint: 'notes/polls/recommendation' as const,
+	endpoint: "notes/polls/recommendation" as const,
 	limit: 10,
 	offsetMode: true,
 };
 
-let tab = $ref('notes');
+let tab = $ref("notes");
 </script>

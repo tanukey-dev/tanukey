@@ -92,31 +92,44 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, computed, watch, onMounted } from 'vue';
-import * as Misskey from 'misskey-js';
-import XSection from '@/components/MkEmojiPicker.section.vue';
-import { emojilist, emojiCharByCategory, UnicodeEmojiDef, unicodeEmojiCategories as categories, getEmojiName } from '@/scripts/emojilist';
-import MkRippleEffect from '@/components/MkRippleEffect.vue';
-import * as os from '@/os';
-import { isTouchUsing } from '@/scripts/touch';
-import { deviceKind } from '@/scripts/device-kind';
-import { i18n } from '@/i18n';
-import { defaultStore } from '@/store';
-import { customEmojiCategories, customEmojis, customEmojisMap } from '@/custom-emojis';
-import { $i } from '@/account';
+import { ref, shallowRef, computed, watch, onMounted } from "vue";
+import * as Misskey from "misskey-js";
+import XSection from "@/components/MkEmojiPicker.section.vue";
+import {
+	emojilist,
+	emojiCharByCategory,
+	UnicodeEmojiDef,
+	unicodeEmojiCategories as categories,
+	getEmojiName,
+} from "@/scripts/emojilist";
+import MkRippleEffect from "@/components/MkRippleEffect.vue";
+import * as os from "@/os";
+import { isTouchUsing } from "@/scripts/touch";
+import { deviceKind } from "@/scripts/device-kind";
+import { i18n } from "@/i18n";
+import { defaultStore } from "@/store";
+import {
+	customEmojiCategories,
+	customEmojis,
+	customEmojisMap,
+} from "@/custom-emojis";
+import { $i } from "@/account";
 
-const props = withDefaults(defineProps<{
-	showPinned?: boolean;
-	asReactionPicker?: boolean;
-	maxHeight?: number;
-	asDrawer?: boolean;
-	asWindow?: boolean;
-}>(), {
-	showPinned: true,
-});
+const props = withDefaults(
+	defineProps<{
+		showPinned?: boolean;
+		asReactionPicker?: boolean;
+		maxHeight?: number;
+		asDrawer?: boolean;
+		asWindow?: boolean;
+	}>(),
+	{
+		showPinned: true,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'chosen', v: string): void;
+	(ev: "chosen", v: string): void;
 }>();
 
 const searchEl = shallowRef<HTMLInputElement>();
@@ -131,39 +144,46 @@ const {
 	recentlyUsedEmojis,
 } = defaultStore.reactiveState;
 
-const size = computed(() => props.asReactionPicker ? reactionPickerSize.value : 1);
-const width = computed(() => props.asReactionPicker ? reactionPickerWidth.value : 3);
-const height = computed(() => props.asReactionPicker ? reactionPickerHeight.value : 2);
-const q = ref<string>('');
+const size = computed(() =>
+	props.asReactionPicker ? reactionPickerSize.value : 1,
+);
+const width = computed(() =>
+	props.asReactionPicker ? reactionPickerWidth.value : 3,
+);
+const height = computed(() =>
+	props.asReactionPicker ? reactionPickerHeight.value : 2,
+);
+const q = ref<string>("");
 const searchResultCustom = ref<Misskey.entities.CustomEmoji[]>([]);
 const searchResultUnicode = ref<UnicodeEmojiDef[]>([]);
-const tab = ref<'index' | 'custom' | 'unicode' | 'tags'>('index');
+const tab = ref<"index" | "custom" | "unicode" | "tags">("index");
 
 watch(q, () => {
 	if (emojisEl.value) emojisEl.value.scrollTop = 0;
 
-	if (q.value === '') {
+	if (q.value === "") {
 		searchResultCustom.value = [];
 		searchResultUnicode.value = [];
 		return;
 	}
 
-	const newQ = q.value.replace(/:/g, '').toLowerCase();
+	const newQ = q.value.replace(/:/g, "").toLowerCase();
 
 	const searchCustom = () => {
 		const max = 100;
-		const emojis = customEmojis.value.filter(emoji => !emoji.draft);
+		const emojis = customEmojis.value.filter((emoji) => !emoji.draft);
 		const matches = new Set<Misskey.entities.CustomEmoji>();
 
-		const exactMatch = emojis.find(emoji => emoji.name === newQ);
+		const exactMatch = emojis.find((emoji) => emoji.name === newQ);
 		if (exactMatch) matches.add(exactMatch);
 
-		if (newQ.includes(' ')) { // AND検索
-			const keywords = newQ.split(' ');
+		if (newQ.includes(" ")) {
+			// AND検索
+			const keywords = newQ.split(" ");
 
 			// 名前にキーワードが含まれている
 			for (const emoji of emojis) {
-				if (keywords.every(keyword => emoji.name.includes(keyword))) {
+				if (keywords.every((keyword) => emoji.name.includes(keyword))) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
@@ -172,7 +192,13 @@ watch(q, () => {
 
 			// 名前またはエイリアスにキーワードが含まれている
 			for (const emoji of emojis) {
-				if (keywords.every(keyword => emoji.name.includes(keyword) || emoji.aliases.some(alias => alias.includes(keyword)))) {
+				if (
+					keywords.every(
+						(keyword) =>
+							emoji.name.includes(keyword) ||
+							emoji.aliases.some((alias) => alias.includes(keyword)),
+					)
+				) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
@@ -187,7 +213,7 @@ watch(q, () => {
 			if (matches.size >= max) return matches;
 
 			for (const emoji of emojis) {
-				if (emoji.aliases.some(alias => alias.startsWith(newQ))) {
+				if (emoji.aliases.some((alias) => alias.startsWith(newQ))) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
@@ -203,7 +229,7 @@ watch(q, () => {
 			if (matches.size >= max) return matches;
 
 			for (const emoji of emojis) {
-				if (emoji.aliases.some(alias => alias.includes(newQ))) {
+				if (emoji.aliases.some((alias) => alias.includes(newQ))) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
@@ -218,15 +244,16 @@ watch(q, () => {
 		const emojis = emojilist;
 		const matches = new Set<UnicodeEmojiDef>();
 
-		const exactMatch = emojis.find(emoji => emoji.name === newQ);
+		const exactMatch = emojis.find((emoji) => emoji.name === newQ);
 		if (exactMatch) matches.add(exactMatch);
 
-		if (newQ.includes(' ')) { // AND検索
-			const keywords = newQ.split(' ');
+		if (newQ.includes(" ")) {
+			// AND検索
+			const keywords = newQ.split(" ");
 
 			// 名前にキーワードが含まれている
 			for (const emoji of emojis) {
-				if (keywords.every(keyword => emoji.name.includes(keyword))) {
+				if (keywords.every((keyword) => emoji.name.includes(keyword))) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
@@ -235,7 +262,13 @@ watch(q, () => {
 
 			// 名前またはエイリアスにキーワードが含まれている
 			for (const emoji of emojis) {
-				if (keywords.every(keyword => emoji.name.includes(keyword) || emoji.keywords.some(alias => alias.includes(keyword)))) {
+				if (
+					keywords.every(
+						(keyword) =>
+							emoji.name.includes(keyword) ||
+							emoji.keywords.some((alias) => alias.includes(keyword)),
+					)
+				) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
@@ -250,7 +283,7 @@ watch(q, () => {
 			if (matches.size >= max) return matches;
 
 			for (const emoji of emojis) {
-				if (emoji.keywords.some(keyword => keyword.startsWith(newQ))) {
+				if (emoji.keywords.some((keyword) => keyword.startsWith(newQ))) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
@@ -266,7 +299,7 @@ watch(q, () => {
 			if (matches.size >= max) return matches;
 
 			for (const emoji of emojis) {
-				if (emoji.keywords.some(keyword => keyword.includes(newQ))) {
+				if (emoji.keywords.some((keyword) => keyword.includes(newQ))) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
@@ -281,11 +314,18 @@ watch(q, () => {
 });
 
 function filterAvailable(emoji: Misskey.entities.CustomEmoji): boolean {
-	return (emoji.roleIdsThatCanBeUsedThisEmojiAsReaction == null || emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length === 0) || ($i && $i.roles.some(r => emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.includes(r.id)));
+	return (
+		emoji.roleIdsThatCanBeUsedThisEmojiAsReaction == null ||
+		emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length === 0 ||
+		($i &&
+			$i.roles.some((r) =>
+				emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.includes(r.id),
+			))
+	);
 }
 
 function focus() {
-	if (!['smartphone', 'tablet'].includes(deviceKind) && !isTouchUsing) {
+	if (!["smartphone", "tablet"].includes(deviceKind) && !isTouchUsing) {
 		searchEl.value?.focus({
 			preventScroll: true,
 		});
@@ -294,11 +334,17 @@ function focus() {
 
 function reset() {
 	if (emojisEl.value) emojisEl.value.scrollTop = 0;
-	q.value = '';
+	q.value = "";
 }
 
-function getKey(emoji: string | Misskey.entities.CustomEmoji | UnicodeEmojiDef): string {
-	return typeof emoji === 'string' ? emoji : 'char' in emoji ? emoji.char : `:${emoji.name}:`;
+function getKey(
+	emoji: string | Misskey.entities.CustomEmoji | UnicodeEmojiDef,
+): string {
+	return typeof emoji === "string"
+		? emoji
+		: "char" in emoji
+			? emoji.char
+			: `:${emoji.name}:`;
 }
 
 /** @see MkEmojiPicker.section.vue */
@@ -309,23 +355,24 @@ function computeButtonTitle(ev: MouseEvent): void {
 }
 
 function chosen(emoji: any, ev?: MouseEvent) {
-	const el = ev && (ev.currentTarget ?? ev.target) as HTMLElement | null | undefined;
+	const el =
+		ev && ((ev.currentTarget ?? ev.target) as HTMLElement | null | undefined);
 	if (el) {
 		const rect = el.getBoundingClientRect();
-		const x = rect.left + (el.offsetWidth / 2);
-		const y = rect.top + (el.offsetHeight / 2);
-		os.popup(MkRippleEffect, { x, y }, {}, 'end');
+		const x = rect.left + el.offsetWidth / 2;
+		const y = rect.top + el.offsetHeight / 2;
+		os.popup(MkRippleEffect, { x, y }, {}, "end");
 	}
 
 	const key = getKey(emoji);
-	emit('chosen', key);
+	emit("chosen", key);
 
 	// 最近使った絵文字更新
 	if (!pinned.value.includes(key)) {
 		let recents = defaultStore.state.recentlyUsedEmojis;
 		recents = recents.filter((emoji: any) => emoji !== key);
 		recents.unshift(key);
-		defaultStore.set('recentlyUsedEmojis', recents.splice(0, 32));
+		defaultStore.set("recentlyUsedEmojis", recents.splice(0, 32));
 	}
 }
 
@@ -333,32 +380,34 @@ function input(): void {
 	// Using custom input event instead of v-model to respond immediately on
 	// Android, where composition happens on all languages
 	// (v-model does not update during composition)
-	q.value = searchEl.value?.value.trim() ?? '';
+	q.value = searchEl.value?.value.trim() ?? "";
 }
 
 function paste(event: ClipboardEvent): void {
-	const pasted = event.clipboardData?.getData('text') ?? '';
+	const pasted = event.clipboardData?.getData("text") ?? "";
 	if (done(pasted)) {
 		event.preventDefault();
 	}
 }
 
 function onEnter(ev: KeyboardEvent) {
-	if (ev.isComposing || ev.key === 'Process' || ev.keyCode === 229) return;
+	if (ev.isComposing || ev.key === "Process" || ev.keyCode === 229) return;
 	done();
 }
 
 function done(query?: string): boolean | void {
 	if (query == null) query = q.value;
-	if (query == null || typeof query !== 'string') return;
+	if (query == null || typeof query !== "string") return;
 
-	const q2 = query.replace(/:/g, '');
+	const q2 = query.replace(/:/g, "");
 	const exactMatchCustom = customEmojisMap.get(q2);
 	if (exactMatchCustom) {
 		chosen(exactMatchCustom);
 		return true;
 	}
-	const exactMatchUnicode = emojilist.find(emoji => emoji.char === q2 || emoji.name === q2);
+	const exactMatchUnicode = emojilist.find(
+		(emoji) => emoji.char === q2 || emoji.name === q2,
+	);
 	if (exactMatchUnicode) {
 		chosen(exactMatchUnicode);
 		return true;

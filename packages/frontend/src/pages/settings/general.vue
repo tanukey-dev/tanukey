@@ -158,29 +158,29 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import MkRadios from '@/components/MkRadios.vue';
-import MkRange from '@/components/MkRange.vue';
-import FormSection from '@/components/form/section.vue';
-import FormLink from '@/components/form/link.vue';
-import MkLink from '@/components/MkLink.vue';
-import { langs } from '@/config';
-import { defaultStore } from '@/store';
-import * as os from '@/os';
-import { unisonReload } from '@/scripts/unison-reload';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { miLocalStorage } from '@/local-storage';
+import { computed, ref, watch } from "vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import MkRadios from "@/components/MkRadios.vue";
+import MkRange from "@/components/MkRange.vue";
+import FormSection from "@/components/form/section.vue";
+import FormLink from "@/components/form/link.vue";
+import MkLink from "@/components/MkLink.vue";
+import { langs } from "@/config";
+import { defaultStore } from "@/store";
+import * as os from "@/os";
+import { unisonReload } from "@/scripts/unison-reload";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { miLocalStorage } from "@/local-storage";
 
-const lang = ref(miLocalStorage.getItem('lang'));
-const fontSize = ref(miLocalStorage.getItem('fontSize'));
-const useSystemFont = ref(miLocalStorage.getItem('useSystemFont') != null);
+const lang = ref(miLocalStorage.getItem("lang"));
+const fontSize = ref(miLocalStorage.getItem("fontSize"));
+const useSystemFont = ref(miLocalStorage.getItem("useSystemFont") != null);
 
 async function reloadAsk() {
 	const { canceled } = await os.confirm({
-		type: 'info',
+		type: "info",
 		text: i18n.ts.reloadToApplySetting,
 	});
 	if (canceled) return;
@@ -188,73 +188,124 @@ async function reloadAsk() {
 	unisonReload();
 }
 
-const overridedDeviceKind = computed(defaultStore.makeGetterSetter('overridedDeviceKind'));
-const serverDisconnectedBehavior = computed(defaultStore.makeGetterSetter('serverDisconnectedBehavior'));
-const showNoteActionsOnlyHover = computed(defaultStore.makeGetterSetter('showNoteActionsOnlyHover'));
-const showClipButtonInNoteFooter = computed(defaultStore.makeGetterSetter('showClipButtonInNoteFooter'));
-const largeNoteReactions = computed(defaultStore.makeGetterSetter('largeNoteReactions'));
-const collapseRenotes = computed(defaultStore.makeGetterSetter('collapseRenotes'));
-const reduceAnimation = computed(defaultStore.makeGetterSetter('animation', v => !v, v => !v));
-const useBlurEffectForModal = computed(defaultStore.makeGetterSetter('useBlurEffectForModal'));
-const useBlurEffect = computed(defaultStore.makeGetterSetter('useBlurEffect'));
-const showGapBetweenNotesInTimeline = computed(defaultStore.makeGetterSetter('showGapBetweenNotesInTimeline'));
-const animatedMfm = computed(defaultStore.makeGetterSetter('animatedMfm'));
-const advancedMfm = computed(defaultStore.makeGetterSetter('advancedMfm'));
-const emojiStyle = computed(defaultStore.makeGetterSetter('emojiStyle'));
-const disableDrawer = computed(defaultStore.makeGetterSetter('disableDrawer'));
-const disableShowingAnimatedImages = computed(defaultStore.makeGetterSetter('disableShowingAnimatedImages'));
-const forceShowAds = computed(defaultStore.makeGetterSetter('forceShowAds'));
-const loadRawImages = computed(defaultStore.makeGetterSetter('loadRawImages'));
-const enableDataSaverMode = computed(defaultStore.makeGetterSetter('enableDataSaverMode'));
-const imageNewTab = computed(defaultStore.makeGetterSetter('imageNewTab'));
-const nsfw = computed(defaultStore.makeGetterSetter('nsfw'));
-const showFixedPostForm = computed(defaultStore.makeGetterSetter('showFixedPostForm'));
-const showFixedPostFormInChannel = computed(defaultStore.makeGetterSetter('showFixedPostFormInChannel'));
-const numberOfPageCache = computed(defaultStore.makeGetterSetter('numberOfPageCache'));
-const instanceTicker = computed(defaultStore.makeGetterSetter('instanceTicker'));
-const enableInfiniteScroll = computed(defaultStore.makeGetterSetter('enableInfiniteScroll'));
-const useReactionPickerForContextMenu = computed(defaultStore.makeGetterSetter('useReactionPickerForContextMenu'));
-const asciiArtDarkMode = computed(defaultStore.makeGetterSetter('asciiArtDarkMode'));
-const squareAvatars = computed(defaultStore.makeGetterSetter('squareAvatars'));
-const mediaListWithOneImageAppearance = computed(defaultStore.makeGetterSetter('mediaListWithOneImageAppearance'));
-const notificationPosition = computed(defaultStore.makeGetterSetter('notificationPosition'));
-const notificationStackAxis = computed(defaultStore.makeGetterSetter('notificationStackAxis'));
-const showTimelineReplies = computed(defaultStore.makeGetterSetter('showTimelineReplies'));
+const overridedDeviceKind = computed(
+	defaultStore.makeGetterSetter("overridedDeviceKind"),
+);
+const serverDisconnectedBehavior = computed(
+	defaultStore.makeGetterSetter("serverDisconnectedBehavior"),
+);
+const showNoteActionsOnlyHover = computed(
+	defaultStore.makeGetterSetter("showNoteActionsOnlyHover"),
+);
+const showClipButtonInNoteFooter = computed(
+	defaultStore.makeGetterSetter("showClipButtonInNoteFooter"),
+);
+const largeNoteReactions = computed(
+	defaultStore.makeGetterSetter("largeNoteReactions"),
+);
+const collapseRenotes = computed(
+	defaultStore.makeGetterSetter("collapseRenotes"),
+);
+const reduceAnimation = computed(
+	defaultStore.makeGetterSetter(
+		"animation",
+		(v) => !v,
+		(v) => !v,
+	),
+);
+const useBlurEffectForModal = computed(
+	defaultStore.makeGetterSetter("useBlurEffectForModal"),
+);
+const useBlurEffect = computed(defaultStore.makeGetterSetter("useBlurEffect"));
+const showGapBetweenNotesInTimeline = computed(
+	defaultStore.makeGetterSetter("showGapBetweenNotesInTimeline"),
+);
+const animatedMfm = computed(defaultStore.makeGetterSetter("animatedMfm"));
+const advancedMfm = computed(defaultStore.makeGetterSetter("advancedMfm"));
+const emojiStyle = computed(defaultStore.makeGetterSetter("emojiStyle"));
+const disableDrawer = computed(defaultStore.makeGetterSetter("disableDrawer"));
+const disableShowingAnimatedImages = computed(
+	defaultStore.makeGetterSetter("disableShowingAnimatedImages"),
+);
+const forceShowAds = computed(defaultStore.makeGetterSetter("forceShowAds"));
+const loadRawImages = computed(defaultStore.makeGetterSetter("loadRawImages"));
+const enableDataSaverMode = computed(
+	defaultStore.makeGetterSetter("enableDataSaverMode"),
+);
+const imageNewTab = computed(defaultStore.makeGetterSetter("imageNewTab"));
+const nsfw = computed(defaultStore.makeGetterSetter("nsfw"));
+const showFixedPostForm = computed(
+	defaultStore.makeGetterSetter("showFixedPostForm"),
+);
+const showFixedPostFormInChannel = computed(
+	defaultStore.makeGetterSetter("showFixedPostFormInChannel"),
+);
+const numberOfPageCache = computed(
+	defaultStore.makeGetterSetter("numberOfPageCache"),
+);
+const instanceTicker = computed(
+	defaultStore.makeGetterSetter("instanceTicker"),
+);
+const enableInfiniteScroll = computed(
+	defaultStore.makeGetterSetter("enableInfiniteScroll"),
+);
+const useReactionPickerForContextMenu = computed(
+	defaultStore.makeGetterSetter("useReactionPickerForContextMenu"),
+);
+const asciiArtDarkMode = computed(
+	defaultStore.makeGetterSetter("asciiArtDarkMode"),
+);
+const squareAvatars = computed(defaultStore.makeGetterSetter("squareAvatars"));
+const mediaListWithOneImageAppearance = computed(
+	defaultStore.makeGetterSetter("mediaListWithOneImageAppearance"),
+);
+const notificationPosition = computed(
+	defaultStore.makeGetterSetter("notificationPosition"),
+);
+const notificationStackAxis = computed(
+	defaultStore.makeGetterSetter("notificationStackAxis"),
+);
+const showTimelineReplies = computed(
+	defaultStore.makeGetterSetter("showTimelineReplies"),
+);
 
 watch(lang, () => {
-	miLocalStorage.setItem('lang', lang.value as string);
-	miLocalStorage.removeItem('locale');
+	miLocalStorage.setItem("lang", lang.value as string);
+	miLocalStorage.removeItem("locale");
 });
 
 watch(fontSize, () => {
 	if (fontSize.value == null) {
-		miLocalStorage.removeItem('fontSize');
+		miLocalStorage.removeItem("fontSize");
 	} else {
-		miLocalStorage.setItem('fontSize', fontSize.value);
+		miLocalStorage.setItem("fontSize", fontSize.value);
 	}
 });
 
 watch(useSystemFont, () => {
 	if (useSystemFont.value) {
-		miLocalStorage.setItem('useSystemFont', 't');
+		miLocalStorage.setItem("useSystemFont", "t");
 	} else {
-		miLocalStorage.removeItem('useSystemFont');
+		miLocalStorage.removeItem("useSystemFont");
 	}
 });
 
-watch([
-	lang,
-	fontSize,
-	useSystemFont,
-	enableInfiniteScroll,
-	squareAvatars,
-	showNoteActionsOnlyHover,
-	showGapBetweenNotesInTimeline,
-	instanceTicker,
-	overridedDeviceKind,
-], async () => {
-	await reloadAsk();
-});
+watch(
+	[
+		lang,
+		fontSize,
+		useSystemFont,
+		enableInfiniteScroll,
+		squareAvatars,
+		showNoteActionsOnlyHover,
+		showGapBetweenNotesInTimeline,
+		instanceTicker,
+		overridedDeviceKind,
+	],
+	async () => {
+		await reloadAsk();
+	},
+);
 
 const headerActions = $computed(() => []);
 
@@ -262,9 +313,8 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.general,
-	icon: 'ti ti-adjustments',
+	icon: "ti ti-adjustments",
 });
-
 </script>
 
 <style src="@vueform/multiselect/themes/default.css"></style>

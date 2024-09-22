@@ -34,23 +34,26 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, shallowRef, watch } from 'vue';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
+import { onMounted, onUnmounted, ref, shallowRef, watch } from "vue";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	showHeader?: boolean;
-	thin?: boolean;
-	naked?: boolean;
-	foldable?: boolean;
-	scrollable?: boolean;
-	expanded?: boolean;
-	maxHeight?: number | null;
-}>(), {
-	expanded: true,
-	showHeader: true,
-	maxHeight: null,
-});
+const props = withDefaults(
+	defineProps<{
+		showHeader?: boolean;
+		thin?: boolean;
+		naked?: boolean;
+		foldable?: boolean;
+		scrollable?: boolean;
+		expanded?: boolean;
+		maxHeight?: number | null;
+	}>(),
+	{
+		expanded: true,
+		showHeader: true,
+		maxHeight: null,
+	},
+);
 
 const rootEl = shallowRef<HTMLElement>();
 const contentEl = shallowRef<HTMLElement>();
@@ -63,7 +66,7 @@ function enter(el) {
 	const elementHeight = el.getBoundingClientRect().height;
 	el.style.height = 0;
 	el.offsetHeight; // reflow
-	el.style.height = Math.min(elementHeight, props.maxHeight ?? Infinity) + 'px';
+	el.style.height = Math.min(elementHeight, props.maxHeight ?? Infinity) + "px";
 }
 
 function afterEnter(el) {
@@ -72,7 +75,7 @@ function afterEnter(el) {
 
 function leave(el) {
 	const elementHeight = el.getBoundingClientRect().height;
-	el.style.height = elementHeight + 'px';
+	el.style.height = elementHeight + "px";
 	el.offsetHeight; // reflow
 	el.style.height = 0;
 }
@@ -93,20 +96,27 @@ const omitObserver = new ResizeObserver((entries, observer) => {
 });
 
 onMounted(() => {
-	watch(showBody, v => {
-		if (!rootEl.value) return;
-		const headerHeight = props.showHeader ? headerEl.value?.offsetHeight ?? 0 : 0;
-		rootEl.value.style.minHeight = `${headerHeight}px`;
-		if (v) {
-			rootEl.value.style.flexBasis = 'auto';
-		} else {
-			rootEl.value.style.flexBasis = `${headerHeight}px`;
-		}
-	}, {
-		immediate: true,
-	});
+	watch(
+		showBody,
+		(v) => {
+			if (!rootEl.value) return;
+			const headerHeight = props.showHeader
+				? (headerEl.value?.offsetHeight ?? 0)
+				: 0;
+			rootEl.value.style.minHeight = `${headerHeight}px`;
+			if (v) {
+				rootEl.value.style.flexBasis = "auto";
+			} else {
+				rootEl.value.style.flexBasis = `${headerHeight}px`;
+			}
+		},
+		{
+			immediate: true,
+		},
+	);
 
-	if (rootEl.value) rootEl.value.style.setProperty('--maxHeight', props.maxHeight + 'px');
+	if (rootEl.value)
+		rootEl.value.style.setProperty("--maxHeight", props.maxHeight + "px");
 
 	calcOmit();
 

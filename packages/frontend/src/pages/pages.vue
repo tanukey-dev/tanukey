@@ -45,39 +45,39 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import MkPagePreview from '@/components/MkPagePreview.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkPageList from '@/components/MkPageList.vue';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import { useRouter } from '@/router';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { computed } from "vue";
+import MkPagePreview from "@/components/MkPagePreview.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkPageList from "@/components/MkPageList.vue";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import { useRouter } from "@/router";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
 const router = useRouter();
 
-let key = $ref('');
-let tab = $ref('search');
-let searchQuery = $ref('');
+let key = $ref("");
+let tab = $ref("search");
+let searchQuery = $ref("");
 let searchPagePagination = $ref();
 
 const featuredPagesPagination = {
-	endpoint: 'pages/featured' as const,
+	endpoint: "pages/featured" as const,
 	noPaging: true,
 };
 const myPagesPagination = {
-	endpoint: 'i/pages' as const,
+	endpoint: "i/pages" as const,
 	limit: 5,
 };
 const likedPagesPagination = {
-	endpoint: 'i/page-likes' as const,
+	endpoint: "i/page-likes" as const,
 	limit: 5,
 };
 
 function create() {
-	router.push('/pages/new');
+	router.push("/pages/new");
 }
 
 async function search() {
@@ -86,7 +86,7 @@ async function search() {
 	if (query == null) return;
 
 	searchPagePagination = {
-		endpoint: 'pages/search',
+		endpoint: "pages/search",
 		limit: 10,
 		params: {
 			query: query,
@@ -96,32 +96,41 @@ async function search() {
 	key = query;
 }
 
-const headerActions = $computed(() => [{
-	icon: 'ti ti-plus',
-	text: i18n.ts.create,
-	handler: create,
-}]);
+const headerActions = $computed(() => [
+	{
+		icon: "ti ti-plus",
+		text: i18n.ts.create,
+		handler: create,
+	},
+]);
 
-const headerTabs = $computed(() => [{
-	key: 'search',
-	title: i18n.ts.search,
-	icon: 'ti ti-search',
-}, {
-	key: 'featured',
-	title: i18n.ts._pages.featured,
-	icon: 'ti ti-flare',
-}, {
-	key: 'my',
-	title: i18n.ts._pages.my,
-	icon: 'ti ti-edit',
-}, {
-	key: 'liked',
-	title: i18n.ts._pages.liked,
-	icon: 'ti ti-heart',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "search",
+		title: i18n.ts.search,
+		icon: "ti ti-search",
+	},
+	{
+		key: "featured",
+		title: i18n.ts._pages.featured,
+		icon: "ti ti-flare",
+	},
+	{
+		key: "my",
+		title: i18n.ts._pages.my,
+		icon: "ti ti-edit",
+	},
+	{
+		key: "liked",
+		title: i18n.ts._pages.liked,
+		icon: "ti ti-heart",
+	},
+]);
 
-definePageMetadata(computed(() => ({
-	title: i18n.ts.pages,
-	icon: 'ti ti-note',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: i18n.ts.pages,
+		icon: "ti ti-note",
+	})),
+);
 </script>

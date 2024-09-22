@@ -15,12 +15,14 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
-import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import { defineAsyncComponent } from "vue";
+import MkDriveFileThumbnail from "@/components/MkDriveFileThumbnail.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
-const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
+const Sortable = defineAsyncComponent(() =>
+	import("vuedraggable").then((x) => x.default),
+);
 
 const props = defineProps<{
 	modelValue: any[];
@@ -28,10 +30,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'update:modelValue', value: any[]): void;
-	(ev: 'detach', id: string): void;
-	(ev: 'changeSensitive'): void;
-	(ev: 'changeName'): void;
+	(ev: "update:modelValue", value: any[]): void;
+	(ev: "detach", id: string): void;
+	(ev: "changeSensitive"): void;
+	(ev: "changeName"): void;
 }>();
 
 let menuShowing = false;
@@ -40,16 +42,16 @@ function detachMedia(id: string) {
 	if (props.detachMediaFn) {
 		props.detachMediaFn(id);
 	} else {
-		emit('detach', id);
+		emit("detach", id);
 	}
 }
 
 function toggleSensitive(file) {
-	os.api('drive/files/update', {
+	os.api("drive/files/update", {
 		fileId: file.id,
 		isSensitive: !file.isSensitive,
 	}).then(() => {
-		emit('changeSensitive', file, !file.isSensitive);
+		emit("changeSensitive", file, !file.isSensitive);
 	});
 }
 async function rename(file) {
@@ -59,51 +61,76 @@ async function rename(file) {
 		allowEmpty: false,
 	});
 	if (canceled) return;
-	os.api('drive/files/update', {
+	os.api("drive/files/update", {
 		fileId: file.id,
 		name: result,
 	}).then(() => {
-		emit('changeName', file, result);
+		emit("changeName", file, result);
 		file.name = result;
 	});
 }
 
 async function describe(file) {
-	os.popup(defineAsyncComponent(() => import('@/components/MkFileCaptionEditWindow.vue')), {
-		default: file.comment !== null ? file.comment : '',
-		file: file,
-	}, {
-		done: caption => {
-			let comment = caption.length === 0 ? null : caption;
-			os.api('drive/files/update', {
-				fileId: file.id,
-				comment: comment,
-			}).then(() => {
-				file.comment = comment;
-			});
+	os.popup(
+		defineAsyncComponent(
+			() => import("@/components/MkFileCaptionEditWindow.vue"),
+		),
+		{
+			default: file.comment !== null ? file.comment : "",
+			file: file,
 		},
-	}, 'closed');
+		{
+			done: (caption) => {
+				let comment = caption.length === 0 ? null : caption;
+				os.api("drive/files/update", {
+					fileId: file.id,
+					comment: comment,
+				}).then(() => {
+					file.comment = comment;
+				});
+			},
+		},
+		"closed",
+	);
 }
 
 function showFileMenu(file, ev: MouseEvent) {
 	if (menuShowing) return;
-	os.popupMenu([{
-		text: i18n.ts.renameFile,
-		icon: 'ti ti-forms',
-		action: () => { rename(file); },
-	}, {
-		text: file.isSensitive ? i18n.ts.unmarkAsSensitive : i18n.ts.markAsSensitive,
-		icon: file.isSensitive ? 'ti ti-eye-exclamation' : 'ti ti-eye',
-		action: () => { toggleSensitive(file); },
-	}, {
-		text: i18n.ts.describeFile,
-		icon: 'ti ti-text-caption',
-		action: () => { describe(file); },
-	}, {
-		text: i18n.ts.attachCancel,
-		icon: 'ti ti-circle-x',
-		action: () => { detachMedia(file.id); },
-	}], ev.currentTarget ?? ev.target).then(() => menuShowing = false);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.renameFile,
+				icon: "ti ti-forms",
+				action: () => {
+					rename(file);
+				},
+			},
+			{
+				text: file.isSensitive
+					? i18n.ts.unmarkAsSensitive
+					: i18n.ts.markAsSensitive,
+				icon: file.isSensitive ? "ti ti-eye-exclamation" : "ti ti-eye",
+				action: () => {
+					toggleSensitive(file);
+				},
+			},
+			{
+				text: i18n.ts.describeFile,
+				icon: "ti ti-text-caption",
+				action: () => {
+					describe(file);
+				},
+			},
+			{
+				text: i18n.ts.attachCancel,
+				icon: "ti ti-circle-x",
+				action: () => {
+					detachMedia(file.id);
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	).then(() => (menuShowing = false));
 	menuShowing = true;
 }
 </script>

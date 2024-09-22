@@ -38,15 +38,15 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
-import * as misskey from 'misskey-js';
-import { getStaticImageUrl } from '@/scripts/media-proxy';
-import bytes from '@/filters/bytes';
-import ImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import { iAmModerator } from '@/account';
+import { watch } from "vue";
+import * as misskey from "misskey-js";
+import { getStaticImageUrl } from "@/scripts/media-proxy";
+import bytes from "@/filters/bytes";
+import ImgWithBlurhash from "@/components/MkImgWithBlurhash.vue";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import { iAmModerator } from "@/account";
 
 const props = defineProps<{
 	image: misskey.entities.DriveFile;
@@ -56,11 +56,12 @@ const props = defineProps<{
 let hide = $ref(true);
 let darkMode: boolean = $ref(defaultStore.state.darkMode);
 
-const url = $computed(() => (props.raw || defaultStore.state.loadRawImages)
-	? props.image.url
-	: defaultStore.state.disableShowingAnimatedImages
-		? getStaticImageUrl(props.image.url)
-		: props.image.thumbnailUrl,
+const url = $computed(() =>
+	props.raw || defaultStore.state.loadRawImages
+		? props.image.url
+		: defaultStore.state.disableShowingAnimatedImages
+			? getStaticImageUrl(props.image.url)
+			: props.image.thumbnailUrl,
 );
 
 function onclick() {
@@ -70,30 +71,50 @@ function onclick() {
 }
 
 // Plugin:register_note_view_interruptor を使って書き換えられる可能性があるためwatchする
-watch(() => props.image, () => {
-	hide = (defaultStore.state.nsfw === 'force' || defaultStore.state.enableDataSaverMode) ? true : (props.image.isSensitive && defaultStore.state.nsfw !== 'ignore');
-}, {
-	deep: true,
-	immediate: true,
-});
+watch(
+	() => props.image,
+	() => {
+		hide =
+			defaultStore.state.nsfw === "force" ||
+			defaultStore.state.enableDataSaverMode
+				? true
+				: props.image.isSensitive && defaultStore.state.nsfw !== "ignore";
+	},
+	{
+		deep: true,
+		immediate: true,
+	},
+);
 
 function showMenu(ev: MouseEvent) {
-	os.popupMenu([{
-		text: i18n.ts.hide,
-		icon: 'ti ti-eye-off',
-		action: () => {
-			hide = true;
-		},
-	}, ...(iAmModerator ? [{
-		text: i18n.ts.markAsSensitive,
-		icon: 'ti ti-eye-exclamation',
-		danger: true,
-		action: () => {
-			os.apiWithDialog('drive/files/update', { fileId: props.image.id, isSensitive: true });
-		},
-	}] : [])], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.hide,
+				icon: "ti ti-eye-off",
+				action: () => {
+					hide = true;
+				},
+			},
+			...(iAmModerator
+				? [
+						{
+							text: i18n.ts.markAsSensitive,
+							icon: "ti ti-eye-exclamation",
+							danger: true,
+							action: () => {
+								os.apiWithDialog("drive/files/update", {
+									fileId: props.image.id,
+									isSensitive: true,
+								});
+							},
+						},
+					]
+				: []),
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
-
 </script>
 
 <style lang="scss" module>

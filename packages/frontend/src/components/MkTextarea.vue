@@ -27,11 +27,19 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, nextTick, ref, watch, computed, toRefs, shallowRef } from 'vue';
-import { debounce } from 'throttle-debounce';
-import MkButton from '@/components/MkButton.vue';
-import { Autocomplete } from '@/scripts/autocomplete';
-import { i18n } from '@/i18n';
+import {
+	onMounted,
+	nextTick,
+	ref,
+	watch,
+	computed,
+	toRefs,
+	shallowRef,
+} from "vue";
+import { debounce } from "throttle-debounce";
+import MkButton from "@/components/MkButton.vue";
+import { Autocomplete } from "@/scripts/autocomplete";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	modelValue: string | null;
@@ -52,47 +60,47 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'change', _ev: KeyboardEvent): void;
-	(ev: 'keydown', _ev: KeyboardEvent): void;
-	(ev: 'enter'): void;
-	(ev: 'update:modelValue', value: string): void;
+	(ev: "change", _ev: KeyboardEvent): void;
+	(ev: "keydown", _ev: KeyboardEvent): void;
+	(ev: "enter"): void;
+	(ev: "update:modelValue", value: string): void;
 }>();
 
 const { modelValue, autofocus } = toRefs(props);
-const v = ref<string>(modelValue.value ?? '');
+const v = ref<string>(modelValue.value ?? "");
 const focused = ref(false);
 const changed = ref(false);
 const invalid = ref(false);
-const filled = computed(() => v.value !== '' && v.value != null);
+const filled = computed(() => v.value !== "" && v.value != null);
 const inputEl = shallowRef<HTMLTextAreaElement>();
 
 const focus = () => inputEl.value.focus();
 const onInput = (ev) => {
 	changed.value = true;
-	emit('change', ev);
+	emit("change", ev);
 };
 const onKeydown = (ev: KeyboardEvent) => {
-	if (ev.isComposing || ev.key === 'Process' || ev.keyCode === 229) return;
+	if (ev.isComposing || ev.key === "Process" || ev.keyCode === 229) return;
 
-	emit('keydown', ev);
+	emit("keydown", ev);
 
-	if (ev.code === 'Enter') {
-		emit('enter');
+	if (ev.code === "Enter") {
+		emit("enter");
 	}
 };
 
 const updated = () => {
 	changed.value = false;
-	emit('update:modelValue', v.value ?? '');
+	emit("update:modelValue", v.value ?? "");
 };
 
 const debouncedUpdated = debounce(1000, updated);
 
-watch(modelValue, newValue => {
+watch(modelValue, (newValue) => {
 	v.value = newValue;
 });
 
-watch(v, newValue => {
+watch(v, (newValue) => {
 	if (!props.manualSave) {
 		if (props.debounce) {
 			debouncedUpdated();

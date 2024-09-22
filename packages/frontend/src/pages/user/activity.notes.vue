@@ -9,17 +9,17 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import { Chart, ChartDataset } from 'chart.js';
-import * as misskey from 'misskey-js';
-import gradient from 'chartjs-plugin-gradient';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip';
-import { chartVLine } from '@/scripts/chart-vline';
-import { initChart } from '@/scripts/init-chart';
-import { chartLegend } from '@/scripts/chart-legend';
-import MkChartLegend from '@/components/MkChartLegend.vue';
+import { onMounted } from "vue";
+import { Chart, ChartDataset } from "chart.js";
+import * as misskey from "misskey-js";
+import gradient from "chartjs-plugin-gradient";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
+import { useChartTooltip } from "@/scripts/use-chart-tooltip";
+import { chartVLine } from "@/scripts/chart-vline";
+import { initChart } from "@/scripts/init-chart";
+import { chartLegend } from "@/scripts/chart-legend";
+import MkChartLegend from "@/components/MkChartLegend.vue";
 
 initChart();
 
@@ -56,40 +56,61 @@ async function renderChart() {
 		}));
 	};
 
-	const raw = await os.api('charts/user/notes', { userId: props.user.id, limit: chartLimit, span: 'day' });
+	const raw = await os.api("charts/user/notes", {
+		userId: props.user.id,
+		limit: chartLimit,
+		span: "day",
+	});
 
-	const vLineColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)';
+	const vLineColor = defaultStore.state.darkMode
+		? "rgba(255, 255, 255, 0.2)"
+		: "rgba(0, 0, 0, 0.2)";
 
-	const colorNormal = '#008FFB';
-	const colorReply = '#FEB019';
-	const colorRenote = '#00E396';
-	const colorFile = '#e300db';
+	const colorNormal = "#008FFB";
+	const colorReply = "#FEB019";
+	const colorRenote = "#00E396";
+	const colorFile = "#e300db";
 
-	function makeDataset(label: string, data: ChartDataset['data'], extra: Partial<ChartDataset> = {}): ChartDataset {
-		return Object.assign({
-			label: label,
-			data: data,
-			parsing: false,
-			pointRadius: 0,
-			borderWidth: 0,
-			borderJoinStyle: 'round',
-			borderRadius: 4,
-			barPercentage: 0.9,
-			fill: true,
-		/* @see <https://github.com/misskey-dev/misskey/pull/10365#discussion_r1155511107>
+	function makeDataset(
+		label: string,
+		data: ChartDataset["data"],
+		extra: Partial<ChartDataset> = {},
+	): ChartDataset {
+		return Object.assign(
+			{
+				label: label,
+				data: data,
+				parsing: false,
+				pointRadius: 0,
+				borderWidth: 0,
+				borderJoinStyle: "round",
+				borderRadius: 4,
+				barPercentage: 0.9,
+				fill: true,
+				/* @see <https://github.com/misskey-dev/misskey/pull/10365#discussion_r1155511107>
 		} satisfies ChartData, extra);
 		 */
-		}, extra);
+			},
+			extra,
+		);
 	}
 
 	chartInstance = new Chart(chartEl, {
-		type: 'bar',
+		type: "bar",
 		data: {
 			datasets: [
-				makeDataset('File', format(raw.diffs.withFile).slice().reverse(), { backgroundColor: colorFile }),
-				makeDataset('Renote', format(raw.diffs.renote).slice().reverse(), { backgroundColor: colorRenote }),
-				makeDataset('Reply', format(raw.diffs.reply).slice().reverse(), { backgroundColor: colorReply }),
-				makeDataset('Normal', format(raw.diffs.normal).slice().reverse(), { backgroundColor: colorNormal }),
+				makeDataset("File", format(raw.diffs.withFile).slice().reverse(), {
+					backgroundColor: colorFile,
+				}),
+				makeDataset("Renote", format(raw.diffs.renote).slice().reverse(), {
+					backgroundColor: colorRenote,
+				}),
+				makeDataset("Reply", format(raw.diffs.reply).slice().reverse(), {
+					backgroundColor: colorReply,
+				}),
+				makeDataset("Normal", format(raw.diffs.normal).slice().reverse(), {
+					backgroundColor: colorNormal,
+				}),
 			],
 		},
 		options: {
@@ -104,15 +125,15 @@ async function renderChart() {
 			},
 			scales: {
 				x: {
-					type: 'time',
+					type: "time",
 					offset: true,
 					stacked: true,
 					time: {
 						stepSize: 1,
-						unit: 'day',
+						unit: "day",
 						displayFormats: {
-							day: 'M/d',
-							month: 'Y/M',
+							day: "M/d",
+							month: "Y/M",
 						},
 					},
 					grid: {
@@ -125,7 +146,7 @@ async function renderChart() {
 					},
 				},
 				y: {
-					position: 'left',
+					position: "left",
 					stacked: true,
 					suggestedMax: 10,
 					grid: {
@@ -139,7 +160,7 @@ async function renderChart() {
 			},
 			interaction: {
 				intersect: false,
-				mode: 'index',
+				mode: "index",
 			},
 			plugins: {
 				legend: {
@@ -147,7 +168,7 @@ async function renderChart() {
 				},
 				tooltip: {
 					enabled: false,
-					mode: 'index',
+					mode: "index",
 					animation: {
 						duration: 0,
 					},

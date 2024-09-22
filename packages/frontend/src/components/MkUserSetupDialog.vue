@@ -118,22 +118,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, watch } from 'vue';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import MkButton from '@/components/MkButton.vue';
-import XProfile from '@/components/MkUserSetupDialog.Profile.vue';
-import XFollow from '@/components/MkUserSetupDialog.Follow.vue';
-import XPrivacy from '@/components/MkUserSetupDialog.Privacy.vue';
-import MkAnimBg from '@/components/MkAnimBg.vue';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import { host } from '@/config';
-import MkPushNotificationAllowButton from '@/components/MkPushNotificationAllowButton.vue';
-import { defaultStore } from '@/store';
-import * as os from '@/os';
+import { ref, shallowRef, watch } from "vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import MkButton from "@/components/MkButton.vue";
+import XProfile from "@/components/MkUserSetupDialog.Profile.vue";
+import XFollow from "@/components/MkUserSetupDialog.Follow.vue";
+import XPrivacy from "@/components/MkUserSetupDialog.Privacy.vue";
+import MkAnimBg from "@/components/MkAnimBg.vue";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
+import { host } from "@/config";
+import MkPushNotificationAllowButton from "@/components/MkPushNotificationAllowButton.vue";
+import { defaultStore } from "@/store";
+import * as os from "@/os";
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+	(ev: "closed"): void;
 }>();
 
 const dialog = shallowRef<InstanceType<typeof MkModalWindow>>();
@@ -141,33 +141,33 @@ const dialog = shallowRef<InstanceType<typeof MkModalWindow>>();
 const page = ref(defaultStore.state.accountSetupWizard);
 
 watch(page, () => {
-	defaultStore.set('accountSetupWizard', page.value);
+	defaultStore.set("accountSetupWizard", page.value);
 });
 
 async function close(skip: boolean) {
 	if (skip) {
 		const { canceled } = await os.confirm({
-			type: 'warning',
+			type: "warning",
 			text: i18n.ts._initialAccountSetting.skipAreYouSure,
 		});
 		if (canceled) return;
 	}
 
 	dialog.value.close();
-	defaultStore.set('accountSetupWizard', -1);
+	defaultStore.set("accountSetupWizard", -1);
 }
 
 async function later(later: boolean) {
 	if (later) {
 		const { canceled } = await os.confirm({
-			type: 'warning',
+			type: "warning",
 			text: i18n.ts._initialAccountSetting.laterAreYouSure,
 		});
 		if (canceled) return;
 	}
 
 	dialog.value.close();
-	defaultStore.set('accountSetupWizard', 0);
+	defaultStore.set("accountSetupWizard", 0);
 }
 </script>
 

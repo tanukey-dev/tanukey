@@ -43,46 +43,49 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import tinycolor from 'tinycolor2';
-import * as os from '@/os';
-import MkPagination from '@/components/MkPagination.vue';
-import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
-import { i18n } from '@/i18n';
-import bytes from '@/filters/bytes';
-import { dateString } from '@/filters/date';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkSelect from '@/components/MkSelect.vue';
-import { getDriveFileMenu } from '@/scripts/get-drive-file-menu';
+import { computed, ref, watch } from "vue";
+import tinycolor from "tinycolor2";
+import * as os from "@/os";
+import MkPagination from "@/components/MkPagination.vue";
+import MkDriveFileThumbnail from "@/components/MkDriveFileThumbnail.vue";
+import { i18n } from "@/i18n";
+import bytes from "@/filters/bytes";
+import { dateString } from "@/filters/date";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkSelect from "@/components/MkSelect.vue";
+import { getDriveFileMenu } from "@/scripts/get-drive-file-menu";
 
-let sortMode = ref('+size');
+let sortMode = ref("+size");
 const pagination = {
-	endpoint: 'drive/files' as const,
+	endpoint: "drive/files" as const,
 	limit: 10,
 	params: computed(() => ({ sort: sortMode.value })),
 };
 
 const sortOptions = [
-	{ value: 'sizeDesc', displayName: i18n.ts._drivecleaner.orderBySizeDesc },
-	{ value: 'createdAtAsc', displayName: i18n.ts._drivecleaner.orderByCreatedAtAsc },
+	{ value: "sizeDesc", displayName: i18n.ts._drivecleaner.orderBySizeDesc },
+	{
+		value: "createdAtAsc",
+		displayName: i18n.ts._drivecleaner.orderByCreatedAtAsc,
+	},
 ];
 
 const capacity = ref<number>(0);
 const usage = ref<number>(0);
 const fetching = ref(true);
-const sortModeSelect = ref('sizeDesc');
+const sortModeSelect = ref("sizeDesc");
 
 fetchDriveInfo();
 
 watch(sortModeSelect, () => {
 	switch (sortModeSelect.value) {
-		case 'sizeDesc':
-			sortMode.value = '+size';
+		case "sizeDesc":
+			sortMode.value = "+size";
 			fetchDriveInfo();
 			break;
-		
-		case 'createdAtAsc':
-			sortMode.value = '-createdAt';
+
+		case "createdAtAsc":
+			sortMode.value = "-createdAt";
 			fetchDriveInfo();
 			break;
 	}
@@ -90,7 +93,7 @@ watch(sortModeSelect, () => {
 
 function fetchDriveInfo(): void {
 	fetching.value = true;
-	os.api('drive').then(info => {
+	os.api("drive").then((info) => {
 		capacity.value = info.capacity;
 		usage.value = info.usage;
 		fetching.value = false;
@@ -99,13 +102,20 @@ function fetchDriveInfo(): void {
 
 function genUsageBar(fsize: number): object {
 	return {
-		width: `${fsize / usage.value * 100}%`,
-		background: tinycolor({ h: 180 - (fsize / usage.value * 180), s: 0.7, l: 0.5 }),
+		width: `${(fsize / usage.value) * 100}%`,
+		background: tinycolor({
+			h: 180 - (fsize / usage.value) * 180,
+			s: 0.7,
+			l: 0.5,
+		}),
 	};
 }
 
 function onClick(ev: MouseEvent, file) {
-	os.popupMenu(getDriveFileMenu(file), (ev.currentTarget ?? ev.target ?? undefined) as HTMLElement | undefined);
+	os.popupMenu(
+		getDriveFileMenu(file),
+		(ev.currentTarget ?? ev.target ?? undefined) as HTMLElement | undefined,
+	);
 }
 
 function onContextMenu(ev: MouseEvent, file): void {
@@ -114,7 +124,7 @@ function onContextMenu(ev: MouseEvent, file): void {
 
 definePageMetadata({
 	title: i18n.ts.drivecleaner,
-	icon: 'ti ti-trash',
+	icon: "ti ti-trash",
 });
 </script>
 

@@ -10,11 +10,11 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from 'misskey-js';
-import { toUnicode } from 'punycode/';
-import MkCondensedLine from './MkCondensedLine.vue';
-import { host as hostRaw } from '@/config';
-import { defaultStore } from '@/store';
+import * as misskey from "misskey-js";
+import { toUnicode } from "punycode/";
+import MkCondensedLine from "./MkCondensedLine.vue";
+import { host as hostRaw } from "@/config";
+import { defaultStore } from "@/store";
 
 defineProps<{
 	user: misskey.entities.UserDetailed;

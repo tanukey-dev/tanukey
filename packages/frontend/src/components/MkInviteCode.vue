@@ -53,13 +53,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import * as misskey from 'misskey-js';
-import MkFolder from '@/components/MkFolder.vue';
-import MkButton from '@/components/MkButton.vue';
-import copyToClipboard from '@/scripts/copy-to-clipboard';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
+import { computed } from "vue";
+import * as misskey from "misskey-js";
+import MkFolder from "@/components/MkFolder.vue";
+import MkButton from "@/components/MkButton.vue";
+import copyToClipboard from "@/scripts/copy-to-clipboard";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
 
 const props = defineProps<{
 	invite: misskey.entities.Invite;
@@ -67,18 +67,20 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-	(event: 'deleted', value: string): void;
+	(event: "deleted", value: string): void;
 }>();
 
 const isExpired = computed(() => {
-	return props.invite.expiresAt && new Date(props.invite.expiresAt) < new Date();
+	return (
+		props.invite.expiresAt && new Date(props.invite.expiresAt) < new Date()
+	);
 });
 
 function deleteCode() {
-	os.apiWithDialog('invite/delete', {
+	os.apiWithDialog("invite/delete", {
 		inviteId: props.invite.id,
 	});
-	emits('deleted', props.invite.id);
+	emits("deleted", props.invite.id);
 }
 
 function copyInviteCode() {

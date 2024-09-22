@@ -20,12 +20,12 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import * as Misskey from 'misskey-js';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import * as Misskey from "misskey-js";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkDriveFileThumbnail from "@/components/MkDriveFileThumbnail.vue";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	file: Misskey.entities.DriveFile;
@@ -33,8 +33,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'done', v: string): void;
-	(ev: 'closed'): void;
+	(ev: "done", v: string): void;
+	(ev: "closed"): void;
 }>();
 
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
@@ -42,7 +42,7 @@ const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
 let caption = $ref(props.default);
 
 async function ok() {
-	emit('done', caption);
+	emit("done", caption);
 	dialog.close();
 }
 </script>

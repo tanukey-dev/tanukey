@@ -29,9 +29,9 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue';
-import number from '@/filters/number';
-import XValue from '@/components/MkObjectView.value.vue';
+import { reactive } from "vue";
+import number from "@/filters/number";
+import XValue from "@/components/MkObjectView.value.vue";
 
 const props = defineProps<{
 	value: any;
@@ -46,7 +46,7 @@ if (isObject(props.value)) {
 }
 
 function isObject(v): boolean {
-	return typeof v === 'object' && !Array.isArray(v) && v !== null;
+	return typeof v === "object" && !Array.isArray(v) && v !== null;
 }
 
 function isArray(v): boolean {
@@ -54,7 +54,10 @@ function isArray(v): boolean {
 }
 
 function isEmpty(v): boolean {
-	return (isArray(v) && v.length === 0) || (isObject(v) && Object.keys(v).length === 0);
+	return (
+		(isArray(v) && v.length === 0) ||
+		(isObject(v) && Object.keys(v).length === 0)
+	);
 }
 
 function collapsable(v): boolean {

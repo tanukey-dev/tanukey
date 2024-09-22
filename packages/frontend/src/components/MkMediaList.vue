@@ -23,17 +23,17 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch, shallowRef } from 'vue';
-import * as misskey from 'misskey-js';
-import PhotoSwipeLightbox from 'photoswipe/lightbox';
-import PhotoSwipe from 'photoswipe';
-import 'photoswipe/style.css';
-import XBanner from '@/components/MkMediaBanner.vue';
-import XImage from '@/components/MkMediaImage.vue';
-import XVideo from '@/components/MkMediaVideo.vue';
-import * as os from '@/os';
-import { FILE_TYPE_BROWSERSAFE } from '@/const';
-import { defaultStore } from '@/store';
+import { onMounted, watch, shallowRef } from "vue";
+import * as misskey from "misskey-js";
+import PhotoSwipeLightbox from "photoswipe/lightbox";
+import PhotoSwipe from "photoswipe";
+import "photoswipe/style.css";
+import XBanner from "@/components/MkMediaBanner.vue";
+import XImage from "@/components/MkMediaImage.vue";
+import XVideo from "@/components/MkMediaVideo.vue";
+import * as os from "@/os";
+import { FILE_TYPE_BROWSERSAFE } from "@/const";
+import { defaultStore } from "@/store";
 
 const props = defineProps<{
 	mediaList: misskey.entities.DriveFile[];
@@ -41,49 +41,64 @@ const props = defineProps<{
 }>();
 
 const gallery = shallowRef<HTMLDivElement>();
-const pswpZIndex = os.claimZIndex('middle');
-document.documentElement.style.setProperty('--mk-pswp-root-z-index', pswpZIndex.toString());
-const count = $computed(() => props.mediaList.filter(media => previewable(media)).length);
+const pswpZIndex = os.claimZIndex("middle");
+document.documentElement.style.setProperty(
+	"--mk-pswp-root-z-index",
+	pswpZIndex.toString(),
+);
+const count = $computed(
+	() => props.mediaList.filter((media) => previewable(media)).length,
+);
 
 function calcAspectRatio() {
 	if (!gallery.value) return;
 
 	let img = props.mediaList[0];
 
-	if (props.mediaList.length !== 1 || !(img.properties.width && img.properties.height)) {
-		gallery.value.style.aspectRatio = '';
+	if (
+		props.mediaList.length !== 1 ||
+		!(img.properties.width && img.properties.height)
+	) {
+		gallery.value.style.aspectRatio = "";
 		return;
 	}
 
 	// アスペクト比上限設定では、横長の場合は高さを縮小させる
-	const ratioMax = (ratio: number) => `${Math.max(ratio, img.properties.width / img.properties.height).toString()} / 1`;
+	const ratioMax = (ratio: number) =>
+		`${Math.max(ratio, img.properties.width / img.properties.height).toString()} / 1`;
 
 	switch (defaultStore.state.mediaListWithOneImageAppearance) {
-		case '16_9':
+		case "16_9":
 			gallery.value.style.aspectRatio = ratioMax(16 / 9);
 			break;
-		case '1_1':
+		case "1_1":
 			gallery.value.style.aspectRatio = ratioMax(1);
 			break;
-		case '2_3':
+		case "2_3":
 			gallery.value.style.aspectRatio = ratioMax(2 / 3);
 			break;
 		default:
-			gallery.value.style.aspectRatio = '';
+			gallery.value.style.aspectRatio = "";
 			break;
 	}
 }
 
-watch([defaultStore.reactiveState.mediaListWithOneImageAppearance, gallery], () => calcAspectRatio());
+watch(
+	[defaultStore.reactiveState.mediaListWithOneImageAppearance, gallery],
+	() => calcAspectRatio(),
+);
 
 onMounted(() => {
 	const lightbox = new PhotoSwipeLightbox({
 		dataSource: props.mediaList
-			.filter(media => {
-				if (media.type === 'image/svg+xml') return true; // svgのwebpublicはpngなのでtrue
-				return media.type.startsWith('image') && FILE_TYPE_BROWSERSAFE.includes(media.type);
+			.filter((media) => {
+				if (media.type === "image/svg+xml") return true; // svgのwebpublicはpngなのでtrue
+				return (
+					media.type.startsWith("image") &&
+					FILE_TYPE_BROWSERSAFE.includes(media.type)
+				);
 			})
-			.map(media => {
+			.map((media) => {
 				const item = {
 					src: media.url,
 					w: media.properties.width,
@@ -91,47 +106,56 @@ onMounted(() => {
 					alt: media.comment ?? media.name,
 					comment: media.comment ?? media.name,
 				};
-				if (media.properties.orientation != null && media.properties.orientation >= 5) {
+				if (
+					media.properties.orientation != null &&
+					media.properties.orientation >= 5
+				) {
 					[item.w, item.h] = [item.h, item.w];
 				}
 				return item;
 			}),
 		gallery: gallery.value,
-		mainClass: 'pswp',
-		children: '.image',
-		thumbSelector: '.image',
+		mainClass: "pswp",
+		children: ".image",
+		thumbSelector: ".image",
 		loop: false,
-		padding: window.innerWidth > 500 ? {
-			top: 32,
-			bottom: 90,
-			left: 32,
-			right: 32,
-		} : {
-			top: 0,
-			bottom: 78,
-			left: 0,
-			right: 0,
-		},
-		imageClickAction: 'close',
-		tapAction: 'close',
+		padding:
+			window.innerWidth > 500
+				? {
+						top: 32,
+						bottom: 90,
+						left: 32,
+						right: 32,
+					}
+				: {
+						top: 0,
+						bottom: 78,
+						left: 0,
+						right: 0,
+					},
+		imageClickAction: "close",
+		tapAction: "close",
 		bgOpacity: 1,
 		pswpModule: PhotoSwipe,
 	});
 
-	lightbox.on('itemData', (ev) => {
+	lightbox.on("itemData", (ev) => {
 		const { itemData } = ev;
 
 		// element is children
 		const { element } = itemData;
 
 		const id = element.dataset.id;
-		const file = props.mediaList.find(media => media.id === id);
+		const file = props.mediaList.find((media) => media.id === id);
 		if (!file) return;
 
 		itemData.src = file.url;
 		itemData.w = Number(file.properties.width);
 		itemData.h = Number(file.properties.height);
-		if (file.properties.orientation != null && file.properties.orientation >= 5) {
+		if (
+			file.properties.orientation != null &&
+			file.properties.orientation >= 5
+		) {
 			[itemData.w, itemData.h] = [itemData.h, itemData.w];
 		}
 		itemData.msrc = file.thumbnailUrl;
@@ -140,17 +164,17 @@ onMounted(() => {
 		itemData.thumbCropped = true;
 	});
 
-	lightbox.on('uiRegister', () => {
+	lightbox.on("uiRegister", () => {
 		lightbox.pswp.ui.registerElement({
-			name: 'altText',
-			className: 'pwsp__alt-text-container',
-			appendTo: 'wrapper',
+			name: "altText",
+			className: "pwsp__alt-text-container",
+			appendTo: "wrapper",
 			onInit: (el, pwsp) => {
-				let textBox = document.createElement('p');
-				textBox.className = 'pwsp__alt-text _acrylic';
+				let textBox = document.createElement("p");
+				textBox.className = "pwsp__alt-text _acrylic";
 				el.appendChild(textBox);
 
-				pwsp.on('change', (a) => {
+				pwsp.on("change", (a) => {
 					textBox.textContent = pwsp.currSlide.data.comment;
 				});
 			},
@@ -159,28 +183,31 @@ onMounted(() => {
 
 	lightbox.init();
 
-	window.addEventListener('popstate', () => {
+	window.addEventListener("popstate", () => {
 		if (lightbox.pswp && lightbox.pswp.isOpen === true) {
 			lightbox.pswp.close();
 			return;
 		}
 	});
 
-	lightbox.on('beforeOpen', () => {
-		history.pushState(null, '', '#pswp');
+	lightbox.on("beforeOpen", () => {
+		history.pushState(null, "", "#pswp");
 	});
 
-	lightbox.on('close', () => {
-		if (window.location.hash === '#pswp') {
+	lightbox.on("close", () => {
+		if (window.location.hash === "#pswp") {
 			history.back();
 		}
 	});
 });
 
 const previewable = (file: misskey.entities.DriveFile): boolean => {
-	if (file.type === 'image/svg+xml') return true; // svgのwebpublic/thumbnailはpngなのでtrue
+	if (file.type === "image/svg+xml") return true; // svgのwebpublic/thumbnailはpngなのでtrue
 	// FILE_TYPE_BROWSERSAFEに適合しないものはブラウザで表示するのに不適切
-	return (file.type.startsWith('video') || file.type.startsWith('image')) && FILE_TYPE_BROWSERSAFE.includes(file.type);
+	return (
+		(file.type.startsWith("video") || file.type.startsWith("image")) &&
+		FILE_TYPE_BROWSERSAFE.includes(file.type)
+	);
 };
 </script>
 

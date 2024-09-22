@@ -31,19 +31,19 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
-import FullCalendar from '@fullcalendar/vue3';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import MkEventList from '@/components/MkEventList.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkRadios from '@/components/MkRadios.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import * as os from '@/os';
-import { useRouter } from '@/router';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
-import { miLocalStorage } from '@/local-storage';
+import { computed, onMounted, ref } from "vue";
+import FullCalendar from "@fullcalendar/vue3";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import MkEventList from "@/components/MkEventList.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkRadios from "@/components/MkRadios.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import * as os from "@/os";
+import { useRouter } from "@/router";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
+import { miLocalStorage } from "@/local-storage";
 
 const router = useRouter();
 
@@ -52,24 +52,24 @@ const props = defineProps<{
 	type?: string;
 }>();
 
-let key = $ref('');
-let tab = $ref('calender');
-let searchQuery = $ref('');
-let searchType = $ref('nameAndDescription');
+let key = $ref("");
+let tab = $ref("calender");
+let searchQuery = $ref("");
+let searchType = $ref("nameAndDescription");
 let eventPagination = $ref();
-const lang = ref(miLocalStorage.getItem('lang'));
+const lang = ref(miLocalStorage.getItem("lang"));
 const fullCalendar = ref();
 
 onMounted(async () => {
-	searchQuery = props.query ?? '';
-	searchType = props.type ?? 'nameAndDescription';
-	const evs = await os.api('events/show', {
+	searchQuery = props.query ?? "";
+	searchType = props.type ?? "nameAndDescription";
+	const evs = await os.api("events/show", {
 		time: new Date().getTime(),
 	});
 
 	let calendarApi = fullCalendar.value.getApi();
 
-	evs.forEach(ev => {
+	evs.forEach((ev) => {
 		calendarApi.addEvent({
 			id: ev.id,
 			title: ev.name,
@@ -81,20 +81,20 @@ onMounted(async () => {
 
 const calendarOptions = $ref({
 	plugins: [dayGridPlugin],
-	initialView: 'dayGridMonth',
+	initialView: "dayGridMonth",
 	locale: lang.value,
 	dayCellContent: (e) => {
 		// X日表記の'日'を除去
-		return e.dayNumberText.replace('日', '');
+		return e.dayNumberText.replace("日", "");
 	},
 	eventClick: (info) => {
-		router.push('/events/' + info.event.id);
+		router.push("/events/" + info.event.id);
 	},
 	events: [],
 });
 
 const ownedPagination = {
-	endpoint: 'events/owned' as const,
+	endpoint: "events/owned" as const,
 	limit: 10,
 };
 
@@ -106,7 +106,7 @@ async function search() {
 	const type = searchType.toString().trim();
 
 	eventPagination = {
-		endpoint: 'events/search',
+		endpoint: "events/search",
 		limit: 10,
 		params: {
 			query: searchQuery,
@@ -118,31 +118,39 @@ async function search() {
 }
 
 function create() {
-	router.push('/events/new');
+	router.push("/events/new");
 }
 
-const headerActions = $computed(() => [{
-	icon: 'ti ti-plus',
-	text: i18n.ts.create,
-	handler: create,
-}]);
+const headerActions = $computed(() => [
+	{
+		icon: "ti ti-plus",
+		text: i18n.ts.create,
+		handler: create,
+	},
+]);
 
-const headerTabs = $computed(() => [{
-	key: 'search',
-	title: i18n.ts._event.search,
-	icon: 'ti ti-search',
-}, {
-	key: 'calender',
-	title: i18n.ts._event.calender,
-	icon: 'ti ti-calendar',
-}, {
-	key: 'owned',
-	title: i18n.ts._event.owned,
-	icon: 'ti ti-edit',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "search",
+		title: i18n.ts._event.search,
+		icon: "ti ti-search",
+	},
+	{
+		key: "calender",
+		title: i18n.ts._event.calender,
+		icon: "ti ti-calendar",
+	},
+	{
+		key: "owned",
+		title: i18n.ts._event.owned,
+		icon: "ti ti-edit",
+	},
+]);
 
-definePageMetadata(computed(() => ({
-	title: i18n.ts.event,
-	icon: 'ti ti-calendar-event',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: i18n.ts.event,
+		icon: "ti ti-calendar-event",
+	})),
+);
 </script>

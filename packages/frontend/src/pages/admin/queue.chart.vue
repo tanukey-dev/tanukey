@@ -43,15 +43,15 @@
 </template>
 
 <script lang="ts" setup>
-import { markRaw, onMounted, onUnmounted, ref } from 'vue';
-import XChart from './queue.chart.chart.vue';
-import number from '@/filters/number';
-import * as os from '@/os';
-import { useStream } from '@/stream';
-import { i18n } from '@/i18n';
-import MkFolder from '@/components/MkFolder.vue';
+import { markRaw, onMounted, onUnmounted, ref } from "vue";
+import XChart from "./queue.chart.chart.vue";
+import number from "@/filters/number";
+import * as os from "@/os";
+import { useStream } from "@/stream";
+import { i18n } from "@/i18n";
+import MkFolder from "@/components/MkFolder.vue";
 
-const connection = markRaw(useStream().useChannel('queueStats'));
+const connection = markRaw(useStream().useChannel("queueStats"));
 
 const activeSincePrevTick = ref(0);
 const active = ref(0);
@@ -99,21 +99,28 @@ const onStatsLog = (statsLog) => {
 };
 
 onMounted(() => {
-	os.api(props.domain === 'inbox' ? 'admin/queue/inbox-delayed' : props.domain === 'deliver' ? 'admin/queue/deliver-delayed' : null, {}).then(result => {
+	os.api(
+		props.domain === "inbox"
+			? "admin/queue/inbox-delayed"
+			: props.domain === "deliver"
+				? "admin/queue/deliver-delayed"
+				: null,
+		{},
+	).then((result) => {
 		jobs.value = result;
 	});
 
-	connection.on('stats', onStats);
-	connection.on('statsLog', onStatsLog);
-	connection.send('requestLog', {
+	connection.on("stats", onStats);
+	connection.on("statsLog", onStatsLog);
+	connection.send("requestLog", {
 		id: Math.random().toString().substr(2, 8),
 		length: 200,
 	});
 });
 
 onUnmounted(() => {
-	connection.off('stats', onStats);
-	connection.off('statsLog', onStatsLog);
+	connection.off("stats", onStats);
+	connection.off("statsLog", onStatsLog);
 	connection.dispose();
 });
 </script>

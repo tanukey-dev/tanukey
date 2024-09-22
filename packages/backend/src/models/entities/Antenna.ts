@@ -1,100 +1,109 @@
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from '../id.js';
-import { User } from './User.js';
-import { UserList } from './UserList.js';
+import {
+	PrimaryColumn,
+	Entity,
+	Index,
+	JoinColumn,
+	Column,
+	ManyToOne,
+} from "typeorm";
+import { id } from "../id.js";
+import { User } from "./User.js";
+import { UserList } from "./UserList.js";
 
 @Entity()
 export class Antenna {
 	@PrimaryColumn(id())
 	public id: string;
 
-	@Column('timestamp with time zone', {
-		comment: 'The created date of the Antenna.',
+	@Column("timestamp with time zone", {
+		comment: "The created date of the Antenna.",
 	})
 	public createdAt: Date;
 
 	@Index()
-	@Column('timestamp with time zone')
+	@Column("timestamp with time zone")
 	public lastUsedAt: Date;
 
 	@Index()
 	@Column({
 		...id(),
-		comment: 'The owner ID.',
+		comment: "The owner ID.",
 	})
-	public userId: User['id'];
+	public userId: User["id"];
 
-	@ManyToOne(type => User, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => User, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public user: User | null;
 
-	@Column('varchar', {
+	@Column("varchar", {
 		length: 128,
-		comment: 'The name of the Antenna.',
+		comment: "The name of the Antenna.",
 	})
 	public name: string;
 
-	@Column('enum', { enum: ['home', 'all', 'users', 'list'] })
-	public src: 'home' | 'all' | 'users' | 'list';
+	@Column("enum", { enum: ["home", "all", "users", "list"] })
+	public src: "home" | "all" | "users" | "list";
 
 	@Column({
 		...id(),
 		nullable: true,
 	})
-	public userListId: UserList['id'] | null;
+	public userListId: UserList["id"] | null;
 
-	@ManyToOne(type => UserList, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => UserList, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public userList: UserList | null;
 
-	@Column('varchar', {
-		length: 1024, array: true,
-		default: '{}',
+	@Column("varchar", {
+		length: 1024,
+		array: true,
+		default: "{}",
 	})
 	public users: string[];
 
-	@Column('jsonb', {
+	@Column("jsonb", {
 		default: [],
 	})
 	public keywords: string[][];
 
-	@Column('jsonb', {
+	@Column("jsonb", {
 		default: [],
 	})
 	public excludeKeywords: string[][];
 
-	@Column('boolean', {
+	@Column("boolean", {
 		default: false,
 	})
 	public caseSensitive: boolean;
 
-	@Column('boolean', {
+	@Column("boolean", {
 		default: false,
 	})
 	public withReplies: boolean;
 
-	@Column('boolean')
+	@Column("boolean")
 	public withFile: boolean;
 
-	@Column('varchar', {
-		length: 2048, nullable: true,
+	@Column("varchar", {
+		length: 2048,
+		nullable: true,
 	})
 	public expression: string | null;
 
-	@Column('boolean')
+	@Column("boolean")
 	public notify: boolean;
 
 	@Index()
-	@Column('boolean', {
+	@Column("boolean", {
 		default: true,
 	})
 	public isActive: boolean;
 
-	@Column('boolean', {
+	@Column("boolean", {
 		default: false,
 	})
 	public localOnly: boolean;

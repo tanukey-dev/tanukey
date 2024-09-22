@@ -21,21 +21,21 @@
 </template>
 
 <script lang="ts" setup>
-import MkPagination from '@/components/MkPagination.vue';
-import MkNote from '@/components/MkNote.vue';
-import MkDateSeparatedList from '@/components/MkDateSeparatedList.vue';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { infoImageUrl } from '@/instance';
+import MkPagination from "@/components/MkPagination.vue";
+import MkNote from "@/components/MkNote.vue";
+import MkDateSeparatedList from "@/components/MkDateSeparatedList.vue";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { infoImageUrl } from "@/instance";
 
 const pagination = {
-	endpoint: 'i/favorites' as const,
+	endpoint: "i/favorites" as const,
 	limit: 10,
 };
 
 definePageMetadata({
 	title: i18n.ts.favorites,
-	icon: 'ti ti-star',
+	icon: "ti ti-star",
 });
 </script>
 

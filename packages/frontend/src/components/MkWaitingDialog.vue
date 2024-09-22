@@ -9,8 +9,8 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, shallowRef } from 'vue';
-import MkModal from '@/components/MkModal.vue';
+import { watch, shallowRef } from "vue";
+import MkModal from "@/components/MkModal.vue";
 
 const modal = shallowRef<InstanceType<typeof MkModal>>();
 
@@ -21,18 +21,21 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'done');
-	(ev: 'closed');
+	(ev: "done");
+	(ev: "closed");
 }>();
 
 function done() {
-	emit('done');
+	emit("done");
 	modal.value.close();
 }
 
-watch(() => props.showing, () => {
-	if (!props.showing) done();
-});
+watch(
+	() => props.showing,
+	() => {
+		if (!props.showing) done();
+	},
+);
 </script>
 
 <style lang="scss" module>

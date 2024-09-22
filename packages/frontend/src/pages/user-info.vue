@@ -197,39 +197,42 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, watch } from 'vue';
-import * as misskey from 'misskey-js';
-import MkChart from '@/components/MkChart.vue';
-import MkObjectView from '@/components/MkObjectView.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import FormLink from '@/components/form/link.vue';
-import FormSection from '@/components/form/section.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import MkFileListForAdmin from '@/components/MkFileListForAdmin.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import * as os from '@/os';
-import { url } from '@/config';
-import { userPage, acct } from '@/filters/user';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
-import { iAmAdmin, iAmModerator, $i } from '@/account';
-import MkRolePreview from '@/components/MkRolePreview.vue';
-import MkPagination, { Paging } from '@/components/MkPagination.vue';
+import { computed, defineAsyncComponent, watch } from "vue";
+import * as misskey from "misskey-js";
+import MkChart from "@/components/MkChart.vue";
+import MkObjectView from "@/components/MkObjectView.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import FormLink from "@/components/form/link.vue";
+import FormSection from "@/components/form/section.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import MkFileListForAdmin from "@/components/MkFileListForAdmin.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import * as os from "@/os";
+import { url } from "@/config";
+import { userPage, acct } from "@/filters/user";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
+import { iAmAdmin, iAmModerator, $i } from "@/account";
+import MkRolePreview from "@/components/MkRolePreview.vue";
+import MkPagination, { Paging } from "@/components/MkPagination.vue";
 
-const props = withDefaults(defineProps<{
-	userId: string;
-	initialTab?: string;
-}>(), {
-	initialTab: 'overview',
-});
+const props = withDefaults(
+	defineProps<{
+		userId: string;
+		initialTab?: string;
+	}>(),
+	{
+		initialTab: "overview",
+	},
+);
 
 let tab = $ref(props.initialTab);
-let chartSrc = $ref('per-user-notes');
+let chartSrc = $ref("per-user-notes");
 let user = $ref<null | misskey.entities.UserDetailed>();
 let init = $ref<ReturnType<typeof createFetcher>>();
 let info = $ref();
@@ -238,16 +241,16 @@ let ap = $ref(null);
 let moderator = $ref(false);
 let silenced = $ref(false);
 let suspended = $ref(false);
-let moderationNote = $ref('');
+let moderationNote = $ref("");
 const filesPagination = {
-	endpoint: 'admin/drive/files' as const,
+	endpoint: "admin/drive/files" as const,
 	limit: 10,
 	params: computed(() => ({
 		userId: props.userId,
 	})),
 };
 const announcementsPagination = {
-	endpoint: 'admin/announcements/list' as const,
+	endpoint: "admin/announcements/list" as const,
 	limit: 10,
 	params: computed(() => ({
 		userId: props.userId,
@@ -257,33 +260,46 @@ let expandedRoles = $ref([]);
 
 function createFetcher() {
 	if (iAmModerator) {
-		return () => Promise.all([os.api('users/show', {
-			userId: props.userId,
-		}), os.api('admin/show-user', {
-			userId: props.userId,
-		}), iAmAdmin ? os.api('admin/get-user-ips', {
-			userId: props.userId,
-		}) : Promise.resolve(null)]).then(([_user, _info, _ips]) => {
-			user = _user;
-			info = _info;
-			ips = _ips;
-			moderator = info.isModerator;
-			silenced = info.isSilenced;
-			suspended = info.isSuspended;
-			moderationNote = info.moderationNote;
-			tab = 'moderation';
+		return () =>
+			Promise.all([
+				os.api("users/show", {
+					userId: props.userId,
+				}),
+				os.api("admin/show-user", {
+					userId: props.userId,
+				}),
+				iAmAdmin
+					? os.api("admin/get-user-ips", {
+							userId: props.userId,
+						})
+					: Promise.resolve(null),
+			]).then(([_user, _info, _ips]) => {
+				user = _user;
+				info = _info;
+				ips = _ips;
+				moderator = info.isModerator;
+				silenced = info.isSilenced;
+				suspended = info.isSuspended;
+				moderationNote = info.moderationNote;
+				tab = "moderation";
 
-			watch($$(moderationNote), async () => {
-				await os.api('admin/update-user-note', { userId: user.id, text: moderationNote });
-				await refreshUser();
+				watch($$(moderationNote), async () => {
+					await os.api("admin/update-user-note", {
+						userId: user.id,
+						text: moderationNote,
+					});
+					await refreshUser();
+				});
 			});
-		});
 	} else {
-		return () => os.api('users/show', {
-			userId: props.userId,
-		}).then((res) => {
-			user = res;
-		});
+		return () =>
+			os
+				.api("users/show", {
+					userId: props.userId,
+				})
+				.then((res) => {
+					user = res;
+				});
 	}
 }
 
@@ -292,54 +308,56 @@ function refreshUser() {
 }
 
 async function updateRemoteUser() {
-	await os.apiWithDialog('federation/update-remote-user', { userId: user.id });
+	await os.apiWithDialog("federation/update-remote-user", { userId: user.id });
 	refreshUser();
 }
 
 async function resetPassword() {
 	const confirm = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		text: i18n.ts.resetPasswordConfirm,
 	});
 	if (confirm.canceled) {
 		return;
 	} else {
-		const { password } = await os.api('admin/reset-password', {
+		const { password } = await os.api("admin/reset-password", {
 			userId: user.id,
 		});
 		os.alert({
-			type: 'success',
-			text: i18n.t('newPasswordIs', { password }),
+			type: "success",
+			text: i18n.t("newPasswordIs", { password }),
 		});
 	}
 }
 
 async function toggleSuspend(v) {
 	const confirm = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		text: v ? i18n.ts.suspendConfirm : i18n.ts.unsuspendConfirm,
 	});
 	if (confirm.canceled) {
 		suspended = !v;
 	} else {
-		await os.api(v ? 'admin/suspend-user' : 'admin/unsuspend-user', { userId: user.id });
+		await os.api(v ? "admin/suspend-user" : "admin/unsuspend-user", {
+			userId: user.id,
+		});
 		await refreshUser();
 	}
 }
 
 async function deleteAllFiles() {
 	const confirm = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		text: i18n.ts.deleteAllFilesConfirm,
 	});
 	if (confirm.canceled) return;
 	const process = async () => {
-		await os.api('admin/delete-all-files-of-a-user', { userId: user.id });
+		await os.api("admin/delete-all-files-of-a-user", { userId: user.id });
 		os.success();
 	};
-	await process().catch(err => {
+	await process().catch((err) => {
 		os.alert({
-			type: 'error',
+			type: "error",
 			text: err.toString(),
 		});
 	});
@@ -348,136 +366,194 @@ async function deleteAllFiles() {
 
 async function deleteAccount() {
 	const confirm = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		text: i18n.ts.deleteAccountConfirm,
 	});
 	if (confirm.canceled) return;
 
 	const typed = await os.inputText({
-		text: i18n.t('typeToConfirm', { x: user?.username }),
+		text: i18n.t("typeToConfirm", { x: user?.username }),
 	});
 	if (typed.canceled) return;
 
 	if (typed.result === user?.username) {
-		await os.apiWithDialog('admin/delete-account', {
+		await os.apiWithDialog("admin/delete-account", {
 			userId: user.id,
 		});
 	} else {
 		os.alert({
-			type: 'error',
-			text: 'input not match',
+			type: "error",
+			text: "input not match",
 		});
 	}
 }
 
 async function assignRole() {
-	const roles = await os.api('admin/roles/list');
+	const roles = await os.api("admin/roles/list");
 
 	const { canceled, result: roleId } = await os.select({
 		title: i18n.ts._role.chooseRoleToAssign,
-		items: roles.map(r => ({ text: r.name, value: r.id })),
+		items: roles.map((r) => ({ text: r.name, value: r.id })),
 	});
 	if (canceled) return;
 
 	const { canceled: canceled2, result: period } = await os.select({
 		title: i18n.ts.period,
-		items: [{
-			value: 'indefinitely', text: i18n.ts.indefinitely,
-		}, {
-			value: 'oneHour', text: i18n.ts.oneHour,
-		}, {
-			value: 'oneDay', text: i18n.ts.oneDay,
-		}, {
-			value: 'oneWeek', text: i18n.ts.oneWeek,
-		}, {
-			value: 'oneMonth', text: i18n.ts.oneMonth,
-		}],
-		default: 'indefinitely',
+		items: [
+			{
+				value: "indefinitely",
+				text: i18n.ts.indefinitely,
+			},
+			{
+				value: "oneHour",
+				text: i18n.ts.oneHour,
+			},
+			{
+				value: "oneDay",
+				text: i18n.ts.oneDay,
+			},
+			{
+				value: "oneWeek",
+				text: i18n.ts.oneWeek,
+			},
+			{
+				value: "oneMonth",
+				text: i18n.ts.oneMonth,
+			},
+		],
+		default: "indefinitely",
 	});
 	if (canceled2) return;
 
-	const expiresAt = period === 'indefinitely' ? null
-		: period === 'oneHour' ? Date.now() + (1000 * 60 * 60)
-		: period === 'oneDay' ? Date.now() + (1000 * 60 * 60 * 24)
-		: period === 'oneWeek' ? Date.now() + (1000 * 60 * 60 * 24 * 7)
-		: period === 'oneMonth' ? Date.now() + (1000 * 60 * 60 * 24 * 30)
-		: null;
+	const expiresAt =
+		period === "indefinitely"
+			? null
+			: period === "oneHour"
+				? Date.now() + 1000 * 60 * 60
+				: period === "oneDay"
+					? Date.now() + 1000 * 60 * 60 * 24
+					: period === "oneWeek"
+						? Date.now() + 1000 * 60 * 60 * 24 * 7
+						: period === "oneMonth"
+							? Date.now() + 1000 * 60 * 60 * 24 * 30
+							: null;
 
-	await os.apiWithDialog('admin/roles/assign', { roleId, userId: user.id, expiresAt });
+	await os.apiWithDialog("admin/roles/assign", {
+		roleId,
+		userId: user.id,
+		expiresAt,
+	});
 	refreshUser();
 }
 
 async function unassignRole(role, ev) {
-	os.popupMenu([{
-		text: i18n.ts.unassign,
-		icon: 'ti ti-x',
-		danger: true,
-		action: async () => {
-			await os.apiWithDialog('admin/roles/unassign', { roleId: role.id, userId: user.id });
-			refreshUser();
-		},
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.unassign,
+				icon: "ti ti-x",
+				danger: true,
+				action: async () => {
+					await os.apiWithDialog("admin/roles/unassign", {
+						roleId: role.id,
+						userId: user.id,
+					});
+					refreshUser();
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 function toggleRoleItem(role) {
 	if (expandedRoles.includes(role.id)) {
-		expandedRoles = expandedRoles.filter(x => x !== role.id);
+		expandedRoles = expandedRoles.filter((x) => x !== role.id);
 	} else {
 		expandedRoles.push(role.id);
 	}
 }
 
 function createAnnouncement() {
-	os.popup(defineAsyncComponent(() => import('@/components/MkUserAnnouncementEditDialog.vue')), {
-		user,
-	}, {}, 'closed');
+	os.popup(
+		defineAsyncComponent(
+			() => import("@/components/MkUserAnnouncementEditDialog.vue"),
+		),
+		{
+			user,
+		},
+		{},
+		"closed",
+	);
 }
 
 function editAnnouncement(announcement) {
-	os.popup(defineAsyncComponent(() => import('@/components/MkUserAnnouncementEditDialog.vue')), {
-		user,
-		announcement,
-	}, {}, 'closed');
+	os.popup(
+		defineAsyncComponent(
+			() => import("@/components/MkUserAnnouncementEditDialog.vue"),
+		),
+		{
+			user,
+			announcement,
+		},
+		{},
+		"closed",
+	);
 }
 
-watch(() => props.userId, () => {
-	init = createFetcher();
-}, {
-	immediate: true,
-});
+watch(
+	() => props.userId,
+	() => {
+		init = createFetcher();
+	},
+	{
+		immediate: true,
+	},
+);
 
 watch($$(user), () => {
-	os.api('ap/get', {
+	os.api("ap/get", {
 		uri: user.uri ?? `${url}/users/${user.id}`,
-	}).then(res => {
+	}).then((res) => {
 		ap = res;
 	});
 });
 
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => [{
-	key: 'overview',
-	title: i18n.ts.overview,
-	icon: 'ti ti-info-circle',
-}, iAmModerator ? {
-	key: 'moderation',
-	title: i18n.ts.moderation,
-	icon: 'ti ti-user-exclamation',
-} : null, {
-	key: 'chart',
-	title: i18n.ts.charts,
-	icon: 'ti ti-chart-line',
-}, {
-	key: 'raw',
-	title: 'Raw',
-	icon: 'ti ti-code',
-}].filter(x => x != null));
+const headerTabs = $computed(() =>
+	[
+		{
+			key: "overview",
+			title: i18n.ts.overview,
+			icon: "ti ti-info-circle",
+		},
+		iAmModerator
+			? {
+					key: "moderation",
+					title: i18n.ts.moderation,
+					icon: "ti ti-user-exclamation",
+				}
+			: null,
+		{
+			key: "chart",
+			title: i18n.ts.charts,
+			icon: "ti ti-chart-line",
+		},
+		{
+			key: "raw",
+			title: "Raw",
+			icon: "ti ti-code",
+		},
+	].filter((x) => x != null),
+);
 
-definePageMetadata(computed(() => ({
-	title: user ? acct(user) : i18n.ts.userInfo,
-	icon: 'ti ti-info-circle',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: user ? acct(user) : i18n.ts.userInfo,
+		icon: "ti ti-info-circle",
+	})),
+);
 </script>
 
 <style lang="scss" scoped>

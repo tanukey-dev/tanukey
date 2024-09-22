@@ -79,47 +79,51 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import { Chart } from 'chart.js';
-import MkSelect from '@/components/MkSelect.vue';
-import MkChart from '@/components/MkChart.vue';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import MkHeatmap from '@/components/MkHeatmap.vue';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import MkRetentionHeatmap from '@/components/MkRetentionHeatmap.vue';
-import MkRetentionLineChart from '@/components/MkRetentionLineChart.vue';
-import { initChart } from '@/scripts/init-chart';
+import { onMounted } from "vue";
+import { Chart } from "chart.js";
+import MkSelect from "@/components/MkSelect.vue";
+import MkChart from "@/components/MkChart.vue";
+import { useChartTooltip } from "@/scripts/use-chart-tooltip";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import MkHeatmap from "@/components/MkHeatmap.vue";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import MkRetentionHeatmap from "@/components/MkRetentionHeatmap.vue";
+import MkRetentionLineChart from "@/components/MkRetentionLineChart.vue";
+import { initChart } from "@/scripts/init-chart";
 
 initChart();
 
 const chartLimit = 500;
-let chartSpan = $ref<'hour' | 'day'>('hour');
-let chartSrc = $ref('active-users');
-let heatmapSrc = $ref('active-users');
+let chartSpan = $ref<"hour" | "day">("hour");
+let chartSrc = $ref("active-users");
+let heatmapSrc = $ref("active-users");
 let subDoughnutEl = $shallowRef<HTMLCanvasElement>();
 let pubDoughnutEl = $shallowRef<HTMLCanvasElement>();
 
 const { handler: externalTooltipHandler1 } = useChartTooltip({
-	position: 'middle',
+	position: "middle",
 });
 const { handler: externalTooltipHandler2 } = useChartTooltip({
-	position: 'middle',
+	position: "middle",
 });
 
 function createDoughnut(chartEl, tooltip, data) {
 	const chartInstance = new Chart(chartEl, {
-		type: 'doughnut',
+		type: "doughnut",
 		data: {
-			labels: data.map(x => x.name),
-			datasets: [{
-				backgroundColor: data.map(x => x.color),
-				borderColor: getComputedStyle(document.documentElement).getPropertyValue('--panel'),
-				borderWidth: 2,
-				hoverOffset: 0,
-				data: data.map(x => x.value),
-			}],
+			labels: data.map((x) => x.name),
+			datasets: [
+				{
+					backgroundColor: data.map((x) => x.color),
+					borderColor: getComputedStyle(
+						document.documentElement,
+					).getPropertyValue("--panel"),
+					borderWidth: 2,
+					hoverOffset: 0,
+					data: data.map((x) => x.value),
+				},
+			],
 		},
 		options: {
 			maintainAspectRatio: false,
@@ -132,7 +136,12 @@ function createDoughnut(chartEl, tooltip, data) {
 				},
 			},
 			onClick: (ev) => {
-				const hit = chartInstance.getElementsAtEventForMode(ev, 'nearest', { intersect: true }, false)[0];
+				const hit = chartInstance.getElementsAtEventForMode(
+					ev,
+					"nearest",
+					{ intersect: true },
+					false,
+				)[0];
 				if (hit && data[hit.index].onClick) {
 					data[hit.index].onClick();
 				}
@@ -143,7 +152,7 @@ function createDoughnut(chartEl, tooltip, data) {
 				},
 				tooltip: {
 					enabled: false,
-					mode: 'index',
+					mode: "index",
 					animation: {
 						duration: 0,
 					},
@@ -157,24 +166,48 @@ function createDoughnut(chartEl, tooltip, data) {
 }
 
 onMounted(() => {
-	os.apiGet('federation/stats', { limit: 30 }).then(fedStats => {
-		createDoughnut(subDoughnutEl, externalTooltipHandler1, fedStats.topSubInstances.map(x => ({
-			name: x.host,
-			color: x.themeColor,
-			value: x.followersCount,
-			onClick: () => {
-				os.pageWindow(`/instance-info/${x.host}`);
-			},
-		})).concat([{ name: '(other)', color: '#80808080', value: fedStats.otherFollowersCount }]));
+	os.apiGet("federation/stats", { limit: 30 }).then((fedStats) => {
+		createDoughnut(
+			subDoughnutEl,
+			externalTooltipHandler1,
+			fedStats.topSubInstances
+				.map((x) => ({
+					name: x.host,
+					color: x.themeColor,
+					value: x.followersCount,
+					onClick: () => {
+						os.pageWindow(`/instance-info/${x.host}`);
+					},
+				}))
+				.concat([
+					{
+						name: "(other)",
+						color: "#80808080",
+						value: fedStats.otherFollowersCount,
+					},
+				]),
+		);
 
-		createDoughnut(pubDoughnutEl, externalTooltipHandler2, fedStats.topPubInstances.map(x => ({
-			name: x.host,
-			color: x.themeColor,
-			value: x.followingCount,
-			onClick: () => {
-				os.pageWindow(`/instance-info/${x.host}`);
-			},
-		})).concat([{ name: '(other)', color: '#80808080', value: fedStats.otherFollowingCount }]));
+		createDoughnut(
+			pubDoughnutEl,
+			externalTooltipHandler2,
+			fedStats.topPubInstances
+				.map((x) => ({
+					name: x.host,
+					color: x.themeColor,
+					value: x.followingCount,
+					onClick: () => {
+						os.pageWindow(`/instance-info/${x.host}`);
+					},
+				}))
+				.concat([
+					{
+						name: "(other)",
+						color: "#80808080",
+						value: fedStats.otherFollowingCount,
+					},
+				]),
+		);
 	});
 });
 </script>

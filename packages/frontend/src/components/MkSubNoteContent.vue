@@ -22,22 +22,22 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import * as misskey from 'misskey-js';
-import MkMediaList from '@/components/MkMediaList.vue';
-import MkPoll from '@/components/MkPoll.vue';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
+import {} from "vue";
+import * as misskey from "misskey-js";
+import MkMediaList from "@/components/MkMediaList.vue";
+import MkPoll from "@/components/MkPoll.vue";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
 
 const props = defineProps<{
 	note: misskey.entities.Note;
 }>();
 
 const collapsed = $ref(
-	props.note.cw == null && props.note.text != null && (
-		(props.note.text.split('\n').length > 9) ||
-		(props.note.text.length > 500)
-	));
+	props.note.cw == null &&
+		props.note.text != null &&
+		(props.note.text.split("\n").length > 9 || props.note.text.length > 500),
+);
 </script>
 
 <style lang="scss" module>

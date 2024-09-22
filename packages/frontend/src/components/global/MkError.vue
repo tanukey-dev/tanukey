@@ -9,13 +9,13 @@
 </template>
 
 <script lang="ts" setup>
-import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n';
-import { defaultStore } from '@/store';
-import { serverErrorImageUrl } from '@/instance';
+import MkButton from "@/components/MkButton.vue";
+import { i18n } from "@/i18n";
+import { defaultStore } from "@/store";
+import { serverErrorImageUrl } from "@/instance";
 
 const emit = defineEmits<{
-	(ev: 'retry'): void;
+	(ev: "retry"): void;
 }>();
 </script>
 

@@ -16,21 +16,24 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from "vue";
 
-const props = withDefaults(defineProps<{
-	static?: boolean;
-	inline?: boolean;
-	colored?: boolean;
-	mini?: boolean;
-	em?: boolean;
-}>(), {
-	static: false,
-	inline: false,
-	colored: true,
-	mini: false,
-	em: false,
-});
+const props = withDefaults(
+	defineProps<{
+		static?: boolean;
+		inline?: boolean;
+		colored?: boolean;
+		mini?: boolean;
+		em?: boolean;
+	}>(),
+	{
+		static: false,
+		inline: false,
+		colored: true,
+		mini: false,
+		em: false,
+	},
+);
 </script>
 
 <style lang="scss" module>

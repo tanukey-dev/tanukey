@@ -20,11 +20,15 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
-import { defaultStore } from '@/store';
-const XRss = defineAsyncComponent(() => import('./statusbar-rss.vue'));
-const XFederation = defineAsyncComponent(() => import('./statusbar-federation.vue'));
-const XUserList = defineAsyncComponent(() => import('./statusbar-user-list.vue'));
+import { defineAsyncComponent } from "vue";
+import { defaultStore } from "@/store";
+const XRss = defineAsyncComponent(() => import("./statusbar-rss.vue"));
+const XFederation = defineAsyncComponent(
+	() => import("./statusbar-federation.vue"),
+);
+const XUserList = defineAsyncComponent(
+	() => import("./statusbar-user-list.vue"),
+);
 </script>
 
 <style lang="scss" module>

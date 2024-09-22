@@ -26,15 +26,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import * as misskey from 'misskey-js';
-import MarqueeText from '@/components/MkMarquee.vue';
-import * as os from '@/os';
-import { useInterval } from '@/scripts/use-interval';
-import { getProxiedImageUrlNullable } from '@/scripts/media-proxy';
+import { ref } from "vue";
+import * as misskey from "misskey-js";
+import MarqueeText from "@/components/MkMarquee.vue";
+import * as os from "@/os";
+import { useInterval } from "@/scripts/use-interval";
+import { getProxiedImageUrlNullable } from "@/scripts/media-proxy";
 
 const props = defineProps<{
-	display?: 'marquee' | 'oneByOne';
+	display?: "marquee" | "oneByOne";
 	colored?: boolean;
 	marqueeDuration?: number;
 	marqueeReverse?: boolean;
@@ -47,10 +47,10 @@ const fetching = ref(true);
 let key = $ref(0);
 
 const tick = () => {
-	os.api('federation/instances', {
-		sort: '+latestRequestReceivedAt',
+	os.api("federation/instances", {
+		sort: "+latestRequestReceivedAt",
 		limit: 30,
-	}).then(res => {
+	}).then((res) => {
 		instances.value = res;
 		fetching.value = false;
 		key++;
@@ -63,7 +63,11 @@ useInterval(tick, Math.max(5000, props.refreshIntervalSec * 1000), {
 });
 
 function getInstanceIcon(instance): string {
-	return getProxiedImageUrlNullable(instance.iconUrl, 'preview') ?? getProxiedImageUrlNullable(instance.faviconUrl, 'preview') ?? '/client-assets/dummy.png';
+	return (
+		getProxiedImageUrlNullable(instance.iconUrl, "preview") ??
+		getProxiedImageUrlNullable(instance.faviconUrl, "preview") ??
+		"/client-assets/dummy.png"
+	);
 }
 </script>
 

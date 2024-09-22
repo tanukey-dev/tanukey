@@ -8,13 +8,13 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, nextTick, watch } from 'vue';
-import { Chart } from 'chart.js';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip';
-import { alpha } from '@/scripts/color';
-import { initChart } from '@/scripts/init-chart';
+import { onMounted, nextTick, watch } from "vue";
+import { Chart } from "chart.js";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
+import { useChartTooltip } from "@/scripts/use-chart-tooltip";
+import { alpha } from "@/scripts/color";
+import { initChart } from "@/scripts/init-chart";
 
 initChart();
 
@@ -29,7 +29,7 @@ let chartInstance: Chart = null;
 let fetching = $ref(true);
 
 const { handler: externalTooltipHandler } = useChartTooltip({
-	position: 'middle',
+	position: "middle",
 });
 
 async function renderChart() {
@@ -54,7 +54,7 @@ async function renderChart() {
 	const format = (arr) => {
 		return arr.map((v, i) => {
 			const dt = getDate(i);
-			const iso = `${dt.getFullYear()}-${(dt.getMonth() + 1).toString().padStart(2, '0')}-${dt.getDate().toString().padStart(2, '0')}`;
+			const iso = `${dt.getFullYear()}-${(dt.getMonth() + 1).toString().padStart(2, "0")}-${dt.getDate().toString().padStart(2, "0")}`;
 			return {
 				x: iso,
 				y: dt.getDay(),
@@ -66,20 +66,35 @@ async function renderChart() {
 
 	let values;
 
-	if (props.src === 'active-users') {
-		const raw = await os.api('charts/active-users', { limit: chartLimit, span: 'day' });
+	if (props.src === "active-users") {
+		const raw = await os.api("charts/active-users", {
+			limit: chartLimit,
+			span: "day",
+		});
 		values = raw.readWrite;
-	} else if (props.src === 'notes') {
-		const raw = await os.api('charts/notes', { limit: chartLimit, span: 'day' });
+	} else if (props.src === "notes") {
+		const raw = await os.api("charts/notes", {
+			limit: chartLimit,
+			span: "day",
+		});
 		values = raw.local.inc;
-	} else if (props.src === 'ap-requests-inbox-received') {
-		const raw = await os.api('charts/ap-request', { limit: chartLimit, span: 'day' });
+	} else if (props.src === "ap-requests-inbox-received") {
+		const raw = await os.api("charts/ap-request", {
+			limit: chartLimit,
+			span: "day",
+		});
 		values = raw.inboxReceived;
-	} else if (props.src === 'ap-requests-deliver-succeeded') {
-		const raw = await os.api('charts/ap-request', { limit: chartLimit, span: 'day' });
+	} else if (props.src === "ap-requests-deliver-succeeded") {
+		const raw = await os.api("charts/ap-request", {
+			limit: chartLimit,
+			span: "day",
+		});
 		values = raw.deliverSucceeded;
-	} else if (props.src === 'ap-requests-deliver-failed') {
-		const raw = await os.api('charts/ap-request', { limit: chartLimit, span: 'day' });
+	} else if (props.src === "ap-requests-deliver-failed") {
+		const raw = await os.api("charts/ap-request", {
+			limit: chartLimit,
+			span: "day",
+		});
 		values = raw.deliverFailed;
 	}
 
@@ -87,43 +102,51 @@ async function renderChart() {
 
 	await nextTick();
 
-	const color = defaultStore.state.darkMode ? '#b4e900' : '#86b300';
+	const color = defaultStore.state.darkMode ? "#b4e900" : "#86b300";
 
 	// 視覚上の分かりやすさのため上から最も大きい3つの値の平均を最大値とする
-	const max = values.slice().sort((a, b) => b - a).slice(0, 3).reduce((a, b) => a + b, 0) / 3;
+	const max =
+		values
+			.slice()
+			.sort((a, b) => b - a)
+			.slice(0, 3)
+			.reduce((a, b) => a + b, 0) / 3;
 
 	const min = Math.max(0, Math.min(...values) - 1);
 
 	const marginEachCell = 4;
 
 	chartInstance = new Chart(chartEl, {
-		type: 'matrix',
+		type: "matrix",
 		data: {
-			datasets: [{
-				label: 'Read & Write',
-				data: format(values),
-				pointRadius: 0,
-				borderWidth: 0,
-				borderJoinStyle: 'round',
-				borderRadius: 3,
-				backgroundColor(c) {
-					const value = c.dataset.data[c.dataIndex].v;
-					let a = (value - min) / max;
-					if (value !== 0) { // 0でない限りは完全に不可視にはしない
-						a = Math.max(a, 0.05);
-					}
-					return alpha(color, a);
+			datasets: [
+				{
+					label: "Read & Write",
+					data: format(values),
+					pointRadius: 0,
+					borderWidth: 0,
+					borderJoinStyle: "round",
+					borderRadius: 3,
+					backgroundColor(c) {
+						const value = c.dataset.data[c.dataIndex].v;
+						let a = (value - min) / max;
+						if (value !== 0) {
+							// 0でない限りは完全に不可視にはしない
+							a = Math.max(a, 0.05);
+						}
+						return alpha(color, a);
+					},
+					fill: true,
+					width(c) {
+						const a = c.chart.chartArea ?? {};
+						return (a.right - a.left) / weeks - marginEachCell;
+					},
+					height(c) {
+						const a = c.chart.chartArea ?? {};
+						return (a.bottom - a.top) / 7 - marginEachCell;
+					},
 				},
-				fill: true,
-				width(c) {
-					const a = c.chart.chartArea ?? {};
-					return (a.right - a.left) / weeks - marginEachCell;
-				},
-				height(c) {
-					const a = c.chart.chartArea ?? {};
-					return (a.bottom - a.top) / 7 - marginEachCell;
-				},
-			}],
+			],
 		},
 		options: {
 			aspectRatio: wide ? 6 : narrow ? 1.8 : 3.2,
@@ -137,17 +160,17 @@ async function renderChart() {
 			},
 			scales: {
 				x: {
-					type: 'time',
+					type: "time",
 					offset: true,
-					position: 'bottom',
+					position: "bottom",
 					time: {
-						unit: 'week',
-						round: 'week',
+						unit: "week",
+						round: "week",
 						isoWeekday: 0,
 						displayFormats: {
-							day: 'M/d',
-							month: 'Y/M',
-							week: 'M/d',
+							day: "M/d",
+							month: "Y/M",
+							week: "M/d",
 						},
 					},
 					grid: {
@@ -162,7 +185,7 @@ async function renderChart() {
 				y: {
 					offset: true,
 					reverse: true,
-					position: 'right',
+					position: "right",
 					grid: {
 						display: false,
 					},
@@ -173,7 +196,8 @@ async function renderChart() {
 						font: {
 							size: 9,
 						},
-						callback: (value, index, values) => ['', 'Mon', '', 'Wed', '', 'Fri', ''][value],
+						callback: (value, index, values) =>
+							["", "Mon", "", "Wed", "", "Fri", ""][value],
 					},
 				},
 			},
@@ -190,7 +214,7 @@ async function renderChart() {
 						},
 						label(context) {
 							const v = context.dataset.data[context.dataIndex];
-							return ['Active: ' + v.v];
+							return ["Active: " + v.v];
 						},
 					},
 					//mode: 'index',
@@ -204,10 +228,13 @@ async function renderChart() {
 	});
 }
 
-watch(() => props.src, () => {
-	fetching = true;
-	renderChart();
-});
+watch(
+	() => props.src,
+	() => {
+		fetching = true;
+		renderChart();
+	},
+);
 
 onMounted(async () => {
 	renderChart();

@@ -64,13 +64,13 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, shallowRef } from 'vue';
+import { onMounted, onUnmounted, ref, shallowRef } from "vue";
 
 const particles = ref([]);
 const el = shallowRef<HTMLElement>();
 const width = ref(0);
 const height = ref(0);
-const colors = ['#FF1493', '#00FFFF', '#FFE202', '#FFE202', '#FFE202'];
+const colors = ["#FF1493", "#00FFFF", "#FFE202", "#FFE202", "#FFE202"];
 let stop = false;
 let ro: ResizeObserver | undefined;
 
@@ -82,25 +82,28 @@ onMounted(() => {
 	ro.observe(el.value);
 	const add = () => {
 		if (stop) return;
-		const x = (Math.random() * (width.value - 64));
-		const y = (Math.random() * (height.value - 64));
+		const x = Math.random() * (width.value - 64);
+		const y = Math.random() * (height.value - 64);
 		const sizeFactor = Math.random();
 		const particle = {
 			id: Math.random().toString(),
 			x,
 			y,
-			size: 0.2 + ((sizeFactor / 10) * 3),
-			dur: 1000 + (sizeFactor * 1000),
+			size: 0.2 + (sizeFactor / 10) * 3,
+			dur: 1000 + sizeFactor * 1000,
 			color: colors[Math.floor(Math.random() * colors.length)],
 		};
 		particles.value.push(particle);
 		window.setTimeout(() => {
-			particles.value = particles.value.filter(x => x.id !== particle.id);
+			particles.value = particles.value.filter((x) => x.id !== particle.id);
 		}, particle.dur - 100);
 
-		window.setTimeout(() => {
-			add();
-		}, 500 + (Math.random() * 500));
+		window.setTimeout(
+			() => {
+				add();
+			},
+			500 + Math.random() * 500,
+		);
 	};
 	add();
 });

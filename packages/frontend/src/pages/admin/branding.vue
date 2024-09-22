@@ -63,20 +63,20 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XHeader from './_header_.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import FormSection from '@/components/form/section.vue';
-import FormSplit from '@/components/form/split.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import * as os from '@/os';
-import { fetchInstance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkButton from '@/components/MkButton.vue';
-import MkColorInput from '@/components/MkColorInput.vue';
+import {} from "vue";
+import XHeader from "./_header_.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import FormSection from "@/components/form/section.vue";
+import FormSplit from "@/components/form/split.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import * as os from "@/os";
+import { fetchInstance } from "@/instance";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkButton from "@/components/MkButton.vue";
+import MkColorInput from "@/components/MkColorInput.vue";
 
 let iconUrl: string | null = $ref(null);
 let bannerUrl: string | null = $ref(null);
@@ -89,7 +89,7 @@ let infoImageUrl: string | null = $ref(null);
 let notFoundImageUrl: string | null = $ref(null);
 
 async function init() {
-	const meta = await os.api('admin/meta');
+	const meta = await os.api("admin/meta");
 	iconUrl = meta.iconUrl;
 	bannerUrl = meta.bannerUrl;
 	backgroundImageUrl = meta.backgroundImageUrl;
@@ -102,13 +102,13 @@ async function init() {
 }
 
 function save() {
-	os.apiWithDialog('admin/update-meta', {
+	os.apiWithDialog("admin/update-meta", {
 		iconUrl,
 		bannerUrl,
 		backgroundImageUrl,
-		themeColor: themeColor === '' ? null : themeColor,
-		defaultLightTheme: defaultLightTheme === '' ? null : defaultLightTheme,
-		defaultDarkTheme: defaultDarkTheme === '' ? null : defaultDarkTheme,
+		themeColor: themeColor === "" ? null : themeColor,
+		defaultLightTheme: defaultLightTheme === "" ? null : defaultLightTheme,
+		defaultDarkTheme: defaultDarkTheme === "" ? null : defaultDarkTheme,
 		infoImageUrl,
 		notFoundImageUrl,
 		serverErrorImageUrl,
@@ -121,7 +121,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.branding,
-	icon: 'ti ti-paint',
+	icon: "ti ti-paint",
 });
 </script>
 

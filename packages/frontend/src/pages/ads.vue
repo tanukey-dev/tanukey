@@ -11,15 +11,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
-import * as os from '@/os';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
+import { computed, watch } from "vue";
+import * as os from "@/os";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
 
 definePageMetadata({
 	title: i18n.ts.ads,
-	icon: 'ti ti-ad',
+	icon: "ti ti-ad",
 });
 </script>
 

@@ -72,27 +72,29 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import FormLink from '@/components/form/link.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import FormInfo from '@/components/MkInfo.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
-import { signout, $i } from '@/account';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { unisonReload } from '@/scripts/unison-reload';
-import FormSection from '@/components/form/section.vue';
+import { computed, watch } from "vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import FormLink from "@/components/form/link.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import FormInfo from "@/components/MkInfo.vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
+import { signout, $i } from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { unisonReload } from "@/scripts/unison-reload";
+import FormSection from "@/components/form/section.vue";
 
-const reportError = computed(defaultStore.makeGetterSetter('reportError'));
-const enableCondensedLineForAcct = computed(defaultStore.makeGetterSetter('enableCondensedLineForAcct'));
-const devMode = computed(defaultStore.makeGetterSetter('devMode'));
+const reportError = computed(defaultStore.makeGetterSetter("reportError"));
+const enableCondensedLineForAcct = computed(
+	defaultStore.makeGetterSetter("enableCondensedLineForAcct"),
+);
+const devMode = computed(defaultStore.makeGetterSetter("devMode"));
 
 function onChangeInjectFeaturedNote(v) {
-	os.api('i/update', {
+	os.api("i/update", {
 		injectFeaturedNote: v,
 	}).then((i) => {
 		$i!.injectFeaturedNote = i.injectFeaturedNote;
@@ -102,7 +104,7 @@ function onChangeInjectFeaturedNote(v) {
 async function deleteAccount() {
 	{
 		const { canceled } = await os.confirm({
-			type: 'warning',
+			type: "warning",
 			text: i18n.ts.deleteAccountConfirm,
 		});
 		if (canceled) return;
@@ -110,11 +112,11 @@ async function deleteAccount() {
 
 	const { canceled, result: password } = await os.inputText({
 		title: i18n.ts.password,
-		type: 'password',
+		type: "password",
 	});
 	if (canceled) return;
 
-	await os.apiWithDialog('i/delete-account', {
+	await os.apiWithDialog("i/delete-account", {
 		password: password,
 	});
 
@@ -127,7 +129,7 @@ async function deleteAccount() {
 
 async function reloadAsk() {
 	const { canceled } = await os.confirm({
-		type: 'info',
+		type: "info",
 		text: i18n.ts.reloadToApplySetting,
 	});
 	if (canceled) return;
@@ -135,9 +137,7 @@ async function reloadAsk() {
 	unisonReload();
 }
 
-watch([
-	enableCondensedLineForAcct,
-], async () => {
+watch([enableCondensedLineForAcct], async () => {
 	await reloadAsk();
 });
 
@@ -147,6 +147,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.other,
-	icon: 'ti ti-dots',
+	icon: "ti ti-dots",
 });
 </script>

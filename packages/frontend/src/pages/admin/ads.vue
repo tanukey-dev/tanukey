@@ -66,28 +66,36 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XHeader from './_header_.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkRadios from '@/components/MkRadios.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import FormSplit from '@/components/form/split.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import {} from "vue";
+import XHeader from "./_header_.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkRadios from "@/components/MkRadios.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import FormSplit from "@/components/form/split.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
 let ads: any[] = $ref([]);
 
 // ISO形式はTZがUTCになってしまうので、TZ分ずらして時間を初期化
 const localTime = new Date();
 const localTimeDiff = localTime.getTimezoneOffset() * 60 * 1000;
-const daysOfWeek: string[] = [i18n.ts._weekday.sunday, i18n.ts._weekday.monday, i18n.ts._weekday.tuesday, i18n.ts._weekday.wednesday, i18n.ts._weekday.thursday, i18n.ts._weekday.friday, i18n.ts._weekday.saturday];
+const daysOfWeek: string[] = [
+	i18n.ts._weekday.sunday,
+	i18n.ts._weekday.monday,
+	i18n.ts._weekday.tuesday,
+	i18n.ts._weekday.wednesday,
+	i18n.ts._weekday.thursday,
+	i18n.ts._weekday.friday,
+	i18n.ts._weekday.saturday,
+];
 
-os.api('admin/ad/list').then(adsResponse => {
-	ads = adsResponse.map(r => {
+os.api("admin/ad/list").then((adsResponse) => {
+	ads = adsResponse.map((r) => {
 		const exdate = new Date(r.expiresAt);
 		const stdate = new Date(r.startsAt);
 		exdate.setMilliseconds(exdate.getMilliseconds() - localTimeDiff);
@@ -108,11 +116,11 @@ function toggleDayOfWeek(ad, index) {
 function add() {
 	ads.unshift({
 		id: null,
-		memo: '',
-		place: 'square',
-		priority: 'middle',
+		memo: "",
+		place: "square",
+		priority: "middle",
 		ratio: 1,
-		url: '',
+		url: "",
 		forceShowAds: false,
 		imageUrl: null,
 		expiresAt: null,
@@ -123,13 +131,13 @@ function add() {
 
 function remove(ad) {
 	os.confirm({
-		type: 'warning',
-		text: i18n.t('removeAreYouSure', { x: ad.url }),
+		type: "warning",
+		text: i18n.t("removeAreYouSure", { x: ad.url }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
-		ads = ads.filter(x => x !== ad);
+		ads = ads.filter((x) => x !== ad);
 		if (ad.id == null) return;
-		os.apiWithDialog('admin/ad/delete', {
+		os.apiWithDialog("admin/ad/delete", {
 			id: ad.id,
 		});
 	});
@@ -137,59 +145,67 @@ function remove(ad) {
 
 function save(ad) {
 	if (ad.id == null) {
-		os.api('admin/ad/create', {
+		os.api("admin/ad/create", {
 			...ad,
 			expiresAt: new Date(ad.expiresAt).getTime(),
 			startsAt: new Date(ad.startsAt).getTime(),
-		}).then(() => {
-			os.alert({
-				type: 'success',
-				text: i18n.ts.saved,
+		})
+			.then(() => {
+				os.alert({
+					type: "success",
+					text: i18n.ts.saved,
+				});
+				refresh();
+			})
+			.catch((err) => {
+				os.alert({
+					type: "error",
+					text: err,
+				});
 			});
-			refresh();
-		}).catch(err => {
-			os.alert({
-				type: 'error',
-				text: err,
-			});
-		});
 	} else {
-		os.api('admin/ad/update', {
+		os.api("admin/ad/update", {
 			...ad,
 			expiresAt: new Date(ad.expiresAt).getTime(),
 			startsAt: new Date(ad.startsAt).getTime(),
-		}).then(() => {
-			os.alert({
-				type: 'success',
-				text: i18n.ts.saved,
+		})
+			.then(() => {
+				os.alert({
+					type: "success",
+					text: i18n.ts.saved,
+				});
+			})
+			.catch((err) => {
+				os.alert({
+					type: "error",
+					text: err,
+				});
 			});
-		}).catch(err => {
-			os.alert({
-				type: 'error',
-				text: err,
-			});
-		});
 	}
 }
 function more() {
-	os.api('admin/ad/list', { untilId: ads.reduce((acc, ad) => ad.id != null ? ad : acc).id }).then(adsResponse => {
-		ads = ads.concat(adsResponse.map(r => {
-			const exdate = new Date(r.expiresAt);
-			const stdate = new Date(r.startsAt);
-			exdate.setMilliseconds(exdate.getMilliseconds() - localTimeDiff);
-			stdate.setMilliseconds(stdate.getMilliseconds() - localTimeDiff);
-			return {
-				...r,
-				expiresAt: exdate.toISOString().slice(0, 16),
-				startsAt: stdate.toISOString().slice(0, 16),
-			};
-		}));
+	os.api("admin/ad/list", {
+		untilId: ads.reduce((acc, ad) => (ad.id != null ? ad : acc)).id,
+	}).then((adsResponse) => {
+		ads = ads.concat(
+			adsResponse.map((r) => {
+				const exdate = new Date(r.expiresAt);
+				const stdate = new Date(r.startsAt);
+				exdate.setMilliseconds(exdate.getMilliseconds() - localTimeDiff);
+				stdate.setMilliseconds(stdate.getMilliseconds() - localTimeDiff);
+				return {
+					...r,
+					expiresAt: exdate.toISOString().slice(0, 16),
+					startsAt: stdate.toISOString().slice(0, 16),
+				};
+			}),
+		);
 	});
 }
 
 function refresh() {
-	os.api('admin/ad/list').then(adsResponse => {
-		ads = adsResponse.map(r => {
+	os.api("admin/ad/list").then((adsResponse) => {
+		ads = adsResponse.map((r) => {
 			const exdate = new Date(r.expiresAt);
 			const stdate = new Date(r.startsAt);
 			exdate.setMilliseconds(exdate.getMilliseconds() - localTimeDiff);
@@ -205,18 +221,20 @@ function refresh() {
 
 refresh();
 
-const headerActions = $computed(() => [{
-	asFullButton: true,
-	icon: 'ti ti-plus',
-	text: i18n.ts.add,
-	handler: add,
-}]);
+const headerActions = $computed(() => [
+	{
+		asFullButton: true,
+		icon: "ti ti-plus",
+		text: i18n.ts.add,
+		handler: add,
+	},
+]);
 
 const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.ads,
-	icon: 'ti ti-ad',
+	icon: "ti ti-ad",
 });
 </script>
 

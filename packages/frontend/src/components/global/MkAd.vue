@@ -27,16 +27,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import { host } from '@/config';
-import MkButton from '@/components/MkButton.vue';
-import { defaultStore } from '@/store';
-import * as os from '@/os';
-import { $i } from '@/account';
+import { ref } from "vue";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
+import { host } from "@/config";
+import MkButton from "@/components/MkButton.vue";
+import { defaultStore } from "@/store";
+import * as os from "@/os";
+import { $i } from "@/account";
 
-type Ad = (typeof instance)['ads'][number];
+type Ad = (typeof instance)["ads"][number];
 
 const props = defineProps<{
 	prefer: string[];
@@ -53,19 +53,23 @@ const choseAd = (): Ad | null => {
 		return props.specify;
 	}
 
-	const allAds = instance.ads.map(ad => defaultStore.state.mutedAds.includes(ad.id) ? {
-		...ad,
-		ratio: 0,
-	} : ad);
+	const allAds = instance.ads.map((ad) =>
+		defaultStore.state.mutedAds.includes(ad.id)
+			? {
+					...ad,
+					ratio: 0,
+				}
+			: ad,
+	);
 
-	let ads = allAds.filter(ad => props.prefer.includes(ad.place));
+	let ads = allAds.filter((ad) => props.prefer.includes(ad.place));
 
 	if (ads.length === 0) {
-		ads = allAds.filter(ad => ad.place === 'square');
+		ads = allAds.filter((ad) => ad.place === "square");
 	}
 
-	const lowPriorityAds = ads.filter(ad => ad.ratio === 0);
-	ads = ads.filter(ad => ad.ratio !== 0);
+	const lowPriorityAds = ads.filter((ad) => ad.ratio === 0);
+	ads = ads.filter((ad) => ad.ratio !== 0);
 
 	if (ads.length === 0) {
 		if (lowPriorityAds.length !== 0) {
@@ -91,12 +95,17 @@ const choseAd = (): Ad | null => {
 };
 
 const chosen = ref(choseAd());
-const shouldHide = $ref(!defaultStore.state.forceShowAds && $i && $i.policies.canHideAds && (props.specify == null));
+const shouldHide = $ref(
+	!defaultStore.state.forceShowAds &&
+		$i &&
+		$i.policies.canHideAds &&
+		props.specify == null,
+);
 
 function reduceFrequency(): void {
 	if (chosen.value == null) return;
 	if (defaultStore.state.mutedAds.includes(chosen.value.id)) return;
-	defaultStore.push('mutedAds', chosen.value.id);
+	defaultStore.push("mutedAds", chosen.value.id);
 	os.success();
 	chosen.value = choseAd();
 	showMenu.value = false;

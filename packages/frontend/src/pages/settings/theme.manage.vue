@@ -26,33 +26,36 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import JSON5 from 'json5';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkButton from '@/components/MkButton.vue';
-import { Theme, getBuiltinThemesRef } from '@/scripts/theme';
-import copyToClipboard from '@/scripts/copy-to-clipboard';
-import * as os from '@/os';
-import { getThemes, removeTheme } from '@/theme-store';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { computed, ref } from "vue";
+import JSON5 from "json5";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkButton from "@/components/MkButton.vue";
+import { Theme, getBuiltinThemesRef } from "@/scripts/theme";
+import copyToClipboard from "@/scripts/copy-to-clipboard";
+import * as os from "@/os";
+import { getThemes, removeTheme } from "@/theme-store";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
 const installedThemes = ref(getThemes());
 const builtinThemes = getBuiltinThemesRef();
 const selectedThemeId = ref(null);
 
-const themes = computed(() => [...installedThemes.value, ...builtinThemes.value]);
+const themes = computed(() => [
+	...installedThemes.value,
+	...builtinThemes.value,
+]);
 
 const selectedTheme = computed(() => {
 	if (selectedThemeId.value == null) return null;
-	return themes.value.find(x => x.id === selectedThemeId.value);
+	return themes.value.find((x) => x.id === selectedThemeId.value);
 });
 
 const selectedThemeCode = computed(() => {
 	if (selectedTheme.value == null) return null;
-	return JSON5.stringify(selectedTheme.value, null, '\t');
+	return JSON5.stringify(selectedTheme.value, null, "\t");
 });
 
 function copyThemeCode() {
@@ -62,7 +65,9 @@ function copyThemeCode() {
 
 function uninstall() {
 	removeTheme(selectedTheme.value as Theme);
-	installedThemes.value = installedThemes.value.filter(t => t.id !== selectedThemeId.value);
+	installedThemes.value = installedThemes.value.filter(
+		(t) => t.id !== selectedThemeId.value,
+	);
 	selectedThemeId.value = null;
 	os.success();
 }
@@ -73,6 +78,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts._theme.manage,
-	icon: 'ti ti-tool',
+	icon: "ti ti-tool",
 });
 </script>

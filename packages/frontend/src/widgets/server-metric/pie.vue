@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import {} from "vue";
 
 const props = defineProps<{
 	value: number;
@@ -30,8 +30,10 @@ const props = defineProps<{
 
 const r = 0.45;
 
-const color = $computed(() => `hsl(${180 - (props.value * 180)}, 80%, 70%)`);
-const strokeDashoffset = $computed(() => (1 - props.value) * (Math.PI * (r * 2)));
+const color = $computed(() => `hsl(${180 - props.value * 180}, 80%, 70%)`);
+const strokeDashoffset = $computed(
+	() => (1 - props.value) * (Math.PI * (r * 2)),
+);
 </script>
 
 <style lang="scss" module>

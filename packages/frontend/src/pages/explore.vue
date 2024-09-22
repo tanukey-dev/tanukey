@@ -16,46 +16,58 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
-import XFeatured from './explore.featured.vue';
-import XUsers from './explore.users.vue';
-import XRoles from './explore.roles.vue';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
+import { computed, watch } from "vue";
+import XFeatured from "./explore.featured.vue";
+import XUsers from "./explore.users.vue";
+import XRoles from "./explore.roles.vue";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	tag?: string;
-	initialTab?: string;
-}>(), {
-	initialTab: 'featured',
-});
+const props = withDefaults(
+	defineProps<{
+		tag?: string;
+		initialTab?: string;
+	}>(),
+	{
+		initialTab: "featured",
+	},
+);
 
 let tab = $ref(props.initialTab);
 let tagsEl = $shallowRef<InstanceType<typeof MkFoldableSection>>();
 
-watch(() => props.tag, () => {
-	if (tagsEl) tagsEl.toggleContent(props.tag == null);
-});
+watch(
+	() => props.tag,
+	() => {
+		if (tagsEl) tagsEl.toggleContent(props.tag == null);
+	},
+);
 
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => [{
-	key: 'featured',
-	icon: 'ti ti-bolt',
-	title: i18n.ts.featured,
-}, {
-	key: 'users',
-	icon: 'ti ti-users',
-	title: i18n.ts.users,
-}, {
-	key: 'roles',
-	icon: 'ti ti-badges',
-	title: i18n.ts.roles,
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "featured",
+		icon: "ti ti-bolt",
+		title: i18n.ts.featured,
+	},
+	{
+		key: "users",
+		icon: "ti ti-users",
+		title: i18n.ts.users,
+	},
+	{
+		key: "roles",
+		icon: "ti ti-badges",
+		title: i18n.ts.roles,
+	},
+]);
 
-definePageMetadata(computed(() => ({
-	title: i18n.ts.explore,
-	icon: 'ti ti-hash',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: i18n.ts.explore,
+		icon: "ti ti-hash",
+	})),
+);
 </script>

@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import * as misskey from 'misskey-js';
-import XNotification from '@/components/MkNotification.vue';
+import {} from "vue";
+import * as misskey from "misskey-js";
+import XNotification from "@/components/MkNotification.vue";
 
 defineProps<{
 	notification: misskey.entities.Notification;

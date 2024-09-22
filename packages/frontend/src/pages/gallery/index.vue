@@ -42,13 +42,13 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import MkGalleryPostPreview from '@/components/MkGalleryPostPreview.vue';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
-import { useRouter } from '@/router';
+import { watch } from "vue";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import MkGalleryPostPreview from "@/components/MkGalleryPostPreview.vue";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
+import { useRouter } from "@/router";
 
 const router = useRouter();
 
@@ -56,66 +56,75 @@ const props = defineProps<{
 	tag?: string;
 }>();
 
-let tab = $ref('explore');
+let tab = $ref("explore");
 let tags = $ref([]);
 let tagsRef = $ref();
 
 const recentPostsPagination = {
-	endpoint: 'gallery/posts' as const,
+	endpoint: "gallery/posts" as const,
 	limit: 6,
 };
 const popularPostsPagination = {
-	endpoint: 'gallery/featured' as const,
+	endpoint: "gallery/featured" as const,
 	noPaging: true,
 };
 const myPostsPagination = {
-	endpoint: 'i/gallery/posts' as const,
+	endpoint: "i/gallery/posts" as const,
 	limit: 5,
 };
 const likedPostsPagination = {
-	endpoint: 'i/gallery/likes' as const,
+	endpoint: "i/gallery/likes" as const,
 	limit: 5,
 };
 
 const tagUsersPagination = $computed(() => ({
-	endpoint: 'hashtags/users' as const,
+	endpoint: "hashtags/users" as const,
 	limit: 30,
 	params: {
 		tag: props.tag,
-		origin: 'combined',
-		sort: '+follower',
+		origin: "combined",
+		sort: "+follower",
 	},
 }));
 
-watch(() => props.tag, () => {
-	if (tagsRef) tagsRef.tags.toggleContent(props.tag == null);
-});
-
-const headerActions = $computed(() => [{
-	icon: 'ti ti-plus',
-	text: i18n.ts.create,
-	handler: () => {
-		router.push('/gallery/new');
+watch(
+	() => props.tag,
+	() => {
+		if (tagsRef) tagsRef.tags.toggleContent(props.tag == null);
 	},
-}]);
+);
 
-const headerTabs = $computed(() => [{
-	key: 'explore',
-	title: i18n.ts.gallery,
-	icon: 'ti ti-icons',
-}, {
-	key: 'liked',
-	title: i18n.ts._gallery.liked,
-	icon: 'ti ti-heart',
-}, {
-	key: 'my',
-	title: i18n.ts._gallery.my,
-	icon: 'ti ti-edit',
-}]);
+const headerActions = $computed(() => [
+	{
+		icon: "ti ti-plus",
+		text: i18n.ts.create,
+		handler: () => {
+			router.push("/gallery/new");
+		},
+	},
+]);
+
+const headerTabs = $computed(() => [
+	{
+		key: "explore",
+		title: i18n.ts.gallery,
+		icon: "ti ti-icons",
+	},
+	{
+		key: "liked",
+		title: i18n.ts._gallery.liked,
+		icon: "ti ti-heart",
+	},
+	{
+		key: "my",
+		title: i18n.ts._gallery.my,
+		icon: "ti ti-edit",
+	},
+]);
 
 definePageMetadata({
 	title: i18n.ts.gallery,
-	icon: 'ti ti-icons',
+	icon: "ti ti-icons",
 });
 </script>
 

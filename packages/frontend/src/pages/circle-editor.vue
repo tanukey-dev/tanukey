@@ -34,16 +34,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import { selectFile } from '@/scripts/select-file';
-import * as os from '@/os';
-import { useRouter } from '@/router';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
+import { computed, ref, watch } from "vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import { selectFile } from "@/scripts/select-file";
+import * as os from "@/os";
+import { useRouter } from "@/router";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
 
 const router = useRouter();
 
@@ -59,18 +59,23 @@ let pages = $ref(null);
 let profileImageUrl = $ref<string | null>(null);
 let profileImageId = $ref<string | null>(null);
 
-watch(() => profileImageId, async () => {
-	if (profileImageId == null) {
-		profileImageUrl = null;
-	} else {
-		profileImageUrl = (await os.api('drive/files/show', {
-			fileId: profileImageId,
-		})).url;
-	}
-});
+watch(
+	() => profileImageId,
+	async () => {
+		if (profileImageId == null) {
+			profileImageUrl = null;
+		} else {
+			profileImageUrl = (
+				await os.api("drive/files/show", {
+					fileId: profileImageId,
+				})
+			).url;
+		}
+	},
+);
 
 async function fetchPages() {
-	pages = await os.api('i/pages');
+	pages = await os.api("i/pages");
 }
 
 fetchPages();
@@ -78,7 +83,7 @@ fetchPages();
 async function fetchEvent() {
 	if (props.circleId == null) return;
 
-	circle = await os.api('circles/show', {
+	circle = await os.api("circles/show", {
 		circleId: props.circleId,
 	});
 
@@ -101,11 +106,11 @@ function save() {
 
 	if (props.circleId) {
 		params.circleId = props.circleId;
-		os.api('circles/update', params).then((u) => {
+		os.api("circles/update", params).then((u) => {
 			os.success();
 		});
 	} else {
-		os.api('circles/create', params).then(created => {
+		os.api("circles/create", params).then((created) => {
 			os.success();
 			router.push(`/circles/${created.id}`);
 		});
@@ -114,25 +119,25 @@ function save() {
 
 async function archive() {
 	const { canceled } = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		title: i18n.ts.archiveConfirmTitle,
 		text: i18n.ts.archiveConfirmDescription,
 	});
 
 	if (canceled) return;
-	
-	os.api('circles/update', {
+
+	os.api("circles/update", {
 		circleId: props.circleId,
 		isArchived: true,
 	}).then(() => {
 		os.success();
-		router.push('/circles');
+		router.push("/circles");
 		location.reload();
 	});
 }
 
 function setBannerImage(evt) {
-	selectFile(evt.currentTarget ?? evt.target, null).then(file => {
+	selectFile(evt.currentTarget ?? evt.target, null).then((file) => {
 		profileImageId = file.id;
 	});
 }
@@ -145,14 +150,19 @@ const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => props.circleId ? {
-	title: i18n.ts._circle.edit,
-	icon: 'ti ti-circles-relation',
-} : {
-	title: i18n.ts._circle.create,
-	icon: 'ti ti-circles-relation',
-}));
-
+definePageMetadata(
+	computed(() =>
+		props.circleId
+			? {
+					title: i18n.ts._circle.edit,
+					icon: "ti ti-circles-relation",
+				}
+			: {
+					title: i18n.ts._circle.create,
+					icon: "ti ti-circles-relation",
+				},
+	),
+);
 </script>
 
 <style lang="scss" module>

@@ -43,17 +43,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import FormSplit from '@/components/form/split.vue';
-import { selectFile } from '@/scripts/select-file';
-import * as os from '@/os';
-import { useRouter } from '@/router';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
+import { computed, ref, watch } from "vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import FormSplit from "@/components/form/split.vue";
+import { selectFile } from "@/scripts/select-file";
+import * as os from "@/os";
+import { useRouter } from "@/router";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
 
 const router = useRouter();
 
@@ -71,18 +71,23 @@ let pages = $ref(null);
 let bannerUrl = $ref<string | null>(null);
 let bannerId = $ref<string | null>(null);
 
-watch(() => bannerId, async () => {
-	if (bannerId == null) {
-		bannerUrl = null;
-	} else {
-		bannerUrl = (await os.api('drive/files/show', {
-			fileId: bannerId,
-		})).url;
-	}
-});
+watch(
+	() => bannerId,
+	async () => {
+		if (bannerId == null) {
+			bannerUrl = null;
+		} else {
+			bannerUrl = (
+				await os.api("drive/files/show", {
+					fileId: bannerId,
+				})
+			).url;
+		}
+	},
+);
 
 async function fetchPages() {
-	pages = await os.api('i/pages');
+	pages = await os.api("i/pages");
 }
 
 fetchPages();
@@ -90,7 +95,7 @@ fetchPages();
 async function fetchEvent() {
 	if (props.eventId == null) return;
 
-	event = await os.api('events/show', {
+	event = await os.api("events/show", {
 		eventId: props.eventId,
 	});
 
@@ -117,11 +122,11 @@ function save() {
 
 	if (props.eventId) {
 		params.eventId = props.eventId;
-		os.api('events/update', params).then((u) => {
+		os.api("events/update", params).then((u) => {
 			os.success();
 		});
 	} else {
-		os.api('events/create', params).then(created => {
+		os.api("events/create", params).then((created) => {
 			os.success();
 			router.push(`/events/${created.id}`);
 		});
@@ -130,25 +135,25 @@ function save() {
 
 async function archive() {
 	const { canceled } = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		title: i18n.ts.archiveConfirmTitle,
 		text: i18n.ts.archiveConfirmDescription,
 	});
 
 	if (canceled) return;
-	
-	os.api('events/update', {
+
+	os.api("events/update", {
 		eventId: props.eventId,
 		isArchived: true,
 	}).then(() => {
 		os.success();
-		router.push('/events');
+		router.push("/events");
 		location.reload();
 	});
 }
 
 function setBannerImage(evt) {
-	selectFile(evt.currentTarget ?? evt.target, null).then(file => {
+	selectFile(evt.currentTarget ?? evt.target, null).then((file) => {
 		bannerId = file.id;
 	});
 }
@@ -161,14 +166,19 @@ const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => props.eventId ? {
-	title: i18n.ts._event.edit,
-	icon: 'ti ti-calendar-event',
-} : {
-	title: i18n.ts._event.create,
-	icon: 'ti ti-calendar-event',
-}));
-
+definePageMetadata(
+	computed(() =>
+		props.eventId
+			? {
+					title: i18n.ts._event.edit,
+					icon: "ti ti-calendar-event",
+				}
+			: {
+					title: i18n.ts._event.create,
+					icon: "ti ti-calendar-event",
+				},
+	),
+);
 </script>
 
 <style lang="scss" module>

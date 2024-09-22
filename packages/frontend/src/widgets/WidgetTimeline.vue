@@ -29,41 +29,51 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import { GetFormResultType } from '@/scripts/form';
-import * as os from '@/os';
-import MkContainer from '@/components/MkContainer.vue';
-import MkTimeline from '@/components/MkTimeline.vue';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
-import { instance } from '@/instance';
+import { ref } from "vue";
+import {
+	useWidgetPropsManager,
+	Widget,
+	WidgetComponentEmits,
+	WidgetComponentExpose,
+	WidgetComponentProps,
+} from "./widget";
+import { GetFormResultType } from "@/scripts/form";
+import * as os from "@/os";
+import MkContainer from "@/components/MkContainer.vue";
+import MkTimeline from "@/components/MkTimeline.vue";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
+import { instance } from "@/instance";
 
-const name = 'timeline';
-const isLocalTimelineAvailable = (($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable));
-const isGlobalTimelineAvailable = (($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable));
+const name = "timeline";
+const isLocalTimelineAvailable =
+	($i == null && instance.policies.ltlAvailable) ||
+	($i != null && $i.policies.ltlAvailable);
+const isGlobalTimelineAvailable =
+	($i == null && instance.policies.gtlAvailable) ||
+	($i != null && $i.policies.gtlAvailable);
 
 const widgetPropsDef = {
 	showHeader: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: true,
 	},
 	height: {
-		type: 'number' as const,
+		type: "number" as const,
 		default: 300,
 	},
 	src: {
-		type: 'string' as const,
-		default: 'home',
+		type: "string" as const,
+		default: "home",
 		hidden: true,
 	},
 	antenna: {
-		type: 'object' as const,
+		type: "object" as const,
 		default: null,
 		hidden: true,
 	},
 	list: {
-		type: 'object' as const,
+		type: "object" as const,
 		default: null,
 		hidden: true,
 	},
@@ -74,7 +84,8 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure, save } = useWidgetPropsManager(name,
+const { widgetProps, configure, save } = useWidgetPropsManager(
+	name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -90,46 +101,69 @@ const setSrc = (src) => {
 const choose = async (ev) => {
 	menuOpened.value = true;
 	const [antennas, lists] = await Promise.all([
-		os.api('antennas/list'),
-		os.api('users/lists/list'),
+		os.api("antennas/list"),
+		os.api("users/lists/list"),
 	]);
-	const antennaItems = antennas.map(antenna => ({
+	const antennaItems = antennas.map((antenna) => ({
 		text: antenna.name,
-		icon: 'ti ti-antenna',
+		icon: "ti ti-antenna",
 		action: () => {
 			widgetProps.antenna = antenna;
-			setSrc('antenna');
+			setSrc("antenna");
 		},
 	}));
-	const listItems = lists.map(list => ({
+	const listItems = lists.map((list) => ({
 		text: list.name,
-		icon: 'ti ti-list',
+		icon: "ti ti-list",
 		action: () => {
 			widgetProps.list = list;
-			setSrc('list');
+			setSrc("list");
 		},
 	}));
-	os.popupMenu([{
-		text: i18n.ts._timelines.home,
-		icon: 'ti ti-home',
-		action: () => { setSrc('home'); },
-	}, {
-		text: i18n.ts._timelines.local,
-		icon: 'ti ti-planet',
-		action: () => { setSrc('local'); },
-	}, {
-		text: i18n.ts._timelines.media,
-		icon: 'ti ti-photo',
-		action: () => { setSrc('media'); },
-	}, {
-		text: i18n.ts._timelines.social,
-		icon: 'ti ti-rocket',
-		action: () => { setSrc('social'); },
-	}, {
-		text: i18n.ts._timelines.global,
-		icon: 'ti ti-whirl',
-		action: () => { setSrc('global'); },
-	}, antennaItems.length > 0 ? null : undefined, ...antennaItems, listItems.length > 0 ? null : undefined, ...listItems], ev.currentTarget ?? ev.target).then(() => {
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts._timelines.home,
+				icon: "ti ti-home",
+				action: () => {
+					setSrc("home");
+				},
+			},
+			{
+				text: i18n.ts._timelines.local,
+				icon: "ti ti-planet",
+				action: () => {
+					setSrc("local");
+				},
+			},
+			{
+				text: i18n.ts._timelines.media,
+				icon: "ti ti-photo",
+				action: () => {
+					setSrc("media");
+				},
+			},
+			{
+				text: i18n.ts._timelines.social,
+				icon: "ti ti-rocket",
+				action: () => {
+					setSrc("social");
+				},
+			},
+			{
+				text: i18n.ts._timelines.global,
+				icon: "ti ti-whirl",
+				action: () => {
+					setSrc("global");
+				},
+			},
+			antennaItems.length > 0 ? null : undefined,
+			...antennaItems,
+			listItems.length > 0 ? null : undefined,
+			...listItems,
+		],
+		ev.currentTarget ?? ev.target,
+	).then(() => {
 		menuOpened.value = false;
 	});
 };

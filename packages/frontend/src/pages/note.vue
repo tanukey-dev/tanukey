@@ -40,20 +40,20 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
-import * as misskey from 'misskey-js';
-import MkNoteDetailed from '@/components/MkNoteDetailed.vue';
-import MkNotes from '@/components/MkNotes.vue';
-import MkRemoteCaution from '@/components/MkRemoteCaution.vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
-import { dateString } from '@/filters/date';
-import MkClipPreview from '@/components/MkClipPreview.vue';
-import { defaultStore } from '@/store';
-import XNotFound from '@/pages/not-found.vue';
-import { $i } from '@/account';
+import { computed, watch } from "vue";
+import * as misskey from "misskey-js";
+import MkNoteDetailed from "@/components/MkNoteDetailed.vue";
+import MkNotes from "@/components/MkNotes.vue";
+import MkRemoteCaution from "@/components/MkRemoteCaution.vue";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
+import { dateString } from "@/filters/date";
+import MkClipPreview from "@/components/MkClipPreview.vue";
+import { defaultStore } from "@/store";
+import XNotFound from "@/pages/not-found.vue";
+import { $i } from "@/account";
 
 const props = defineProps<{
 	noteId: string;
@@ -69,22 +69,30 @@ let error = $ref();
 let localOnly = computed(() => note?.localOnly && !$i);
 
 const prevPagination = {
-	endpoint: 'users/notes' as const,
+	endpoint: "users/notes" as const,
 	limit: 10,
-	params: computed(() => note ? ({
-		userId: note.userId,
-		untilId: note.id,
-	}) : null),
+	params: computed(() =>
+		note
+			? {
+					userId: note.userId,
+					untilId: note.id,
+				}
+			: null,
+	),
 };
 
 const nextPagination = {
 	reversed: true,
-	endpoint: 'users/notes' as const,
+	endpoint: "users/notes" as const,
 	limit: 10,
-	params: computed(() => note ? ({
-		userId: note.userId,
-		sinceId: note.id,
-	}) : null),
+	params: computed(() =>
+		note
+			? {
+					userId: note.userId,
+					sinceId: note.id,
+				}
+			: null,
+	),
 };
 
 function fetchNote() {
@@ -93,32 +101,34 @@ function fetchNote() {
 	showPrev = false;
 	showNext = false;
 	note = null;
-	os.api('notes/show', {
+	os.api("notes/show", {
 		noteId: props.noteId,
-	}).then(res => {
-		note = res;
-		Promise.all([
-			os.api('notes/clips', {
-				noteId: note.id,
-			}),
-			os.api('users/notes', {
-				userId: note.userId,
-				untilId: note.id,
-				limit: 1,
-			}),
-			os.api('users/notes', {
-				userId: note.userId,
-				sinceId: note.id,
-				limit: 1,
-			}),
-		]).then(([_clips, prev, next]) => {
-			clips = _clips;
-			hasPrev = prev.length !== 0;
-			hasNext = next.length !== 0;
+	})
+		.then((res) => {
+			note = res;
+			Promise.all([
+				os.api("notes/clips", {
+					noteId: note.id,
+				}),
+				os.api("users/notes", {
+					userId: note.userId,
+					untilId: note.id,
+					limit: 1,
+				}),
+				os.api("users/notes", {
+					userId: note.userId,
+					sinceId: note.id,
+					limit: 1,
+				}),
+			]).then(([_clips, prev, next]) => {
+				clips = _clips;
+				hasPrev = prev.length !== 0;
+				hasNext = next.length !== 0;
+			});
+		})
+		.catch((err) => {
+			error = err;
 		});
-	}).catch(err => {
-		error = err;
-	});
 }
 
 watch(() => props.noteId, fetchNote, {
@@ -129,16 +139,22 @@ const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => note ? {
-	title: i18n.ts.note,
-	subtitle: dateString(note.createdAt),
-	avatar: note.user,
-	path: `/notes/${note.id}`,
-	share: {
-		title: i18n.t('noteOf', { user: note.user.name }),
-		text: note.text,
-	},
-} : null));
+definePageMetadata(
+	computed(() =>
+		note
+			? {
+					title: i18n.ts.note,
+					subtitle: dateString(note.createdAt),
+					avatar: note.user,
+					path: `/notes/${note.id}`,
+					share: {
+						title: i18n.t("noteOf", { user: note.user.name }),
+						text: note.text,
+					},
+				}
+			: null,
+	),
+);
 </script>
 
 <style lang="scss" module>

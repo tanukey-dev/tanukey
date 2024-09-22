@@ -23,41 +23,43 @@
 </template>
 
 <script lang="ts" setup>
-import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { antennasCache } from '@/cache';
-import { api } from '@/os';
-import { onActivated } from 'vue';
-import { infoImageUrl } from '@/instance';
+import MkButton from "@/components/MkButton.vue";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { antennasCache } from "@/cache";
+import { api } from "@/os";
+import { onActivated } from "vue";
+import { infoImageUrl } from "@/instance";
 
 const antennas = $computed(() => antennasCache.value.value ?? []);
 
 function fetch() {
-	antennasCache.fetch(() => api('antennas/list'));
+	antennasCache.fetch(() => api("antennas/list"));
 }
 
 fetch();
 
-const headerActions = $computed(() => [{
-	asFullButton: true,
-	icon: 'ti ti-refresh',
-	text: i18n.ts.reload,
-	handler: () => {
-		antennasCache.delete();
-		fetch();
+const headerActions = $computed(() => [
+	{
+		asFullButton: true,
+		icon: "ti ti-refresh",
+		text: i18n.ts.reload,
+		handler: () => {
+			antennasCache.delete();
+			fetch();
+		},
 	},
-}]);
+]);
 
 const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.manageAntennas,
-	icon: 'ti ti-antenna',
+	icon: "ti ti-antenna",
 });
 
 onActivated(() => {
-	antennasCache.fetch(() => api('antennas/list'));
+	antennasCache.fetch(() => api("antennas/list"));
 });
 </script>
 

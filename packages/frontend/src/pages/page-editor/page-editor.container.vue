@@ -23,32 +23,35 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { i18n } from '@/i18n';
+import { ref } from "vue";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	expanded?: boolean;
-	removable?: boolean;
-	draggable?: boolean;
-}>(), {
-	expanded: true,
-	removable: true,
-});
+const props = withDefaults(
+	defineProps<{
+		expanded?: boolean;
+		removable?: boolean;
+		draggable?: boolean;
+	}>(),
+	{
+		expanded: true,
+		removable: true,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'toggle', show: boolean): void;
-	(ev: 'remove'): void;
+	(ev: "toggle", show: boolean): void;
+	(ev: "remove"): void;
 }>();
 
 const showBody = ref(props.expanded);
 
 function toggleContent(show: boolean) {
 	showBody.value = show;
-	emit('toggle', show);
+	emit("toggle", show);
 }
 
 function remove() {
-	emit('remove');
+	emit("remove");
 }
 </script>
 

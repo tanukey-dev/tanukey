@@ -31,24 +31,26 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, shallowRef } from 'vue';
-import type { Invite } from 'misskey-js/built/entities';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import MkButton from '@/components/MkButton.vue';
-import MkPagination, { Paging } from '@/components/MkPagination.vue';
-import MkInviteCode from '@/components/MkInviteCode.vue';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { serverErrorImageUrl, instance } from '@/instance';
-import { $i } from '@/account';
+import { computed, ref, shallowRef } from "vue";
+import type { Invite } from "misskey-js/built/entities";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import MkButton from "@/components/MkButton.vue";
+import MkPagination, { Paging } from "@/components/MkPagination.vue";
+import MkInviteCode from "@/components/MkInviteCode.vue";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { serverErrorImageUrl, instance } from "@/instance";
+import { $i } from "@/account";
 
 const pagingComponent = shallowRef<InstanceType<typeof MkPagination>>();
 const currentInviteLimit = ref<null | number>(null);
-const inviteLimit = (($i != null && $i.policies.inviteLimit) || (($i == null && instance.policies.inviteLimit))) as number;
-const inviteLimitCycle = (($i != null && $i.policies.inviteLimitCycle) || ($i == null && instance.policies.inviteLimitCycle)) as number;
+const inviteLimit = (($i != null && $i.policies.inviteLimit) ||
+	($i == null && instance.policies.inviteLimit)) as number;
+const inviteLimitCycle = (($i != null && $i.policies.inviteLimitCycle) ||
+	($i == null && instance.policies.inviteLimitCycle)) as number;
 
 const pagination: Paging = {
-	endpoint: 'invite/list' as const,
+	endpoint: "invite/list" as const,
 	limit: 10,
 };
 
@@ -63,9 +65,9 @@ const resetCycle = computed<null | string>(() => {
 });
 
 async function create() {
-	const ticket = await os.api('invite/create');
+	const ticket = await os.api("invite/create");
 	os.alert({
-		type: 'success',
+		type: "success",
 		title: i18n.ts.inviteCodeCreated,
 		text: ticket.code,
 	});
@@ -82,14 +84,14 @@ function deleted(id: string) {
 }
 
 async function update() {
-	currentInviteLimit.value = (await os.api('invite/limit')).remaining;
+	currentInviteLimit.value = (await os.api("invite/limit")).remaining;
 }
 
 update();
 
 definePageMetadata({
 	title: i18n.ts.invite,
-	icon: 'ti ti-user-plus',
+	icon: "ti ti-user-plus",
 });
 </script>
 

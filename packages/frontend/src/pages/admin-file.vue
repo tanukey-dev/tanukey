@@ -62,33 +62,33 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkObjectView from '@/components/MkObjectView.vue';
-import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import FormSection from '@/components/form/section.vue';
-import MkUserCardMini from '@/components/MkUserCardMini.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import bytes from '@/filters/bytes';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { iAmAdmin, iAmModerator } from '@/account';
+import { computed } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkObjectView from "@/components/MkObjectView.vue";
+import MkDriveFileThumbnail from "@/components/MkDriveFileThumbnail.vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import FormSection from "@/components/form/section.vue";
+import MkUserCardMini from "@/components/MkUserCardMini.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import bytes from "@/filters/bytes";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { iAmAdmin, iAmModerator } from "@/account";
 
-let tab = $ref('overview');
+let tab = $ref("overview");
 let file: any = $ref(null);
 let info: any = $ref(null);
 let isSensitive: boolean = $ref(false);
 
 const props = defineProps<{
-	fileId: string,
+	fileId: string;
 }>();
 
 async function fetch() {
-	file = await os.api('drive/files/show', { fileId: props.fileId });
-	info = await os.api('admin/drive/show-file', { fileId: props.fileId });
+	file = await os.api("drive/files/show", { fileId: props.fileId });
+	info = await os.api("admin/drive/show-file", { fileId: props.fileId });
 	isSensitive = file.isSensitive;
 }
 
@@ -96,47 +96,57 @@ fetch();
 
 async function del() {
 	const { canceled } = await os.confirm({
-		type: 'warning',
-		text: i18n.t('removeAreYouSure', { x: file.name }),
+		type: "warning",
+		text: i18n.t("removeAreYouSure", { x: file.name }),
 	});
 	if (canceled) return;
 
-	os.apiWithDialog('drive/files/delete', {
+	os.apiWithDialog("drive/files/delete", {
 		fileId: file.id,
 	});
 }
 
 async function toggleIsSensitive(v) {
-	await os.api('drive/files/update', { fileId: props.fileId, isSensitive: v });
+	await os.api("drive/files/update", { fileId: props.fileId, isSensitive: v });
 	isSensitive = v;
 }
 
-const headerActions = $computed(() => [{
-	text: i18n.ts.openInNewTab,
-	icon: 'ti ti-external-link',
-	handler: () => {
-		window.open(file.url, '_blank');
+const headerActions = $computed(() => [
+	{
+		text: i18n.ts.openInNewTab,
+		icon: "ti ti-external-link",
+		handler: () => {
+			window.open(file.url, "_blank");
+		},
 	},
-}]);
+]);
 
-const headerTabs = $computed(() => [{
-	key: 'overview',
-	title: i18n.ts.overview,
-	icon: 'ti ti-info-circle',
-}, iAmModerator ? {
-	key: 'ip',
-	title: 'IP',
-	icon: 'ti ti-password',
-} : null, {
-	key: 'raw',
-	title: 'Raw data',
-	icon: 'ti ti-code',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "overview",
+		title: i18n.ts.overview,
+		icon: "ti ti-info-circle",
+	},
+	iAmModerator
+		? {
+				key: "ip",
+				title: "IP",
+				icon: "ti ti-password",
+			}
+		: null,
+	{
+		key: "raw",
+		title: "Raw data",
+		icon: "ti ti-code",
+	},
+]);
 
-definePageMetadata(computed(() => ({
-	title: file ? i18n.ts.file + ': ' + file.name : i18n.ts.file,
-	icon: 'ti ti-file',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: file ? i18n.ts.file + ": " + file.name : i18n.ts.file,
+		icon: "ti ti-file",
+	})),
+);
 </script>
 
 <style lang="scss" scoped>

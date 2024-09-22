@@ -55,24 +55,24 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue';
-import MkNotes from '@/components/MkNotes.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkRadios from '@/components/MkRadios.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import FormSplit from '@/components/form/split.vue';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import { useRouter } from '@/router';
-import MkFolder from '@/components/MkFolder.vue';
+import { onMounted, ref, watch } from "vue";
+import MkNotes from "@/components/MkNotes.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkRadios from "@/components/MkRadios.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import FormSplit from "@/components/form/split.vue";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import { useRouter } from "@/router";
+import MkFolder from "@/components/MkFolder.vue";
 
 const router = useRouter();
 
 let key = $ref(0);
-let searchQuery = ref('');
-let searchOrigin = ref<string>('local');
+let searchQuery = ref("");
+let searchOrigin = ref<string>("local");
 let notePagination = $ref();
 let user = ref<any>(null);
 let createAtBegin = ref<any>(null);
@@ -117,54 +117,56 @@ function setSearchParams(searchParams, name, value): void {
 }
 function updateUrlParameter(): void {
 	const searchParams = new URLSearchParams(window.location.search);
-	setSearchParams(searchParams, 'q', searchQuery.value);
-	setSearchParams(searchParams, 'origin', searchOrigin.value);
-	setSearchParams(searchParams, 'userId', user.value?.id);
-	setSearchParams(searchParams, 'createAtBegin', createAtBegin.value);
-	setSearchParams(searchParams, 'createAtEnd', createAtEnd.value);
-	setSearchParams(searchParams, 'reverseOrder', reverseOrder.value);
-	setSearchParams(searchParams, 'hasFile', hasFile.value);
-	history.replaceState('', '', `?${searchParams.toString()}`);
+	setSearchParams(searchParams, "q", searchQuery.value);
+	setSearchParams(searchParams, "origin", searchOrigin.value);
+	setSearchParams(searchParams, "userId", user.value?.id);
+	setSearchParams(searchParams, "createAtBegin", createAtBegin.value);
+	setSearchParams(searchParams, "createAtEnd", createAtEnd.value);
+	setSearchParams(searchParams, "reverseOrder", reverseOrder.value);
+	setSearchParams(searchParams, "hasFile", hasFile.value);
+	history.replaceState("", "", `?${searchParams.toString()}`);
 }
 
 async function loadUrlParameter() {
 	const searchParams = new URLSearchParams(window.location.search);
-	const query = searchParams.get('q');
+	const query = searchParams.get("q");
 	if (query) {
 		searchQuery.value = query;
 	}
-	const origin = searchParams.get('origin');
+	const origin = searchParams.get("origin");
 	if (origin) {
 		searchOrigin.value = origin;
 	}
-	const userId = searchParams.get('userId');
+	const userId = searchParams.get("userId");
 	if (userId) {
-		user.value = await os.api('users/show', {
-			userId: userId,
-		}).catch(() => {
-			user.value = null;
-		});
+		user.value = await os
+			.api("users/show", {
+				userId: userId,
+			})
+			.catch(() => {
+				user.value = null;
+			});
 		optionOpen.value = true;
 		userOptionOpen.value = true;
 	}
-	const begin = searchParams.get('createAtBegin');
+	const begin = searchParams.get("createAtBegin");
 	if (begin) {
 		createAtBegin.value = begin;
 		optionOpen.value = true;
 	}
-	const end = searchParams.get('createAtEnd');
+	const end = searchParams.get("createAtEnd");
 	if (end) {
 		createAtEnd.value = end;
 		optionOpen.value = true;
 	}
-	const _reverseOrder = searchParams.get('reverseOrder');
+	const _reverseOrder = searchParams.get("reverseOrder");
 	if (_reverseOrder) {
-		reverseOrder.value = _reverseOrder === 'true';
+		reverseOrder.value = _reverseOrder === "true";
 		optionOpen.value = true;
 	}
-	const _hasFile = searchParams.get('hasFile');
+	const _hasFile = searchParams.get("hasFile");
 	if (_hasFile) {
-		hasFile.value = _hasFile === 'true';
+		hasFile.value = _hasFile === "true";
 		optionOpen.value = true;
 	}
 
@@ -177,7 +179,7 @@ async function loadUrlParameter() {
 await loadUrlParameter();
 
 function selectUser() {
-	os.selectUser().then(_user => {
+	os.selectUser().then((_user) => {
 		user.value = _user;
 	});
 }
@@ -185,8 +187,8 @@ function selectUser() {
 async function search() {
 	const query = searchQuery.value.toString().trim();
 
-	if (query.startsWith('https://')) {
-		const promise = os.api('ap/show', {
+	if (query.startsWith("https://")) {
+		const promise = os.api("ap/show", {
 			uri: query,
 		});
 
@@ -194,17 +196,17 @@ async function search() {
 
 		const res = await promise;
 
-		if (res.type === 'User') {
+		if (res.type === "User") {
 			router.push(`/@${res.object.username}@${res.object.host}`);
-		} else if (res.type === 'Note') {
+		} else if (res.type === "Note") {
 			router.push(`/notes/${res.object.id}`);
 		}
 
 		return;
 	}
 
-	let begin: Date|null = null;
-	let end: Date|null = null;
+	let begin: Date | null = null;
+	let end: Date | null = null;
 	if (createAtBegin.value !== null) {
 		begin = new Date(createAtBegin.value);
 		begin.setMilliseconds(begin.getMilliseconds() - localTimeDiff);
@@ -215,7 +217,7 @@ async function search() {
 	}
 
 	notePagination = {
-		endpoint: 'notes/search',
+		endpoint: "notes/search",
 		limit: 10,
 		params: {
 			query: query,
@@ -230,7 +232,6 @@ async function search() {
 
 	key++;
 }
-
 </script>
 
 <style lang="scss" module>

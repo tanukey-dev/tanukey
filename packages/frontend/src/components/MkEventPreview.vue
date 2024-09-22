@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { i18n } from '@/i18n';
+import { computed } from "vue";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	event: Record<string, any>;

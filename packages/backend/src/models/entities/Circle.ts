@@ -1,8 +1,15 @@
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from '../id.js';
-import { User } from './User.js';
-import { DriveFile } from './DriveFile.js';
-import { Page } from './Page.js';
+import {
+	PrimaryColumn,
+	Entity,
+	Index,
+	JoinColumn,
+	Column,
+	ManyToOne,
+} from "typeorm";
+import { id } from "../id.js";
+import { User } from "./User.js";
+import { DriveFile } from "./DriveFile.js";
+import { Page } from "./Page.js";
 
 @Entity()
 export class Circle {
@@ -10,8 +17,8 @@ export class Circle {
 	public id: string;
 
 	@Index()
-	@Column('timestamp with time zone', {
-		comment: 'The created date of the Circle.',
+	@Column("timestamp with time zone", {
+		comment: "The created date of the Circle.",
 	})
 	public createdAt: Date;
 
@@ -19,44 +26,45 @@ export class Circle {
 	@Column({
 		...id(),
 		nullable: true,
-		comment: 'The owner ID.',
+		comment: "The owner ID.",
 	})
-	public userId: User['id'] | null;
+	public userId: User["id"] | null;
 
-	@ManyToOne(type => User, {
-		onDelete: 'SET NULL',
+	@ManyToOne((type) => User, {
+		onDelete: "SET NULL",
 	})
 	@JoinColumn()
 	public user: User | null;
 
-	@Column('varchar', {
+	@Column("varchar", {
 		length: 128,
 	})
 	public name: string;
 
-	@Column('varchar', {
-		length: 8192, nullable: true,
+	@Column("varchar", {
+		length: 8192,
+		nullable: true,
 	})
 	public description: string | null;
 
 	@Column({
 		...id(),
 		nullable: true,
-		comment: 'The ID of banner Channel.',
+		comment: "The ID of banner Channel.",
 	})
-	public profileImageId: DriveFile['id'] | null;
+	public profileImageId: DriveFile["id"] | null;
 
-	@ManyToOne(type => DriveFile, {
-		onDelete: 'SET NULL',
+	@ManyToOne((type) => DriveFile, {
+		onDelete: "SET NULL",
 	})
 	@JoinColumn()
 	public profileImage: DriveFile | null;
 
 	@Column({ ...id(), nullable: true })
-	public pageId: Page['id'] | null;
+	public pageId: Page["id"] | null;
 
 	@Index()
-	@Column('boolean', {
+	@Column("boolean", {
 		default: false,
 	})
 	public isArchived: boolean;

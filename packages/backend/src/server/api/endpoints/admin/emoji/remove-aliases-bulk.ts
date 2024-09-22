@@ -1,34 +1,39 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { CustomEmojiService } from '@/core/CustomEmojiService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { CustomEmojiService } from "@/core/CustomEmojiService.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
-	requireRolePolicy: 'canManageCustomEmojis',
-	kind: 'write:admin:emoji',
+	requireRolePolicy: "canManageCustomEmojis",
+	kind: "write:admin:emoji",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		ids: { type: 'array', items: {
-			type: 'string', format: 'misskey:id',
-		} },
-		aliases: { type: 'array', items: {
-			type: 'string',
-		} },
+		ids: {
+			type: "array",
+			items: {
+				type: "string",
+				format: "misskey:id",
+			},
+		},
+		aliases: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
 	},
-	required: ['ids', 'aliases'],
+	required: ["ids", "aliases"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor(
-		private customEmojiService: CustomEmojiService,
-	) {
+	constructor(private customEmojiService: CustomEmojiService) {
 		super(meta, paramDef, async (ps, me) => {
 			await this.customEmojiService.removeAliasesBulk(ps.ids, ps.aliases);
 		});

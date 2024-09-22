@@ -11,59 +11,64 @@
 </template>
 
 <script lang="ts" setup>
-import XQueue from './queue.chart.vue';
-import XHeader from './_header_.vue';
-import * as os from '@/os';
-import * as config from '@/config';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkButton from '@/components/MkButton.vue';
+import XQueue from "./queue.chart.vue";
+import XHeader from "./_header_.vue";
+import * as os from "@/os";
+import * as config from "@/config";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkButton from "@/components/MkButton.vue";
 
-let tab = $ref('deliver');
+let tab = $ref("deliver");
 
 function clear() {
 	os.confirm({
-		type: 'warning',
+		type: "warning",
 		title: i18n.ts.clearQueueConfirmTitle,
 		text: i18n.ts.clearQueueConfirmText,
 	}).then(({ canceled }) => {
 		if (canceled) return;
 
-		os.apiWithDialog('admin/queue/clear');
+		os.apiWithDialog("admin/queue/clear");
 	});
 }
 
 function promoteAllQueues() {
 	os.confirm({
-		type: 'warning',
+		type: "warning",
 		title: i18n.ts.retryAllQueuesConfirmTitle,
 		text: i18n.ts.retryAllQueuesConfirmText,
 	}).then(({ canceled }) => {
 		if (canceled) return;
 
-		os.apiWithDialog('admin/queue/promote', { type: tab });
+		os.apiWithDialog("admin/queue/promote", { type: tab });
 	});
 }
 
-const headerActions = $computed(() => [{
-	asFullButton: true,
-	icon: 'ti ti-external-link',
-	text: i18n.ts.dashboard,
-	handler: () => {
-		window.open(config.url + '/queue', '_blank');
+const headerActions = $computed(() => [
+	{
+		asFullButton: true,
+		icon: "ti ti-external-link",
+		text: i18n.ts.dashboard,
+		handler: () => {
+			window.open(config.url + "/queue", "_blank");
+		},
 	},
-}]);
+]);
 
-const headerTabs = $computed(() => [{
-	key: 'deliver',
-	title: 'Deliver',
-}, {
-	key: 'inbox',
-	title: 'Inbox',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "deliver",
+		title: "Deliver",
+	},
+	{
+		key: "inbox",
+		title: "Inbox",
+	},
+]);
 
 definePageMetadata({
 	title: i18n.ts.jobQueue,
-	icon: 'ti ti-clock-play',
+	icon: "ti ti-clock-play",
 });
 </script>

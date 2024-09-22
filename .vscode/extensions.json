@@ -7,5 +7,6 @@
 		"Orta.vscode-jest",
 		"dbaeumer.vscode-eslint",
 		"mrmlnc.vscode-json5"
+		"biomejs.biome"
 	]
 }

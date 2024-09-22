@@ -29,14 +29,14 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, computed } from 'vue';
-import * as os from '@/os';
-import { userPage } from '@/filters/user';
-import { i18n } from '@/i18n';
-import MkUserCardMini from '@/components/MkUserCardMini.vue';
-import MkButton from '@/components/MkButton.vue';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { serverErrorImageUrl } from '@/instance';
+import { watch, computed } from "vue";
+import * as os from "@/os";
+import { userPage } from "@/filters/user";
+import { i18n } from "@/i18n";
+import MkUserCardMini from "@/components/MkUserCardMini.vue";
+import MkButton from "@/components/MkButton.vue";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { serverErrorImageUrl } from "@/instance";
 
 const props = defineProps<{
 	listId: string;
@@ -47,23 +47,25 @@ let error = $ref();
 let users = $ref([]);
 
 function fetchList(): void {
-	os.api('users/lists/show', {
+	os.api("users/lists/show", {
 		listId: props.listId,
 		forPublic: true,
-	}).then(_list => {
-		list = _list;
-		os.api('users/show', {
-			userIds: list.userIds,
-		}).then(_users => {
-			users = _users;
+	})
+		.then((_list) => {
+			list = _list;
+			os.api("users/show", {
+				userIds: list.userIds,
+			}).then((_users) => {
+				users = _users;
+			});
+		})
+		.catch((err) => {
+			error = err;
 		});
-	}).catch(err => {
-		error = err;
-	});
 }
 
 function like() {
-	os.apiWithDialog('users/lists/favorite', {
+	os.apiWithDialog("users/lists/favorite", {
 		listId: list.id,
 	}).then(() => {
 		list.isLiked = true;
@@ -72,7 +74,7 @@ function like() {
 }
 
 function unlike() {
-	os.apiWithDialog('users/lists/unfavorite', {
+	os.apiWithDialog("users/lists/unfavorite", {
 		listId: list.id,
 	}).then(() => {
 		list.isLiked = false;
@@ -85,7 +87,10 @@ async function create() {
 		title: i18n.ts.enterListName,
 	});
 	if (canceled) return;
-	await os.apiWithDialog('users/lists/create-from-public', { name: name, listId: list.id });
+	await os.apiWithDialog("users/lists/create-from-public", {
+		name: name,
+		listId: list.id,
+	});
 }
 
 watch(() => props.listId, fetchList, { immediate: true });
@@ -94,10 +99,16 @@ const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => list ? {
-	title: list.name,
-	icon: 'ti ti-list',
-} : null));
+definePageMetadata(
+	computed(() =>
+		list
+			? {
+					title: list.name,
+					icon: "ti ti-list",
+				}
+			: null,
+	),
+);
 </script>
 <style lang="scss" module>
 .main {

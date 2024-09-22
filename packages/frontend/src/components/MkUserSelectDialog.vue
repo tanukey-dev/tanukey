@@ -52,71 +52,74 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import * as misskey from 'misskey-js';
-import MkInput from '@/components/MkInput.vue';
-import FormSplit from '@/components/form/split.vue';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
-import { hostname } from '@/config';
+import { onMounted } from "vue";
+import * as misskey from "misskey-js";
+import MkInput from "@/components/MkInput.vue";
+import FormSplit from "@/components/form/split.vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
+import { hostname } from "@/config";
 
 const emit = defineEmits<{
-	(ev: 'ok', selected: misskey.entities.UserDetailed): void;
-	(ev: 'cancel'): void;
-	(ev: 'closed'): void;
+	(ev: "ok", selected: misskey.entities.UserDetailed): void;
+	(ev: "cancel"): void;
+	(ev: "closed"): void;
 }>();
 
-const props = withDefaults(defineProps<{
-	includeSelf?: boolean;
-	localOnly?: boolean;
-}>(), {
-	includeSelf: true,
-	localOnly: false,
-});
+const props = withDefaults(
+	defineProps<{
+		includeSelf?: boolean;
+		localOnly?: boolean;
+	}>(),
+	{
+		includeSelf: true,
+		localOnly: false,
+	},
+);
 
-let username = $ref('');
-let host = $ref('');
+let username = $ref("");
+let host = $ref("");
 let users: misskey.entities.UserDetailed[] = $ref([]);
 let recentUsers: misskey.entities.UserDetailed[] = $ref([]);
 let selected: misskey.entities.UserDetailed | null = $ref(null);
 let dialogEl = $ref();
 
 const search = () => {
-	if (username === '' && host === '') {
+	if (username === "" && host === "") {
 		users = [];
 		return;
 	}
-	os.api('users/search-by-username-and-host', {
+	os.api("users/search-by-username-and-host", {
 		username: username,
 		host: host,
 		limit: 10,
 		detail: false,
-	}).then(_users => {
+	}).then((_users) => {
 		if (props.includeSelf) {
 			users = _users;
 		} else {
-			users = _users?.filter(u => u.id !== $i?.id);
+			users = _users?.filter((u) => u.id !== $i?.id);
 		}
 	});
 };
 
 const ok = () => {
 	if (selected == null) return;
-	emit('ok', selected);
+	emit("ok", selected);
 	dialogEl.close();
 
 	// 最近使ったユーザー更新
 	let recents = defaultStore.state.recentlyUsedUsers;
-	recents = recents.filter(x => x !== selected.id);
+	recents = recents.filter((x) => x !== selected.id);
 	recents.unshift(selected.id);
-	defaultStore.set('recentlyUsedUsers', recents.splice(0, 16));
+	defaultStore.set("recentlyUsedUsers", recents.splice(0, 16));
 };
 
 const cancel = () => {
-	emit('cancel');
+	emit("cancel");
 	dialogEl.close();
 };
 
@@ -125,10 +128,13 @@ onMounted(() => {
 		host = hostname;
 	}
 
-	os.api('users/show', {
+	os.api("users/show", {
 		userIds: defaultStore.state.recentlyUsedUsers,
-	}).then(users => {
-		if (props.includeSelf && users.find(x => $i ? x.id === $i.id : true) == null) {
+	}).then((users) => {
+		if (
+			props.includeSelf &&
+			users.find((x) => ($i ? x.id === $i.id : true)) == null
+		) {
 			recentUsers = [$i, ...users];
 		} else {
 			recentUsers = users;

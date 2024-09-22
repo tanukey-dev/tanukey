@@ -30,33 +30,37 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted } from 'vue';
-import * as Misskey from 'misskey-js';
-import * as os from '@/os';
-import { useStream } from '@/stream';
-import { i18n } from '@/i18n';
-import { claimAchievement } from '@/scripts/achievements';
-import { $i } from '@/account';
+import { onBeforeUnmount, onMounted } from "vue";
+import * as Misskey from "misskey-js";
+import * as os from "@/os";
+import { useStream } from "@/stream";
+import { i18n } from "@/i18n";
+import { claimAchievement } from "@/scripts/achievements";
+import { $i } from "@/account";
 
-const props = withDefaults(defineProps<{
-	user: Misskey.entities.UserDetailed,
-	full?: boolean,
-	large?: boolean,
-}>(), {
-	full: false,
-	large: false,
-});
+const props = withDefaults(
+	defineProps<{
+		user: Misskey.entities.UserDetailed;
+		full?: boolean;
+		large?: boolean;
+	}>(),
+	{
+		full: false,
+		large: false,
+	},
+);
 
 let isFollowing = $ref(props.user.isFollowing);
-let hasPendingFollowRequestFromYou = $ref(props.user.hasPendingFollowRequestFromYou);
+let hasPendingFollowRequestFromYou = $ref(
+	props.user.hasPendingFollowRequestFromYou,
+);
 let wait = $ref(false);
-const connection = useStream().useChannel('main');
+const connection = useStream().useChannel("main");
 
 if (props.user.isFollowing == null) {
-	os.api('users/show', {
+	os.api("users/show", {
 		userId: props.user.id,
-	})
-		.then(onFollowChange);
+	}).then(onFollowChange);
 }
 
 function onFollowChange(user: Misskey.entities.UserDetailed) {
@@ -72,49 +76,51 @@ async function onClick() {
 	try {
 		if (isFollowing) {
 			const { canceled } = await os.confirm({
-				type: 'warning',
-				text: i18n.t('unfollowConfirm', { name: props.user.name || props.user.username }),
+				type: "warning",
+				text: i18n.t("unfollowConfirm", {
+					name: props.user.name || props.user.username,
+				}),
 			});
 
 			if (canceled) return;
 
-			await os.api('following/delete', {
+			await os.api("following/delete", {
 				userId: props.user.id,
 			});
 		} else {
 			if (hasPendingFollowRequestFromYou) {
-				await os.api('following/requests/cancel', {
+				await os.api("following/requests/cancel", {
 					userId: props.user.id,
 				});
 				hasPendingFollowRequestFromYou = false;
 			} else {
 				try {
-					await os.api('following/create', {
+					await os.api("following/create", {
 						userId: props.user.id,
 					});
 				} catch (err) {
-					if (err.code === 'LIMIT') {
+					if (err.code === "LIMIT") {
 						os.alert({
-							type: 'error',
+							type: "error",
 							text: i18n.ts.followingLimit,
 						});
 					}
 				}
 				hasPendingFollowRequestFromYou = true;
 
-				claimAchievement('following1');
+				claimAchievement("following1");
 
 				if ($i.followingCount >= 10) {
-					claimAchievement('following10');
+					claimAchievement("following10");
 				}
 				if ($i.followingCount >= 50) {
-					claimAchievement('following50');
+					claimAchievement("following50");
 				}
 				if ($i.followingCount >= 100) {
-					claimAchievement('following100');
+					claimAchievement("following100");
 				}
 				if ($i.followingCount >= 300) {
-					claimAchievement('following300');
+					claimAchievement("following300");
 				}
 			}
 		}
@@ -126,8 +132,8 @@ async function onClick() {
 }
 
 onMounted(() => {
-	connection.on('follow', onFollowChange);
-	connection.on('unfollow', onFollowChange);
+	connection.on("follow", onFollowChange);
+	connection.on("unfollow", onFollowChange);
 });
 
 onBeforeUnmount(() => {

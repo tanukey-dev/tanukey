@@ -14,10 +14,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
+import { ref, watch } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	p: () => Promise<any>;
@@ -47,11 +47,15 @@ const process = () => {
 	});
 };
 
-watch(() => props.p, () => {
-	process();
-}, {
-	immediate: true,
-});
+watch(
+	() => props.p,
+	() => {
+		process();
+	},
+	{
+		immediate: true,
+	},
+);
 
 const retry = () => {
 	process();

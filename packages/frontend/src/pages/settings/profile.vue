@@ -97,27 +97,39 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref, watch, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import FormSplit from '@/components/form/split.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import FormSlot from '@/components/form/slot.vue';
-import { selectFile } from '@/scripts/select-file';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
-import { langmap } from '@/scripts/langmap';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { claimAchievement } from '@/scripts/achievements';
-import { defaultStore } from '@/store';
+import {
+	computed,
+	reactive,
+	ref,
+	watch,
+	defineAsyncComponent,
+	onMounted,
+	onUnmounted,
+} from "vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import FormSplit from "@/components/form/split.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import FormSlot from "@/components/form/slot.vue";
+import { selectFile } from "@/scripts/select-file";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
+import { langmap } from "@/scripts/langmap";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { claimAchievement } from "@/scripts/achievements";
+import { defaultStore } from "@/store";
 
-const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
+const Sortable = defineAsyncComponent(() =>
+	import("vuedraggable").then((x) => x.default),
+);
 
-const reactionAcceptance = computed(defaultStore.makeGetterSetter('reactionAcceptance'));
+const reactionAcceptance = computed(
+	defaultStore.makeGetterSetter("reactionAcceptance"),
+);
 
 const profile = reactive({
 	name: $i.name,
@@ -129,20 +141,30 @@ const profile = reactive({
 	isCat: $i.isCat,
 });
 
-watch(() => profile, () => {
-	save();
-}, {
-	deep: true,
-});
+watch(
+	() => profile,
+	() => {
+		save();
+	},
+	{
+		deep: true,
+	},
+);
 
-const fields = ref($i?.fields.map(field => ({ id: Math.random().toString(), name: field.name, value: field.value })) ?? []);
+const fields = ref(
+	$i?.fields.map((field) => ({
+		id: Math.random().toString(),
+		name: field.name,
+		value: field.value,
+	})) ?? [],
+);
 const fieldEditMode = ref(false);
 
 function addField() {
 	fields.value.push({
 		id: Math.random().toString(),
-		name: '',
-		value: '',
+		name: "",
+		value: "",
 	});
 }
 
@@ -155,13 +177,15 @@ function deleteField(index: number) {
 }
 
 function saveFields() {
-	os.apiWithDialog('i/update', {
-		fields: fields.value.filter(field => field.name !== '' && field.value !== '').map(field => ({ name: field.name, value: field.value })),
+	os.apiWithDialog("i/update", {
+		fields: fields.value
+			.filter((field) => field.name !== "" && field.value !== "")
+			.map((field) => ({ name: field.name, value: field.value })),
 	});
 }
 
 function save() {
-	os.apiWithDialog('i/update', {
+	os.apiWithDialog("i/update", {
 		// 空文字列をnullにしたいので??は使うな
 		// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 		name: profile.name || null,
@@ -176,61 +200,65 @@ function save() {
 		isBot: !!profile.isBot,
 		isCat: !!profile.isCat,
 	});
-	claimAchievement('profileFilled');
+	claimAchievement("profileFilled");
 	if (profile.isCat) {
-		claimAchievement('markedAsCat');
+		claimAchievement("markedAsCat");
 	}
 }
 
 function changeAvatar(ev) {
-	selectFile(ev.currentTarget ?? ev.target, i18n.ts.avatar).then(async (file) => {
-		let originalOrCropped = file;
+	selectFile(ev.currentTarget ?? ev.target, i18n.ts.avatar).then(
+		async (file) => {
+			let originalOrCropped = file;
 
-		const { canceled } = await os.confirm({
-			type: 'question',
-			text: i18n.t('cropImageAsk'),
-			okText: i18n.ts.cropYes,
-			cancelText: i18n.ts.cropNo,
-		});
-
-		if (!canceled) {
-			originalOrCropped = await os.cropImage(file, {
-				aspectRatio: 1,
+			const { canceled } = await os.confirm({
+				type: "question",
+				text: i18n.t("cropImageAsk"),
+				okText: i18n.ts.cropYes,
+				cancelText: i18n.ts.cropNo,
 			});
-		}
 
-		const i = await os.apiWithDialog('i/update', {
-			avatarId: originalOrCropped.id,
-		});
-		$i.avatarId = i.avatarId;
-		$i.avatarUrl = i.avatarUrl;
-		claimAchievement('profileFilled');
-	});
+			if (!canceled) {
+				originalOrCropped = await os.cropImage(file, {
+					aspectRatio: 1,
+				});
+			}
+
+			const i = await os.apiWithDialog("i/update", {
+				avatarId: originalOrCropped.id,
+			});
+			$i.avatarId = i.avatarId;
+			$i.avatarUrl = i.avatarUrl;
+			claimAchievement("profileFilled");
+		},
+	);
 }
 
 function changeBanner(ev) {
-	selectFile(ev.currentTarget ?? ev.target, i18n.ts.banner).then(async (file) => {
-		let originalOrCropped = file;
+	selectFile(ev.currentTarget ?? ev.target, i18n.ts.banner).then(
+		async (file) => {
+			let originalOrCropped = file;
 
-		const { canceled } = await os.confirm({
-			type: 'question',
-			text: i18n.t('cropImageAsk'),
-			okText: i18n.ts.cropYes,
-			cancelText: i18n.ts.cropNo,
-		});
-
-		if (!canceled) {
-			originalOrCropped = await os.cropImage(file, {
-				aspectRatio: 2,
+			const { canceled } = await os.confirm({
+				type: "question",
+				text: i18n.t("cropImageAsk"),
+				okText: i18n.ts.cropYes,
+				cancelText: i18n.ts.cropNo,
 			});
-		}
 
-		const i = await os.apiWithDialog('i/update', {
-			bannerId: originalOrCropped.id,
-		});
-		$i.bannerId = i.bannerId;
-		$i.bannerUrl = i.bannerUrl;
-	});
+			if (!canceled) {
+				originalOrCropped = await os.cropImage(file, {
+					aspectRatio: 2,
+				});
+			}
+
+			const i = await os.apiWithDialog("i/update", {
+				bannerId: originalOrCropped.id,
+			});
+			$i.bannerId = i.bannerId;
+			$i.bannerUrl = i.bannerUrl;
+		},
+	);
 }
 
 const headerActions = $computed(() => []);
@@ -239,7 +267,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.profile,
-	icon: 'ti ti-user',
+	icon: "ti ti-user",
 });
 </script>
 

@@ -1,17 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueueService } from '@/core/QueueService.js';
+import { Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { QueueService } from "@/core/QueueService.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:drive',
+	kind: "write:admin:drive",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;
@@ -19,9 +19,7 @@ export const paramDef = {
 // eslint-disable-next-line import/no-default-export
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor(
-		private queueService: QueueService,
-	) {
+	constructor(private queueService: QueueService) {
 		super(meta, paramDef, async (ps, me) => {
 			this.queueService.createCleanRemoteFilesJob();
 		});

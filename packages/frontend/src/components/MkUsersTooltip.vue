@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import MkTooltip from './MkTooltip.vue';
+import {} from "vue";
+import MkTooltip from "./MkTooltip.vue";
 
 defineProps<{
 	showing: boolean;
@@ -22,7 +22,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+	(ev: "closed"): void;
 }>();
 </script>
 

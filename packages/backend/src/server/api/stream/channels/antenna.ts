@@ -1,22 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { isUserRelated } from '@/misc/is-user-related.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { bindThis } from '@/decorators.js';
-import Channel from '../channel.js';
-import type { StreamMessages } from '../types.js';
+import { Injectable } from "@nestjs/common";
+import { isUserRelated } from "@/misc/is-user-related.js";
+import { NoteEntityService } from "@/core/entities/NoteEntityService.js";
+import { bindThis } from "@/decorators.js";
+import Channel from "../channel.js";
+import type { StreamMessages } from "../types.js";
 
 class AntennaChannel extends Channel {
-	public readonly chName = 'antenna';
+	public readonly chName = "antenna";
 	public static shouldShare = false;
 	public static requireCredential = true as const;
-	public static kind = 'read:account';
+	public static kind = "read:account";
 	private antennaId: string;
 
 	constructor(
 		private noteEntityService: NoteEntityService,
 
 		id: string,
-		connection: Channel['connection'],
+		connection: Channel["connection"],
 	) {
 		super(id, connection);
 		//this.onEvent = this.onEvent.bind(this);
@@ -31,20 +31,27 @@ class AntennaChannel extends Channel {
 	}
 
 	@bindThis
-	private async onEvent(data: StreamMessages['antenna']['payload']) {
-		if (data.type === 'note') {
-			const note = await this.noteEntityService.pack(data.body.id, this.user, { detail: true });
+	private async onEvent(data: StreamMessages["antenna"]["payload"]) {
+		if (data.type === "note") {
+			const note = await this.noteEntityService.pack(data.body.id, this.user, {
+				detail: true,
+			});
 
 			// 流れてきたNoteがミュートしているユーザーが関わるものだったら無視する
 			if (isUserRelated(note, this.userIdsWhoMeMuting)) return;
 			// 流れてきたNoteがブロックされているユーザーが関わるものだったら無視する
 			if (isUserRelated(note, this.userIdsWhoBlockingMe)) return;
 
-			if (note.renote && !note.text && isUserRelated(note, this.userIdsWhoMeMutingRenotes)) return;
+			if (
+				note.renote &&
+				!note.text &&
+				isUserRelated(note, this.userIdsWhoMeMutingRenotes)
+			)
+				return;
 
 			this.connection.cacheNote(note);
 
-			this.send('note', note);
+			this.send("note", note);
 		} else {
 			this.send(data.type, data.body);
 		}
@@ -63,17 +70,10 @@ export class AntennaChannelService {
 	public readonly requireCredential = AntennaChannel.requireCredential;
 	public readonly kind = AntennaChannel.kind;
 
-	constructor(
-		private noteEntityService: NoteEntityService,
-	) {
-	}
+	constructor(private noteEntityService: NoteEntityService) {}
 
 	@bindThis
-	public create(id: string, connection: Channel['connection']): AntennaChannel {
-		return new AntennaChannel(
-			this.noteEntityService,
-			id,
-			connection,
-		);
+	public create(id: string, connection: Channel["connection"]): AntennaChannel {
+		return new AntennaChannel(this.noteEntityService, id, connection);
 	}
 }

@@ -1,22 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { QueueService } from '@/core/QueueService.js';
+import { Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { ModerationLogService } from "@/core/ModerationLogService.js";
+import { QueueService } from "@/core/QueueService.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:queue',
+	kind: "write:admin:queue",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		type: { type: 'string', enum: ['deliver', 'inbox'] },
+		type: { type: "string", enum: ["deliver", "inbox"] },
 	},
-	required: ['type'],
+	required: ["type"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -30,15 +30,19 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			let delayedQueues;
 
 			switch (ps.type) {
-				case 'deliver':
+				case "deliver":
 					delayedQueues = await this.queueService.deliverQueue.getDelayed();
-					for (let queueIndex = 0; queueIndex < delayedQueues.length; queueIndex++) {
+					for (
+						let queueIndex = 0;
+						queueIndex < delayedQueues.length;
+						queueIndex++
+					) {
 						const queue = delayedQueues[queueIndex];
 						try {
 							await queue.promote();
 						} catch (e) {
 							if (e instanceof Error) {
-								if (e.message.indexOf('not in a delayed state') !== -1) {
+								if (e.message.indexOf("not in a delayed state") !== -1) {
 									throw e;
 								}
 							} else {
@@ -47,16 +51,20 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 						}
 					}
 					break;
-				
-				case 'inbox':
+
+				case "inbox":
 					delayedQueues = await this.queueService.inboxQueue.getDelayed();
-					for (let queueIndex = 0; queueIndex < delayedQueues.length; queueIndex++) {
+					for (
+						let queueIndex = 0;
+						queueIndex < delayedQueues.length;
+						queueIndex++
+					) {
 						const queue = delayedQueues[queueIndex];
 						try {
 							await queue.promote();
 						} catch (e) {
 							if (e instanceof Error) {
-								if (e.message.indexOf('not in a delayed state') !== -1) {
+								if (e.message.indexOf("not in a delayed state") !== -1) {
 									throw e;
 								}
 							} else {
@@ -67,7 +75,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					break;
 			}
 
-			this.moderationLogService.insertModerationLog(me, 'promoteQueue');
+			this.moderationLogService.insertModerationLog(me, "promoteQueue");
 		});
 	}
 }

@@ -55,16 +55,16 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, shallowRef } from 'vue';
-import MkInput from './MkInput.vue';
-import MkTextarea from './MkTextarea.vue';
-import MkSwitch from './MkSwitch.vue';
-import MkSelect from './MkSelect.vue';
-import MkRange from './MkRange.vue';
-import MkButton from './MkButton.vue';
-import MkRadios from './MkRadios.vue';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import { i18n } from '@/i18n';
+import { reactive, shallowRef } from "vue";
+import MkInput from "./MkInput.vue";
+import MkTextarea from "./MkTextarea.vue";
+import MkSwitch from "./MkSwitch.vue";
+import MkSelect from "./MkSelect.vue";
+import MkRange from "./MkRange.vue";
+import MkButton from "./MkButton.vue";
+import MkRadios from "./MkRadios.vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	title: string;
@@ -72,10 +72,13 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'done', v: {
-		canceled?: boolean;
-		result?: any;
-	}): void;
+	(
+		ev: "done",
+		v: {
+			canceled?: boolean;
+			result?: any;
+		},
+	): void;
 }>();
 
 const dialog = shallowRef<InstanceType<typeof MkModalWindow>>();
@@ -86,14 +89,14 @@ for (const item in props.form) {
 }
 
 function ok() {
-	emit('done', {
+	emit("done", {
 		result: values,
 	});
 	dialog.value.close();
 }
 
 function cancel() {
-	emit('done', {
+	emit("done", {
 		canceled: true,
 	});
 	dialog.value.close();

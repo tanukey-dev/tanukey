@@ -1,31 +1,38 @@
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from '../id.js';
-import { User } from './User.js';
-import { Note } from './Note.js';
-import type { Channel } from './Channel.js';
+import {
+	PrimaryColumn,
+	Entity,
+	Index,
+	JoinColumn,
+	Column,
+	ManyToOne,
+} from "typeorm";
+import { id } from "../id.js";
+import { User } from "./User.js";
+import { Note } from "./Note.js";
+import type { Channel } from "./Channel.js";
 
 @Entity()
-@Index(['userId', 'noteId'], { unique: true })
+@Index(["userId", "noteId"], { unique: true })
 export class NoteUnread {
 	@PrimaryColumn(id())
 	public id: string;
 
 	@Index()
 	@Column(id())
-	public userId: User['id'];
+	public userId: User["id"];
 
-	@ManyToOne(type => User, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => User, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public user: User | null;
 
 	@Index()
 	@Column(id())
-	public noteId: Note['id'];
+	public noteId: Note["id"];
 
-	@ManyToOne(type => Note, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => Note, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public note: Note | null;
@@ -34,30 +41,30 @@ export class NoteUnread {
 	 * メンションか否か
 	 */
 	@Index()
-	@Column('boolean')
+	@Column("boolean")
 	public isMentioned: boolean;
 
 	/**
 	 * ダイレクト投稿か否か
 	 */
 	@Index()
-	@Column('boolean')
+	@Column("boolean")
 	public isSpecified: boolean;
 
 	//#region Denormalized fields
 	@Index()
 	@Column({
 		...id(),
-		comment: '[Denormalized]',
+		comment: "[Denormalized]",
 	})
-	public noteUserId: User['id'];
+	public noteUserId: User["id"];
 
 	@Index()
 	@Column({
 		...id(),
 		nullable: true,
-		comment: '[Denormalized]',
+		comment: "[Denormalized]",
 	})
-	public noteChannelId: Channel['id'] | null;
+	public noteChannelId: Channel["id"] | null;
 	//#endregion
 }

@@ -55,81 +55,114 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, ref } from 'vue';
-import MkUserList from '@/components/MkUserList.vue';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import MkTab from '@/components/MkTab.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import { watch, ref } from "vue";
+import MkUserList from "@/components/MkUserList.vue";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import MkTab from "@/components/MkTab.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	tag?: string;
 }>();
 
-let origin = $ref('local');
+let origin = $ref("local");
 let tagsEl = $shallowRef<InstanceType<typeof MkFoldableSection>>();
 let tagsLocal = $ref([]);
 let tagsRemote = $ref([]);
 const tabs = ref([
-	{ value: 'local', label: i18n.ts.local },
-	{ value: 'remote', label: i18n.ts.remote },
+	{ value: "local", label: i18n.ts.local },
+	{ value: "remote", label: i18n.ts.remote },
 ]);
 
-watch(() => props.tag, () => {
-	if (tagsEl) tagsEl.toggleContent(props.tag == null);
-});
+watch(
+	() => props.tag,
+	() => {
+		if (tagsEl) tagsEl.toggleContent(props.tag == null);
+	},
+);
 
 const tagUsers = $computed(() => ({
-	endpoint: 'hashtags/users' as const,
+	endpoint: "hashtags/users" as const,
 	limit: 30,
 	params: {
 		tag: props.tag,
-		origin: 'combined',
-		sort: '+follower',
+		origin: "combined",
+		sort: "+follower",
 	},
 }));
 
-const pinnedUsers = { endpoint: 'pinned-users', noPaging: true };
-const popularUsers = { endpoint: 'users', limit: 10, noPaging: true, params: {
-	state: 'alive',
-	origin: 'local',
-	sort: '+follower',
-} };
-const recentlyUpdatedUsers = { endpoint: 'users', limit: 10, noPaging: true, params: {
-	origin: 'local',
-	sort: '+updatedAt',
-} };
-const recentlyRegisteredUsers = { endpoint: 'users', limit: 10, noPaging: true, params: {
-	origin: 'local',
-	state: 'alive',
-	sort: '+createdAt',
-} };
-const popularUsersF = { endpoint: 'users', limit: 10, noPaging: true, params: {
-	state: 'alive',
-	origin: 'remote',
-	sort: '+follower',
-} };
-const recentlyUpdatedUsersF = { endpoint: 'users', limit: 10, noPaging: true, params: {
-	origin: 'combined',
-	sort: '+updatedAt',
-} };
-const recentlyRegisteredUsersF = { endpoint: 'users', limit: 10, noPaging: true, params: {
-	origin: 'combined',
-	sort: '+createdAt',
-} };
+const pinnedUsers = { endpoint: "pinned-users", noPaging: true };
+const popularUsers = {
+	endpoint: "users",
+	limit: 10,
+	noPaging: true,
+	params: {
+		state: "alive",
+		origin: "local",
+		sort: "+follower",
+	},
+};
+const recentlyUpdatedUsers = {
+	endpoint: "users",
+	limit: 10,
+	noPaging: true,
+	params: {
+		origin: "local",
+		sort: "+updatedAt",
+	},
+};
+const recentlyRegisteredUsers = {
+	endpoint: "users",
+	limit: 10,
+	noPaging: true,
+	params: {
+		origin: "local",
+		state: "alive",
+		sort: "+createdAt",
+	},
+};
+const popularUsersF = {
+	endpoint: "users",
+	limit: 10,
+	noPaging: true,
+	params: {
+		state: "alive",
+		origin: "remote",
+		sort: "+follower",
+	},
+};
+const recentlyUpdatedUsersF = {
+	endpoint: "users",
+	limit: 10,
+	noPaging: true,
+	params: {
+		origin: "combined",
+		sort: "+updatedAt",
+	},
+};
+const recentlyRegisteredUsersF = {
+	endpoint: "users",
+	limit: 10,
+	noPaging: true,
+	params: {
+		origin: "combined",
+		sort: "+createdAt",
+	},
+};
 
-os.api('hashtags/list', {
-	sort: '+attachedLocalUsers',
+os.api("hashtags/list", {
+	sort: "+attachedLocalUsers",
 	attachedToLocalUserOnly: true,
 	limit: 30,
-}).then(tags => {
+}).then((tags) => {
 	tagsLocal = tags;
 });
-os.api('hashtags/list', {
-	sort: '+attachedRemoteUsers',
+os.api("hashtags/list", {
+	sort: "+attachedRemoteUsers",
 	attachedToRemoteUserOnly: true,
 	limit: 30,
-}).then(tags => {
+}).then((tags) => {
 	tagsRemote = tags;
 });
 </script>

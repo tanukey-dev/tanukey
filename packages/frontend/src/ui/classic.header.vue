@@ -42,15 +42,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, onMounted } from 'vue';
-import { openInstanceMenu } from './_common_/common';
-import * as os from '@/os';
-import { navbarItemDef } from '@/navbar';
-import { openAccountMenu as openAccountMenu_, $i } from '@/account';
-import MkButton from '@/components/MkButton.vue';
-import { defaultStore } from '@/store';
-import { instance } from '@/instance';
-import { i18n } from '@/i18n';
+import { computed, defineAsyncComponent, onMounted } from "vue";
+import { openInstanceMenu } from "./_common_/common";
+import * as os from "@/os";
+import { navbarItemDef } from "@/navbar";
+import { openAccountMenu as openAccountMenu_, $i } from "@/account";
+import MkButton from "@/components/MkButton.vue";
+import { defaultStore } from "@/store";
+import { instance } from "@/instance";
+import { i18n } from "@/i18n";
 
 const WINDOW_THRESHOLD = 1400;
 
@@ -66,25 +66,35 @@ let otherNavItemIndicated = computed<boolean>(() => {
 });
 
 function more(ev: MouseEvent) {
-	os.popup(defineAsyncComponent(() => import('@/components/MkLaunchPad.vue')), {
-		src: ev.currentTarget ?? ev.target,
-		anchor: { x: 'center', y: 'bottom' },
-	}, {
-	}, 'closed');
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkLaunchPad.vue")),
+		{
+			src: ev.currentTarget ?? ev.target,
+			anchor: { x: "center", y: "bottom" },
+		},
+		{},
+		"closed",
+	);
 }
 
 function openAccountMenu(ev: MouseEvent) {
-	openAccountMenu_({
-		withExtraOperation: true,
-	}, ev);
+	openAccountMenu_(
+		{
+			withExtraOperation: true,
+		},
+		ev,
+	);
 }
 
 onMounted(() => {
-	window.addEventListener('resize', () => {
-		settingsWindowed = (window.innerWidth >= WINDOW_THRESHOLD);
-	}, { passive: true });	
+	window.addEventListener(
+		"resize",
+		() => {
+			settingsWindowed = window.innerWidth >= WINDOW_THRESHOLD;
+		},
+		{ passive: true },
+	);
 });
-
 </script>
 
 <style lang="scss" scoped>

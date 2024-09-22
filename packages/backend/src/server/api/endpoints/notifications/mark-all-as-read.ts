@@ -1,18 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { NotificationService } from '@/core/NotificationService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { DI } from "@/di-symbols.js";
+import { NotificationService } from "@/core/NotificationService.js";
 
 export const meta = {
-	tags: ['notifications', 'account'],
+	tags: ["notifications", "account"],
 
 	requireCredential: true,
 
-	kind: 'write:notifications',
+	kind: "write:notifications",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;
@@ -20,9 +20,7 @@ export const paramDef = {
 // eslint-disable-next-line import/no-default-export
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor(
-		private notificationService: NotificationService,
-	) {
+	constructor(private notificationService: NotificationService) {
 		super(meta, paramDef, async (ps, me) => {
 			this.notificationService.readAllNotification(me.id, true);
 		});

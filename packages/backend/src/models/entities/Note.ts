@@ -1,21 +1,28 @@
-import { Entity, Index, JoinColumn, Column, PrimaryColumn, ManyToOne } from 'typeorm';
-import { id } from '../id.js';
-import { noteVisibilities } from '../../types.js';
-import { User } from './User.js';
-import { Channel } from './Channel.js';
-import type { DriveFile } from './DriveFile.js';
+import {
+	Entity,
+	Index,
+	JoinColumn,
+	Column,
+	PrimaryColumn,
+	ManyToOne,
+} from "typeorm";
+import { id } from "../id.js";
+import { noteVisibilities } from "../../types.js";
+import { User } from "./User.js";
+import { Channel } from "./Channel.js";
+import type { DriveFile } from "./DriveFile.js";
 
 @Entity()
-@Index('IDX_NOTE_TAGS', { synchronize: false })
-@Index('IDX_NOTE_MENTIONS', { synchronize: false })
-@Index('IDX_NOTE_VISIBLE_USER_IDS', { synchronize: false })
+@Index("IDX_NOTE_TAGS", { synchronize: false })
+@Index("IDX_NOTE_MENTIONS", { synchronize: false })
+@Index("IDX_NOTE_VISIBLE_USER_IDS", { synchronize: false })
 export class Note {
 	@PrimaryColumn(id())
 	public id: string;
 
 	@Index()
-	@Column('timestamp with time zone', {
-		comment: 'The created date of the Note.',
+	@Column("timestamp with time zone", {
+		comment: "The created date of the Note.",
 	})
 	public createdAt: Date;
 
@@ -23,12 +30,12 @@ export class Note {
 	@Column({
 		...id(),
 		nullable: true,
-		comment: 'The ID of reply target.',
+		comment: "The ID of reply target.",
 	})
-	public replyId: Note['id'] | null;
+	public replyId: Note["id"] | null;
 
-	@ManyToOne(type => Note, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => Note, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public reply: Note | null;
@@ -37,72 +44,81 @@ export class Note {
 	@Column({
 		...id(),
 		nullable: true,
-		comment: 'The ID of renote target.',
+		comment: "The ID of renote target.",
 	})
-	public renoteId: Note['id'] | null;
+	public renoteId: Note["id"] | null;
 
-	@ManyToOne(type => Note, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => Note, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public renote: Note | null;
 
 	@Index()
-	@Column('varchar', {
-		length: 256, nullable: true,
+	@Column("varchar", {
+		length: 256,
+		nullable: true,
 	})
 	public threadId: string | null;
 
 	// TODO: varcharにしたい
-	@Column('text', {
+	@Column("text", {
 		nullable: true,
 	})
 	public text: string | null;
 
-	@Column('varchar', {
-		length: 256, nullable: true,
+	@Column("varchar", {
+		length: 256,
+		nullable: true,
 	})
 	public name: string | null;
 
-	@Column('varchar', {
-		length: 512, nullable: true,
+	@Column("varchar", {
+		length: 512,
+		nullable: true,
 	})
 	public cw: string | null;
 
 	@Index()
 	@Column({
 		...id(),
-		comment: 'The ID of author.',
+		comment: "The ID of author.",
 	})
-	public userId: User['id'];
+	public userId: User["id"];
 
-	@ManyToOne(type => User, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => User, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public user: User | null;
 
-	@Column('boolean', {
+	@Column("boolean", {
 		default: false,
 	})
 	public localOnly: boolean;
 
-	@Column('varchar', {
-		length: 64, nullable: true,
+	@Column("varchar", {
+		length: 64,
+		nullable: true,
 	})
-	public reactionAcceptance: 'likeOnly' | 'likeOnlyForRemote' | 'nonSensitiveOnly' | 'nonSensitiveOnlyForLocalLikeOnlyForRemote' | null;
+	public reactionAcceptance:
+		| "likeOnly"
+		| "likeOnlyForRemote"
+		| "nonSensitiveOnly"
+		| "nonSensitiveOnlyForLocalLikeOnlyForRemote"
+		| null;
 
-	@Column('smallint', {
+	@Column("smallint", {
 		default: 0,
 	})
 	public renoteCount: number;
 
-	@Column('smallint', {
+	@Column("smallint", {
 		default: 0,
 	})
 	public repliesCount: number;
 
-	@Column('jsonb', {
+	@Column("jsonb", {
 		default: {},
 	})
 	public reactions: Record<string, number>;
@@ -113,71 +129,84 @@ export class Note {
 	 * followers ... フォロワーのみ
 	 * specified ... visibleUserIds で指定したユーザーのみ
 	 */
-	@Column('enum', { enum: noteVisibilities })
-	public visibility: typeof noteVisibilities[number];
+	@Column("enum", { enum: noteVisibilities })
+	public visibility: (typeof noteVisibilities)[number];
 
 	@Index({ unique: true })
-	@Column('varchar', {
-		length: 512, nullable: true,
-		comment: 'The URI of a note. it will be null when the note is local.',
+	@Column("varchar", {
+		length: 512,
+		nullable: true,
+		comment: "The URI of a note. it will be null when the note is local.",
 	})
 	public uri: string | null;
 
-	@Column('varchar', {
-		length: 512, nullable: true,
-		comment: 'The human readable url of a note. it will be null when the note is local.',
+	@Column("varchar", {
+		length: 512,
+		nullable: true,
+		comment:
+			"The human readable url of a note. it will be null when the note is local.",
 	})
 	public url: string | null;
 
-	@Column('integer', {
-		default: 0, select: false,
+	@Column("integer", {
+		default: 0,
+		select: false,
 	})
 	public score: number;
 
 	@Index()
 	@Column({
 		...id(),
-		array: true, default: '{}',
+		array: true,
+		default: "{}",
 	})
-	public fileIds: DriveFile['id'][];
+	public fileIds: DriveFile["id"][];
 
 	@Index()
-	@Column('varchar', {
-		length: 256, array: true, default: '{}',
+	@Column("varchar", {
+		length: 256,
+		array: true,
+		default: "{}",
 	})
 	public attachedFileTypes: string[];
 
 	@Index()
 	@Column({
 		...id(),
-		array: true, default: '{}',
+		array: true,
+		default: "{}",
 	})
-	public visibleUserIds: User['id'][];
+	public visibleUserIds: User["id"][];
 
 	@Index()
 	@Column({
 		...id(),
-		array: true, default: '{}',
+		array: true,
+		default: "{}",
 	})
-	public mentions: User['id'][];
+	public mentions: User["id"][];
 
-	@Column('text', {
-		default: '[]',
+	@Column("text", {
+		default: "[]",
 	})
 	public mentionedRemoteUsers: string;
 
-	@Column('varchar', {
-		length: 128, array: true, default: '{}',
+	@Column("varchar", {
+		length: 128,
+		array: true,
+		default: "{}",
 	})
 	public emojis: string[];
 
 	@Index()
-	@Column('varchar', {
-		length: 128, array: true, default: '{}',
+	@Column("varchar", {
+		length: 128,
+		array: true,
+		default: "{}",
 	})
 	public tags: string[];
 
-	@Column('boolean', {
+	@Column("boolean", {
 		default: false,
 	})
 	public hasPoll: boolean;
@@ -186,47 +215,50 @@ export class Note {
 	@Column({
 		...id(),
 		nullable: true,
-		comment: 'The ID of source channel.',
+		comment: "The ID of source channel.",
 	})
-	public channelId: Channel['id'] | null;
+	public channelId: Channel["id"] | null;
 
-	@ManyToOne(type => Channel, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => Channel, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public channel: Channel | null;
 
 	//#region Denormalized fields
 	@Index()
-	@Column('varchar', {
-		length: 128, nullable: true,
-		comment: '[Denormalized]',
+	@Column("varchar", {
+		length: 128,
+		nullable: true,
+		comment: "[Denormalized]",
 	})
 	public userHost: string | null;
 
 	@Column({
 		...id(),
 		nullable: true,
-		comment: '[Denormalized]',
+		comment: "[Denormalized]",
 	})
-	public replyUserId: User['id'] | null;
+	public replyUserId: User["id"] | null;
 
-	@Column('varchar', {
-		length: 128, nullable: true,
-		comment: '[Denormalized]',
+	@Column("varchar", {
+		length: 128,
+		nullable: true,
+		comment: "[Denormalized]",
 	})
 	public replyUserHost: string | null;
 
 	@Column({
 		...id(),
 		nullable: true,
-		comment: '[Denormalized]',
+		comment: "[Denormalized]",
 	})
-	public renoteUserId: User['id'] | null;
+	public renoteUserId: User["id"] | null;
 
-	@Column('varchar', {
-		length: 128, nullable: true,
-		comment: '[Denormalized]',
+	@Column("varchar", {
+		length: 128,
+		nullable: true,
+		comment: "[Denormalized]",
 	})
 	public renoteUserHost: string | null;
 	//#endregion

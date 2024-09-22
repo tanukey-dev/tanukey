@@ -72,28 +72,31 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import getPasswordStrength from 'syuilo-password-strength';
-import { toUnicode } from 'punycode/';
-import MkButton from './MkButton.vue';
-import MkInput from './MkInput.vue';
-import MkSwitch from './MkSwitch.vue';
-import MkCaptcha, { type Captcha } from '@/components/MkCaptcha.vue';
-import * as config from '@/config';
-import * as os from '@/os';
-import { login } from '@/account';
-import { instance } from '@/instance';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import getPasswordStrength from "syuilo-password-strength";
+import { toUnicode } from "punycode/";
+import MkButton from "./MkButton.vue";
+import MkInput from "./MkInput.vue";
+import MkSwitch from "./MkSwitch.vue";
+import MkCaptcha, { type Captcha } from "@/components/MkCaptcha.vue";
+import * as config from "@/config";
+import * as os from "@/os";
+import { login } from "@/account";
+import { instance } from "@/instance";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	autoSet?: boolean;
-}>(), {
-	autoSet: false,
-});
+const props = withDefaults(
+	defineProps<{
+		autoSet?: boolean;
+	}>(),
+	{
+		autoSet: false,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'signup', user: Record<string, any>): void;
-	(ev: 'signupEmailPending'): void;
+	(ev: "signup", user: Record<string, any>): void;
+	(ev: "signupEmailPending"): void;
 }>();
 
 const host = toUnicode(config.host);
@@ -102,15 +105,34 @@ let hcaptcha = $ref<Captcha | undefined>();
 let recaptcha = $ref<Captcha | undefined>();
 let turnstile = $ref<Captcha | undefined>();
 
-let username: string = $ref('');
-let password: string = $ref('');
-let retypedPassword: string = $ref('');
-let invitationCode: string = $ref('');
-let email = $ref('');
-let usernameState: null | 'wait' | 'ok' | 'unavailable' | 'error' | 'invalid-format' | 'min-range' | 'max-range' = $ref(null);
-let emailState: null | 'wait' | 'ok' | 'unavailable:used' | 'unavailable:format' | 'unavailable:disposable' | 'unavailable:banned' | 'unavailable:mx' | 'unavailable:smtp' | 'unavailable' | 'error' = $ref(null);
-let passwordStrength: '' | 'low' | 'medium' | 'high' = $ref('');
-let passwordRetypeState: null | 'match' | 'not-match' = $ref(null);
+let username: string = $ref("");
+let password: string = $ref("");
+let retypedPassword: string = $ref("");
+let invitationCode: string = $ref("");
+let email = $ref("");
+let usernameState:
+	| null
+	| "wait"
+	| "ok"
+	| "unavailable"
+	| "error"
+	| "invalid-format"
+	| "min-range"
+	| "max-range" = $ref(null);
+let emailState:
+	| null
+	| "wait"
+	| "ok"
+	| "unavailable:used"
+	| "unavailable:format"
+	| "unavailable:disposable"
+	| "unavailable:banned"
+	| "unavailable:mx"
+	| "unavailable:smtp"
+	| "unavailable"
+	| "error" = $ref(null);
+let passwordStrength: "" | "low" | "medium" | "high" = $ref("");
+let passwordRetypeState: null | "match" | "not-match" = $ref(null);
 let submitting: boolean = $ref(false);
 let hCaptchaResponse = $ref(null);
 let reCaptchaResponse = $ref(null);
@@ -119,27 +141,31 @@ let usernameAbortController: null | AbortController = $ref(null);
 let emailAbortController: null | AbortController = $ref(null);
 
 const shouldDisableSubmitting = $computed((): boolean => {
-	return submitting ||
-		instance.enableHcaptcha && !hCaptchaResponse ||
-		instance.enableRecaptcha && !reCaptchaResponse ||
-		instance.enableTurnstile && !turnstileResponse ||
-		instance.emailRequiredForSignup && emailState !== 'ok' ||
-		usernameState !== 'ok' ||
-		passwordRetypeState !== 'match';
+	return (
+		submitting ||
+		(instance.enableHcaptcha && !hCaptchaResponse) ||
+		(instance.enableRecaptcha && !reCaptchaResponse) ||
+		(instance.enableTurnstile && !turnstileResponse) ||
+		(instance.emailRequiredForSignup && emailState !== "ok") ||
+		usernameState !== "ok" ||
+		passwordRetypeState !== "match"
+	);
 });
 
 function onChangeUsername(): void {
-	if (username === '') {
+	if (username === "") {
 		usernameState = null;
 		return;
 	}
 
 	{
-		const err =
-			!username.match(/^[a-zA-Z0-9_]+$/) ? 'invalid-format' :
-			username.length < 1 ? 'min-range' :
-			username.length > 20 ? 'max-range' :
-			null;
+		const err = !username.match(/^[a-zA-Z0-9_]+$/)
+			? "invalid-format"
+			: username.length < 1
+				? "min-range"
+				: username.length > 20
+					? "max-range"
+					: null;
 
 		if (err) {
 			usernameState = err;
@@ -150,22 +176,29 @@ function onChangeUsername(): void {
 	if (usernameAbortController != null) {
 		usernameAbortController.abort();
 	}
-	usernameState = 'wait';
+	usernameState = "wait";
 	usernameAbortController = new AbortController();
 
-	os.api('username/available', {
-		username,
-	}, undefined, usernameAbortController.signal).then(result => {
-		usernameState = result.available ? 'ok' : 'unavailable';
-	}).catch((err) => {
-		if (err.name !== 'AbortError') {
-			usernameState = 'error';
-		}
-	});
+	os.api(
+		"username/available",
+		{
+			username,
+		},
+		undefined,
+		usernameAbortController.signal,
+	)
+		.then((result) => {
+			usernameState = result.available ? "ok" : "unavailable";
+		})
+		.catch((err) => {
+			if (err.name !== "AbortError") {
+				usernameState = "error";
+			}
+		});
 }
 
 function onChangeEmail(): void {
-	if (email === '') {
+	if (email === "") {
 		emailState = null;
 		return;
 	}
@@ -173,44 +206,59 @@ function onChangeEmail(): void {
 	if (emailAbortController != null) {
 		emailAbortController.abort();
 	}
-	emailState = 'wait';
+	emailState = "wait";
 	emailAbortController = new AbortController();
 
-	os.api('email-address/available', {
-		emailAddress: email,
-	}, undefined, emailAbortController.signal).then(result => {
-		emailState = result.available ? 'ok' :
-			result.reason === 'used' ? 'unavailable:used' :
-			result.reason === 'format' ? 'unavailable:format' :
-			result.reason === 'disposable' ? 'unavailable:disposable' :
-			result.reason === 'banned' ? 'unavailable:banned' :
-			result.reason === 'mx' ? 'unavailable:mx' :
-			result.reason === 'smtp' ? 'unavailable:smtp' :
-			'unavailable';
-	}).catch((err) => {
-		if (err.name !== 'AbortError') {
-			emailState = 'error';
-		}
-	});
+	os.api(
+		"email-address/available",
+		{
+			emailAddress: email,
+		},
+		undefined,
+		emailAbortController.signal,
+	)
+		.then((result) => {
+			emailState = result.available
+				? "ok"
+				: result.reason === "used"
+					? "unavailable:used"
+					: result.reason === "format"
+						? "unavailable:format"
+						: result.reason === "disposable"
+							? "unavailable:disposable"
+							: result.reason === "banned"
+								? "unavailable:banned"
+								: result.reason === "mx"
+									? "unavailable:mx"
+									: result.reason === "smtp"
+										? "unavailable:smtp"
+										: "unavailable";
+		})
+		.catch((err) => {
+			if (err.name !== "AbortError") {
+				emailState = "error";
+			}
+		});
 }
 
 function onChangePassword(): void {
-	if (password === '') {
-		passwordStrength = '';
+	if (password === "") {
+		passwordStrength = "";
 		return;
 	}
 
 	const strength = getPasswordStrength(password);
-	passwordStrength = strength > 0.7 ? 'high' : strength > 0.3 ? 'medium' : 'low';
+	passwordStrength =
+		strength > 0.7 ? "high" : strength > 0.3 ? "medium" : "low";
 }
 
 function onChangePasswordRetype(): void {
-	if (retypedPassword === '') {
+	if (retypedPassword === "") {
 		passwordRetypeState = null;
 		return;
 	}
 
-	passwordRetypeState = password === retypedPassword ? 'match' : 'not-match';
+	passwordRetypeState = password === retypedPassword ? "match" : "not-match";
 }
 
 async function onSubmit(): Promise<void> {
@@ -218,28 +266,28 @@ async function onSubmit(): Promise<void> {
 	submitting = true;
 
 	try {
-		await os.api('signup', {
+		await os.api("signup", {
 			username,
 			password,
 			emailAddress: email,
 			invitationCode,
-			'hcaptcha-response': hCaptchaResponse,
-			'g-recaptcha-response': reCaptchaResponse,
-			'turnstile-response': turnstileResponse,
+			"hcaptcha-response": hCaptchaResponse,
+			"g-recaptcha-response": reCaptchaResponse,
+			"turnstile-response": turnstileResponse,
 		});
 		if (instance.emailRequiredForSignup) {
 			os.alert({
-				type: 'success',
+				type: "success",
 				title: i18n.ts._signup.almostThere,
-				text: i18n.t('_signup.emailSent', { email }),
+				text: i18n.t("_signup.emailSent", { email }),
 			});
-			emit('signupEmailPending');
+			emit("signupEmailPending");
 		} else {
-			const res = await os.api('signin', {
+			const res = await os.api("signin", {
 				username,
 				password,
 			});
-			emit('signup', res);
+			emit("signup", res);
 
 			if (props.autoSet) {
 				return login(res.i);
@@ -252,7 +300,7 @@ async function onSubmit(): Promise<void> {
 		turnstile?.reset?.();
 
 		os.alert({
-			type: 'error',
+			type: "error",
 			text: i18n.ts.somethingHappened,
 		});
 	}

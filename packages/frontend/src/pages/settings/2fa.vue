@@ -60,25 +60,28 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineAsyncComponent } from 'vue';
-import { hostname } from '@/config';
-import { byteify, hexify, stringify } from '@/scripts/2fa';
-import MkButton from '@/components/MkButton.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import FormSection from '@/components/form/section.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import * as os from '@/os';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
+import { ref, defineAsyncComponent } from "vue";
+import { hostname } from "@/config";
+import { byteify, hexify, stringify } from "@/scripts/2fa";
+import MkButton from "@/components/MkButton.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import FormSection from "@/components/form/section.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import * as os from "@/os";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
 
 // メモ: 各エンドポイントはmeUpdatedを発行するため、refreshAccountは不要
 
-withDefaults(defineProps<{
-	first?: boolean;
-}>(), {
-	first: false,
-});
+withDefaults(
+	defineProps<{
+		first?: boolean;
+	}>(),
+	{
+		first: false,
+	},
+);
 
 const twoFactorData = ref<any>(null);
 const supportsCredentials = ref(!!navigator.credentials);
@@ -88,38 +91,43 @@ async function registerTOTP() {
 	const password = await os.inputText({
 		title: i18n.ts._2fa.registerTOTP,
 		text: i18n.ts._2fa.passwordToTOTP,
-		type: 'password',
-		autocomplete: 'current-password',
+		type: "password",
+		autocomplete: "current-password",
 	});
 	if (password.canceled) return;
 
-	const twoFactorData = await os.apiWithDialog('i/2fa/register', {
+	const twoFactorData = await os.apiWithDialog("i/2fa/register", {
 		password: password.result,
 	});
 
-	const qrdialog = await new Promise<boolean>(res => {
-		os.popup(defineAsyncComponent(() => import('./2fa.qrdialog.vue')), {
-			twoFactorData,
-		}, {
-			'ok': () => res(true),
-			'cancel': () => res(false),
-		}, 'closed');
+	const qrdialog = await new Promise<boolean>((res) => {
+		os.popup(
+			defineAsyncComponent(() => import("./2fa.qrdialog.vue")),
+			{
+				twoFactorData,
+			},
+			{
+				ok: () => res(true),
+				cancel: () => res(false),
+			},
+			"closed",
+		);
 	});
 	if (!qrdialog) return;
 
 	const token = await os.inputNumber({
 		title: i18n.ts._2fa.step3Title,
 		text: i18n.ts._2fa.step3,
-		autocomplete: 'one-time-code',
+		autocomplete: "one-time-code",
 	});
 	if (token.canceled) return;
 
-	await os.apiWithDialog('i/2fa/done', {
+	await os.apiWithDialog("i/2fa/done", {
 		token: token.result.toString(),
 	});
 
 	await os.alert({
-		type: 'success',
+		type: "success",
 		text: i18n.ts._2fa.step4,
 	});
 }
@@ -127,15 +135,15 @@ async function registerTOTP() {
 function unregisterTOTP() {
 	os.inputText({
 		title: i18n.ts.password,
-		type: 'password',
-		autocomplete: 'current-password',
+		type: "password",
+		autocomplete: "current-password",
 	}).then(({ canceled, result: password }) => {
 		if (canceled) return;
-		os.apiWithDialog('i/2fa/unregister', {
+		os.apiWithDialog("i/2fa/unregister", {
 			password: password,
-		}).catch(error => {
+		}).catch((error) => {
 			os.alert({
-				type: 'error',
+				type: "error",
 				text: error,
 			});
 		});
@@ -144,7 +152,7 @@ function unregisterTOTP() {
 
 function renewTOTP() {
 	os.confirm({
-		type: 'question',
+		type: "question",
 		title: i18n.ts._2fa.renewTOTP,
 		text: i18n.ts._2fa.renewTOTPConfirm,
 		okText: i18n.ts._2fa.renewTOTPOk,
@@ -157,20 +165,20 @@ function renewTOTP() {
 
 async function unregisterKey(key) {
 	const confirm = await os.confirm({
-		type: 'question',
+		type: "question",
 		title: i18n.ts._2fa.removeKey,
-		text: i18n.t('_2fa.removeKeyConfirm', { name: key.name }),
+		text: i18n.t("_2fa.removeKeyConfirm", { name: key.name }),
 	});
 	if (confirm.canceled) return;
 
 	const password = await os.inputText({
 		title: i18n.ts.password,
-		type: 'password',
-		autocomplete: 'current-password',
+		type: "password",
+		autocomplete: "current-password",
 	});
 	if (password.canceled) return;
 
-	await os.apiWithDialog('i/2fa/remove-key', {
+	await os.apiWithDialog("i/2fa/remove-key", {
 		password: password.result,
 		credentialId: key.id,
 	});
@@ -181,13 +189,13 @@ async function renameKey(key) {
 	const name = await os.inputText({
 		title: i18n.ts.rename,
 		default: key.name,
-		type: 'text',
+		type: "text",
 		minLength: 1,
 		maxLength: 30,
 	});
 	if (name.canceled) return;
 
-	await os.apiWithDialog('i/2fa/update-key', {
+	await os.apiWithDialog("i/2fa/update-key", {
 		name: name.result,
 		credentialId: key.id,
 	});
@@ -196,19 +204,19 @@ async function renameKey(key) {
 async function addSecurityKey() {
 	const password = await os.inputText({
 		title: i18n.ts.password,
-		type: 'password',
-		autocomplete: 'current-password',
+		type: "password",
+		autocomplete: "current-password",
 	});
 	if (password.canceled) return;
 
-	const challenge: any = await os.apiWithDialog('i/2fa/register-key', {
+	const challenge: any = await os.apiWithDialog("i/2fa/register-key", {
 		password: password.result,
 	});
 
 	const name = await os.inputText({
 		title: i18n.ts._2fa.registerSecurityKey,
 		text: i18n.ts._2fa.securityKeyName,
-		type: 'text',
+		type: "text",
 		minLength: 1,
 		maxLength: 30,
 	});
@@ -216,21 +224,24 @@ async function addSecurityKey() {
 
 	const webAuthnCreation = navigator.credentials.create({
 		publicKey: {
-			challenge: byteify(challenge.challenge, 'base64'),
+			challenge: byteify(challenge.challenge, "base64"),
 			rp: {
 				id: hostname,
-				name: 'Misskey',
+				name: "Misskey",
 			},
 			user: {
-				id: byteify($i!.id, 'ascii'),
+				id: byteify($i!.id, "ascii"),
 				name: $i!.username,
 				displayName: $i!.name,
 			},
-			pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
+			pubKeyCredParams: [{ alg: -7, type: "public-key" }],
 			timeout: 60000,
-			attestation: 'direct',
+			attestation: "direct",
 		},
-	}) as Promise<PublicKeyCredential & { response: AuthenticatorAttestationResponse; } | null>;
+	}) as Promise<
+		| (PublicKeyCredential & { response: AuthenticatorAttestationResponse })
+		| null
+	>;
 
 	const credential = await os.promiseDialog(
 		webAuthnCreation,
@@ -240,7 +251,7 @@ async function addSecurityKey() {
 	);
 	if (!credential) return;
 
-	await os.apiWithDialog('i/2fa/key-done', {
+	await os.apiWithDialog("i/2fa/key-done", {
 		password: password.result,
 		name: name.result,
 		challengeId: challenge.challengeId,
@@ -251,7 +262,7 @@ async function addSecurityKey() {
 }
 
 async function updatePasswordLessLogin(value: boolean) {
-	await os.apiWithDialog('i/2fa/password-less', {
+	await os.apiWithDialog("i/2fa/password-less", {
 		value,
 	});
 }

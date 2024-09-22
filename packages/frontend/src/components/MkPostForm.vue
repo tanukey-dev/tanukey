@@ -118,61 +118,80 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, watch, nextTick, computed, onMounted, defineAsyncComponent, onUnmounted, ref, WritableComputedRef } from 'vue';
-import * as mfm from 'tfm-js';
-import * as misskey from 'misskey-js';
-import insertTextAtCursor from 'insert-text-at-cursor';
-import { toASCII } from 'punycode/';
-import * as Acct from 'misskey-js/built/acct';
-import MkNoteSimple from '@/components/MkNoteSimple.vue';
-import MkNotePreview from '@/components/MkNotePreview.vue';
-import XPostFormAttaches from '@/components/MkPostFormAttaches.vue';
-import MkPollEditor from '@/components/MkPollEditor.vue';
-import { host, url } from '@/config';
-import { erase, unique } from '@/scripts/array';
-import { extractMentions } from '@/scripts/extract-mentions';
-import { formatTimeString } from '@/scripts/format-time-string';
-import { Autocomplete } from '@/scripts/autocomplete';
-import * as os from '@/os';
-import { selectFiles } from '@/scripts/select-file';
-import { defaultStore, notePostInterruptors, postFormActions } from '@/store';
-import MkInfo from '@/components/MkInfo.vue';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import { $i, notesCount, incNotesCount, getAccounts, openAccountMenu as openAccountMenu_ } from '@/account';
-import { uploadFile } from '@/scripts/upload';
-import { deepClone } from '@/scripts/clone';
-import MkRippleEffect from '@/components/MkRippleEffect.vue';
-import { miLocalStorage } from '@/local-storage';
-import { claimAchievement } from '@/scripts/achievements';
+import {
+	inject,
+	watch,
+	nextTick,
+	computed,
+	onMounted,
+	defineAsyncComponent,
+	onUnmounted,
+	ref,
+	WritableComputedRef,
+} from "vue";
+import * as mfm from "tfm-js";
+import * as misskey from "misskey-js";
+import insertTextAtCursor from "insert-text-at-cursor";
+import { toASCII } from "punycode/";
+import * as Acct from "misskey-js/built/acct";
+import MkNoteSimple from "@/components/MkNoteSimple.vue";
+import MkNotePreview from "@/components/MkNotePreview.vue";
+import XPostFormAttaches from "@/components/MkPostFormAttaches.vue";
+import MkPollEditor from "@/components/MkPollEditor.vue";
+import { host, url } from "@/config";
+import { erase, unique } from "@/scripts/array";
+import { extractMentions } from "@/scripts/extract-mentions";
+import { formatTimeString } from "@/scripts/format-time-string";
+import { Autocomplete } from "@/scripts/autocomplete";
+import * as os from "@/os";
+import { selectFiles } from "@/scripts/select-file";
+import { defaultStore, notePostInterruptors, postFormActions } from "@/store";
+import MkInfo from "@/components/MkInfo.vue";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
+import {
+	$i,
+	notesCount,
+	incNotesCount,
+	getAccounts,
+	openAccountMenu as openAccountMenu_,
+} from "@/account";
+import { uploadFile } from "@/scripts/upload";
+import { deepClone } from "@/scripts/clone";
+import MkRippleEffect from "@/components/MkRippleEffect.vue";
+import { miLocalStorage } from "@/local-storage";
+import { claimAchievement } from "@/scripts/achievements";
 
-const modal = inject('modal');
+const modal = inject("modal");
 
-const props = withDefaults(defineProps<{
-	reply?: misskey.entities.Note;
-	renote?: misskey.entities.Note;
-	channel?: misskey.entities.Channel; // TODO
-	mention?: misskey.entities.User;
-	specified?: misskey.entities.User;
-	initialText?: string;
-	initialVisibility?: (typeof misskey.noteVisibilities)[number];
-	initialFiles?: misskey.entities.DriveFile[];
-	initialLocalOnly?: boolean;
-	initialVisibleUsers?: misskey.entities.User[];
-	initialNote?: misskey.entities.Note;
-	instant?: boolean;
-	fixed?: boolean;
-	autofocus?: boolean;
-	freezeAfterPosted?: boolean;
-}>(), {
-	initialVisibleUsers: () => [],
-	autofocus: true,
-});
+const props = withDefaults(
+	defineProps<{
+		reply?: misskey.entities.Note;
+		renote?: misskey.entities.Note;
+		channel?: misskey.entities.Channel; // TODO
+		mention?: misskey.entities.User;
+		specified?: misskey.entities.User;
+		initialText?: string;
+		initialVisibility?: (typeof misskey.noteVisibilities)[number];
+		initialFiles?: misskey.entities.DriveFile[];
+		initialLocalOnly?: boolean;
+		initialVisibleUsers?: misskey.entities.User[];
+		initialNote?: misskey.entities.Note;
+		instant?: boolean;
+		fixed?: boolean;
+		autofocus?: boolean;
+		freezeAfterPosted?: boolean;
+	}>(),
+	{
+		initialVisibleUsers: () => [],
+		autofocus: true,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'posted'): void;
-	(ev: 'cancel'): void;
-	(ev: 'esc'): void;
+	(ev: "posted"): void;
+	(ev: "cancel"): void;
+	(ev: "esc"): void;
 }>();
 
 const textareaEl = $shallowRef<HTMLTextAreaElement | null>(null);
@@ -185,7 +204,7 @@ const changeChannelButtonAtChannelEl = $shallowRef<HTMLElement | null>(null);
 
 let posting = $ref(false);
 let posted = $ref(false);
-let text = $ref(props.initialText ?? '');
+let text = $ref(props.initialText ?? "");
 let files = $ref(props.initialFiles ?? []);
 let poll = $ref<{
 	choices: string[];
@@ -196,8 +215,20 @@ let poll = $ref<{
 let useCw = $ref(false);
 let showPreview = $ref(false);
 let cw = $ref<string | undefined>(undefined);
-let localOnly = $ref<boolean>(props.initialLocalOnly ?? visibility === 'specified' ? false : defaultStore.state.rememberNoteVisibility ? defaultStore.state.localOnly : defaultStore.state.defaultNoteLocalOnly);
-let visibility = $ref(props.initialVisibility ?? (defaultStore.state.rememberNoteVisibility ? defaultStore.state.visibility : defaultStore.state.defaultNoteVisibility) as typeof misskey.noteVisibilities[number]);
+let localOnly = $ref<boolean>(
+	(props.initialLocalOnly ?? visibility === "specified")
+		? false
+		: defaultStore.state.rememberNoteVisibility
+			? defaultStore.state.localOnly
+			: defaultStore.state.defaultNoteLocalOnly,
+);
+let visibility = $ref(
+	props.initialVisibility ??
+		((defaultStore.state.rememberNoteVisibility
+			? defaultStore.state.visibility
+			: defaultStore.state
+					.defaultNoteVisibility) as (typeof misskey.noteVisibilities)[number]),
+);
 let visibleUsers = $ref([]);
 if (props.initialVisibleUsers) {
 	props.initialVisibleUsers.forEach(pushVisibleUser);
@@ -207,18 +238,27 @@ let autocomplete = $ref(null);
 let draghover = $ref(false);
 let quoteId = $ref(null);
 let hasNotSpecifiedMentions = $ref(false);
-let recentHashtags = $ref(JSON.parse(miLocalStorage.getItem('hashtags') ?? '[]'));
-let imeText = $ref('');
+let recentHashtags = $ref(
+	JSON.parse(miLocalStorage.getItem("hashtags") ?? "[]"),
+);
+let imeText = $ref("");
 let showingOptions = $ref(false);
-let postChannel: WritableComputedRef<misskey.entities.Channel | null> = computed(defaultStore.makeGetterSetter('postChannel'));
-let tmpPostChannel: misskey.entities.Channel|null = null;
+let postChannel: WritableComputedRef<misskey.entities.Channel | null> =
+	computed(defaultStore.makeGetterSetter("postChannel"));
+let tmpPostChannel: misskey.entities.Channel | null = null;
 let updateDraft = true;
 const textareaCwHeight = ref(30);
-const textareaCwStyle = computed(() => { return { height: `${textareaCwHeight.value + 2}px` }; });
+const textareaCwStyle = computed(() => {
+	return { height: `${textareaCwHeight.value + 2}px` };
+});
 const textareaMainHeight = ref(90);
-const textareaMainStyle = computed(() => { return { height: `${textareaMainHeight.value + 2}px` }; });
+const textareaMainStyle = computed(() => {
+	return { height: `${textareaMainHeight.value + 2}px` };
+});
 const textareaAAHeight = ref(300);
-const textareaAAStyle = computed(() => { return { height: `${textareaAAHeight.value + 2}px` }; });
+const textareaAAStyle = computed(() => {
+	return { height: `${textareaAAHeight.value + 2}px` };
+});
 
 function handleInputCw(event: any) {
 	handleInput(event, textareaCwHeight);
@@ -250,7 +290,7 @@ watch(postChannel, () => {
 });
 
 const draftKey = $computed((): string => {
-	let key = postChannel.value ? `channel:${postChannel.value.id}` : '';
+	let key = postChannel.value ? `channel:${postChannel.value.id}` : "";
 
 	if (props.renote) {
 		key += `renote:${props.renote.id}`;
@@ -264,11 +304,11 @@ const draftKey = $computed((): string => {
 });
 
 const placeholder = $computed((): string => {
-	let postTo = '';
+	let postTo = "";
 	if (postChannel.value) {
-		postTo = '[' + postChannel.value.name + '] ';
+		postTo = "[" + postChannel.value.name + "] ";
 	} else {
-		postTo = '[' + i18n.ts._visibility[visibility] + '] ';
+		postTo = "[" + i18n.ts._visibility[visibility] + "] ";
 	}
 
 	if (props.renote) {
@@ -307,38 +347,67 @@ const maxTextLength = $computed((): number => {
 });
 
 const canPost = $computed((): boolean => {
-	return !posting && !posted &&
-		(1 <= textLength || 1 <= files.length || !!poll || !!props.renote || 1 <= asciiartText.value.trim().length) &&
-		(textLength <= maxTextLength) &&
-		(!poll || poll.choices.length >= 2);
+	return (
+		!posting &&
+		!posted &&
+		(1 <= textLength ||
+			1 <= files.length ||
+			!!poll ||
+			!!props.renote ||
+			1 <= asciiartText.value.trim().length) &&
+		textLength <= maxTextLength &&
+		(!poll || poll.choices.length >= 2)
+	);
 });
 
-const withHashtags = $computed(defaultStore.makeGetterSetter('postFormWithHashtags'));
-const hashtags = $computed(defaultStore.makeGetterSetter('postFormHashtags'));
-const withAsciiArt = computed(defaultStore.makeGetterSetter('postFormWithAsciiArt'));
-const asciiartText = ref('');
+const withHashtags = $computed(
+	defaultStore.makeGetterSetter("postFormWithHashtags"),
+);
+const hashtags = $computed(defaultStore.makeGetterSetter("postFormHashtags"));
+const withAsciiArt = computed(
+	defaultStore.makeGetterSetter("postFormWithAsciiArt"),
+);
+const asciiartText = ref("");
 
-watch($$(text), () => {
-	checkMissingMention();
-}, { immediate: true });
+watch(
+	$$(text),
+	() => {
+		checkMissingMention();
+	},
+	{ immediate: true },
+);
 
-watch($$(visibility), () => {
-	checkMissingMention();
-}, { immediate: true });
+watch(
+	$$(visibility),
+	() => {
+		checkMissingMention();
+	},
+	{ immediate: true },
+);
 
-watch($$(visibleUsers), () => {
-	checkMissingMention();
-}, {
-	deep: true,
-});
+watch(
+	$$(visibleUsers),
+	() => {
+		checkMissingMention();
+	},
+	{
+		deep: true,
+	},
+);
 
 if (props.mention) {
-	text = props.mention.host ? `@${props.mention.username}@${toASCII(props.mention.host)}` : `@${props.mention.username}`;
-	text += ' ';
+	text = props.mention.host
+		? `@${props.mention.username}@${toASCII(props.mention.host)}`
+		: `@${props.mention.username}`;
+	text += " ";
 }
 
-if (props.reply && (props.reply.user.username !== $i.username || (props.reply.user.host != null && props.reply.user.host !== host))) {
-	text = `@${props.reply.user.username}${props.reply.user.host != null ? '@' + toASCII(props.reply.user.host) : ''} `;
+if (
+	props.reply &&
+	(props.reply.user.username !== $i.username ||
+		(props.reply.user.host != null && props.reply.user.host !== host))
+) {
+	text = `@${props.reply.user.username}${props.reply.user.host != null ? "@" + toASCII(props.reply.user.host) : ""} `;
 }
 
 if (props.reply && props.reply.text != null) {
@@ -346,14 +415,15 @@ if (props.reply && props.reply.text != null) {
 	const otherHost = props.reply.user.host;
 
 	for (const x of extractMentions(ast)) {
-		const mention = x.host ?
-			`@${x.username}@${toASCII(x.host)}` :
-			(otherHost == null || otherHost === host) ?
-				`@${x.username}` :
-				`@${x.username}@${toASCII(otherHost)}`;
+		const mention = x.host
+			? `@${x.username}@${toASCII(x.host)}`
+			: otherHost == null || otherHost === host
+				? `@${x.username}`
+				: `@${x.username}@${toASCII(otherHost)}`;
 
 		// 自分は除外
-		if ($i.username === x.username && (x.host == null || x.host === host)) continue;
+		if ($i.username === x.username && (x.host == null || x.host === host))
+			continue;
 
 		// 重複は除外
 		if (text.includes(`${mention} `)) continue;
@@ -363,36 +433,44 @@ if (props.reply && props.reply.text != null) {
 }
 
 if (postChannel.value) {
-	visibility = 'public';
+	visibility = "public";
 	if (!postChannel.value.federation) {
 		localOnly = true;
 	}
 }
 
 // 公開以外へのリプライ時は元の公開範囲を引き継ぐ
-if (props.reply && ['home', 'followers', 'specified'].includes(props.reply.visibility)) {
+if (
+	props.reply &&
+	["home", "followers", "specified"].includes(props.reply.visibility)
+) {
 	tmpPostChannel = postChannel.value;
 	postChannel.value = null;
 
-	if (props.reply.visibility === 'home' && visibility === 'followers') {
-		visibility = 'followers';
-	} else if (['home', 'followers'].includes(props.reply.visibility) && visibility === 'specified') {
-		visibility = 'specified';
+	if (props.reply.visibility === "home" && visibility === "followers") {
+		visibility = "followers";
+	} else if (
+		["home", "followers"].includes(props.reply.visibility) &&
+		visibility === "specified"
+	) {
+		visibility = "specified";
 	} else {
 		visibility = props.reply.visibility;
 	}
 
-	if (visibility === 'specified') {
+	if (visibility === "specified") {
 		if (props.reply.visibleUserIds) {
-			os.api('users/show', {
-				userIds: props.reply.visibleUserIds.filter(uid => uid !== $i.id && uid !== props.reply.userId),
-			}).then(users => {
+			os.api("users/show", {
+				userIds: props.reply.visibleUserIds.filter(
+					(uid) => uid !== $i.id && uid !== props.reply.userId,
+				),
+			}).then((users) => {
 				users.forEach(pushVisibleUser);
 			});
 		}
 
 		if (props.reply.userId !== $i.id) {
-			os.api('users/show', { userId: props.reply.userId }).then(user => {
+			os.api("users/show", { userId: props.reply.userId }).then((user) => {
 				pushVisibleUser(user);
 			});
 		}
@@ -408,7 +486,7 @@ if (props.reply && ['home', 'followers', 'specified'].includes(props.reply.visib
 }
 
 if (props.specified) {
-	visibility = 'specified';
+	visibility = "specified";
 	pushVisibleUser(props.specified);
 }
 
@@ -428,11 +506,15 @@ function watchForDraft() {
 }
 
 function checkMissingMention() {
-	if (visibility === 'specified') {
+	if (visibility === "specified") {
 		const ast = mfm.parse(text);
 
 		for (const x of extractMentions(ast)) {
-			if (!visibleUsers.some(u => (u.username === x.username) && (u.host === x.host))) {
+			if (
+				!visibleUsers.some(
+					(u) => u.username === x.username && u.host === x.host,
+				)
+			) {
 				hasNotSpecifiedMentions = true;
 				return;
 			}
@@ -445,10 +527,14 @@ function addMissingMention() {
 	const ast = mfm.parse(text);
 
 	for (const x of extractMentions(ast)) {
-		if (!visibleUsers.some(u => (u.username === x.username) && (u.host === x.host))) {
-			os.api('users/show', { username: x.username, host: x.host }).then(user => {
-				visibleUsers.push(user);
-			});
+		if (
+			!visibleUsers.some((u) => u.username === x.username && u.host === x.host)
+		) {
+			os.api("users/show", { username: x.username, host: x.host }).then(
+				(user) => {
+					visibleUsers.push(user);
+				},
+			);
 		}
 	}
 }
@@ -458,7 +544,7 @@ function togglePoll() {
 		poll = null;
 	} else {
 		poll = {
-			choices: ['', ''],
+			choices: ["", ""],
 			multiple: false,
 			expiresAt: null,
 			expiredAfter: null,
@@ -473,108 +559,126 @@ function addTag(tag: string) {
 function focus() {
 	if (textareaEl) {
 		textareaEl.focus();
-		textareaEl.setSelectionRange(textareaEl.value.length, textareaEl.value.length);
+		textareaEl.setSelectionRange(
+			textareaEl.value.length,
+			textareaEl.value.length,
+		);
 	}
 }
 
 function chooseFileFrom(ev) {
-	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(files_ => {
-		for (const file of files_) {
-			files.push(file);
-		}
-	});
+	selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(
+		(files_) => {
+			for (const file of files_) {
+				files.push(file);
+			}
+		},
+	);
 }
 
 function detachFile(id) {
-	files = files.filter(x => x.id !== id);
+	files = files.filter((x) => x.id !== id);
 }
 
 function updateFileSensitive(file, sensitive) {
-	files[files.findIndex(x => x.id === file.id)].isSensitive = sensitive;
+	files[files.findIndex((x) => x.id === file.id)].isSensitive = sensitive;
 }
 
 function updateFileName(file, name) {
-	files[files.findIndex(x => x.id === file.id)].name = name;
+	files[files.findIndex((x) => x.id === file.id)].name = name;
 }
 
 function upload(file: File, name?: string) {
-	uploadFile(file, defaultStore.state.uploadFolder, name).then(res => {
+	uploadFile(file, defaultStore.state.uploadFolder, name).then((res) => {
 		files.push(res);
 	});
 }
 
 function setChannel(): void {
-	os.popup(defineAsyncComponent(() => import('@/components/MkChannelPicker.vue')), {
-		currentChannel: postChannel.value,
-		src: postChannel.value == null ? changeChannelButtonAtPublicEl : changeChannelButtonAtChannelEl,
-	}, {
-		changeChannel: ch => {
-			deleteDraft();
-			postChannel.value = ch;
-			visibility = 'public';
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkChannelPicker.vue")),
+		{
+			currentChannel: postChannel.value,
+			src:
+				postChannel.value == null
+					? changeChannelButtonAtPublicEl
+					: changeChannelButtonAtChannelEl,
 		},
-	}, 'closed');
+		{
+			changeChannel: (ch) => {
+				deleteDraft();
+				postChannel.value = ch;
+				visibility = "public";
+			},
+		},
+		"closed",
+	);
 }
 
 function setVisibility() {
 	if (postChannel.value) {
-		visibility = 'public';
+		visibility = "public";
 		localOnly = true;
 		return;
 	}
 
-	os.popup(defineAsyncComponent(() => import('@/components/MkVisibilityPicker.vue')), {
-		currentVisibility: visibility,
-		localOnly: localOnly,
-		src: visibilityButton,
-	}, {
-		changeVisibility: v => {
-			visibility = v;
-			if (defaultStore.state.rememberNoteVisibility) {
-				defaultStore.set('visibility', visibility);
-			}
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkVisibilityPicker.vue")),
+		{
+			currentVisibility: visibility,
+			localOnly: localOnly,
+			src: visibilityButton,
 		},
-	}, 'closed');
+		{
+			changeVisibility: (v) => {
+				visibility = v;
+				if (defaultStore.state.rememberNoteVisibility) {
+					defaultStore.set("visibility", visibility);
+				}
+			},
+		},
+		"closed",
+	);
 }
 
 async function toggleLocalOnly() {
 	if (postChannel.value) {
-		visibility = 'public';
+		visibility = "public";
 		if (!postChannel.value.federation) {
 			localOnly = true;
 			return;
 		}
 	}
 
-	const neverShowInfo = miLocalStorage.getItem('neverShowLocalOnlyInfo');
+	const neverShowInfo = miLocalStorage.getItem("neverShowLocalOnlyInfo");
 
-	if (!localOnly && neverShowInfo !== 'true') {
+	if (!localOnly && neverShowInfo !== "true") {
 		const confirm = await os.actions({
-			type: 'question',
+			type: "question",
 			title: i18n.ts.disableFederationConfirm,
 			text: i18n.ts.disableFederationConfirmWarn,
 			actions: [
 				{
-					value: 'yes' as const,
+					value: "yes" as const,
 					text: i18n.ts.disableFederationOk,
 					primary: true,
 				},
 				{
-					value: 'neverShow' as const,
+					value: "neverShow" as const,
 					text: `${i18n.ts.disableFederationOk} (${i18n.ts.neverShow})`,
 					danger: true,
 				},
 				{
-					value: 'no' as const,
+					value: "no" as const,
 					text: i18n.ts.cancel,
 				},
 			],
 		});
 		if (confirm.canceled) return;
-		if (confirm.result === 'no') return;
+		if (confirm.result === "no") return;
 
-		if (confirm.result === 'neverShow') {
-			miLocalStorage.setItem('neverShowLocalOnlyInfo', 'true');
+		if (confirm.result === "neverShow") {
+			miLocalStorage.setItem("neverShowLocalOnlyInfo", "true");
 		}
 	}
 
@@ -586,10 +690,13 @@ async function toggleReactionAcceptance() {
 		title: i18n.ts.reactionAcceptance,
 		items: [
 			{ value: null, text: i18n.ts.all },
-			{ value: 'likeOnlyForRemote' as const, text: i18n.ts.likeOnlyForRemote },
-			{ value: 'nonSensitiveOnly' as const, text: i18n.ts.nonSensitiveOnly },
-			{ value: 'nonSensitiveOnlyForLocalLikeOnlyForRemote' as const, text: i18n.ts.nonSensitiveOnlyForLocalLikeOnlyForRemote },
-			{ value: 'likeOnly' as const, text: i18n.ts.likeOnly },
+			{ value: "likeOnlyForRemote" as const, text: i18n.ts.likeOnlyForRemote },
+			{ value: "nonSensitiveOnly" as const, text: i18n.ts.nonSensitiveOnly },
+			{
+				value: "nonSensitiveOnlyForLocalLikeOnlyForRemote" as const,
+				text: i18n.ts.nonSensitiveOnlyForLocalLikeOnlyForRemote,
+			},
+			{ value: "likeOnly" as const, text: i18n.ts.likeOnly },
 		],
 		default: reactionAcceptance,
 	});
@@ -598,13 +705,17 @@ async function toggleReactionAcceptance() {
 }
 
 function pushVisibleUser(user) {
-	if (!visibleUsers.some(u => u.username === user.username && u.host === user.host)) {
+	if (
+		!visibleUsers.some(
+			(u) => u.username === user.username && u.host === user.host,
+		)
+	) {
 		visibleUsers.push(user);
 	}
 }
 
 function addVisibleUser() {
-	os.selectUser().then(user => {
+	os.selectUser().then((user) => {
 		pushVisibleUser(user);
 
 		if (!text.toLowerCase().includes(`@${user.username.toLowerCase()}`)) {
@@ -618,20 +729,20 @@ function removeVisibleUser(user) {
 }
 
 function clear() {
-	text = '';
+	text = "";
 	files = [];
-	asciiartText.value = '';
+	asciiartText.value = "";
 	withAsciiArt.value = false;
 	poll = null;
 	quoteId = null;
 }
 
 function onKeydown(ev: KeyboardEvent) {
-	if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey) && canPost) post();
-	if (ev.key === 'Escape') {
+	if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey) && canPost) post();
+	if (ev.key === "Escape") {
 		updateDraft = false;
 		restoreChannel();
-		emit('esc');
+		emit("esc");
 	}
 }
 
@@ -640,27 +751,29 @@ function onCompositionUpdate(ev: CompositionEvent) {
 }
 
 function onCompositionEnd(ev: CompositionEvent) {
-	imeText = '';
+	imeText = "";
 }
 
 async function onPaste(ev: ClipboardEvent) {
-	for (const { item, i } of Array.from(ev.clipboardData.items).map((item, i) => ({ item, i }))) {
-		if (item.kind === 'file') {
+	for (const { item, i } of Array.from(ev.clipboardData.items).map(
+		(item, i) => ({ item, i }),
+	)) {
+		if (item.kind === "file") {
 			const file = item.getAsFile();
-			const lio = file.name.lastIndexOf('.');
-			const ext = lio >= 0 ? file.name.slice(lio) : '';
+			const lio = file.name.lastIndexOf(".");
+			const ext = lio >= 0 ? file.name.slice(lio) : "";
 			const formatted = `${formatTimeString(new Date(file.lastModified), defaultStore.state.pastedFileName).replace(/{{number}}/g, `${i + 1}`)}${ext}`;
 			upload(file, formatted);
 		}
 	}
 
-	const paste = ev.clipboardData.getData('text');
+	const paste = ev.clipboardData.getData("text");
 
-	if (!props.renote && !quoteId && paste.startsWith(url + '/notes/')) {
+	if (!props.renote && !quoteId && paste.startsWith(url + "/notes/")) {
 		ev.preventDefault();
 
 		os.confirm({
-			type: 'info',
+			type: "info",
 			text: i18n.ts.quoteQuestion,
 		}).then(({ canceled }) => {
 			if (canceled) {
@@ -675,25 +788,25 @@ async function onPaste(ev: ClipboardEvent) {
 
 function onDragover(ev) {
 	if (!ev.dataTransfer.items[0]) return;
-	const isFile = ev.dataTransfer.items[0].kind === 'file';
+	const isFile = ev.dataTransfer.items[0].kind === "file";
 	const isDriveFile = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
 	if (isFile || isDriveFile) {
 		ev.preventDefault();
 		draghover = true;
 		switch (ev.dataTransfer.effectAllowed) {
-			case 'all':
-			case 'uninitialized':
-			case 'copy':
-			case 'copyLink':
-			case 'copyMove':
-				ev.dataTransfer.dropEffect = 'copy';
+			case "all":
+			case "uninitialized":
+			case "copy":
+			case "copyLink":
+			case "copyMove":
+				ev.dataTransfer.dropEffect = "copy";
 				break;
-			case 'linkMove':
-			case 'move':
-				ev.dataTransfer.dropEffect = 'move';
+			case "linkMove":
+			case "move":
+				ev.dataTransfer.dropEffect = "move";
 				break;
 			default:
-				ev.dataTransfer.dropEffect = 'none';
+				ev.dataTransfer.dropEffect = "none";
 				break;
 		}
 	}
@@ -719,7 +832,7 @@ function onDrop(ev): void {
 
 	//#region ドライブのファイル
 	const driveFile = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
-	if (driveFile != null && driveFile !== '') {
+	if (driveFile != null && driveFile !== "") {
 		const file = JSON.parse(driveFile);
 		files.push(file);
 		ev.preventDefault();
@@ -730,7 +843,7 @@ function onDrop(ev): void {
 function saveDraft() {
 	if (!updateDraft) return;
 
-	const draftData = JSON.parse(miLocalStorage.getItem('drafts') ?? '{}');
+	const draftData = JSON.parse(miLocalStorage.getItem("drafts") ?? "{}");
 
 	draftData[draftKey] = {
 		updatedAt: new Date(),
@@ -745,104 +858,132 @@ function saveDraft() {
 		},
 	};
 
-	miLocalStorage.setItem('drafts', JSON.stringify(draftData));
+	miLocalStorage.setItem("drafts", JSON.stringify(draftData));
 }
 
 function deleteDraft() {
-	const draftData = JSON.parse(miLocalStorage.getItem('drafts') ?? '{}');
+	const draftData = JSON.parse(miLocalStorage.getItem("drafts") ?? "{}");
 
 	delete draftData[draftKey];
 
-	miLocalStorage.setItem('drafts', JSON.stringify(draftData));
+	miLocalStorage.setItem("drafts", JSON.stringify(draftData));
 }
 
 const diceRoll = (text: string, bold: boolean): string => {
-	return text.replace(/!(\d{1,3})?[dD](\d{1,3})(([-+])(\d+))?/g, (match, c1, c2, c3, c4) => {
-		const dice: number = parseInt(c1 ?? 1);
-		const rolls: number[] = [];
-		let plus: number = parseInt(c3 ?? 0);
-		if (c3 === '-') {
-			plus = -c4;
-		}
-		for (let i = 0; i < dice; i++) {
-			rolls.push(Math.ceil(Math.random() * c2));
-		}
+	return text.replace(
+		/!(\d{1,3})?[dD](\d{1,3})(([-+])(\d+))?/g,
+		(match, c1, c2, c3, c4) => {
+			const dice: number = parseInt(c1 ?? 1);
+			const rolls: number[] = [];
+			let plus: number = parseInt(c3 ?? 0);
+			if (c3 === "-") {
+				plus = -c4;
+			}
+			for (let i = 0; i < dice; i++) {
+				rolls.push(Math.ceil(Math.random() * c2));
+			}
 
-		const replacedText = match + ' => '
-			+ (dice === 0 ? '0' : rolls.map(r => r + plus).reduce((sum, ele) => sum + ele))
-			+ ((dice <= 1 && plus === 0) ? '' : ' [' + rolls.map(r => r + (c3 ? '(' + (r + plus) + ')' : '')).join(',') + ']');
+			const replacedText =
+				match +
+				" => " +
+				(dice === 0
+					? "0"
+					: rolls.map((r) => r + plus).reduce((sum, ele) => sum + ele)) +
+				(dice <= 1 && plus === 0
+					? ""
+					: " [" +
+						rolls.map((r) => r + (c3 ? "(" + (r + plus) + ")" : "")).join(",") +
+						"]");
 
-		if (bold) {
-			return '**' + replacedText + '**';
-		} else {
-			return replacedText;
-		}
-	});
+			if (bold) {
+				return "**" + replacedText + "**";
+			} else {
+				return replacedText;
+			}
+		},
+	);
 };
 
 async function post(ev?: MouseEvent) {
 	if (ev) {
 		const el = ev.currentTarget ?? ev.target;
 		const rect = el.getBoundingClientRect();
-		const x = rect.left + (el.offsetWidth / 2);
-		const y = rect.top + (el.offsetHeight / 2);
-		os.popup(MkRippleEffect, { x, y }, {}, 'end');
+		const x = rect.left + el.offsetWidth / 2;
+		const y = rect.top + el.offsetHeight / 2;
+		os.popup(MkRippleEffect, { x, y }, {}, "end");
 	}
 
 	const annoying =
-		text.includes('$[x2') ||
-		text.includes('$[x3') ||
-		text.includes('$[x4') ||
-		text.includes('$[scale') ||
-		text.includes('$[position');
+		text.includes("$[x2") ||
+		text.includes("$[x3") ||
+		text.includes("$[x4") ||
+		text.includes("$[scale") ||
+		text.includes("$[position");
 
-	if (annoying && visibility === 'public') {
+	if (annoying && visibility === "public") {
 		const { canceled, result } = await os.actions({
-			type: 'warning',
+			type: "warning",
 			text: i18n.ts.thisPostMayBeAnnoying,
-			actions: [{
-				value: 'home',
-				text: i18n.ts.thisPostMayBeAnnoyingHome,
-				primary: true,
-			}, {
-				value: 'cancel',
-				text: i18n.ts.thisPostMayBeAnnoyingCancel,
-			}, {
-				value: 'ignore',
-				text: i18n.ts.thisPostMayBeAnnoyingIgnore,
-			}],
+			actions: [
+				{
+					value: "home",
+					text: i18n.ts.thisPostMayBeAnnoyingHome,
+					primary: true,
+				},
+				{
+					value: "cancel",
+					text: i18n.ts.thisPostMayBeAnnoyingCancel,
+				},
+				{
+					value: "ignore",
+					text: i18n.ts.thisPostMayBeAnnoyingIgnore,
+				},
+			],
 		});
 
 		if (canceled) return;
-		if (result === 'cancel') return;
-		if (result === 'home') {
-			visibility = 'home';
+		if (result === "cancel") return;
+		if (result === "home") {
+			visibility = "home";
 		}
 	}
 
 	text = diceRoll(text, true);
 
 	let postData = {
-		text: (text === null || text === '') ? undefined : text,
-		fileIds: files.length > 0 ? files.map(f => f.id) : undefined,
+		text: text === null || text === "" ? undefined : text,
+		fileIds: files.length > 0 ? files.map((f) => f.id) : undefined,
 		replyId: props.reply ? props.reply.id : undefined,
 		renoteId: props.renote ? props.renote.id : quoteId ? quoteId : undefined,
 		channelId: postChannel.value ? postChannel.value.id : undefined,
 		poll: poll,
-		cw: useCw ? cw ?? '' : undefined,
+		cw: useCw ? (cw ?? "") : undefined,
 		localOnly: localOnly,
 		visibility: visibility,
-		visibleUserIds: visibility === 'specified' ? visibleUsers.map(u => u.id) : undefined,
+		visibleUserIds:
+			visibility === "specified" ? visibleUsers.map((u) => u.id) : undefined,
 		reactionAcceptance,
 	};
 
-	if (withHashtags && hashtags && hashtags.trim() !== '') {
-		const hashtags_ = hashtags.trim().split(' ').map(x => x.startsWith('#') ? x : '#' + x).join(' ');
+	if (withHashtags && hashtags && hashtags.trim() !== "") {
+		const hashtags_ = hashtags
+			.trim()
+			.split(" ")
+			.map((x) => (x.startsWith("#") ? x : "#" + x))
+			.join(" ");
 		postData.text = postData.text ? `${postData.text} ${hashtags_}` : hashtags_;
 	}
 
-	if (withAsciiArt.value && asciiartText.value && asciiartText.value.trim() !== '') {
-		postData.text = (postData.text === undefined ? '' : postData.text + '\n') + '<asciiart>' + diceRoll(asciiartText.value, false) + '\n</asciiart>\n';
+	if (
+		withAsciiArt.value &&
+		asciiartText.value &&
+		asciiartText.value.trim() !== ""
+	) {
+		postData.text =
+			(postData.text === undefined ? "" : postData.text + "\n") +
+			"<asciiart>" +
+			diceRoll(asciiartText.value, false) +
+			"\n</asciiart>\n";
 	}
 
 	// plugin
@@ -856,66 +997,79 @@ async function post(ev?: MouseEvent) {
 
 	if (postAccount) {
 		const storedAccounts = await getAccounts();
-		token = storedAccounts.find(x => x.id === postAccount.id)?.token;
+		token = storedAccounts.find((x) => x.id === postAccount.id)?.token;
 	}
 
 	posting = true;
-	os.api('notes/create', postData, token).then(() => {
-		if (props.freezeAfterPosted) {
-			posted = true;
-		} else {
-			clear();
-		}
-		nextTick(() => {
-			updateDraft = false;
-			deleteDraft();
-			emit('posted');
-			if (postData.text && postData.text !== '') {
-				const hashtags_ = mfm.parse(postData.text).filter(x => x.type === 'hashtag').map(x => x.props.hashtag);
-				const history = JSON.parse(miLocalStorage.getItem('hashtags') ?? '[]') as string[];
-				miLocalStorage.setItem('hashtags', JSON.stringify(unique(hashtags_.concat(history))));
+	os.api("notes/create", postData, token)
+		.then(() => {
+			if (props.freezeAfterPosted) {
+				posted = true;
+			} else {
+				clear();
 			}
+			nextTick(() => {
+				updateDraft = false;
+				deleteDraft();
+				emit("posted");
+				if (postData.text && postData.text !== "") {
+					const hashtags_ = mfm
+						.parse(postData.text)
+						.filter((x) => x.type === "hashtag")
+						.map((x) => x.props.hashtag);
+					const history = JSON.parse(
+						miLocalStorage.getItem("hashtags") ?? "[]",
+					) as string[];
+					miLocalStorage.setItem(
+						"hashtags",
+						JSON.stringify(unique(hashtags_.concat(history))),
+					);
+				}
+				posting = false;
+				postAccount = null;
+
+				//Postしたらハッシュタグを初期化
+				defaultStore.set("postFormWithHashtags", false);
+				defaultStore.set("postFormHashtags", "");
+
+				incNotesCount();
+				if (notesCount === 1) {
+					claimAchievement("notes1");
+				}
+
+				const text = postData.text?.toLowerCase() ?? "";
+				if (
+					(text.includes("love") || text.includes("❤")) &&
+					text.includes("tanukey")
+				) {
+					claimAchievement("iLoveTanukey");
+				}
+
+				if (props.renote && props.renote.userId === $i.id && text.length > 0) {
+					claimAchievement("selfQuote");
+				}
+
+				const date = new Date();
+				const h = date.getHours();
+				const m = date.getMinutes();
+				const s = date.getSeconds();
+				if (h >= 0 && h <= 3) {
+					claimAchievement("postedAtLateNight");
+				}
+				if (m === 0 && s === 0) {
+					claimAchievement("postedAt0min0sec");
+				}
+
+				restoreChannel();
+			});
+		})
+		.catch((err) => {
 			posting = false;
-			postAccount = null;
-
-			//Postしたらハッシュタグを初期化
-			defaultStore.set('postFormWithHashtags', false);
-			defaultStore.set('postFormHashtags', '');
-
-			incNotesCount();
-			if (notesCount === 1) {
-				claimAchievement('notes1');
-			}
-
-			const text = postData.text?.toLowerCase() ?? '';
-			if ((text.includes('love') || text.includes('❤')) && text.includes('tanukey')) {
-				claimAchievement('iLoveTanukey');
-			}
-
-			if (props.renote && (props.renote.userId === $i.id) && text.length > 0) {
-				claimAchievement('selfQuote');
-			}
-
-			const date = new Date();
-			const h = date.getHours();
-			const m = date.getMinutes();
-			const s = date.getSeconds();
-			if (h >= 0 && h <= 3) {
-				claimAchievement('postedAtLateNight');
-			}
-			if (m === 0 && s === 0) {
-				claimAchievement('postedAt0min0sec');
-			}
-
-			restoreChannel();
+			os.alert({
+				type: "error",
+				text: err.message + "\n" + (err as any).id,
+			});
 		});
-	}).catch(err => {
-		posting = false;
-		os.alert({
-			type: 'error',
-			text: err.message + '\n' + (err as any).id,
-		});
-	});
 }
 
 function restoreChannel() {
@@ -926,12 +1080,12 @@ function restoreChannel() {
 function cancel() {
 	updateDraft = false;
 	restoreChannel();
-	emit('cancel');
+	emit("cancel");
 }
 
 function insertMention() {
-	os.selectUser().then(user => {
-		insertTextAtCursor(textareaEl, '@' + Acct.toString(user) + ' ');
+	os.selectUser().then((user) => {
+		insertTextAtCursor(textareaEl, "@" + Acct.toString(user) + " ");
 	});
 }
 
@@ -940,33 +1094,44 @@ async function insertEmoji(ev: MouseEvent) {
 }
 
 function showActions(ev) {
-	os.popupMenu(postFormActions.map(action => ({
-		text: action.title,
-		action: () => {
-			action.handler({
-				text: text,
-			}, (key, value) => {
-				if (key === 'text') { text = value; }
-			});
-		},
-	})), ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		postFormActions.map((action) => ({
+			text: action.title,
+			action: () => {
+				action.handler(
+					{
+						text: text,
+					},
+					(key, value) => {
+						if (key === "text") {
+							text = value;
+						}
+					},
+				);
+			},
+		})),
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 let postAccount = $ref<misskey.entities.UserDetailed | null>(null);
 
 function openAccountMenu(ev: MouseEvent) {
-	openAccountMenu_({
-		withExtraOperation: false,
-		includeCurrentAccount: true,
-		active: postAccount != null ? postAccount.id : $i.id,
-		onChoose: (account) => {
-			if (account.id === $i.id) {
-				postAccount = null;
-			} else {
-				postAccount = account;
-			}
+	openAccountMenu_(
+		{
+			withExtraOperation: false,
+			includeCurrentAccount: true,
+			active: postAccount != null ? postAccount.id : $i.id,
+			onChoose: (account) => {
+				if (account.id === $i.id) {
+					postAccount = null;
+				} else {
+					postAccount = account;
+				}
+			},
 		},
-	}, ev);
+		ev,
+	);
 }
 
 onMounted(async () => {
@@ -985,7 +1150,7 @@ onMounted(async () => {
 
 	//チャンネル指定があった場合は書き換える
 	if (props.channel) {
-		postChannel.value = await os.api('channels/show', {
+		postChannel.value = await os.api("channels/show", {
 			channelId: props.channel.id,
 		});
 	}
@@ -993,14 +1158,16 @@ onMounted(async () => {
 	nextTick(() => {
 		// 書きかけの投稿を復元
 		if (!props.instant && !props.mention && !props.specified) {
-			const draft = JSON.parse(miLocalStorage.getItem('drafts') ?? '{}')[draftKey];
+			const draft = JSON.parse(miLocalStorage.getItem("drafts") ?? "{}")[
+				draftKey
+			];
 			if (draft) {
 				text = draft.data.text;
 				useCw = draft.data.useCw;
 				cw = draft.data.cw;
 				visibility = draft.data.visibility;
 				localOnly = draft.data.localOnly;
-				files = (draft.data.files || []).filter(draftFile => draftFile);
+				files = (draft.data.files || []).filter((draftFile) => draftFile);
 				if (draft.data.poll) {
 					poll = draft.data.poll;
 				}
@@ -1010,13 +1177,13 @@ onMounted(async () => {
 		// 削除して編集
 		if (props.initialNote) {
 			const init = props.initialNote;
-			text = init.text ? init.text : '';
+			text = init.text ? init.text : "";
 			files = init.files;
-			cw = init.cw ?? '';
-			useCw = init.cw !== null && init.cw !== '';
+			cw = init.cw ?? "";
+			useCw = init.cw !== null && init.cw !== "";
 			if (init.poll) {
 				poll = {
-					choices: init.poll.choices.map(x => x.text),
+					choices: init.poll.choices.map((x) => x.text),
 					multiple: init.poll.multiple,
 					expiresAt: init.poll.expiresAt,
 					expiredAfter: init.poll.expiredAfter,
@@ -1033,7 +1200,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
 	//Deckモードでチャンネルに投稿した後はpublicに戻す
-	if (miLocalStorage.getItem('ui') === 'deck') {
+	if (miLocalStorage.getItem("ui") === "deck") {
 		postChannel.value = null;
 	}
 });

@@ -58,22 +58,22 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XHeader from './_header_.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkRadios from '@/components/MkRadios.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkFolder from '@/components/MkFolder.vue';
+import {} from "vue";
+import XHeader from "./_header_.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkRadios from "@/components/MkRadios.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkFolder from "@/components/MkFolder.vue";
 
 let announcements: any[] = $ref([]);
 
-os.api('admin/announcements/list').then(announcementResponse => {
+os.api("admin/announcements/list").then((announcementResponse) => {
 	announcements = announcementResponse;
 });
 
@@ -81,11 +81,11 @@ function add() {
 	announcements.unshift({
 		_id: Math.random().toString(36),
 		id: null,
-		title: 'New announcement',
-		text: '',
+		title: "New announcement",
+		text: "",
 		imageUrl: null,
-		icon: 'info',
-		display: 'normal',
+		icon: "info",
+		display: "normal",
 		forExistingUsers: false,
 		needConfirmationToRead: false,
 	});
@@ -93,17 +93,17 @@ function add() {
 
 function del(announcement) {
 	os.confirm({
-		type: 'warning',
-		text: i18n.t('deleteAreYouSure', { x: announcement.title }),
+		type: "warning",
+		text: i18n.t("deleteAreYouSure", { x: announcement.title }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
-		announcements = announcements.filter(x => x !== announcement);
-		os.api('admin/announcements/delete', announcement);
+		announcements = announcements.filter((x) => x !== announcement);
+		os.api("admin/announcements/delete", announcement);
 	});
 }
 
 async function archive(announcement) {
-	await os.apiWithDialog('admin/announcements/update', {
+	await os.apiWithDialog("admin/announcements/update", {
 		...announcement,
 		isActive: false,
 	});
@@ -112,32 +112,34 @@ async function archive(announcement) {
 
 async function save(announcement) {
 	if (announcement.id == null) {
-		await os.apiWithDialog('admin/announcements/create', announcement);
+		await os.apiWithDialog("admin/announcements/create", announcement);
 		refresh();
 	} else {
-		os.apiWithDialog('admin/announcements/update', announcement);
+		os.apiWithDialog("admin/announcements/update", announcement);
 	}
 }
 
 function refresh() {
-	os.api('admin/announcements/list').then(announcementResponse => {
+	os.api("admin/announcements/list").then((announcementResponse) => {
 		announcements = announcementResponse;
 	});
 }
 
 refresh();
 
-const headerActions = $computed(() => [{
-	asFullButton: true,
-	icon: 'ti ti-plus',
-	text: i18n.ts.add,
-	handler: add,
-}]);
+const headerActions = $computed(() => [
+	{
+		asFullButton: true,
+		icon: "ti ti-plus",
+		text: i18n.ts.add,
+		handler: add,
+	},
+]);
 
 const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.announcements,
-	icon: 'ti ti-speakerphone',
+	icon: "ti ti-speakerphone",
 });
 </script>

@@ -23,28 +23,30 @@
 </MkStickyContainer>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch, defineAsyncComponent } from 'vue';
-import { Tab } from './global/MkPageHeader.tabs.vue';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import MkTimelineWithScroll from '@/components/MkTimelineWithScroll.vue';
-import { defaultStore } from '@/store';
-import { deviceKind } from '@/scripts/device-kind';
-import { scrollToTop } from '@/scripts/scroll';
+import { computed, onMounted, ref, watch, defineAsyncComponent } from "vue";
+import { Tab } from "./global/MkPageHeader.tabs.vue";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import MkTimelineWithScroll from "@/components/MkTimelineWithScroll.vue";
+import { defaultStore } from "@/store";
+import { deviceKind } from "@/scripts/device-kind";
+import { scrollToTop } from "@/scripts/scroll";
 
 const tabs = ref<Tab[]>([]);
-const srcCh = computed(() => 'channel');
-const postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
-const tab = ref<string|null>(null);
-const selectedTab = computed(defaultStore.makeGetterSetter('selectedUserChannelTab'));
+const srcCh = computed(() => "channel");
+const postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
+const tab = ref<string | null>(null);
+const selectedTab = computed(
+	defaultStore.makeGetterSetter("selectedUserChannelTab"),
+);
 const channelId = computed(() => tab.value);
-const disableSwipe = computed(defaultStore.makeGetterSetter('disableSwipe'));
+const disableSwipe = computed(defaultStore.makeGetterSetter("disableSwipe"));
 
 watch(tab, async () => {
 	selectedTab.value = tab.value;
 
 	if (tab.value !== null) {
-		let ch = await os.api('channels/show', {
+		let ch = await os.api("channels/show", {
 			channelId: tab.value,
 		});
 		postChannel.value = ch;
@@ -60,7 +62,9 @@ onMounted(async () => {
 	let ids: string[] = [];
 	let s: Set<string> = new Set<string>();
 
-	let userPinnedLtlChannelIds = defaultStore.makeGetterSetter('userPinnedLtlChannelIds');
+	let userPinnedLtlChannelIds = defaultStore.makeGetterSetter(
+		"userPinnedLtlChannelIds",
+	);
 	let userPinnedChIds = userPinnedLtlChannelIds.get();
 	for (let id of userPinnedChIds) {
 		if (!s.has(id.value)) {
@@ -69,14 +73,14 @@ onMounted(async () => {
 		}
 	}
 
-	let pinnedChs = await os.api('channels/show', {
+	let pinnedChs = await os.api("channels/show", {
 		channelIds: ids,
 	});
 
 	if (pinnedChs) {
 		for (let ch of pinnedChs) {
 			if (ch != null) {
-				t.push({ key: ch.id, title: ch.name, icon: 'ti ti-device-tv' });
+				t.push({ key: ch.id, title: ch.name, icon: "ti ti-device-tv" });
 			}
 		}
 	}
@@ -96,7 +100,7 @@ onMounted(async () => {
 
 const onSwipeLeft = (): void => {
 	//モバイル環境のみ
-	if (deviceKind === 'desktop') {
+	if (deviceKind === "desktop") {
 		return;
 	}
 	//AAなどスクロールが必要な場合は無効化
@@ -104,7 +108,7 @@ const onSwipeLeft = (): void => {
 		disableSwipe.value = false;
 		return;
 	}
-	const index = tabs.value.findIndex(x => x.key === tab.value);
+	const index = tabs.value.findIndex((x) => x.key === tab.value);
 	if (index < tabs.value.length - 1) {
 		tab.value = tabs.value[index + 1].key;
 	} else {
@@ -114,7 +118,7 @@ const onSwipeLeft = (): void => {
 
 const onSwipeRight = (): void => {
 	//モバイル環境のみ
-	if (deviceKind === 'desktop') {
+	if (deviceKind === "desktop") {
 		return;
 	}
 	//AAなどスクロールが必要な場合は無効化
@@ -124,7 +128,7 @@ const onSwipeRight = (): void => {
 	}
 	//右スワイプで左のタブに移動
 	//左端までいったら最終ページに移動
-	const index = tabs.value.findIndex(x => x.key === tab.value);
+	const index = tabs.value.findIndex((x) => x.key === tab.value);
 	if (index !== 0) {
 		tab.value = tabs.value[index - 1].key;
 	} else {
@@ -132,12 +136,14 @@ const onSwipeRight = (): void => {
 	}
 };
 
-const headerActions = computed(() => [{
-	icon: 'ti ti-caret-down',
-	text: i18n.ts.menu,
-	handler: dropDownMenu,
-	refHandler: getRef,
-}]);
+const headerActions = computed(() => [
+	{
+		icon: "ti ti-caret-down",
+		text: i18n.ts.menu,
+		handler: dropDownMenu,
+		refHandler: getRef,
+	},
+]);
 
 let el: any = null;
 
@@ -146,17 +152,21 @@ const getRef = (ref) => {
 };
 
 const dropDownMenu = (ev) => {
-	os.popup(defineAsyncComponent(() => import('@/components/MkChannelTabPicker.vue')), {
-		currentKey: tab.value,
-		tabs: tabs,
-		src: el,
-	}, {
-		changeKey: key => {
-			tab.value = key;
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkChannelTabPicker.vue")),
+		{
+			currentKey: tab.value,
+			tabs: tabs,
+			src: el,
 		},
-	}, 'closed');
+		{
+			changeKey: (key) => {
+				tab.value = key;
+			},
+		},
+		"closed",
+	);
 };
-
 </script>
 
 <style lang="scss" module>

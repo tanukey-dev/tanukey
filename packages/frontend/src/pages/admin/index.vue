@@ -23,27 +23,30 @@
 </template>
 
 <script lang="ts" setup>
-import { onActivated, onMounted, onUnmounted, provide, watch } from 'vue';
-import { i18n } from '@/i18n';
-import MkSuperMenu from '@/components/MkSuperMenu.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import { instance } from '@/instance';
-import * as os from '@/os';
-import { lookupUser } from '@/scripts/lookup-user';
-import { useRouter } from '@/router';
-import { definePageMetadata, provideMetadataReceiver } from '@/scripts/page-metadata';
+import { onActivated, onMounted, onUnmounted, provide, watch } from "vue";
+import { i18n } from "@/i18n";
+import MkSuperMenu from "@/components/MkSuperMenu.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import { instance } from "@/instance";
+import * as os from "@/os";
+import { lookupUser } from "@/scripts/lookup-user";
+import { useRouter } from "@/router";
+import {
+	definePageMetadata,
+	provideMetadataReceiver,
+} from "@/scripts/page-metadata";
 
-const isEmpty = (x: string | null) => x == null || x === '';
+const isEmpty = (x: string | null) => x == null || x === "";
 
 const router = useRouter();
 
 const indexInfo = {
 	title: i18n.ts.controlPanel,
-	icon: 'ti ti-settings',
+	icon: "ti ti-settings",
 	hideHeader: true,
 };
 
-provide('shouldOmitHeaderTitle', false);
+provide("shouldOmitHeaderTitle", false);
 
 let INFO = $ref(indexInfo);
 let childInfo = $ref(null);
@@ -51,16 +54,21 @@ let narrow = $ref(false);
 let view = $ref(null);
 let el = $ref(null);
 let pageProps = $ref({});
-let noMaintainerInformation = isEmpty(instance.maintainerName) || isEmpty(instance.maintainerEmail);
-let noBotProtection = !instance.disableRegistration && !instance.enableHcaptcha && !instance.enableRecaptcha && !instance.enableTurnstile;
+let noMaintainerInformation =
+	isEmpty(instance.maintainerName) || isEmpty(instance.maintainerEmail);
+let noBotProtection =
+	!instance.disableRegistration &&
+	!instance.enableHcaptcha &&
+	!instance.enableRecaptcha &&
+	!instance.enableTurnstile;
 let noEmailServer = !instance.enableEmail;
 let thereIsUnresolvedAbuseReport = $ref(false);
 let currentPage = $computed(() => router.currentRef.value.child);
 
-os.api('admin/abuse-user-reports', {
-	state: 'unresolved',
+os.api("admin/abuse-user-reports", {
+	state: "unresolved",
 	limit: 1,
-}).then(reports => {
+}).then((reports) => {
 	if (reports.length > 0) thereIsUnresolvedAbuseReport = true;
 });
 
@@ -70,153 +78,194 @@ const ro = new ResizeObserver((entries, observer) => {
 	narrow = entries[0].borderBoxSize[0].inlineSize < NARROW_THRESHOLD;
 });
 
-const menuDef = $computed(() => [{
-	title: i18n.ts.quickAction,
-	items: [{
-		type: 'button',
-		icon: 'ti ti-search',
-		text: i18n.ts.lookup,
-		action: lookup,
-	}, ...(instance.disableRegistration ? [{
-		type: 'button',
-		icon: 'ti ti-user-plus',
-		text: i18n.ts.createInviteCode,
-		action: invite,
-	}] : [])],
-}, {
-	title: i18n.ts.administration,
-	items: [{
-		icon: 'ti ti-dashboard',
-		text: i18n.ts.dashboard,
-		to: '/admin/overview',
-		active: currentPage?.route.name === 'overview',
-	}, {
-		icon: 'ti ti-users',
-		text: i18n.ts.users,
-		to: '/admin/users',
-		active: currentPage?.route.name === 'users',
-	}, {
-		icon: 'ti ti-user-plus',
-		text: i18n.ts.invite,
-		to: '/admin/invites',
-		active: currentPage?.route.name === 'invites',
-	}, {
-		icon: 'ti ti-badges',
-		text: i18n.ts.roles,
-		to: '/admin/roles',
-		active: currentPage?.route.name === 'roles',
-	}, instance.enableSubscriptions ? {
-		icon: 'ti ti-credit-card',
-		text: i18n.ts.subscription,
-		to: '/admin/subscription-plans',
-		active: currentPage?.route.name === 'subscription-plans',
-	} : undefined, {
-		icon: 'ti ti-icons',
-		text: i18n.ts.customEmojis,
-		to: '/admin/emojis',
-		active: currentPage?.route.name === 'emojis',
-	}, {
-		icon: 'ti ti-whirl',
-		text: i18n.ts.federation,
-		to: '/admin/federation',
-		active: currentPage?.route.name === 'federation',
-	}, {
-		icon: 'ti ti-clock-play',
-		text: i18n.ts.jobQueue,
-		to: '/admin/queue',
-		active: currentPage?.route.name === 'queue',
-	}, {
-		icon: 'ti ti-cloud',
-		text: i18n.ts.files,
-		to: '/admin/files',
-		active: currentPage?.route.name === 'files',
-	}, {
-		icon: 'ti ti-speakerphone',
-		text: i18n.ts.announcements,
-		to: '/admin/announcements',
-		active: currentPage?.route.name === 'announcements',
-	}, {
-		icon: 'ti ti-ad',
-		text: i18n.ts.ads,
-		to: '/admin/ads',
-		active: currentPage?.route.name === 'ads',
-	}, {
-		icon: 'ti ti-exclamation-circle',
-		text: i18n.ts.abuseReports,
-		to: '/admin/abuses',
-		active: currentPage?.route.name === 'abuses',
-	}],
-}, {
-	title: i18n.ts.settings,
-	items: [{
-		icon: 'ti ti-settings',
-		text: i18n.ts.general,
-		to: '/admin/settings',
-		active: currentPage?.route.name === 'settings',
-	}, {
-		icon: 'ti ti-device-tv',
-		text: i18n.ts.pinnedChannel,
-		to: '/admin/pinnedChannel',
-		active: currentPage?.route.name === 'pinnedChannel',
-	}, {
-		icon: 'ti ti-paint',
-		text: i18n.ts.branding,
-		to: '/admin/branding',
-		active: currentPage?.route.name === 'branding',
-	}, {
-		icon: 'ti ti-shield',
-		text: i18n.ts.moderation,
-		to: '/admin/moderation',
-		active: currentPage?.route.name === 'moderation',
-	}, {
-		icon: 'ti ti-mail',
-		text: i18n.ts.emailServer,
-		to: '/admin/email-settings',
-		active: currentPage?.route.name === 'email-settings',
-	}, {
-		icon: 'ti ti-cloud',
-		text: i18n.ts.objectStorage,
-		to: '/admin/object-storage',
-		active: currentPage?.route.name === 'object-storage',
-	}, {
-		icon: 'ti ti-lock',
-		text: i18n.ts.security,
-		to: '/admin/security',
-		active: currentPage?.route.name === 'security',
-	}, {
-		icon: 'ti ti-planet',
-		text: i18n.ts.relays,
-		to: '/admin/relays',
-		active: currentPage?.route.name === 'relays',
-	}, {
-		icon: 'ti ti-ban',
-		text: i18n.ts.instanceBlocking,
-		to: '/admin/instance-block',
-		active: currentPage?.route.name === 'instance-block',
-	}, {
-		icon: 'ti ti-ghost',
-		text: i18n.ts.proxyAccount,
-		to: '/admin/proxy-account',
-		active: currentPage?.route.name === 'proxy-account',
-	}, {
-		icon: 'ti ti-adjustments',
-		text: i18n.ts.other,
-		to: '/admin/other-settings',
-		active: currentPage?.route.name === 'other-settings',
-	}],
-}, {
-	title: i18n.ts.info,
-	items: [{
-		icon: 'ti ti-database',
-		text: i18n.ts.database,
-		to: '/admin/database',
-		active: currentPage?.route.name === 'database',
-	}],
-}]);
+const menuDef = $computed(() => [
+	{
+		title: i18n.ts.quickAction,
+		items: [
+			{
+				type: "button",
+				icon: "ti ti-search",
+				text: i18n.ts.lookup,
+				action: lookup,
+			},
+			...(instance.disableRegistration
+				? [
+						{
+							type: "button",
+							icon: "ti ti-user-plus",
+							text: i18n.ts.createInviteCode,
+							action: invite,
+						},
+					]
+				: []),
+		],
+	},
+	{
+		title: i18n.ts.administration,
+		items: [
+			{
+				icon: "ti ti-dashboard",
+				text: i18n.ts.dashboard,
+				to: "/admin/overview",
+				active: currentPage?.route.name === "overview",
+			},
+			{
+				icon: "ti ti-users",
+				text: i18n.ts.users,
+				to: "/admin/users",
+				active: currentPage?.route.name === "users",
+			},
+			{
+				icon: "ti ti-user-plus",
+				text: i18n.ts.invite,
+				to: "/admin/invites",
+				active: currentPage?.route.name === "invites",
+			},
+			{
+				icon: "ti ti-badges",
+				text: i18n.ts.roles,
+				to: "/admin/roles",
+				active: currentPage?.route.name === "roles",
+			},
+			instance.enableSubscriptions
+				? {
+						icon: "ti ti-credit-card",
+						text: i18n.ts.subscription,
+						to: "/admin/subscription-plans",
+						active: currentPage?.route.name === "subscription-plans",
+					}
+				: undefined,
+			{
+				icon: "ti ti-icons",
+				text: i18n.ts.customEmojis,
+				to: "/admin/emojis",
+				active: currentPage?.route.name === "emojis",
+			},
+			{
+				icon: "ti ti-whirl",
+				text: i18n.ts.federation,
+				to: "/admin/federation",
+				active: currentPage?.route.name === "federation",
+			},
+			{
+				icon: "ti ti-clock-play",
+				text: i18n.ts.jobQueue,
+				to: "/admin/queue",
+				active: currentPage?.route.name === "queue",
+			},
+			{
+				icon: "ti ti-cloud",
+				text: i18n.ts.files,
+				to: "/admin/files",
+				active: currentPage?.route.name === "files",
+			},
+			{
+				icon: "ti ti-speakerphone",
+				text: i18n.ts.announcements,
+				to: "/admin/announcements",
+				active: currentPage?.route.name === "announcements",
+			},
+			{
+				icon: "ti ti-ad",
+				text: i18n.ts.ads,
+				to: "/admin/ads",
+				active: currentPage?.route.name === "ads",
+			},
+			{
+				icon: "ti ti-exclamation-circle",
+				text: i18n.ts.abuseReports,
+				to: "/admin/abuses",
+				active: currentPage?.route.name === "abuses",
+			},
+		],
+	},
+	{
+		title: i18n.ts.settings,
+		items: [
+			{
+				icon: "ti ti-settings",
+				text: i18n.ts.general,
+				to: "/admin/settings",
+				active: currentPage?.route.name === "settings",
+			},
+			{
+				icon: "ti ti-device-tv",
+				text: i18n.ts.pinnedChannel,
+				to: "/admin/pinnedChannel",
+				active: currentPage?.route.name === "pinnedChannel",
+			},
+			{
+				icon: "ti ti-paint",
+				text: i18n.ts.branding,
+				to: "/admin/branding",
+				active: currentPage?.route.name === "branding",
+			},
+			{
+				icon: "ti ti-shield",
+				text: i18n.ts.moderation,
+				to: "/admin/moderation",
+				active: currentPage?.route.name === "moderation",
+			},
+			{
+				icon: "ti ti-mail",
+				text: i18n.ts.emailServer,
+				to: "/admin/email-settings",
+				active: currentPage?.route.name === "email-settings",
+			},
+			{
+				icon: "ti ti-cloud",
+				text: i18n.ts.objectStorage,
+				to: "/admin/object-storage",
+				active: currentPage?.route.name === "object-storage",
+			},
+			{
+				icon: "ti ti-lock",
+				text: i18n.ts.security,
+				to: "/admin/security",
+				active: currentPage?.route.name === "security",
+			},
+			{
+				icon: "ti ti-planet",
+				text: i18n.ts.relays,
+				to: "/admin/relays",
+				active: currentPage?.route.name === "relays",
+			},
+			{
+				icon: "ti ti-ban",
+				text: i18n.ts.instanceBlocking,
+				to: "/admin/instance-block",
+				active: currentPage?.route.name === "instance-block",
+			},
+			{
+				icon: "ti ti-ghost",
+				text: i18n.ts.proxyAccount,
+				to: "/admin/proxy-account",
+				active: currentPage?.route.name === "proxy-account",
+			},
+			{
+				icon: "ti ti-adjustments",
+				text: i18n.ts.other,
+				to: "/admin/other-settings",
+				active: currentPage?.route.name === "other-settings",
+			},
+		],
+	},
+	{
+		title: i18n.ts.info,
+		items: [
+			{
+				icon: "ti ti-database",
+				text: i18n.ts.database,
+				to: "/admin/database",
+				active: currentPage?.route.name === "database",
+			},
+		],
+	},
+]);
 
 watch(narrow, () => {
 	if (currentPage?.route.name == null && !narrow) {
-		router.push('/admin/overview');
+		router.push("/admin/overview");
 	}
 });
 
@@ -225,14 +274,14 @@ onMounted(() => {
 
 	narrow = el.offsetWidth < NARROW_THRESHOLD;
 	if (currentPage?.route.name == null && !narrow) {
-		router.push('/admin/overview');
+		router.push("/admin/overview");
 	}
 });
 
 onActivated(() => {
 	narrow = el.offsetWidth < NARROW_THRESHOLD;
 	if (currentPage?.route.name == null && !narrow) {
-		router.push('/admin/overview');
+		router.push("/admin/overview");
 	}
 });
 
@@ -241,8 +290,8 @@ onUnmounted(() => {
 });
 
 watch(router.currentRef, (to) => {
-	if (to.route.path === '/admin' && to.child?.route.name == null && !narrow) {
-		router.replace('/admin/overview');
+	if (to.route.path === "/admin" && to.child?.route.name == null && !narrow) {
+		router.replace("/admin/overview");
 	}
 });
 
@@ -255,45 +304,55 @@ provideMetadataReceiver((info) => {
 });
 
 const invite = () => {
-	os.api('admin/invite/create').then(x => {
-		os.alert({
-			type: 'info',
-			text: x?.[0].code,
+	os.api("admin/invite/create")
+		.then((x) => {
+			os.alert({
+				type: "info",
+				text: x?.[0].code,
+			});
+		})
+		.catch((err) => {
+			os.alert({
+				type: "error",
+				text: err,
+			});
 		});
-	}).catch(err => {
-		os.alert({
-			type: 'error',
-			text: err,
-		});
-	});
 };
 
 const lookup = (ev) => {
-	os.popupMenu([{
-		text: i18n.ts.user,
-		icon: 'ti ti-user',
-		action: () => {
-			lookupUser();
-		},
-	}, {
-		text: i18n.ts.note,
-		icon: 'ti ti-pencil',
-		action: () => {
-			alert('TODO');
-		},
-	}, {
-		text: i18n.ts.file,
-		icon: 'ti ti-cloud',
-		action: () => {
-			alert('TODO');
-		},
-	}, {
-		text: i18n.ts.instance,
-		icon: 'ti ti-planet',
-		action: () => {
-			alert('TODO');
-		},
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.user,
+				icon: "ti ti-user",
+				action: () => {
+					lookupUser();
+				},
+			},
+			{
+				text: i18n.ts.note,
+				icon: "ti ti-pencil",
+				action: () => {
+					alert("TODO");
+				},
+			},
+			{
+				text: i18n.ts.file,
+				icon: "ti ti-cloud",
+				action: () => {
+					alert("TODO");
+				},
+			},
+			{
+				text: i18n.ts.instance,
+				icon: "ti ti-planet",
+				action: () => {
+					alert("TODO");
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 };
 
 const headerActions = $computed(() => []);

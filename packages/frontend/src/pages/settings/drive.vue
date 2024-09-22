@@ -52,20 +52,20 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import tinycolor from 'tinycolor2';
-import FormLink from '@/components/form/link.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import FormSection from '@/components/form/section.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import FormSplit from '@/components/form/split.vue';
-import * as os from '@/os';
-import bytes from '@/filters/bytes';
-import { defaultStore } from '@/store';
-import MkChart from '@/components/MkChart.vue';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { $i } from '@/account';
+import { computed, ref } from "vue";
+import tinycolor from "tinycolor2";
+import FormLink from "@/components/form/link.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import FormSection from "@/components/form/section.vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import FormSplit from "@/components/form/split.vue";
+import * as os from "@/os";
+import bytes from "@/filters/bytes";
+import { defaultStore } from "@/store";
+import MkChart from "@/components/MkChart.vue";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { $i } from "@/account";
 
 const fetching = ref(true);
 const usage = ref<any>(null);
@@ -76,37 +76,39 @@ let autoSensitive = $ref($i.autoSensitive);
 
 const meterStyle = computed(() => {
 	return {
-		width: `${usage.value / capacity.value * 100}%`,
+		width: `${(usage.value / capacity.value) * 100}%`,
 		background: tinycolor({
-			h: 180 - (usage.value / capacity.value * 180),
+			h: 180 - (usage.value / capacity.value) * 180,
 			s: 0.7,
 			l: 0.5,
 		}),
 	};
 });
 
-const keepOriginalUploading = computed(defaultStore.makeGetterSetter('keepOriginalUploading'));
+const keepOriginalUploading = computed(
+	defaultStore.makeGetterSetter("keepOriginalUploading"),
+);
 
-os.api('drive').then(info => {
+os.api("drive").then((info) => {
 	capacity.value = info.capacity;
 	usage.value = info.usage;
 	fetching.value = false;
 });
 
 if (defaultStore.state.uploadFolder) {
-	os.api('drive/folders/show', {
+	os.api("drive/folders/show", {
 		folderId: defaultStore.state.uploadFolder,
-	}).then(response => {
+	}).then((response) => {
 		uploadFolder.value = response;
 	});
 }
 
 function chooseUploadFolder() {
-	os.selectDriveFolder(false).then(async folder => {
-		defaultStore.set('uploadFolder', folder ? folder.id : null);
+	os.selectDriveFolder(false).then(async (folder) => {
+		defaultStore.set("uploadFolder", folder ? folder.id : null);
 		os.success();
 		if (defaultStore.state.uploadFolder) {
-			uploadFolder.value = await os.api('drive/folders/show', {
+			uploadFolder.value = await os.api("drive/folders/show", {
 				folderId: defaultStore.state.uploadFolder,
 			});
 		} else {
@@ -116,12 +118,12 @@ function chooseUploadFolder() {
 }
 
 function saveProfile() {
-	os.api('i/update', {
+	os.api("i/update", {
 		alwaysMarkNsfw: !!alwaysMarkNsfw,
 		autoSensitive: !!autoSensitive,
-	}).catch(err => {
+	}).catch((err) => {
 		os.alert({
-			type: 'error',
+			type: "error",
 			title: i18n.ts.error,
 			text: err.message,
 		});
@@ -135,7 +137,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.drive,
-	icon: 'ti ti-cloud',
+	icon: "ti ti-cloud",
 });
 </script>
 

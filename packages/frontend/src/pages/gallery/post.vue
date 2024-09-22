@@ -56,19 +56,19 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import MkContainer from '@/components/MkContainer.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import MkGalleryPostPreview from '@/components/MkGalleryPostPreview.vue';
-import MkFollowButton from '@/components/MkFollowButton.vue';
-import { url } from '@/config';
-import { useRouter } from '@/router';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { defaultStore } from '@/store';
-import { $i } from '@/account';
+import { computed, watch } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import MkContainer from "@/components/MkContainer.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import MkGalleryPostPreview from "@/components/MkGalleryPostPreview.vue";
+import MkFollowButton from "@/components/MkFollowButton.vue";
+import { url } from "@/config";
+import { useRouter } from "@/router";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { defaultStore } from "@/store";
+import { $i } from "@/account";
 
 const router = useRouter();
 
@@ -79,7 +79,7 @@ const props = defineProps<{
 let post = $ref(null);
 let error = $ref(null);
 const otherPostsPagination = {
-	endpoint: 'users/gallery/posts' as const,
+	endpoint: "users/gallery/posts" as const,
 	limit: 6,
 	params: computed(() => ({
 		userId: post.user.id,
@@ -88,13 +88,15 @@ const otherPostsPagination = {
 
 function fetchPost() {
 	post = null;
-	os.api('gallery/posts/show', {
+	os.api("gallery/posts/show", {
 		postId: props.postId,
-	}).then(_post => {
-		post = _post;
-	}).catch(_error => {
-		error = _error;
-	});
+	})
+		.then((_post) => {
+			post = _post;
+		})
+		.catch((_error) => {
+			error = _error;
+		});
 }
 
 function share() {
@@ -112,7 +114,7 @@ function shareWithNote() {
 }
 
 function like() {
-	os.apiWithDialog('gallery/posts/like', {
+	os.apiWithDialog("gallery/posts/like", {
 		postId: props.postId,
 	}).then(() => {
 		post.isLiked = true;
@@ -122,11 +124,11 @@ function like() {
 
 async function unlike() {
 	const confirm = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		text: i18n.ts.unlikeConfirm,
 	});
 	if (confirm.canceled) return;
-	os.apiWithDialog('gallery/posts/unlike', {
+	os.apiWithDialog("gallery/posts/unlike", {
 		postId: props.postId,
 	}).then(() => {
 		post.isLiked = false;
@@ -140,18 +142,26 @@ function edit() {
 
 watch(() => props.postId, fetchPost, { immediate: true });
 
-const headerActions = $computed(() => [{
-	icon: 'ti ti-pencil',
-	text: i18n.ts.edit,
-	handler: edit,
-}]);
+const headerActions = $computed(() => [
+	{
+		icon: "ti ti-pencil",
+		text: i18n.ts.edit,
+		handler: edit,
+	},
+]);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => post ? {
-	title: post.title,
-	avatar: post.user,
-} : null));
+definePageMetadata(
+	computed(() =>
+		post
+			? {
+					title: post.title,
+					avatar: post.user,
+				}
+			: null,
+	),
+);
 </script>
 
 <style lang="scss" scoped>

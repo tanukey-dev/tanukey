@@ -28,16 +28,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import { selectFile } from '@/scripts/select-file';
-import * as os from '@/os';
-import { useRouter } from '@/router';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
+import { computed, ref, watch } from "vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import { selectFile } from "@/scripts/select-file";
+import * as os from "@/os";
+import { useRouter } from "@/router";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
 
 const router = useRouter();
 
@@ -56,13 +56,13 @@ let pageId = $ref(null);
 let pages = $ref(null);
 
 async function fetchPages() {
-	pages = await os.api('i/pages');
+	pages = await os.api("i/pages");
 }
 
 fetchPages();
 
 async function fetchCircles() {
-	circles = await os.api('circles/show', {
+	circles = await os.api("circles/show", {
 		userId: $i?.id,
 	});
 }
@@ -72,7 +72,7 @@ fetchCircles();
 async function fetchEvent() {
 	if (props.eventId == null) return;
 
-	event = await os.api('events/show', {
+	event = await os.api("events/show", {
 		eventId: props.eventId,
 	});
 
@@ -84,7 +84,7 @@ fetchEvent();
 async function fetchEventCircle() {
 	if (props.eventCircleId == null) return;
 
-	eventCircle = await os.api('eventCircles/show', {
+	eventCircle = await os.api("eventCircles/show", {
 		eventCircleId: props.eventCircleId,
 	});
 
@@ -105,11 +105,11 @@ function save() {
 
 	if (props.eventCircleId) {
 		params.eventCircleId = props.eventCircleId;
-		os.api('eventCircles/update', params).then((u) => {
+		os.api("eventCircles/update", params).then((u) => {
 			os.success();
 		});
 	} else {
-		os.api('eventCircles/create', params).then(created => {
+		os.api("eventCircles/create", params).then((created) => {
 			os.success();
 			router.push(`/events/${props.eventId}/${created.id}`);
 		});
@@ -118,14 +118,14 @@ function save() {
 
 async function archive() {
 	const { canceled } = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		title: i18n.ts.archiveConfirmTitle,
 		text: i18n.ts.archiveConfirmDescription,
 	});
 
 	if (canceled) return;
-	
-	os.api('eventCircles/update', {
+
+	os.api("eventCircles/update", {
 		eventCircleId: props.eventCircleId,
 		isArchived: true,
 	}).then(() => {
@@ -139,14 +139,19 @@ const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => props.eventId ? {
-	title: i18n.ts._eventCircle.edit,
-	icon: 'ti ti-calendar-event',
-} : {
-	title: i18n.ts._eventCircle.create,
-	icon: 'ti ti-calendar-event',
-}));
-
+definePageMetadata(
+	computed(() =>
+		props.eventId
+			? {
+					title: i18n.ts._eventCircle.edit,
+					icon: "ti ti-calendar-event",
+				}
+			: {
+					title: i18n.ts._eventCircle.create,
+					icon: "ti ti-calendar-event",
+				},
+	),
+);
 </script>
 
 <style lang="scss" module>

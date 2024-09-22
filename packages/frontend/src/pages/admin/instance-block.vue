@@ -28,36 +28,38 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XHeader from './_header_.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import * as os from '@/os';
-import { fetchInstance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import {} from "vue";
+import XHeader from "./_header_.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import * as os from "@/os";
+import { fetchInstance } from "@/instance";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
-let blockedHosts: string = $ref('');
-let allowedHosts: string = $ref('');
+let blockedHosts: string = $ref("");
+let allowedHosts: string = $ref("");
 let enableAllowedHostsInWhiteList: boolean = $ref(false);
 let enableAllowedNotificationInLocalUserFollowed: boolean = $ref(false);
 
 async function init() {
-	const meta = await os.api('admin/meta');
-	blockedHosts = meta.blockedHosts.join('\n');
-	allowedHosts = meta.allowedHosts.join('\n');
+	const meta = await os.api("admin/meta");
+	blockedHosts = meta.blockedHosts.join("\n");
+	allowedHosts = meta.allowedHosts.join("\n");
 	enableAllowedHostsInWhiteList = meta.enableAllowedHostsInWhiteList;
-	enableAllowedNotificationInLocalUserFollowed = meta.enableAllowedNotificationInLocalUserFollowed;
+	enableAllowedNotificationInLocalUserFollowed =
+		meta.enableAllowedNotificationInLocalUserFollowed;
 }
 
 function save() {
-	os.apiWithDialog('admin/update-meta', {
-		blockedHosts: blockedHosts.split('\n') || [],
-		allowedHosts: allowedHosts.split('\n') || [],
+	os.apiWithDialog("admin/update-meta", {
+		blockedHosts: blockedHosts.split("\n") || [],
+		allowedHosts: allowedHosts.split("\n") || [],
 		enableAllowedHostsInWhiteList: enableAllowedHostsInWhiteList,
-		enableAllowedNotificationInLocalUserFollowed: enableAllowedNotificationInLocalUserFollowed,
+		enableAllowedNotificationInLocalUserFollowed:
+			enableAllowedNotificationInLocalUserFollowed,
 	}).then(() => {
 		fetchInstance();
 	});
@@ -69,6 +71,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.instanceBlocking,
-	icon: 'ti ti-ban',
+	icon: "ti ti-ban",
 });
 </script>

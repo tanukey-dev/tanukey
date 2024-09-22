@@ -1,8 +1,8 @@
-import { reactive, watch } from 'vue';
-import { throttle } from 'throttle-debounce';
-import { Form, GetFormResultType } from '@/scripts/form';
-import * as os from '@/os';
-import { deepClone } from '@/scripts/clone';
+import { reactive, watch } from "vue";
+import { throttle } from "throttle-debounce";
+import { Form, GetFormResultType } from "@/scripts/form";
+import * as os from "@/os";
+import { deepClone } from "@/scripts/clone";
 
 export type Widget<P extends Record<string, unknown>> = {
 	id: string;
@@ -14,7 +14,7 @@ export type WidgetComponentProps<P extends Record<string, unknown>> = {
 };
 
 export type WidgetComponentEmits<P extends Record<string, unknown>> = {
-	(ev: 'updateProps', props: P);
+	(ev: "updateProps", props: P);
 };
 
 export type WidgetComponentExpose = {
@@ -23,7 +23,9 @@ export type WidgetComponentExpose = {
 	configure: () => void;
 };
 
-export const useWidgetPropsManager = <F extends Form & Record<string, { default: any; }>>(
+export const useWidgetPropsManager = <
+	F extends Form & Record<string, { default: any }>,
+>(
 	name: string,
 	propsDef: F,
 	props: Readonly<WidgetComponentProps<GetFormResultType<F>>>,
@@ -33,21 +35,27 @@ export const useWidgetPropsManager = <F extends Form & Record<string, { default:
 	save: () => void;
 	configure: () => void;
 } => {
-	const widgetProps = reactive(props.widget ? deepClone(props.widget.data) : {});
+	const widgetProps = reactive(
+		props.widget ? deepClone(props.widget.data) : {},
+	);
 
 	const mergeProps = () => {
 		for (const prop of Object.keys(propsDef)) {
-			if (typeof widgetProps[prop] === 'undefined') {
+			if (typeof widgetProps[prop] === "undefined") {
 				widgetProps[prop] = propsDef[prop].default;
 			}
 		}
 	};
-	watch(widgetProps, () => {
-		mergeProps();
-	}, { deep: true, immediate: true });
+	watch(
+		widgetProps,
+		() => {
+			mergeProps();
+		},
+		{ deep: true, immediate: true },
+	);
 
 	const save = throttle(3000, () => {
-		emit('updateProps', widgetProps);
+		emit("updateProps", widgetProps);
 	});
 
 	const configure = async () => {

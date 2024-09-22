@@ -7,10 +7,10 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XColumn from './column.vue';
-import { Column } from './deck-store';
-import MkNotes from '@/components/MkNotes.vue';
+import {} from "vue";
+import XColumn from "./column.vue";
+import { Column } from "./deck-store";
+import MkNotes from "@/components/MkNotes.vue";
 
 defineProps<{
 	column: Column;
@@ -18,10 +18,10 @@ defineProps<{
 }>();
 
 const pagination = {
-	endpoint: 'notes/mentions' as const,
+	endpoint: "notes/mentions" as const,
 	limit: 10,
 	params: {
-		visibility: 'specified',
+		visibility: "specified",
 	},
 };
 </script>

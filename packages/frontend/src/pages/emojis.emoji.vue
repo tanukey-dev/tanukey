@@ -16,11 +16,11 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
-import * as os from '@/os';
-import copyToClipboard from '@/scripts/copy-to-clipboard';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
+import { defineAsyncComponent } from "vue";
+import * as os from "@/os";
+import copyToClipboard from "@/scripts/copy-to-clipboard";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
 
 const props = defineProps<{
 	emoji: {
@@ -35,43 +35,61 @@ const props = defineProps<{
 }>();
 
 async function menu(ev) {
-	os.popupMenu([{
-		type: 'label',
-		text: ':' + props.emoji.name + ':',
-	}, {
-		text: i18n.ts.edit,
-		icon: 'ti ti-edit',
-		disabled: props.emoji.uploadedUserName !== $i?.username,
-		action: () => {
-			edit();
-		},
-	}, {
-		text: i18n.ts.copy,
-		icon: 'ti ti-copy',
-		action: () => {
-			copyToClipboard(`:${props.emoji.name}:`);
-			os.success();
-		},
-	}, {
-		text: i18n.ts.info,
-		icon: 'ti ti-info-circle',
-		action: () => {
-			os.popup(defineAsyncComponent(() => import('@/components/MkEmojiInfoDialog.vue')), {
-				emoji: props.emoji,
-			});
-		},
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				type: "label",
+				text: ":" + props.emoji.name + ":",
+			},
+			{
+				text: i18n.ts.edit,
+				icon: "ti ti-edit",
+				disabled: props.emoji.uploadedUserName !== $i?.username,
+				action: () => {
+					edit();
+				},
+			},
+			{
+				text: i18n.ts.copy,
+				icon: "ti ti-copy",
+				action: () => {
+					copyToClipboard(`:${props.emoji.name}:`);
+					os.success();
+				},
+			},
+			{
+				text: i18n.ts.info,
+				icon: "ti ti-info-circle",
+				action: () => {
+					os.popup(
+						defineAsyncComponent(
+							() => import("@/components/MkEmojiInfoDialog.vue"),
+						),
+						{
+							emoji: props.emoji,
+						},
+					);
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 const edit = () => {
-	os.popup(defineAsyncComponent(() => import('@/components/MkEmojiEditDialog.vue')), {
-		emoji: props.emoji,
-		isRequest: true,
-	}, {
-		done: result => {
-			window.location.reload();
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkEmojiEditDialog.vue")),
+		{
+			emoji: props.emoji,
+			isRequest: true,
 		},
-	}, 'closed');
+		{
+			done: (result) => {
+				window.location.reload();
+			},
+		},
+		"closed",
+	);
 };
 </script>
 

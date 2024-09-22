@@ -18,17 +18,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
-import * as misskey from 'misskey-js';
-import * as os from '@/os';
-import XPage from '@/components/page/page.vue';
-import { useRouter } from '@/router';
-import { $i, iAmModerator } from '@/account';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { url } from '@/config';
-import MkButton from '@/components/MkButton.vue';
-import MkEventCircleList from '@/components/MkEventCircleList.vue';
+import { computed, watch } from "vue";
+import * as misskey from "misskey-js";
+import * as os from "@/os";
+import XPage from "@/components/page/page.vue";
+import { useRouter } from "@/router";
+import { $i, iAmModerator } from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { url } from "@/config";
+import MkButton from "@/components/MkButton.vue";
+import MkEventCircleList from "@/components/MkEventCircleList.vue";
 
 const router = useRouter();
 
@@ -36,31 +36,35 @@ const props = defineProps<{
 	eventId: string;
 }>();
 
-let tab = $ref('overview');
+let tab = $ref("overview");
 let event = $ref(null);
 let circles = $ref([]);
 let page = $ref(null);
 
-watch(() => props.eventId, async () => {
-	event = await os.api('events/show', {
-		eventId: props.eventId,
-	});
+watch(
+	() => props.eventId,
+	async () => {
+		event = await os.api("events/show", {
+			eventId: props.eventId,
+		});
 
-	circles = await os.api('eventCircles/show', {
-		eventId: props.eventId,
-	});
+		circles = await os.api("eventCircles/show", {
+			eventId: props.eventId,
+		});
 
-	page = await os.api('pages/show', {
-		pageId: event.pageId,
-	});
-}, { immediate: true });
+		page = await os.api("pages/show", {
+			pageId: event.pageId,
+		});
+	},
+	{ immediate: true },
+);
 
 function edit() {
 	router.push(`/events/${event.id}/edit`);
 }
 
 const eventCirclePagination = {
-	endpoint: 'eventCircles/show' as const,
+	endpoint: "eventCircles/show" as const,
 	params: {
 		eventId: props.eventId,
 	},
@@ -74,7 +78,7 @@ function joinEvent() {
 const headerActions = $computed(() => {
 	if (event && event.userId) {
 		const share = {
-			icon: 'ti ti-share',
+			icon: "ti ti-share",
 			text: i18n.ts.share,
 			handler: async (): Promise<void> => {
 				navigator.share({
@@ -85,31 +89,45 @@ const headerActions = $computed(() => {
 			},
 		};
 
-		const canEdit = $i && $i.id === event.userId || iAmModerator;
-		return canEdit ? [share, {
-			icon: 'ti ti-settings',
-			text: i18n.ts.edit,
-			handler: edit,
-		}] : [share];
+		const canEdit = ($i && $i.id === event.userId) || iAmModerator;
+		return canEdit
+			? [
+					share,
+					{
+						icon: "ti ti-settings",
+						text: i18n.ts.edit,
+						handler: edit,
+					},
+				]
+			: [share];
 	} else {
 		return null;
 	}
 });
 
-const headerTabs = $computed(() => [{
-	key: 'overview',
-	title: i18n.ts.overview,
-	icon: 'ti ti-info-circle',
-}, {
-	key: 'eventCircles',
-	title: i18n.ts.participatingCircles,
-	icon: 'ti ti-circles-relation',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "overview",
+		title: i18n.ts.overview,
+		icon: "ti ti-info-circle",
+	},
+	{
+		key: "eventCircles",
+		title: i18n.ts.participatingCircles,
+		icon: "ti ti-circles-relation",
+	},
+]);
 
-definePageMetadata(computed(() => event ? {
-	title: event.name,
-	icon: 'ti ti-calendar-event',
-} : null));
+definePageMetadata(
+	computed(() =>
+		event
+			? {
+					title: event.name,
+					icon: "ti ti-calendar-event",
+				}
+			: null,
+	),
+);
 </script>
 
 <style lang="scss" module>

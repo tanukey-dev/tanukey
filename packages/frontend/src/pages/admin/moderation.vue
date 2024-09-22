@@ -44,43 +44,43 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XHeader from './_header_.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import FormSection from '@/components/form/section.vue';
-import FormSplit from '@/components/form/split.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import * as os from '@/os';
-import { fetchInstance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkButton from '@/components/MkButton.vue';
-import FormLink from '@/components/form/link.vue';
+import {} from "vue";
+import XHeader from "./_header_.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import FormSection from "@/components/form/section.vue";
+import FormSplit from "@/components/form/split.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import * as os from "@/os";
+import { fetchInstance } from "@/instance";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkButton from "@/components/MkButton.vue";
+import FormLink from "@/components/form/link.vue";
 
 let enableRegistration: boolean = $ref(false);
 let emailRequiredForSignup: boolean = $ref(false);
-let sensitiveWords: string = $ref('');
-let preservedUsernames: string = $ref('');
+let sensitiveWords: string = $ref("");
+let preservedUsernames: string = $ref("");
 let tosUrl: string | null = $ref(null);
 
 async function init() {
-	const meta = await os.api('admin/meta');
+	const meta = await os.api("admin/meta");
 	enableRegistration = !meta.disableRegistration;
 	emailRequiredForSignup = meta.emailRequiredForSignup;
-	sensitiveWords = meta.sensitiveWords.join('\n');
-	preservedUsernames = meta.preservedUsernames.join('\n');
+	sensitiveWords = meta.sensitiveWords.join("\n");
+	preservedUsernames = meta.preservedUsernames.join("\n");
 	tosUrl = meta.tosUrl;
 }
 
 function save() {
-	os.apiWithDialog('admin/update-meta', {
+	os.apiWithDialog("admin/update-meta", {
 		disableRegistration: !enableRegistration,
 		emailRequiredForSignup,
 		tosUrl,
-		sensitiveWords: sensitiveWords.split('\n'),
-		preservedUsernames: preservedUsernames.split('\n'),
+		sensitiveWords: sensitiveWords.split("\n"),
+		preservedUsernames: preservedUsernames.split("\n"),
 	}).then(() => {
 		fetchInstance();
 	});
@@ -90,7 +90,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.moderation,
-	icon: 'ti ti-shield',
+	icon: "ti ti-shield",
 });
 </script>
 

@@ -27,17 +27,21 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from 'misskey-js';
-import { computed, ref } from 'vue';
-import ImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
-import { defaultStore } from '@/store';
+import * as misskey from "misskey-js";
+import { computed, ref } from "vue";
+import ImgWithBlurhash from "@/components/MkImgWithBlurhash.vue";
+import { defaultStore } from "@/store";
 
 const props = defineProps<{
 	post: misskey.entities.GalleryPost;
 }>();
 
 const hover = ref(false);
-const safe = computed(() => defaultStore.state.nsfw === 'ignore' || defaultStore.state.nsfw === 'respect' && !props.post.isSensitive);
+const safe = computed(
+	() =>
+		defaultStore.state.nsfw === "ignore" ||
+		(defaultStore.state.nsfw === "respect" && !props.post.isSensitive),
+);
 const show = computed(() => safe.value || hover.value);
 
 function enterHover(): void {

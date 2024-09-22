@@ -78,17 +78,17 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XHeader from './_header_.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkInput from '@/components/MkInput.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import FormSplit from '@/components/form/split.vue';
-import * as os from '@/os';
-import { fetchInstance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkButton from '@/components/MkButton.vue';
+import {} from "vue";
+import XHeader from "./_header_.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkInput from "@/components/MkInput.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import FormSplit from "@/components/form/split.vue";
+import * as os from "@/os";
+import { fetchInstance } from "@/instance";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkButton from "@/components/MkButton.vue";
 
 let useObjectStorage: boolean = $ref(false);
 let objectStorageBaseUrl: string | null = $ref(null);
@@ -105,7 +105,7 @@ let objectStorageSetPublicRead: boolean = $ref(false);
 let objectStorageS3ForcePathStyle: boolean = $ref(true);
 
 async function init() {
-	const meta = await os.api('admin/meta');
+	const meta = await os.api("admin/meta");
 	useObjectStorage = meta.useObjectStorage;
 	objectStorageBaseUrl = meta.objectStorageBaseUrl;
 	objectStorageBucket = meta.objectStorageBucket;
@@ -122,7 +122,7 @@ async function init() {
 }
 
 function save() {
-	os.apiWithDialog('admin/update-meta', {
+	os.apiWithDialog("admin/update-meta", {
 		useObjectStorage,
 		objectStorageBaseUrl,
 		objectStorageBucket,
@@ -145,7 +145,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.objectStorage,
-	icon: 'ti ti-cloud',
+	icon: "ti ti-cloud",
 });
 </script>
 

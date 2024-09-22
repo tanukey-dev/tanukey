@@ -60,22 +60,22 @@
 </template>
 
 <script lang="ts" setup>
-import { markRaw, onMounted, onBeforeUnmount, nextTick } from 'vue';
-import XFederation from './overview.federation.vue';
-import XInstances from './overview.instances.vue';
-import XQueue from './overview.queue.vue';
-import XApRequests from './overview.ap-requests.vue';
-import XUsers from './overview.users.vue';
-import XActiveUsers from './overview.active-users.vue';
-import XStats from './overview.stats.vue';
-import XRetention from './overview.retention.vue';
-import XModerators from './overview.moderators.vue';
-import XHeatmap from './overview.heatmap.vue';
-import * as os from '@/os';
-import { useStream } from '@/stream';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
+import { markRaw, onMounted, onBeforeUnmount, nextTick } from "vue";
+import XFederation from "./overview.federation.vue";
+import XInstances from "./overview.instances.vue";
+import XQueue from "./overview.queue.vue";
+import XApRequests from "./overview.ap-requests.vue";
+import XUsers from "./overview.users.vue";
+import XActiveUsers from "./overview.active-users.vue";
+import XStats from "./overview.stats.vue";
+import XRetention from "./overview.retention.vue";
+import XModerators from "./overview.moderators.vue";
+import XHeatmap from "./overview.heatmap.vue";
+import * as os from "@/os";
+import { useStream } from "@/stream";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
 
 const rootEl = $shallowRef<HTMLElement>();
 let serverInfo: any = $ref(null);
@@ -87,10 +87,10 @@ let federationSubActive = $ref<number | null>(null);
 let federationSubActiveDiff = $ref<number | null>(null);
 let newUsers = $ref(null);
 let activeInstances = $shallowRef(null);
-const queueStatsConnection = markRaw(useStream().useChannel('queueStats'));
+const queueStatsConnection = markRaw(useStream().useChannel("queueStats"));
 const now = new Date();
 const filesPagination = {
-	endpoint: 'admin/drive/files' as const,
+	endpoint: "admin/drive/files" as const,
 	limit: 9,
 	noPaging: true,
 };
@@ -110,52 +110,60 @@ onMounted(async () => {
 	magicGrid.listen();
 	*/
 
-	os.apiGet('charts/federation', { limit: 2, span: 'day' }).then(chart => {
+	os.apiGet("charts/federation", { limit: 2, span: "day" }).then((chart) => {
 		federationPubActive = chart.pubActive[0];
 		federationPubActiveDiff = chart.pubActive[0] - chart.pubActive[1];
 		federationSubActive = chart.subActive[0];
 		federationSubActiveDiff = chart.subActive[0] - chart.subActive[1];
 	});
 
-	os.apiGet('federation/stats', { limit: 10 }).then(res => {
-		topSubInstancesForPie = res.topSubInstances.map(x => ({
-			name: x.host,
-			color: x.themeColor,
-			value: x.followersCount,
-			onClick: () => {
-				os.pageWindow(`/instance-info/${x.host}`);
-			},
-		})).concat([{ name: '(other)', color: '#80808080', value: res.otherFollowersCount }]);
-		topPubInstancesForPie = res.topPubInstances.map(x => ({
-			name: x.host,
-			color: x.themeColor,
-			value: x.followingCount,
-			onClick: () => {
-				os.pageWindow(`/instance-info/${x.host}`);
-			},
-		})).concat([{ name: '(other)', color: '#80808080', value: res.otherFollowingCount }]);
+	os.apiGet("federation/stats", { limit: 10 }).then((res) => {
+		topSubInstancesForPie = res.topSubInstances
+			.map((x) => ({
+				name: x.host,
+				color: x.themeColor,
+				value: x.followersCount,
+				onClick: () => {
+					os.pageWindow(`/instance-info/${x.host}`);
+				},
+			}))
+			.concat([
+				{ name: "(other)", color: "#80808080", value: res.otherFollowersCount },
+			]);
+		topPubInstancesForPie = res.topPubInstances
+			.map((x) => ({
+				name: x.host,
+				color: x.themeColor,
+				value: x.followingCount,
+				onClick: () => {
+					os.pageWindow(`/instance-info/${x.host}`);
+				},
+			}))
+			.concat([
+				{ name: "(other)", color: "#80808080", value: res.otherFollowingCount },
+			]);
 	});
 
-	os.api('admin/server-info').then(serverInfoResponse => {
+	os.api("admin/server-info").then((serverInfoResponse) => {
 		serverInfo = serverInfoResponse;
 	});
 
-	os.api('admin/show-users', {
+	os.api("admin/show-users", {
 		limit: 5,
-		sort: '+createdAt',
-	}).then(res => {
+		sort: "+createdAt",
+	}).then((res) => {
 		newUsers = res;
 	});
 
-	os.api('federation/instances', {
-		sort: '+latestRequestReceivedAt',
+	os.api("federation/instances", {
+		sort: "+latestRequestReceivedAt",
 		limit: 25,
-	}).then(res => {
+	}).then((res) => {
 		activeInstances = res;
 	});
 
 	nextTick(() => {
-		queueStatsConnection.send('requestLog', {
+		queueStatsConnection.send("requestLog", {
 			id: Math.random().toString().substr(2, 8),
 			length: 100,
 		});
@@ -172,7 +180,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.dashboard,
-	icon: 'ti ti-dashboard',
+	icon: "ti ti-dashboard",
 });
 </script>
 

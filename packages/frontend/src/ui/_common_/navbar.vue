@@ -52,14 +52,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, watch } from 'vue';
-import { openInstanceMenu } from './common';
-import * as os from '@/os';
-import { navbarItemDef } from '@/navbar';
-import { $i, openAccountMenu as openAccountMenu_ } from '@/account';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
+import { computed, defineAsyncComponent, ref, watch } from "vue";
+import { openInstanceMenu } from "./common";
+import * as os from "@/os";
+import { navbarItemDef } from "@/navbar";
+import { $i, openAccountMenu as openAccountMenu_ } from "@/account";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
 
 const iconOnly = ref(false);
 
@@ -73,28 +73,36 @@ const otherMenuItemIndicated = computed(() => {
 });
 
 const calcViewState = () => {
-	iconOnly.value = (window.innerWidth <= 1279) || (defaultStore.state.menuDisplay === 'sideIcon');
+	iconOnly.value =
+		window.innerWidth <= 1279 || defaultStore.state.menuDisplay === "sideIcon";
 };
 
 calcViewState();
 
-window.addEventListener('resize', calcViewState);
+window.addEventListener("resize", calcViewState);
 
 watch(defaultStore.reactiveState.menuDisplay, () => {
 	calcViewState();
 });
 
 function openAccountMenu(ev: MouseEvent) {
-	openAccountMenu_({
-		withExtraOperation: true,
-	}, ev);
+	openAccountMenu_(
+		{
+			withExtraOperation: true,
+		},
+		ev,
+	);
 }
 
 function more(ev: MouseEvent) {
-	os.popup(defineAsyncComponent(() => import('@/components/MkLaunchPad.vue')), {
-		src: ev.currentTarget ?? ev.target,
-	}, {
-	}, 'closed');
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkLaunchPad.vue")),
+		{
+			src: ev.currentTarget ?? ev.target,
+		},
+		{},
+		"closed",
+	);
 }
 </script>
 

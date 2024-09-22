@@ -28,42 +28,46 @@
 </template>
 
 <script lang="ts" setup>
-import { onDeactivated, onUnmounted, Ref, ref, watch } from 'vue';
-import 'prismjs';
-import { highlight, languages } from 'prismjs/components/prism-core';
-import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/themes/prism-okaidia.css';
-import { PrismEditor } from 'vue-prism-editor';
-import 'vue-prism-editor/dist/prismeditor.min.css';
-import { Interpreter, Parser, utils } from '@syuilo/aiscript';
-import MkContainer from '@/components/MkContainer.vue';
-import MkButton from '@/components/MkButton.vue';
-import { createAiScriptEnv } from '@/scripts/aiscript/api';
-import * as os from '@/os';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { AsUiComponent, AsUiRoot, registerAsUiLib } from '@/scripts/aiscript/ui';
-import MkAsUi from '@/components/MkAsUi.vue';
-import { miLocalStorage } from '@/local-storage';
-import { claimAchievement } from '@/scripts/achievements';
+import { onDeactivated, onUnmounted, Ref, ref, watch } from "vue";
+import "prismjs";
+import { highlight, languages } from "prismjs/components/prism-core";
+import "prismjs/components/prism-clike";
+import "prismjs/components/prism-javascript";
+import "prismjs/themes/prism-okaidia.css";
+import { PrismEditor } from "vue-prism-editor";
+import "vue-prism-editor/dist/prismeditor.min.css";
+import { Interpreter, Parser, utils } from "@syuilo/aiscript";
+import MkContainer from "@/components/MkContainer.vue";
+import MkButton from "@/components/MkButton.vue";
+import { createAiScriptEnv } from "@/scripts/aiscript/api";
+import * as os from "@/os";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import {
+	AsUiComponent,
+	AsUiRoot,
+	registerAsUiLib,
+} from "@/scripts/aiscript/ui";
+import MkAsUi from "@/components/MkAsUi.vue";
+import { miLocalStorage } from "@/local-storage";
+import { claimAchievement } from "@/scripts/achievements";
 
 const parser = new Parser();
 let aiscript: Interpreter;
-const code = ref('');
+const code = ref("");
 const logs = ref<any[]>([]);
 const root = ref<AsUiRoot>();
 let components: Ref<AsUiComponent>[] = $ref([]);
 let uiKey = $ref(0);
 
-const saved = miLocalStorage.getItem('scratchpad');
+const saved = miLocalStorage.getItem("scratchpad");
 if (saved) {
 	code.value = saved;
 }
 
 watch(code, () => {
-	miLocalStorage.setItem('scratchpad', code.value);
+	miLocalStorage.setItem("scratchpad", code.value);
 });
 
 async function run() {
@@ -72,57 +76,66 @@ async function run() {
 	components = [];
 	uiKey++;
 	logs.value = [];
-	aiscript = new Interpreter(({
-		...createAiScriptEnv({
-			storageKey: 'widget',
-			token: $i?.token,
-		}),
-		...registerAsUiLib(components, (_root) => {
-			root.value = _root.value;
-		}),
-	}), {
-		in: (q) => {
-			return new Promise(ok => {
-				os.inputText({
-					title: q,
-				}).then(({ canceled, result: a }) => {
-					if (canceled) {
-						ok('');
-					} else {
-						ok(a);
-					}
+	aiscript = new Interpreter(
+		{
+			...createAiScriptEnv({
+				storageKey: "widget",
+				token: $i?.token,
+			}),
+			...registerAsUiLib(components, (_root) => {
+				root.value = _root.value;
+			}),
+		},
+		{
+			in: (q) => {
+				return new Promise((ok) => {
+					os.inputText({
+						title: q,
+					}).then(({ canceled, result: a }) => {
+						if (canceled) {
+							ok("");
+						} else {
+							ok(a);
+						}
+					});
 				});
-			});
-		},
-		out: (value) => {
-			if (value.type === 'str' && value.value.toLowerCase().replace(',', '').includes('hello world')) {
-				claimAchievement('outputHelloWorldOnScratchpad');
-			}
-			logs.value.push({
-				id: Math.random(),
-				text: value.type === 'str' ? value.value : utils.valToString(value),
-				print: true,
-			});
-		},
-		log: (type, params) => {
-			switch (type) {
-				case 'end': logs.value.push({
+			},
+			out: (value) => {
+				if (
+					value.type === "str" &&
+					value.value.toLowerCase().replace(",", "").includes("hello world")
+				) {
+					claimAchievement("outputHelloWorldOnScratchpad");
+				}
+				logs.value.push({
 					id: Math.random(),
-					text: utils.valToString(params.val, true),
-					print: false,
-				}); break;
-				default: break;
-			}
+					text: value.type === "str" ? value.value : utils.valToString(value),
+					print: true,
+				});
+			},
+			log: (type, params) => {
+				switch (type) {
+					case "end":
+						logs.value.push({
+							id: Math.random(),
+							text: utils.valToString(params.val, true),
+							print: false,
+						});
+						break;
+					default:
+						break;
+				}
+			},
 		},
-	});
+	);
 
 	let ast;
 	try {
 		ast = parser.parse(code.value);
 	} catch (error) {
 		os.alert({
-			type: 'error',
-			text: 'Syntax error :(',
+			type: "error",
+			text: "Syntax error :(",
 		});
 		return;
 	}
@@ -130,15 +143,15 @@ async function run() {
 		await aiscript.exec(ast);
 	} catch (err: any) {
 		os.alert({
-			type: 'error',
-			title: 'AiScript Error',
+			type: "error",
+			title: "AiScript Error",
 			text: err.message,
 		});
 	}
 }
 
 function highlighter(code) {
-	return highlight(code, languages.js, 'javascript');
+	return highlight(code, languages.js, "javascript");
 }
 
 onDeactivated(() => {
@@ -155,7 +168,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.scratchpad,
-	icon: 'ti ti-terminal-2',
+	icon: "ti ti-terminal-2",
 });
 </script>
 

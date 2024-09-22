@@ -1,6 +1,6 @@
-import { Entity, PrimaryColumn, Index, Column } from 'typeorm';
-import { id } from '../id.js';
-import type { User } from './User.js';
+import { Entity, PrimaryColumn, Index, Column } from "typeorm";
+import { id } from "../id.js";
+import type { User } from "./User.js";
 
 @Entity()
 export class RetentionAggregation {
@@ -8,19 +8,20 @@ export class RetentionAggregation {
 	public id: string;
 
 	@Index()
-	@Column('timestamp with time zone', {
-		comment: 'The created date of the Note.',
+	@Column("timestamp with time zone", {
+		comment: "The created date of the Note.",
 	})
 	public createdAt: Date;
 
-	@Column('timestamp with time zone', {
-		comment: 'The updated date of the GalleryPost.',
+	@Column("timestamp with time zone", {
+		comment: "The updated date of the GalleryPost.",
 	})
 	public updatedAt: Date;
 
 	@Index({ unique: true })
-	@Column('varchar', {
-		length: 512, nullable: false,
+	@Column("varchar", {
+		length: 512,
+		nullable: false,
 	})
 	public dateKey: string;
 
@@ -28,13 +29,12 @@ export class RetentionAggregation {
 		...id(),
 		array: true,
 	})
-	public userIds: User['id'][];
+	public userIds: User["id"][];
 
-	@Column('integer', {
-	})
+	@Column("integer", {})
 	public usersCount: number;
 
-	@Column('jsonb', {
+	@Column("jsonb", {
 		default: {},
 	})
 	public data: Record<string, number>;

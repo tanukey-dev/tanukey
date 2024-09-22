@@ -24,27 +24,35 @@
 </div>
 </template>
 <script lang="ts" setup>
-import { defineAsyncComponent, watch, ref, onMounted, onBeforeMount } from 'vue';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import MkTimeline from '@/components/MkTimeline.vue';
-import MkPostForm from '@/components/MkPostForm.vue';
-import { defaultStore } from '@/store';
-import { scrollToTop } from '@/scripts/scroll';
-import { $i } from '@/account';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import MkNote from '@/components/MkNote.vue';
+import {
+	defineAsyncComponent,
+	watch,
+	ref,
+	onMounted,
+	onBeforeMount,
+} from "vue";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import MkTimeline from "@/components/MkTimeline.vue";
+import MkPostForm from "@/components/MkPostForm.vue";
+import { defaultStore } from "@/store";
+import { scrollToTop } from "@/scripts/scroll";
+import { $i } from "@/account";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import MkNote from "@/components/MkNote.vue";
 
 const props = defineProps<{
 	src: string;
 	list?: string;
 	antenna?: string;
-	channelId?: string|null;
+	channelId?: string | null;
 	role?: string;
 	sound?: boolean;
 }>();
 
-const XTutorial = defineAsyncComponent(() => import('@/pages/timeline.tutorial.vue'));
+const XTutorial = defineAsyncComponent(
+	() => import("@/pages/timeline.tutorial.vue"),
+);
 const tlComponent = $shallowRef<InstanceType<typeof MkTimeline>>();
 const channel = ref<any>(null);
 let el = $shallowRef<HTMLElement | undefined>(undefined);
@@ -52,11 +60,11 @@ let el = $shallowRef<HTMLElement | undefined>(undefined);
 let queue = $ref(0);
 let src = $ref(props.src);
 
-watch ($$(src), () => queue = 0);
+watch($$(src), () => (queue = 0));
 
 onBeforeMount(async () => {
 	if (props.channelId) {
-		let ch = await os.api('channels/show', {
+		let ch = await os.api("channels/show", {
 			channelId: props.channelId,
 		});
 		channel.value = ch;
@@ -69,10 +77,9 @@ function queueUpdated(q: number): void {
 
 const top = () => {
 	if (el) {
-		scrollToTop(el as HTMLElement, { behavior: 'smooth' });
+		scrollToTop(el as HTMLElement, { behavior: "smooth" });
 	}
 };
-
 </script>
 
 <style lang="scss" module>

@@ -1,5 +1,5 @@
-import { bindThis } from '@/decorators.js';
-import type Connection from '.';
+import { bindThis } from "@/decorators.js";
+import type Connection from ".";
 
 /**
  * Stream channel
@@ -54,7 +54,7 @@ export default abstract class Channel {
 		const type = payload === undefined ? typeOrPayload.type : typeOrPayload;
 		const body = payload === undefined ? typeOrPayload.body : payload;
 
-		this.connection.sendMessageToWs('channel', {
+		this.connection.sendMessageToWs("channel", {
 			id: this.id,
 			type: type,
 			body: body,

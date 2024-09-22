@@ -111,33 +111,33 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import * as misskey from 'misskey-js';
-import MkChart from '@/components/MkChart.vue';
-import MkObjectView from '@/components/MkObjectView.vue';
-import FormLink from '@/components/form/link.vue';
-import MkLink from '@/components/MkLink.vue';
-import MkButton from '@/components/MkButton.vue';
-import FormSection from '@/components/form/section.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import * as os from '@/os';
-import number from '@/filters/number';
-import { iAmModerator, iAmAdmin } from '@/account';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
-import MkUserCardMini from '@/components/MkUserCardMini.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import { getProxiedImageUrlNullable } from '@/scripts/media-proxy';
-import { dateString } from '@/filters/date';
+import {} from "vue";
+import * as misskey from "misskey-js";
+import MkChart from "@/components/MkChart.vue";
+import MkObjectView from "@/components/MkObjectView.vue";
+import FormLink from "@/components/form/link.vue";
+import MkLink from "@/components/MkLink.vue";
+import MkButton from "@/components/MkButton.vue";
+import FormSection from "@/components/form/section.vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import * as os from "@/os";
+import number from "@/filters/number";
+import { iAmModerator, iAmAdmin } from "@/account";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
+import MkUserCardMini from "@/components/MkUserCardMini.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import { getProxiedImageUrlNullable } from "@/scripts/media-proxy";
+import { dateString } from "@/filters/date";
 
 const props = defineProps<{
 	host: string;
 }>();
 
-let tab = $ref('overview');
-let chartSrc = $ref('instance-requests');
+let tab = $ref("overview");
+let chartSrc = $ref("instance-requests");
 let meta = $ref<misskey.entities.AdminInstanceMetadata | null>(null);
 let instance = $ref<misskey.entities.Instance | null>(null);
 let suspended = $ref(false);
@@ -145,11 +145,11 @@ let isBlocked = $ref(false);
 let faviconUrl = $ref<string | null>(null);
 
 const usersPagination = {
-	endpoint: iAmModerator ? 'admin/show-users' : 'users' as const,
+	endpoint: iAmModerator ? "admin/show-users" : ("users" as const),
 	limit: 10,
 	params: {
-		sort: '+updatedAt',
-		state: 'all',
+		sort: "+updatedAt",
+		state: "all",
 		hostname: props.host,
 	},
 	offsetMode: true,
@@ -157,74 +157,85 @@ const usersPagination = {
 
 async function fetch(): Promise<void> {
 	if (iAmAdmin) {
-		meta = await os.api('admin/meta');
+		meta = await os.api("admin/meta");
 	}
-	instance = await os.api('federation/show-instance', {
+	instance = await os.api("federation/show-instance", {
 		host: props.host,
 	});
 	suspended = instance.isSuspended;
 	isBlocked = instance.isBlocked;
-	faviconUrl = getProxiedImageUrlNullable(instance.faviconUrl, 'preview') ?? getProxiedImageUrlNullable(instance.iconUrl, 'preview');
+	faviconUrl =
+		getProxiedImageUrlNullable(instance.faviconUrl, "preview") ??
+		getProxiedImageUrlNullable(instance.iconUrl, "preview");
 }
 
 async function toggleBlock(): Promise<void> {
-	if (!meta) throw new Error('No meta?');
-	if (!instance) throw new Error('No instance?');
+	if (!meta) throw new Error("No meta?");
+	if (!instance) throw new Error("No instance?");
 	const { host } = instance;
-	await os.api('admin/update-meta', {
-		blockedHosts: isBlocked ? meta.blockedHosts.concat([host]) : meta.blockedHosts.filter(x => x !== host),
+	await os.api("admin/update-meta", {
+		blockedHosts: isBlocked
+			? meta.blockedHosts.concat([host])
+			: meta.blockedHosts.filter((x) => x !== host),
 	});
 }
 
 async function toggleSuspend(): Promise<void> {
-	if (!instance) throw new Error('No instance?');
-	await os.api('admin/federation/update-instance', {
+	if (!instance) throw new Error("No instance?");
+	await os.api("admin/federation/update-instance", {
 		host: instance.host,
 		isSuspended: suspended,
 	});
 }
 
 function refreshMetadata(): void {
-	if (!instance) throw new Error('No instance?');
-	os.api('admin/federation/refresh-remote-instance-metadata', {
+	if (!instance) throw new Error("No instance?");
+	os.api("admin/federation/refresh-remote-instance-metadata", {
 		host: instance.host,
 	});
 	os.alert({
-		text: 'Refresh requested',
+		text: "Refresh requested",
 	});
 }
 
 fetch();
 
-const headerActions = $computed(() => [{
-	text: `https://${props.host}`,
-	icon: 'ti ti-external-link',
-	handler: () => {
-		window.open(`https://${props.host}`, '_blank');
+const headerActions = $computed(() => [
+	{
+		text: `https://${props.host}`,
+		icon: "ti ti-external-link",
+		handler: () => {
+			window.open(`https://${props.host}`, "_blank");
+		},
 	},
-}]);
+]);
 
-const headerTabs = $computed(() => [{
-	key: 'overview',
-	title: i18n.ts.overview,
-	icon: 'ti ti-info-circle',
-}, {
-	key: 'chart',
-	title: i18n.ts.charts,
-	icon: 'ti ti-chart-line',
-}, {
-	key: 'users',
-	title: i18n.ts.users,
-	icon: 'ti ti-users',
-}, {
-	key: 'raw',
-	title: 'Raw',
-	icon: 'ti ti-code',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "overview",
+		title: i18n.ts.overview,
+		icon: "ti ti-info-circle",
+	},
+	{
+		key: "chart",
+		title: i18n.ts.charts,
+		icon: "ti ti-chart-line",
+	},
+	{
+		key: "users",
+		title: i18n.ts.users,
+		icon: "ti ti-users",
+	},
+	{
+		key: "raw",
+		title: "Raw",
+		icon: "ti ti-code",
+	},
+]);
 
 definePageMetadata({
 	title: props.host,
-	icon: 'ti ti-server',
+	icon: "ti ti-server",
 });
 </script>
 

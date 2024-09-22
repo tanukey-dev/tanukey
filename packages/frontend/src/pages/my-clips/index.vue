@@ -21,51 +21,51 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
-import MkPagination from '@/components/MkPagination.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkClipPreview from '@/components/MkClipPreview.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { clipsCache } from '@/cache';
+import { watch } from "vue";
+import MkPagination from "@/components/MkPagination.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkClipPreview from "@/components/MkClipPreview.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { clipsCache } from "@/cache";
 
 const pagination = {
-	endpoint: 'clips/list' as const,
+	endpoint: "clips/list" as const,
 	noPaging: true,
 	limit: 10,
 };
 
-let tab = $ref('my');
+let tab = $ref("my");
 let favorites = $ref();
 
 const pagingComponent = $shallowRef<InstanceType<typeof MkPagination>>();
 
 watch($$(tab), async () => {
-	favorites = await os.api('clips/my-favorites');
+	favorites = await os.api("clips/my-favorites");
 });
 
 async function create() {
 	const { canceled, result } = await os.form(i18n.ts.createNewClip, {
 		name: {
-			type: 'string',
+			type: "string",
 			label: i18n.ts.name,
 		},
 		description: {
-			type: 'string',
+			type: "string",
 			required: false,
 			multiline: true,
 			label: i18n.ts.description,
 		},
 		isPublic: {
-			type: 'boolean',
+			type: "boolean",
 			label: i18n.ts.public,
 			default: false,
 		},
 	});
 	if (canceled) return;
 
-	os.apiWithDialog('clips/create', result);
+	os.apiWithDialog("clips/create", result);
 
 	clipsCache.delete();
 
@@ -82,21 +82,24 @@ function onClipDeleted() {
 
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => [{
-	key: 'my',
-	title: i18n.ts.myClips,
-	icon: 'ti ti-paperclip',
-}, {
-	key: 'favorites',
-	title: i18n.ts.favorites,
-	icon: 'ti ti-heart',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "my",
+		title: i18n.ts.myClips,
+		icon: "ti ti-paperclip",
+	},
+	{
+		key: "favorites",
+		title: i18n.ts.favorites,
+		icon: "ti ti-heart",
+	},
+]);
 
 definePageMetadata({
 	title: i18n.ts.clip,
-	icon: 'ti ti-paperclip',
+	icon: "ti ti-paperclip",
 	action: {
-		icon: 'ti ti-plus',
+		icon: "ti ti-plus",
 		handler: create,
 	},
 });

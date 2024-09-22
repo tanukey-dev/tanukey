@@ -11,18 +11,21 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import copyToClipboard from '@/scripts/copy-to-clipboard';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import copyToClipboard from "@/scripts/copy-to-clipboard";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	copy?: string | null;
-	oneline?: boolean;
-}>(), {
-	copy: null,
-	oneline: false,
-});
+const props = withDefaults(
+	defineProps<{
+		copy?: string | null;
+		oneline?: boolean;
+	}>(),
+	{
+		copy: null,
+		oneline: false,
+	},
+);
 
 const copy_ = () => {
 	copyToClipboard(props.copy);

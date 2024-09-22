@@ -16,12 +16,12 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import MkSelect from '@/components/MkSelect.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkRange from '@/components/MkRange.vue';
-import { i18n } from '@/i18n';
-import { playFile, soundsTypes } from '@/scripts/sound';
+import {} from "vue";
+import MkSelect from "@/components/MkSelect.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkRange from "@/components/MkRange.vue";
+import { i18n } from "@/i18n";
+import { playFile, soundsTypes } from "@/scripts/sound";
 
 const props = defineProps<{
 	type: string;
@@ -29,7 +29,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'update', result: { type: string; volume: number; }): void;
+	(ev: "update", result: { type: string; volume: number }): void;
 }>();
 
 let type = $ref(props.type);
@@ -40,6 +40,6 @@ function listen() {
 }
 
 function save() {
-	emit('update', { type, volume });
+	emit("update", { type, volume });
 }
 </script>

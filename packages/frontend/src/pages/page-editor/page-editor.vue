@@ -62,20 +62,20 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, provide, watch } from 'vue';
-import { v4 as uuid } from 'uuid';
-import XBlocks from './page-editor.blocks.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkInput from '@/components/MkInput.vue';
-import { url } from '@/config';
-import * as os from '@/os';
-import { selectFile } from '@/scripts/select-file';
-import { mainRouter } from '@/router';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { $i } from '@/account';
+import { computed, provide, watch } from "vue";
+import { v4 as uuid } from "uuid";
+import XBlocks from "./page-editor.blocks.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkInput from "@/components/MkInput.vue";
+import { url } from "@/config";
+import * as os from "@/os";
+import { selectFile } from "@/scripts/select-file";
+import { mainRouter } from "@/router";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { $i } from "@/account";
 
 const props = defineProps<{
 	initPageId?: string;
@@ -83,30 +83,30 @@ const props = defineProps<{
 	initUser?: string;
 }>();
 
-let tab = $ref('settings');
+let tab = $ref("settings");
 let author = $ref($i);
 let readonly = $ref(false);
 let page = $ref(null);
 let pageId = $ref(null);
 let currentName = $ref(null);
-let title = $ref('');
+let title = $ref("");
 let summary = $ref(null);
 let name = $ref(Date.now().toString());
 let eyeCatchingImage = $ref(null);
 let eyeCatchingImageId = $ref(null);
-let font = $ref('sans-serif');
+let font = $ref("sans-serif");
 let content = $ref([]);
 let alignCenter = $ref(false);
 let hideTitleWhenPinned = $ref(false);
 
-provide('readonly', readonly);
-provide('getPageBlockList', getPageBlockList);
+provide("readonly", readonly);
+provide("getPageBlockList", getPageBlockList);
 
 watch($$(eyeCatchingImageId), async () => {
 	if (eyeCatchingImageId == null) {
 		eyeCatchingImage = null;
 	} else {
-		eyeCatchingImage = await os.api('drive/files/show', {
+		eyeCatchingImage = await os.api("drive/files/show", {
 			fileId: eyeCatchingImageId,
 		});
 	}
@@ -118,7 +118,7 @@ function getSaveOptions() {
 		name: name.trim(),
 		summary: summary,
 		font: font,
-		script: '',
+		script: "",
 		hideTitleWhenPinned: hideTitleWhenPinned,
 		alignCenter: alignCenter,
 		content: content,
@@ -130,18 +130,18 @@ function getSaveOptions() {
 function save() {
 	const options = getSaveOptions();
 
-	const onError = err => {
-		if (err.id === '3d81ceae-475f-4600-b2a8-2bc116157532') {
-			if (err.info.param === 'name') {
+	const onError = (err) => {
+		if (err.id === "3d81ceae-475f-4600-b2a8-2bc116157532") {
+			if (err.info.param === "name") {
 				os.alert({
-					type: 'error',
+					type: "error",
 					title: i18n.ts._pages.invalidNameTitle,
 					text: i18n.ts._pages.invalidNameText,
 				});
 			}
-		} else if (err.code === 'NAME_ALREADY_EXISTS') {
+		} else if (err.code === "NAME_ALREADY_EXISTS") {
 			os.alert({
-				type: 'error',
+				type: "error",
 				text: i18n.ts._pages.nameAlreadyExists,
 			});
 		}
@@ -149,54 +149,56 @@ function save() {
 
 	if (pageId) {
 		options.pageId = pageId;
-		os.api('pages/update', options)
-			.then(page => {
+		os.api("pages/update", options)
+			.then((page) => {
 				currentName = name.trim();
 				os.alert({
-					type: 'success',
+					type: "success",
 					text: i18n.ts._pages.updated,
 				});
-			}).catch(onError);
+			})
+			.catch(onError);
 	} else {
-		os.api('pages/create', options)
-			.then(created => {
+		os.api("pages/create", options)
+			.then((created) => {
 				pageId = created.id;
 				currentName = name.trim();
 				os.alert({
-					type: 'success',
+					type: "success",
 					text: i18n.ts._pages.created,
 				});
 				mainRouter.push(`/pages/edit/${pageId}`);
-			}).catch(onError);
+			})
+			.catch(onError);
 	}
 }
 
 function del() {
 	os.confirm({
-		type: 'warning',
-		text: i18n.t('removeAreYouSure', { x: title.trim() }),
+		type: "warning",
+		text: i18n.t("removeAreYouSure", { x: title.trim() }),
 	}).then(({ canceled }) => {
 		if (canceled) return;
-		os.api('pages/delete', {
+		os.api("pages/delete", {
 			pageId: pageId,
 		}).then(() => {
 			os.alert({
-				type: 'success',
+				type: "success",
 				text: i18n.ts._pages.deleted,
 			});
-			mainRouter.push('/pages');
+			mainRouter.push("/pages");
 		});
 	});
 }
 
 function duplicate() {
-	title = title + ' - copy';
-	name = name + '-copy';
-	os.api('pages/create', getSaveOptions()).then(created => {
+	title = title + " - copy";
+	name = name + "-copy";
+	os.api("pages/create", getSaveOptions()).then((created) => {
 		pageId = created.id;
 		currentName = name.trim();
 		os.alert({
-			type: 'success',
+			type: "success",
 			text: i18n.ts._pages.created,
 		});
 		mainRouter.push(`/pages/edit/${pageId}`);
@@ -217,15 +219,15 @@ async function add() {
 
 function getPageBlockList() {
 	return [
-		{ value: 'section', text: i18n.ts._pages.blocks.section },
-		{ value: 'text', text: i18n.ts._pages.blocks.text },
-		{ value: 'image', text: i18n.ts._pages.blocks.image },
-		{ value: 'note', text: i18n.ts._pages.blocks.note },
+		{ value: "section", text: i18n.ts._pages.blocks.section },
+		{ value: "text", text: i18n.ts._pages.blocks.text },
+		{ value: "image", text: i18n.ts._pages.blocks.image },
+		{ value: "note", text: i18n.ts._pages.blocks.note },
 	];
 }
 
 function setEyeCatchingImage(img) {
-	selectFile(img.currentTarget ?? img.target, null).then(file => {
+	selectFile(img.currentTarget ?? img.target, null).then((file) => {
 		eyeCatchingImageId = file.id;
 	});
 }
@@ -236,11 +238,11 @@ function removeEyeCatchingImage() {
 
 async function init() {
 	if (props.initPageId) {
-		page = await os.api('pages/show', {
+		page = await os.api("pages/show", {
 			pageId: props.initPageId,
 		});
 	} else if (props.initPageName && props.initUser) {
-		page = await os.api('pages/show', {
+		page = await os.api("pages/show", {
 			name: props.initPageName,
 			username: props.initUser,
 		});
@@ -261,11 +263,13 @@ async function init() {
 		eyeCatchingImageId = page.eyeCatchingImageId;
 	} else {
 		const id = uuid();
-		content = [{
-			id,
-			type: 'text',
-			text: 'Hello World!',
-		}];
+		content = [
+			{
+				id,
+				type: "text",
+				text: "Hello World!",
+			},
+		];
 	}
 }
 
@@ -273,29 +277,33 @@ init();
 
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => [{
-	key: 'settings',
-	title: i18n.ts._pages.pageSetting,
-	icon: 'ti ti-settings',
-}, {
-	key: 'contents',
-	title: i18n.ts._pages.contents,
-	icon: 'ti ti-note',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "settings",
+		title: i18n.ts._pages.pageSetting,
+		icon: "ti ti-settings",
+	},
+	{
+		key: "contents",
+		title: i18n.ts._pages.contents,
+		icon: "ti ti-note",
+	},
+]);
 
-definePageMetadata(computed(() => {
-	let title = i18n.ts._pages.newPage;
-	if (props.initPageId) {
-		title = i18n.ts._pages.editPage;
-	}
-	else if (props.initPageName && props.initUser) {
-		title = i18n.ts._pages.readPage;
-	}
-	return {
-		title: title,
-		icon: 'ti ti-pencil',
-	};
-}));
+definePageMetadata(
+	computed(() => {
+		let title = i18n.ts._pages.newPage;
+		if (props.initPageId) {
+			title = i18n.ts._pages.editPage;
+		} else if (props.initPageName && props.initUser) {
+			title = i18n.ts._pages.readPage;
+		}
+		return {
+			title: title,
+			icon: "ti ti-pencil",
+		};
+	}),
+);
 </script>
 
 <style lang="scss" module>

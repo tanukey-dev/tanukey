@@ -51,20 +51,24 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onDeactivated, onUnmounted, Ref, ref, watch } from 'vue';
-import { Interpreter, Parser, values } from '@syuilo/aiscript';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { url } from '@/config';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkAsUi from '@/components/MkAsUi.vue';
-import { AsUiComponent, AsUiRoot, registerAsUiLib } from '@/scripts/aiscript/ui';
-import { createAiScriptEnv } from '@/scripts/aiscript/api';
-import MkFolder from '@/components/MkFolder.vue';
-import MkCode from '@/components/MkCode.vue';
-import { defaultStore } from '@/store';
-import { $i } from '@/account';
+import { computed, onDeactivated, onUnmounted, Ref, ref, watch } from "vue";
+import { Interpreter, Parser, values } from "@syuilo/aiscript";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { url } from "@/config";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkAsUi from "@/components/MkAsUi.vue";
+import {
+	AsUiComponent,
+	AsUiRoot,
+	registerAsUiLib,
+} from "@/scripts/aiscript/ui";
+import { createAiScriptEnv } from "@/scripts/aiscript/api";
+import MkFolder from "@/components/MkFolder.vue";
+import MkCode from "@/components/MkCode.vue";
+import { defaultStore } from "@/store";
+import { $i } from "@/account";
 
 const props = defineProps<{
 	id: string;
@@ -75,13 +79,15 @@ let error = $ref(null);
 
 function fetchFlash() {
 	flash = null;
-	os.api('flash/show', {
+	os.api("flash/show", {
 		flashId: props.id,
-	}).then(_flash => {
-		flash = _flash;
-	}).catch(err => {
-		error = err;
-	});
+	})
+		.then((_flash) => {
+			flash = _flash;
+		})
+		.catch((err) => {
+			error = err;
+		});
 }
 
 function share() {
@@ -99,7 +105,7 @@ function shareWithNote() {
 }
 
 function like() {
-	os.apiWithDialog('flash/like', {
+	os.apiWithDialog("flash/like", {
 		flashId: flash.id,
 	}).then(() => {
 		flash.isLiked = true;
@@ -109,11 +115,11 @@ function like() {
 
 async function unlike() {
 	const confirm = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		text: i18n.ts.unlikeConfirm,
 	});
 	if (confirm.canceled) return;
-	os.apiWithDialog('flash/unlike', {
+	os.apiWithDialog("flash/unlike", {
 		flashId: flash.id,
 	}).then(() => {
 		flash.isLiked = false;
@@ -138,44 +144,47 @@ function start() {
 async function run() {
 	if (aiscript) aiscript.abort();
 
-	aiscript = new Interpreter({
-		...createAiScriptEnv({
-			storageKey: 'flash:' + flash.id,
-		}),
-		...registerAsUiLib(components, (_root) => {
-			root.value = _root.value;
-		}),
-		THIS_ID: values.STR(flash.id),
-		THIS_URL: values.STR(`${url}/play/${flash.id}`),
-	}, {
-		in: (q) => {
-			return new Promise(ok => {
-				os.inputText({
-					title: q,
-				}).then(({ canceled, result: a }) => {
-					if (canceled) {
-						ok('');
-					} else {
-						ok(a);
-					}
+	aiscript = new Interpreter(
+		{
+			...createAiScriptEnv({
+				storageKey: "flash:" + flash.id,
+			}),
+			...registerAsUiLib(components, (_root) => {
+				root.value = _root.value;
+			}),
+			THIS_ID: values.STR(flash.id),
+			THIS_URL: values.STR(`${url}/play/${flash.id}`),
+		},
+		{
+			in: (q) => {
+				return new Promise((ok) => {
+					os.inputText({
+						title: q,
+					}).then(({ canceled, result: a }) => {
+						if (canceled) {
+							ok("");
+						} else {
+							ok(a);
+						}
+					});
 				});
-			});
+			},
+			out: (value) => {
+				// nop
+			},
+			log: (type, params) => {
+				// nop
+			},
 		},
-		out: (value) => {
-			// nop
-		},
-		log: (type, params) => {
-			// nop
-		},
-	});
+	);
 
 	let ast;
 	try {
 		ast = parser.parse(flash.script);
 	} catch (err) {
 		os.alert({
-			type: 'error',
-			text: 'Syntax error :(',
+			type: "error",
+			text: "Syntax error :(",
 		});
 		return;
 	}
@@ -183,8 +192,8 @@ async function run() {
 		await aiscript.exec(ast);
 	} catch (err) {
 		os.alert({
-			type: 'error',
-			title: 'AiScript Error',
+			type: "error",
+			title: "AiScript Error",
 			text: err.message,
 		});
 	}
@@ -202,15 +211,21 @@ const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => flash ? {
-	title: flash.title,
-	avatar: flash.user,
-	path: `/play/${flash.id}`,
-	share: {
-		title: flash.title,
-		text: flash.summary,
-	},
-} : null));
+definePageMetadata(
+	computed(() =>
+		flash
+			? {
+					title: flash.title,
+					avatar: flash.user,
+					path: `/play/${flash.id}`,
+					share: {
+						title: flash.title,
+						text: flash.summary,
+					},
+				}
+			: null,
+	),
+);
 </script>
 
 <style lang="scss" module>

@@ -46,23 +46,29 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted, reactive } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import { GetFormResultType } from '@/scripts/form';
-import { useStream } from '@/stream';
-import number from '@/filters/number';
-import * as sound from '@/scripts/sound';
-import { deepClone } from '@/scripts/clone';
+import { onUnmounted, reactive } from "vue";
+import {
+	useWidgetPropsManager,
+	Widget,
+	WidgetComponentEmits,
+	WidgetComponentExpose,
+	WidgetComponentProps,
+} from "./widget";
+import { GetFormResultType } from "@/scripts/form";
+import { useStream } from "@/stream";
+import number from "@/filters/number";
+import * as sound from "@/scripts/sound";
+import { deepClone } from "@/scripts/clone";
 
-const name = 'jobQueue';
+const name = "jobQueue";
 
 const widgetPropsDef = {
 	transparent: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: false,
 	},
 	sound: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: false,
 	},
 };
@@ -72,13 +78,14 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const { widgetProps, configure } = useWidgetPropsManager(
+	name,
 	widgetPropsDef,
 	props,
 	emit,
 );
 
-const connection = useStream().useChannel('queueStats');
+const connection = useStream().useChannel("queueStats");
 const current = reactive({
 	inbox: {
 		activeSincePrevTick: 0,
@@ -94,21 +101,25 @@ const current = reactive({
 	},
 });
 const prev = reactive({} as typeof current);
-const jammedSound = sound.setVolume(sound.getAudio('syuilo/queue-jammed'), 1);
+const jammedSound = sound.setVolume(sound.getAudio("syuilo/queue-jammed"), 1);
 
-for (const domain of ['inbox', 'deliver']) {
+for (const domain of ["inbox", "deliver"]) {
 	prev[domain] = deepClone(current[domain]);
 }
 
 const onStats = (stats) => {
-	for (const domain of ['inbox', 'deliver']) {
+	for (const domain of ["inbox", "deliver"]) {
 		prev[domain] = deepClone(current[domain]);
 		current[domain].activeSincePrevTick = stats[domain].activeSincePrevTick;
 		current[domain].active = stats[domain].active;
 		current[domain].waiting = stats[domain].waiting;
 		current[domain].delayed = stats[domain].delayed;
 
-		if (current[domain].waiting > 0 && widgetProps.sound && jammedSound.paused) {
+		if (
+			current[domain].waiting > 0 &&
+			widgetProps.sound &&
+			jammedSound.paused
+		) {
 			jammedSound.play();
 		}
 	}
@@ -120,17 +131,17 @@ const onStatsLog = (statsLog) => {
 	}
 };
 
-connection.on('stats', onStats);
-connection.on('statsLog', onStatsLog);
+connection.on("stats", onStats);
+connection.on("statsLog", onStatsLog);
 
-connection.send('requestLog', {
+connection.send("requestLog", {
 	id: Math.random().toString().substr(2, 8),
 	length: 1,
 });
 
 onUnmounted(() => {
-	connection.off('stats', onStats);
-	connection.off('statsLog', onStatsLog);
+	connection.off("stats", onStats);
+	connection.off("statsLog", onStatsLog);
 	connection.dispose();
 });
 

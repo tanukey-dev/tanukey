@@ -112,22 +112,24 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, defineAsyncComponent } from 'vue';
-import Multiselect from '@vueform/multiselect';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkColorInput from '@/components/MkColorInput.vue';
-import { selectFile } from '@/scripts/select-file';
-import * as os from '@/os';
-import { useRouter } from '@/router';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
-import MkFolder from '@/components/MkFolder.vue';
-import { $i } from '@/account';
+import { computed, ref, watch, defineAsyncComponent } from "vue";
+import Multiselect from "@vueform/multiselect";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkColorInput from "@/components/MkColorInput.vue";
+import { selectFile } from "@/scripts/select-file";
+import * as os from "@/os";
+import { useRouter } from "@/router";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
+import MkFolder from "@/components/MkFolder.vue";
+import { $i } from "@/account";
 
-const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
+const Sortable = defineAsyncComponent(() =>
+	import("vuedraggable").then((x) => x.default),
+);
 
 const router = useRouter();
 
@@ -137,28 +139,33 @@ const props = defineProps<{
 
 let channel = $ref(null);
 let name = $ref(null);
-let tags = $ref('');
+let tags = $ref("");
 let description = $ref(null);
 let bannerUrl = $ref<string | null>(null);
 let bannerId = $ref<string | null>(null);
-let color = $ref('#000');
+let color = $ref("#000");
 let federation = ref(false);
 let searchable = ref(true);
 let isNoteCollapsed = ref(true);
 let isPrivate = ref(false);
-const privateUserIds = ref<{ value: string, label: string}[]>([]);
-const moderatorUserIds = ref<{ value: string, label: string}[]>([]);
+const privateUserIds = ref<{ value: string; label: string }[]>([]);
+const moderatorUserIds = ref<{ value: string; label: string }[]>([]);
 const pinnedNotes = ref([]);
 
-watch(() => bannerId, async () => {
-	if (bannerId == null) {
-		bannerUrl = null;
-	} else {
-		bannerUrl = (await os.api('drive/files/show', {
-			fileId: bannerId,
-		})).url;
-	}
-});
+watch(
+	() => bannerId,
+	async () => {
+		if (bannerId == null) {
+			bannerUrl = null;
+		} else {
+			bannerUrl = (
+				await os.api("drive/files/show", {
+					fileId: bannerId,
+				})
+			).url;
+		}
+	},
+);
 
 watch(federation, () => {
 	if (federation.value) {
@@ -176,7 +183,7 @@ watch(isPrivate, () => {
 async function fetchChannel() {
 	if (props.channelId == null) return;
 
-	channel = await os.api('channels/show', {
+	channel = await os.api("channels/show", {
 		channelId: props.channelId,
 	});
 
@@ -188,9 +195,9 @@ async function fetchChannel() {
 	searchable.value = channel.federation ? true : channel.searchable;
 	isNoteCollapsed.value = channel.isNoteCollapsed;
 	isPrivate.value = channel.isPrivate;
-	tags = channel.tags.join(' ');
+	tags = channel.tags.join(" ");
 
-	const pusers = await os.api('users/show', {
+	const pusers = await os.api("users/show", {
 		userIds: channel.privateUserIds,
 	});
 	if (pusers) {
@@ -203,7 +210,7 @@ async function fetchChannel() {
 		privateUserIds.value = tmp;
 	}
 
-	const musers = await os.api('users/show', {
+	const musers = await os.api("users/show", {
 		userIds: channel.moderatorUserIds,
 	});
 	if (musers) {
@@ -216,7 +223,7 @@ async function fetchChannel() {
 		moderatorUserIds.value = tmp;
 	}
 
-	pinnedNotes.value = channel.pinnedNoteIds.map(id => ({
+	pinnedNotes.value = channel.pinnedNoteIds.map((id) => ({
 		id,
 	}));
 	color = channel.color;
@@ -229,12 +236,15 @@ async function addPinnedNote() {
 		title: i18n.ts.noteIdOrUrl,
 	});
 	if (canceled) return;
-	const note = await os.apiWithDialog('notes/show', {
-		noteId: value.includes('/') ? value.split('/').pop() : value,
+	const note = await os.apiWithDialog("notes/show", {
+		noteId: value.includes("/") ? value.split("/").pop() : value,
 	});
-	pinnedNotes.value = [{
-		id: note.id,
-	}, ...pinnedNotes.value];
+	pinnedNotes.value = [
+		{
+			id: note.id,
+		},
+		...pinnedNotes.value,
+	];
 }
 
 function removePinnedNote(index: number) {
@@ -246,24 +256,24 @@ function save() {
 		name: name,
 		description: description,
 		bannerId: bannerId,
-		pinnedNoteIds: pinnedNotes.value.map(x => x.id),
+		pinnedNoteIds: pinnedNotes.value.map((x) => x.id),
 		federation: federation.value,
 		searchable: federation.value ? true : searchable.value,
 		isNoteCollapsed: isNoteCollapsed.value,
 		isPrivate: isPrivate.value,
-		privateUserIds: privateUserIds.value.map(v => v.value),
-		moderatorUserIds: moderatorUserIds.value.map(v => v.value),
+		privateUserIds: privateUserIds.value.map((v) => v.value),
+		moderatorUserIds: moderatorUserIds.value.map((v) => v.value),
 		color: color,
-		tags: tags.trim() === '' ? [] : tags.replace('#', '').split(/\s+/),
+		tags: tags.trim() === "" ? [] : tags.replace("#", "").split(/\s+/),
 	};
 
 	if (props.channelId) {
 		params.channelId = props.channelId;
-		os.api('channels/update', params).then((u) => {
+		os.api("channels/update", params).then((u) => {
 			os.success();
 		});
 	} else {
-		os.api('channels/create', params).then(created => {
+		os.api("channels/create", params).then((created) => {
 			os.success();
 			router.push(`/channels/${created.id}`);
 		});
@@ -272,14 +282,14 @@ function save() {
 
 async function archive() {
 	const { canceled } = await os.confirm({
-		type: 'warning',
-		title: i18n.t('channelArchiveConfirmTitle', { name: name }),
+		type: "warning",
+		title: i18n.t("channelArchiveConfirmTitle", { name: name }),
 		text: i18n.ts.channelArchiveConfirmDescription,
 	});
 
 	if (canceled) return;
-	
-	os.api('channels/update', {
+
+	os.api("channels/update", {
 		channelId: props.channelId,
 		isArchived: true,
 	}).then(() => {
@@ -288,7 +298,7 @@ async function archive() {
 }
 
 function setBannerImage(evt) {
-	selectFile(evt.currentTarget ?? evt.target, null).then(file => {
+	selectFile(evt.currentTarget ?? evt.target, null).then((file) => {
 		bannerId = file.id;
 	});
 }
@@ -301,23 +311,30 @@ const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => props.channelId ? {
-	title: i18n.ts._channel.edit,
-	icon: 'ti ti-device-tv',
-} : {
-	title: i18n.ts._channel.create,
-	icon: 'ti ti-device-tv',
-}));
+definePageMetadata(
+	computed(() =>
+		props.channelId
+			? {
+					title: i18n.ts._channel.edit,
+					icon: "ti ti-device-tv",
+				}
+			: {
+					title: i18n.ts._channel.create,
+					icon: "ti ti-device-tv",
+				},
+	),
+);
 
 async function userAsyncFind(query) {
-	let chs = await os.api('users/search', {
-		query: query === null ? '' : query.trim(),
-		origin: 'local',
+	let chs = await os.api("users/search", {
+		query: query === null ? "" : query.trim(),
+		origin: "local",
 		detail: false,
 	});
-	return chs?.map(c => { return { value: c.id, label: c.username };});
+	return chs?.map((c) => {
+		return { value: c.id, label: c.username };
+	});
 }
-
 </script>
 
 <style lang="scss" module>

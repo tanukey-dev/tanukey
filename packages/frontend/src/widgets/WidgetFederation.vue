@@ -20,22 +20,28 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import { GetFormResultType } from '@/scripts/form';
-import MkContainer from '@/components/MkContainer.vue';
-import MkMiniChart from '@/components/MkMiniChart.vue';
-import * as os from '@/os';
-import { useInterval } from '@/scripts/use-interval';
-import { i18n } from '@/i18n';
-import { getProxiedImageUrlNullable } from '@/scripts/media-proxy';
-import { defaultStore } from '@/store';
+import { ref } from "vue";
+import {
+	useWidgetPropsManager,
+	Widget,
+	WidgetComponentEmits,
+	WidgetComponentExpose,
+	WidgetComponentProps,
+} from "./widget";
+import { GetFormResultType } from "@/scripts/form";
+import MkContainer from "@/components/MkContainer.vue";
+import MkMiniChart from "@/components/MkMiniChart.vue";
+import * as os from "@/os";
+import { useInterval } from "@/scripts/use-interval";
+import { i18n } from "@/i18n";
+import { getProxiedImageUrlNullable } from "@/scripts/media-proxy";
+import { defaultStore } from "@/store";
 
-const name = 'federation';
+const name = "federation";
 
 const widgetPropsDef = {
 	showHeader: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: true,
 	},
 };
@@ -45,7 +51,8 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const { widgetProps, configure } = useWidgetPropsManager(
+	name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -56,11 +63,15 @@ const charts = ref([]);
 const fetching = ref(true);
 
 const fetch = async () => {
-	const fetchedInstances = await os.api('federation/instances', {
-		sort: '+latestRequestReceivedAt',
+	const fetchedInstances = await os.api("federation/instances", {
+		sort: "+latestRequestReceivedAt",
 		limit: 5,
 	});
-	const fetchedCharts = await Promise.all(fetchedInstances.map(i => os.apiGet('charts/instance', { host: i.host, limit: 16, span: 'hour' })));
+	const fetchedCharts = await Promise.all(
+		fetchedInstances.map((i) =>
+			os.apiGet("charts/instance", { host: i.host, limit: 16, span: "hour" }),
+		),
+	);
 	instances.value = fetchedInstances;
 	charts.value = fetchedCharts;
 	fetching.value = false;
@@ -72,7 +83,11 @@ useInterval(fetch, 1000 * 60, {
 });
 
 function getInstanceIcon(instance): string {
-	return getProxiedImageUrlNullable(instance.iconUrl, 'preview') ?? getProxiedImageUrlNullable(instance.faviconUrl, 'preview') ?? '/client-assets/dummy.png';
+	return (
+		getProxiedImageUrlNullable(instance.iconUrl, "preview") ??
+		getProxiedImageUrlNullable(instance.faviconUrl, "preview") ??
+		"/client-assets/dummy.png"
+	);
 }
 
 defineExpose<WidgetComponentExpose>({

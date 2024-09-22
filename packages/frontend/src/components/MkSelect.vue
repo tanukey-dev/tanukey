@@ -27,11 +27,20 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, nextTick, ref, watch, computed, toRefs, VNode, useSlots } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { useInterval } from '@/scripts/use-interval';
-import { i18n } from '@/i18n';
+import {
+	onMounted,
+	nextTick,
+	ref,
+	watch,
+	computed,
+	toRefs,
+	VNode,
+	useSlots,
+} from "vue";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { useInterval } from "@/scripts/use-interval";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	modelValue: string | null;
@@ -47,8 +56,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'change', _ev: KeyboardEvent): void;
-	(ev: 'update:modelValue', value: string | null): void;
+	(ev: "change", _ev: KeyboardEvent): void;
+	(ev: "update:modelValue", value: string | null): void;
 }>();
 
 const slots = useSlots();
@@ -59,32 +68,29 @@ const focused = ref(false);
 const opening = ref(false);
 const changed = ref(false);
 const invalid = ref(false);
-const filled = computed(() => v.value !== '' && v.value != null);
+const filled = computed(() => v.value !== "" && v.value != null);
 const inputEl = ref(null);
 const prefixEl = ref(null);
 const suffixEl = ref(null);
 const container = ref(null);
-const height =
-	props.small ? 33 :
-	props.large ? 39 :
-	36;
+const height = props.small ? 33 : props.large ? 39 : 36;
 
 const focus = () => inputEl.value.focus();
 const onInput = (ev) => {
 	changed.value = true;
-	emit('change', ev);
+	emit("change", ev);
 };
 
 const updated = () => {
 	changed.value = false;
-	emit('update:modelValue', v.value);
+	emit("update:modelValue", v.value);
 };
 
-watch(modelValue, newValue => {
+watch(modelValue, (newValue) => {
 	v.value = newValue;
 });
 
-watch(v, newValue => {
+watch(v, (newValue) => {
 	if (!props.manualSave) {
 		updated();
 	}
@@ -94,21 +100,25 @@ watch(v, newValue => {
 
 // このコンポーネントが作成された時、非表示状態である場合がある
 // 非表示状態だと要素の幅などは0になってしまうので、定期的に計算する
-useInterval(() => {
-	if (prefixEl.value) {
-		if (prefixEl.value.offsetWidth) {
-			inputEl.value.style.paddingLeft = prefixEl.value.offsetWidth + 'px';
+useInterval(
+	() => {
+		if (prefixEl.value) {
+			if (prefixEl.value.offsetWidth) {
+				inputEl.value.style.paddingLeft = prefixEl.value.offsetWidth + "px";
+			}
 		}
-	}
-	if (suffixEl.value) {
-		if (suffixEl.value.offsetWidth) {
-			inputEl.value.style.paddingRight = suffixEl.value.offsetWidth + 'px';
+		if (suffixEl.value) {
+			if (suffixEl.value.offsetWidth) {
+				inputEl.value.style.paddingRight = suffixEl.value.offsetWidth + "px";
+			}
 		}
-	}
-}, 100, {
-	immediate: true,
-	afterMounted: true,
-});
+	},
+	100,
+	{
+		immediate: true,
+		afterMounted: true,
+	},
+);
 
 onMounted(() => {
 	nextTick(() => {
@@ -137,17 +147,19 @@ function show(ev: MouseEvent) {
 
 	const scanOptions = (options: VNode[]) => {
 		for (const vnode of options) {
-			if (vnode.type === 'optgroup') {
+			if (vnode.type === "optgroup") {
 				const optgroup = vnode;
 				menu.push({
-					type: 'label',
+					type: "label",
 					text: optgroup.props.label,
 				});
 				scanOptions(optgroup.children);
-			} else if (Array.isArray(vnode.children)) { // 何故かフラグメントになってくることがある
+			} else if (Array.isArray(vnode.children)) {
+				// 何故かフラグメントになってくることがある
 				const fragment = vnode;
 				scanOptions(fragment.children);
-			} else if (vnode.props == null) { // v-if で条件が false のときにこうなる
+			} else if (vnode.props == null) {
+				// v-if で条件が false のときにこうなる
 				// nop?
 			} else {
 				const option = vnode;

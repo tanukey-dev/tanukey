@@ -22,8 +22,8 @@
 </template>
 
 <script lang="ts" setup>
-import { toRefs, Ref } from 'vue';
-import XButton from '@/components/MkSwitch.button.vue';
+import { toRefs, Ref } from "vue";
+import XButton from "@/components/MkSwitch.button.vue";
 
 const props = defineProps<{
 	modelValue: boolean | Ref<boolean>;
@@ -32,13 +32,13 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'update:modelValue', v: boolean): void;
+	(ev: "update:modelValue", v: boolean): void;
 }>();
 
 const checked = toRefs(props).modelValue;
 const toggle = () => {
 	if (props.disabled) return;
-	emit('update:modelValue', !checked.value);
+	emit("update:modelValue", !checked.value);
 };
 </script>
 

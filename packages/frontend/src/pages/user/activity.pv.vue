@@ -9,17 +9,17 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import { Chart, ChartDataset } from 'chart.js';
-import * as misskey from 'misskey-js';
-import gradient from 'chartjs-plugin-gradient';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip';
-import { chartVLine } from '@/scripts/chart-vline';
-import { initChart } from '@/scripts/init-chart';
-import { chartLegend } from '@/scripts/chart-legend';
-import MkChartLegend from '@/components/MkChartLegend.vue';
+import { onMounted } from "vue";
+import { Chart, ChartDataset } from "chart.js";
+import * as misskey from "misskey-js";
+import gradient from "chartjs-plugin-gradient";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
+import { useChartTooltip } from "@/scripts/use-chart-tooltip";
+import { chartVLine } from "@/scripts/chart-vline";
+import { initChart } from "@/scripts/init-chart";
+import { chartLegend } from "@/scripts/chart-legend";
+import MkChartLegend from "@/components/MkChartLegend.vue";
 
 initChart();
 
@@ -56,41 +56,67 @@ async function renderChart() {
 		}));
 	};
 
-	const raw = await os.api('charts/user/pv', { userId: props.user.id, limit: chartLimit, span: 'day' });
+	const raw = await os.api("charts/user/pv", {
+		userId: props.user.id,
+		limit: chartLimit,
+		span: "day",
+	});
 
-	const vLineColor = defaultStore.state.darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)';
+	const vLineColor = defaultStore.state.darkMode
+		? "rgba(255, 255, 255, 0.2)"
+		: "rgba(0, 0, 0, 0.2)";
 
-	const colorUser = '#3498db';
-	const colorVisitor = '#2ecc71';
-	const colorUser2 = '#3498db88';
-	const colorVisitor2 = '#2ecc7188';
+	const colorUser = "#3498db";
+	const colorVisitor = "#2ecc71";
+	const colorUser2 = "#3498db88";
+	const colorVisitor2 = "#2ecc7188";
 
-	function makeDataset(label: string, data: ChartDataset['data'], extra: Partial<ChartDataset> = {}): ChartDataset {
-		return Object.assign({
-			label: label,
-			data: data,
-			parsing: false,
-			pointRadius: 0,
-			borderWidth: 0,
-			borderJoinStyle: 'round',
-			borderRadius: 4,
-			barPercentage: 0.7,
-			categoryPercentage: 0.7,
-			fill: true,
-		/* @see <https://github.com/misskey-dev/misskey/pull/10365#discussion_r1155511107>
+	function makeDataset(
+		label: string,
+		data: ChartDataset["data"],
+		extra: Partial<ChartDataset> = {},
+	): ChartDataset {
+		return Object.assign(
+			{
+				label: label,
+				data: data,
+				parsing: false,
+				pointRadius: 0,
+				borderWidth: 0,
+				borderJoinStyle: "round",
+				borderRadius: 4,
+				barPercentage: 0.7,
+				categoryPercentage: 0.7,
+				fill: true,
+				/* @see <https://github.com/misskey-dev/misskey/pull/10365#discussion_r1155511107>
 		} satisfies ChartData, extra);
 		 */
-		}, extra);
+			},
+			extra,
+		);
 	}
 
 	chartInstance = new Chart(chartEl, {
-		type: 'bar',
+		type: "bar",
 		data: {
 			datasets: [
-				makeDataset('UPV (user)', format(raw.upv.user).slice().reverse(), { backgroundColor: colorUser, stack: 'u' }),
-				makeDataset('UPV (visitor)', format(raw.upv.visitor).slice().reverse(), { backgroundColor: colorVisitor, stack: 'u' }),
-				makeDataset('NPV (user)', format(raw.pv.user).slice().reverse(), { backgroundColor: colorUser2, stack: 'n' }),
-				makeDataset('NPV (visitor)', format(raw.pv.visitor).slice().reverse(), { backgroundColor: colorVisitor2, stack: 'n' }),
+				makeDataset("UPV (user)", format(raw.upv.user).slice().reverse(), {
+					backgroundColor: colorUser,
+					stack: "u",
+				}),
+				makeDataset(
+					"UPV (visitor)",
+					format(raw.upv.visitor).slice().reverse(),
+					{ backgroundColor: colorVisitor, stack: "u" },
+				),
+				makeDataset("NPV (user)", format(raw.pv.user).slice().reverse(), {
+					backgroundColor: colorUser2,
+					stack: "n",
+				}),
+				makeDataset("NPV (visitor)", format(raw.pv.visitor).slice().reverse(), {
+					backgroundColor: colorVisitor2,
+					stack: "n",
+				}),
 			],
 		},
 		options: {
@@ -105,15 +131,15 @@ async function renderChart() {
 			},
 			scales: {
 				x: {
-					type: 'time',
+					type: "time",
 					offset: true,
 					stacked: true,
 					time: {
 						stepSize: 1,
-						unit: 'day',
+						unit: "day",
 						displayFormats: {
-							day: 'M/d',
-							month: 'Y/M',
+							day: "M/d",
+							month: "Y/M",
 						},
 					},
 					grid: {
@@ -126,7 +152,7 @@ async function renderChart() {
 					},
 				},
 				y: {
-					position: 'left',
+					position: "left",
 					stacked: true,
 					suggestedMax: 10,
 					grid: {
@@ -140,12 +166,12 @@ async function renderChart() {
 			},
 			interaction: {
 				intersect: false,
-				mode: 'index',
+				mode: "index",
 			},
 			plugins: {
 				title: {
 					display: true,
-					text: 'Unique/Natural PV',
+					text: "Unique/Natural PV",
 					padding: {
 						left: 0,
 						right: 0,
@@ -158,7 +184,7 @@ async function renderChart() {
 				},
 				tooltip: {
 					enabled: false,
-					mode: 'index',
+					mode: "index",
 					animation: {
 						duration: 0,
 					},

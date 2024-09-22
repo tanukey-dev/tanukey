@@ -85,36 +85,53 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, provide, onMounted, computed, ref, ComputedRef, watch, shallowRef, Ref } from 'vue';
-import XCommon from './_common_/common.vue';
-import type MkStickyContainer from '@/components/global/MkStickyContainer.vue';
-import { instanceName } from '@/config';
-import XDrawerMenu from '@/ui/_common_/navbar-for-mobile.vue';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
-import { navbarItemDef } from '@/navbar';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
-import { mainRouter } from '@/router';
-import { PageMetadata, provideMetadataReceiver } from '@/scripts/page-metadata';
-import { deviceKind } from '@/scripts/device-kind';
-import { miLocalStorage } from '@/local-storage';
-import { CURRENT_STICKY_BOTTOM } from '@/const';
-import { useScrollPositionManager } from '@/nirax';
+import {
+	defineAsyncComponent,
+	provide,
+	onMounted,
+	computed,
+	ref,
+	ComputedRef,
+	watch,
+	shallowRef,
+	Ref,
+} from "vue";
+import XCommon from "./_common_/common.vue";
+import type MkStickyContainer from "@/components/global/MkStickyContainer.vue";
+import { instanceName } from "@/config";
+import XDrawerMenu from "@/ui/_common_/navbar-for-mobile.vue";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
+import { navbarItemDef } from "@/navbar";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
+import { mainRouter } from "@/router";
+import { PageMetadata, provideMetadataReceiver } from "@/scripts/page-metadata";
+import { deviceKind } from "@/scripts/device-kind";
+import { miLocalStorage } from "@/local-storage";
+import { CURRENT_STICKY_BOTTOM } from "@/const";
+import { useScrollPositionManager } from "@/nirax";
 
-const XWidgets = defineAsyncComponent(() => import('./universal.widgets.vue'));
-const XSidebar = defineAsyncComponent(() => import('@/ui/_common_/navbar.vue'));
-const XStatusBars = defineAsyncComponent(() => import('@/ui/_common_/statusbars.vue'));
-const XAnnouncements = defineAsyncComponent(() => import('@/ui/_common_/announcements.vue'));
+const XWidgets = defineAsyncComponent(() => import("./universal.widgets.vue"));
+const XSidebar = defineAsyncComponent(() => import("@/ui/_common_/navbar.vue"));
+const XStatusBars = defineAsyncComponent(
+	() => import("@/ui/_common_/statusbars.vue"),
+);
+const XAnnouncements = defineAsyncComponent(
+	() => import("@/ui/_common_/announcements.vue"),
+);
 
 const DESKTOP_THRESHOLD = 1100;
 const MOBILE_THRESHOLD = 500;
 
 // デスクトップでウィンドウを狭くしたときモバイルUIが表示されて欲しいことはあるので deviceKind === 'desktop' の判定は行わない
 const isDesktop = ref(window.innerWidth >= DESKTOP_THRESHOLD);
-const isMobile = ref(deviceKind === 'smartphone' || window.innerWidth <= MOBILE_THRESHOLD);
-window.addEventListener('resize', () => {
-	isMobile.value = deviceKind === 'smartphone' || window.innerWidth <= MOBILE_THRESHOLD;
+const isMobile = ref(
+	deviceKind === "smartphone" || window.innerWidth <= MOBILE_THRESHOLD,
+);
+window.addEventListener("resize", () => {
+	isMobile.value =
+		deviceKind === "smartphone" || window.innerWidth <= MOBILE_THRESHOLD;
 });
 
 let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
@@ -122,7 +139,7 @@ const widgetsShowing = $ref(false);
 const navFooter = $shallowRef<HTMLElement>();
 const contents = shallowRef<InstanceType<typeof MkStickyContainer>>();
 
-provide('router', mainRouter);
+provide("router", mainRouter);
 provideMetadataReceiver((info) => {
 	pageMetadata = info;
 	if (pageMetadata.value) {
@@ -132,7 +149,7 @@ provideMetadataReceiver((info) => {
 
 const menuIndicated = computed(() => {
 	for (const def in navbarItemDef) {
-		if (def === 'notifications') continue; // 通知は下にボタンとして表示されてるから
+		if (def === "notifications") continue; // 通知は下にボタンとして表示されてるから
 		if (navbarItemDef[def].indicated) return true;
 	}
 	return false;
@@ -140,86 +157,116 @@ const menuIndicated = computed(() => {
 
 const drawerMenuShowing = ref(false);
 
-mainRouter.on('change', () => {
+mainRouter.on("change", () => {
 	drawerMenuShowing.value = false;
 });
 
 if (window.innerWidth > 1024) {
-	const tempUI = miLocalStorage.getItem('ui_temp');
+	const tempUI = miLocalStorage.getItem("ui_temp");
 	if (tempUI) {
-		miLocalStorage.setItem('ui', tempUI);
-		miLocalStorage.removeItem('ui_temp');
+		miLocalStorage.setItem("ui", tempUI);
+		miLocalStorage.removeItem("ui_temp");
 		location.reload();
 	}
 }
 
 defaultStore.loaded.then(() => {
 	if (defaultStore.state.widgets.length === 0) {
-		defaultStore.set('widgets', [{
-			name: 'calendar',
-			id: 'a', place: 'right', data: {},
-		}, {
-			name: 'notifications',
-			id: 'b', place: 'right', data: {},
-		}, {
-			name: 'trends',
-			id: 'c', place: 'right', data: {},
-		}]);
+		defaultStore.set("widgets", [
+			{
+				name: "calendar",
+				id: "a",
+				place: "right",
+				data: {},
+			},
+			{
+				name: "notifications",
+				id: "b",
+				place: "right",
+				data: {},
+			},
+			{
+				name: "trends",
+				id: "c",
+				place: "right",
+				data: {},
+			},
+		]);
 	}
 });
 
 onMounted(() => {
 	if (!isDesktop.value) {
-		window.addEventListener('resize', () => {
-			if (window.innerWidth >= DESKTOP_THRESHOLD) isDesktop.value = true;
-		}, { passive: true });
+		window.addEventListener(
+			"resize",
+			() => {
+				if (window.innerWidth >= DESKTOP_THRESHOLD) isDesktop.value = true;
+			},
+			{ passive: true },
+		);
 	}
 });
 
 const onContextmenu = (ev) => {
 	const isLink = (el: HTMLElement) => {
-		if (el.tagName === 'A') return true;
+		if (el.tagName === "A") return true;
 		if (el.parentElement) {
 			return isLink(el.parentElement);
 		}
 	};
 	if (isLink(ev.target)) return;
-	if (['INPUT', 'TEXTAREA', 'IMG', 'VIDEO', 'CANVAS'].includes(ev.target.tagName) || ev.target.attributes['contenteditable']) return;
-	if (window.getSelection()?.toString() !== '') return;
+	if (
+		["INPUT", "TEXTAREA", "IMG", "VIDEO", "CANVAS"].includes(
+			ev.target.tagName,
+		) ||
+		ev.target.attributes["contenteditable"]
+	)
+		return;
+	if (window.getSelection()?.toString() !== "") return;
 	const path = mainRouter.getCurrentPath();
-	os.contextMenu([{
-		type: 'label',
-		text: path,
-	}, {
-		icon: 'ti ti-window-maximize',
-		text: i18n.ts.openInWindow,
-		action: () => {
-			os.pageWindow(path);
-		},
-	}], ev);
+	os.contextMenu(
+		[
+			{
+				type: "label",
+				text: path,
+			},
+			{
+				icon: "ti ti-window-maximize",
+				text: i18n.ts.openInWindow,
+				action: () => {
+					os.pageWindow(path);
+				},
+			},
+		],
+		ev,
+	);
 };
 
 function top() {
 	contents.value.rootEl.scrollTo({
 		top: 0,
-		behavior: 'smooth',
+		behavior: "smooth",
 	});
 }
 
 let navFooterHeight = $ref(0);
 provide<Ref<number>>(CURRENT_STICKY_BOTTOM, $$(navFooterHeight));
 
-watch($$(navFooter), () => {
-	if (navFooter) {
-		navFooterHeight = navFooter.offsetHeight;
-		document.body.style.setProperty('--stickyBottom', `${navFooterHeight}px`);
-	} else {
-		navFooterHeight = 0;
-		document.body.style.setProperty('--stickyBottom', '0px');
-	}
-}, {
-	immediate: true,
-});
+watch(
+	$$(navFooter),
+	() => {
+		if (navFooter) {
+			navFooterHeight = navFooter.offsetHeight;
+			document.body.style.setProperty("--stickyBottom", `${navFooterHeight}px`);
+		} else {
+			navFooterHeight = 0;
+			document.body.style.setProperty("--stickyBottom", "0px");
+		}
+	},
+	{
+		immediate: true,
+	},
+);
 
 useScrollPositionManager(() => contents.value.rootEl, mainRouter);
 </script>

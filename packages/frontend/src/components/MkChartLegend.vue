@@ -8,27 +8,28 @@
 </template>
 
 <script lang="ts" setup>
-import { Chart, LegendItem } from 'chart.js';
+import { Chart, LegendItem } from "chart.js";
 
-const props = defineProps({
-});
+const props = defineProps({});
 
 let chart = $shallowRef<Chart>();
 let items = $shallowRef<LegendItem[]>([]);
 
 function update(_chart: Chart, _items: LegendItem[]) {
-	chart = _chart,
-	items = _items;
+	(chart = _chart), (items = _items);
 }
 
 function onClick(item: LegendItem) {
 	if (chart == null) return;
 	const { type } = chart.config;
-	if (type === 'pie' || type === 'doughnut') {
+	if (type === "pie" || type === "doughnut") {
 		// Pie and doughnut charts only have a single dataset and visibility is per item
 		chart.toggleDataVisibility(item.index);
 	} else {
-		chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
+		chart.setDatasetVisibility(
+			item.datasetIndex,
+			!chart.isDatasetVisible(item.datasetIndex),
+		);
 	}
 	chart.update();
 }

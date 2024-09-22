@@ -30,12 +30,12 @@
 </template>
 
 <script lang="ts" setup>
-import { markRaw, onMounted, onUnmounted, ref } from 'vue';
-import XChart from './overview.queue.chart.vue';
-import number from '@/filters/number';
-import { useStream } from '@/stream';
+import { markRaw, onMounted, onUnmounted, ref } from "vue";
+import XChart from "./overview.queue.chart.vue";
+import number from "@/filters/number";
+import { useStream } from "@/stream";
 
-const connection = markRaw(useStream().useChannel('queueStats'));
+const connection = markRaw(useStream().useChannel("queueStats"));
 
 const activeSincePrevTick = ref(0);
 const active = ref(0);
@@ -82,17 +82,17 @@ const onStatsLog = (statsLog) => {
 };
 
 onMounted(() => {
-	connection.on('stats', onStats);
-	connection.on('statsLog', onStatsLog);
-	connection.send('requestLog', {
+	connection.on("stats", onStats);
+	connection.on("statsLog", onStatsLog);
+	connection.send("requestLog", {
 		id: Math.random().toString().substr(2, 8),
 		length: 100,
 	});
 });
 
 onUnmounted(() => {
-	connection.off('stats', onStats);
-	connection.off('statsLog', onStatsLog);
+	connection.off("stats", onStats);
+	connection.off("statsLog", onStatsLog);
 	connection.dispose();
 });
 </script>

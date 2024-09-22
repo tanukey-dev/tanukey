@@ -37,27 +37,34 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import { AuthSession } from 'misskey-js/built/entities';
-import XForm from './auth.form.vue';
-import MkSignin from '@/components/MkSignin.vue';
-import * as os from '@/os';
-import { $i, login } from '@/account';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
+import { onMounted } from "vue";
+import { AuthSession } from "misskey-js/built/entities";
+import XForm from "./auth.form.vue";
+import MkSignin from "@/components/MkSignin.vue";
+import * as os from "@/os";
+import { $i, login } from "@/account";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	token: string;
 }>();
 
-let state = $ref<'waiting' | 'accepted' | 'fetch-session-error' | 'denied' | null>(null);
+let state = $ref<
+	"waiting" | "accepted" | "fetch-session-error" | "denied" | null
+>(null);
 let session = $ref<AuthSession | null>(null);
 
 function accepted() {
-	state = 'accepted';
+	state = "accepted";
 	if (session && session.app.callbackUrl) {
 		const url = new URL(session.app.callbackUrl);
-		if (['javascript:', 'file:', 'data:', 'mailto:', 'tel:'].includes(url.protocol)) throw new Error('invalid url');
+		if (
+			["javascript:", "file:", "data:", "mailto:", "tel:"].includes(
+				url.protocol,
+			)
+		)
+			throw new Error("invalid url");
 		location.href = `${session.app.callbackUrl}?token=${session.token}`;
 	}
 }
@@ -70,21 +77,21 @@ onMounted(async () => {
 	if (!$i) return;
 
 	try {
-		session = await os.api('auth/session/show', {
+		session = await os.api("auth/session/show", {
 			token: props.token,
 		});
 
 		// 既に連携していた場合
 		if (session.app.isAuthorized) {
-			await os.api('auth/accept', {
+			await os.api("auth/accept", {
 				token: session.token,
 			});
 			accepted();
 		} else {
-			state = 'waiting';
+			state = "waiting";
 		}
 	} catch (err) {
-		state = 'fetch-session-error';
+		state = "fetch-session-error";
 	}
 });
 
@@ -94,7 +101,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts._auth.shareAccessTitle,
-	icon: 'ti ti-apps',
+	icon: "ti ti-apps",
 });
 </script>
 

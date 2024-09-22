@@ -22,16 +22,19 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	role: any;
-	forModeration: boolean;
-	detailed: boolean;
-}>(), {
-	detailed: true,
-});
+const props = withDefaults(
+	defineProps<{
+		role: any;
+		forModeration: boolean;
+		detailed: boolean;
+	}>(),
+	{
+		detailed: true,
+	},
+);
 </script>
 
 <style lang="scss" module>

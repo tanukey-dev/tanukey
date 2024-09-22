@@ -59,30 +59,30 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XHeader from './_header_.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkInput from '@/components/MkInput.vue';
-import FormInfo from '@/components/MkInfo.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import FormSplit from '@/components/form/split.vue';
-import FormSection from '@/components/form/section.vue';
-import * as os from '@/os';
-import { fetchInstance, instance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkButton from '@/components/MkButton.vue';
+import {} from "vue";
+import XHeader from "./_header_.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkInput from "@/components/MkInput.vue";
+import FormInfo from "@/components/MkInfo.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import FormSplit from "@/components/form/split.vue";
+import FormSection from "@/components/form/section.vue";
+import * as os from "@/os";
+import { fetchInstance, instance } from "@/instance";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkButton from "@/components/MkButton.vue";
 
 let enableEmail: boolean = $ref(false);
 let email: any = $ref(null);
 let smtpSecure: boolean = $ref(false);
-let smtpHost: string = $ref('');
+let smtpHost: string = $ref("");
 let smtpPort: number = $ref(0);
-let smtpUser: string = $ref('');
-let smtpPass: string = $ref('');
+let smtpUser: string = $ref("");
+let smtpPass: string = $ref("");
 
 async function init() {
-	const meta = await os.api('admin/meta');
+	const meta = await os.api("admin/meta");
 	enableEmail = meta.enableEmail;
 	email = meta.email;
 	smtpSecure = meta.smtpSecure;
@@ -95,21 +95,21 @@ async function init() {
 async function testEmail() {
 	const { canceled, result: destination } = await os.inputText({
 		title: i18n.ts.destination,
-		type: 'email',
-		default: instance.maintainerEmail ?? '',
-		placeholder: 'test@example.com',
+		type: "email",
+		default: instance.maintainerEmail ?? "",
+		placeholder: "test@example.com",
 		minLength: 1,
 	});
 	if (canceled) return;
-	os.apiWithDialog('admin/send-email', {
+	os.apiWithDialog("admin/send-email", {
 		to: destination,
-		subject: 'Test email',
-		text: 'Yo',
+		subject: "Test email",
+		text: "Yo",
 	});
 }
 
 function save() {
-	os.apiWithDialog('admin/update-meta', {
+	os.apiWithDialog("admin/update-meta", {
 		enableEmail,
 		email,
 		smtpSecure,
@@ -126,7 +126,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.emailServer,
-	icon: 'ti ti-mail',
+	icon: "ti ti-mail",
 });
 </script>
 

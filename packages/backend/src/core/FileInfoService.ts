@@ -1,14 +1,14 @@
-import * as fs from 'node:fs';
-import * as crypto from 'node:crypto';
-import * as stream from 'node:stream';
-import * as util from 'node:util';
-import { Injectable } from '@nestjs/common';
-import * as fileType from 'file-type';
-import isSvg from 'is-svg';
-import probeImageSize from 'probe-image-size';
-import sharp from 'sharp';
-import { encode } from 'blurhash';
-import { bindThis } from '@/decorators.js';
+import * as fs from "node:fs";
+import * as crypto from "node:crypto";
+import * as stream from "node:stream";
+import * as util from "node:util";
+import { Injectable } from "@nestjs/common";
+import * as fileType from "file-type";
+import isSvg from "is-svg";
+import probeImageSize from "probe-image-size";
+import sharp from "sharp";
+import { encode } from "blurhash";
+import { bindThis } from "@/decorators.js";
 
 const pipeline = util.promisify(stream.pipeline);
 
@@ -29,30 +29,31 @@ export type FileInfo = {
 };
 
 const TYPE_OCTET_STREAM = {
-	mime: 'application/octet-stream',
+	mime: "application/octet-stream",
 	ext: null,
 };
 
 const TYPE_SVG = {
-	mime: 'image/svg+xml',
-	ext: 'svg',
+	mime: "image/svg+xml",
+	ext: "svg",
 };
 
 @Injectable()
 export class FileInfoService {
-	constructor(
-	) {
-	}
+	constructor() {}
 
 	/**
 	 * Get file information
 	 */
 	@bindThis
-	public async getFileInfo(path: string, opts: {
-		sensitiveThreshold?: number;
-		sensitiveThresholdForPorn?: number;
-		enableSensitiveMediaDetectionForVideos?: boolean;
-	}): Promise<FileInfo> {
+	public async getFileInfo(
+		path: string,
+		opts: {
+			sensitiveThreshold?: number;
+			sensitiveThresholdForPorn?: number;
+			enableSensitiveMediaDetectionForVideos?: boolean;
+		},
+	): Promise<FileInfo> {
 		const warnings = [] as string[];
 
 		const size = await this.getFileSize(path);
@@ -65,35 +66,37 @@ export class FileInfoService {
 		let height: number | undefined;
 		let orientation: number | undefined;
 
-		if ([
-			'image/png',
-			'image/gif',
-			'image/jpeg',
-			'image/webp',
-			'image/avif',
-			'image/apng',
-			'image/bmp',
-			'image/tiff',
-			'image/svg+xml',
-			'image/vnd.adobe.photoshop',
-		].includes(type.mime)) {
-			const imageSize = await this.detectImageSize(path).catch(e => {
+		if (
+			[
+				"image/png",
+				"image/gif",
+				"image/jpeg",
+				"image/webp",
+				"image/avif",
+				"image/apng",
+				"image/bmp",
+				"image/tiff",
+				"image/svg+xml",
+				"image/vnd.adobe.photoshop",
+			].includes(type.mime)
+		) {
+			const imageSize = await this.detectImageSize(path).catch((e) => {
 				warnings.push(`detectImageSize failed: ${e}`);
 				return undefined;
 			});
 
 			// うまく判定できない画像は octet-stream にする
 			if (!imageSize) {
-				warnings.push('cannot detect image dimensions');
+				warnings.push("cannot detect image dimensions");
 				type = TYPE_OCTET_STREAM;
-			} else if (imageSize.wUnits === 'px') {
+			} else if (imageSize.wUnits === "px") {
 				width = imageSize.width;
 				height = imageSize.height;
 				orientation = imageSize.orientation;
 
 				// 制限を超えている画像は octet-stream にする
 				if (imageSize.width > 16383 || imageSize.height > 16383) {
-					warnings.push('image dimensions exceeds limits');
+					warnings.push("image dimensions exceeds limits");
 					type = TYPE_OCTET_STREAM;
 				}
 			} else {
@@ -103,16 +106,18 @@ export class FileInfoService {
 
 		let blurhash: string | undefined;
 
-		if ([
-			'image/jpeg',
-			'image/gif',
-			'image/png',
-			'image/apng',
-			'image/webp',
-			'image/avif',
-			'image/svg+xml',
-		].includes(type.mime)) {
-			blurhash = await this.getBlurhash(path).catch(e => {
+		if (
+			[
+				"image/jpeg",
+				"image/gif",
+				"image/png",
+				"image/apng",
+				"image/webp",
+				"image/avif",
+				"image/svg+xml",
+			].includes(type.mime)
+		) {
+			blurhash = await this.getBlurhash(path).catch((e) => {
 				warnings.push(`getBlurhash failed: ${e}`);
 				return undefined;
 			});
@@ -160,7 +165,7 @@ export class FileInfoService {
 		mime: string;
 		ext: string | null;
 	}> {
-	// Check 0 byte
+		// Check 0 byte
 		const fileSize = await this.getFileSize(path);
 		if (fileSize === 0) {
 			return TYPE_OCTET_STREAM;
@@ -169,8 +174,8 @@ export class FileInfoService {
 		const type = await fileType.fileTypeFromFile(path);
 
 		if (type) {
-		// XMLはSVGかもしれない
-			if (type.mime === 'application/xml' && await this.checkSvg(path)) {
+			// XMLはSVGかもしれない
+			if (type.mime === "application/xml" && (await this.checkSvg(path))) {
 				return TYPE_SVG;
 			}
 
@@ -217,7 +222,7 @@ export class FileInfoService {
 	 */
 	@bindThis
 	private async calcHash(path: string): Promise<string> {
-		const hash = crypto.createHash('md5').setEncoding('hex');
+		const hash = crypto.createHash("md5").setEncoding("hex");
 		await pipeline(fs.createReadStream(path), hash);
 		return hash.read();
 	}
@@ -227,12 +232,12 @@ export class FileInfoService {
 	 */
 	@bindThis
 	private async detectImageSize(path: string): Promise<{
-	width: number;
-	height: number;
-	wUnits: string;
-	hUnits: string;
-	orientation?: number;
-}> {
+		width: number;
+		height: number;
+		wUnits: string;
+		hUnits: string;
+		orientation?: number;
+	}> {
 		const readable = fs.createReadStream(path);
 		const imageSize = await probeImageSize(readable);
 		readable.destroy();
@@ -248,14 +253,20 @@ export class FileInfoService {
 			sharp(path)
 				.raw()
 				.ensureAlpha()
-				.resize(64, 64, { fit: 'inside' })
+				.resize(64, 64, { fit: "inside" })
 				.toBuffer((err, buffer, info) => {
 					if (err) return reject(err);
 
 					let hash;
 
 					try {
-						hash = encode(new Uint8ClampedArray(buffer), info.width, info.height, 5, 5);
+						hash = encode(
+							new Uint8ClampedArray(buffer),
+							info.width,
+							info.height,
+							5,
+							5,
+						);
 					} catch (e) {
 						return reject(e);
 					}

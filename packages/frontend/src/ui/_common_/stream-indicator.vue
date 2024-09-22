@@ -9,14 +9,14 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted } from 'vue';
-import { useStream } from '@/stream';
-import { i18n } from '@/i18n';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
+import { onUnmounted } from "vue";
+import { useStream } from "@/stream";
+import { i18n } from "@/i18n";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
 
-const zIndex = os.claimZIndex('high');
+const zIndex = os.claimZIndex("high");
 
 let hasDisconnected = $ref(false);
 
@@ -32,10 +32,10 @@ function reload() {
 	location.reload();
 }
 
-useStream().on('_disconnected_', onDisconnected);
+useStream().on("_disconnected_", onDisconnected);
 
 onUnmounted(() => {
-	useStream().off('_disconnected_', onDisconnected);
+	useStream().off("_disconnected_", onDisconnected);
 });
 </script>
 

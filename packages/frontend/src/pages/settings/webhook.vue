@@ -28,15 +28,15 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import MkPagination from '@/components/MkPagination.vue';
-import FormSection from '@/components/form/section.vue';
-import FormLink from '@/components/form/link.vue';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import MkPagination from "@/components/MkPagination.vue";
+import FormSection from "@/components/form/section.vue";
+import FormLink from "@/components/form/link.vue";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
 
 const pagination = {
-	endpoint: 'i/webhooks/list' as const,
+	endpoint: "i/webhooks/list" as const,
 	limit: 100,
 	noPaging: true,
 };
@@ -46,7 +46,7 @@ const headerActions = $computed(() => []);
 const headerTabs = $computed(() => []);
 
 definePageMetadata({
-	title: 'Webhook',
-	icon: 'ti ti-webhook',
+	title: "Webhook",
+	icon: "ti ti-webhook",
 });
 </script>

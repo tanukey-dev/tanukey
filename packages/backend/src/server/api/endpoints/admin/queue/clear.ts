@@ -1,18 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { QueueService } from '@/core/QueueService.js';
+import { Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { ModerationLogService } from "@/core/ModerationLogService.js";
+import { QueueService } from "@/core/QueueService.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:queue',
+	kind: "write:admin:queue",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;
@@ -27,7 +27,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		super(meta, paramDef, async (ps, me) => {
 			this.queueService.destroy();
 
-			this.moderationLogService.insertModerationLog(me, 'clearQueue');
+			this.moderationLogService.insertModerationLog(me, "clearQueue");
 		});
 	}
 }

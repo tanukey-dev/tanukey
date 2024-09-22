@@ -21,8 +21,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, Ref } from 'vue';
-import { getEmojiName } from '@/scripts/emojilist';
+import { ref, computed, Ref } from "vue";
+import { getEmojiName } from "@/scripts/emojilist";
 
 const props = defineProps<{
 	emojis: string[] | Ref<string[]>;
@@ -30,10 +30,12 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'chosen', v: string, event: MouseEvent): void;
+	(ev: "chosen", v: string, event: MouseEvent): void;
 }>();
 
-const emojis = computed(() => Array.isArray(props.emojis) ? props.emojis : props.emojis.value);
+const emojis = computed(() =>
+	Array.isArray(props.emojis) ? props.emojis : props.emojis.value,
+);
 
 const shown = ref(!!props.initialShown);
 
@@ -43,5 +45,4 @@ function computeButtonTitle(ev: MouseEvent): void {
 	const emoji = elm.dataset.emoji as string;
 	elm.title = getEmojiName(emoji) ?? emoji;
 }
-
 </script>

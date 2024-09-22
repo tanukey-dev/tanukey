@@ -15,45 +15,44 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import { AuthSession } from 'misskey-js/built/entities';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import { AuthSession } from "misskey-js/built/entities";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	session: AuthSession;
 }>();
 
 const emit = defineEmits<{
-	(event: 'accepted'): void;
-	(event: 'denied'): void;
+	(event: "accepted"): void;
+	(event: "denied"): void;
 }>();
 
 const app = $computed(() => props.session.app);
 
 const name = $computed(() => {
-	const el = document.createElement('div');
+	const el = document.createElement("div");
 	el.textContent = app.name;
 	return el.innerHTML;
 });
 
 function cancel() {
-	os.api('auth/deny', {
+	os.api("auth/deny", {
 		token: props.session.token,
 	}).then(() => {
-		emit('denied');
+		emit("denied");
 	});
 }
 
 function accept() {
-	os.api('auth/accept', {
+	os.api("auth/accept", {
 		token: props.session.token,
 	}).then(() => {
-		emit('accepted');
+		emit("accepted");
 	});
 }
-
 </script>
 
 <style lang="scss" module>

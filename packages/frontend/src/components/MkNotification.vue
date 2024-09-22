@@ -130,28 +130,31 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, shallowRef } from 'vue';
-import * as misskey from 'misskey-js';
-import MkReactionIcon from '@/components/MkReactionIcon.vue';
-import MkFollowButton from '@/components/MkFollowButton.vue';
-import XReactionTooltip from '@/components/MkReactionTooltip.vue';
-import MkButton from '@/components/MkButton.vue';
-import { getNoteSummary } from '@/scripts/get-note-summary';
-import { notePage } from '@/filters/note';
-import { userPage } from '@/filters/user';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import { useTooltip } from '@/scripts/use-tooltip';
-import { $i } from '@/account';
+import { onMounted, ref, shallowRef } from "vue";
+import * as misskey from "misskey-js";
+import MkReactionIcon from "@/components/MkReactionIcon.vue";
+import MkFollowButton from "@/components/MkFollowButton.vue";
+import XReactionTooltip from "@/components/MkReactionTooltip.vue";
+import MkButton from "@/components/MkButton.vue";
+import { getNoteSummary } from "@/scripts/get-note-summary";
+import { notePage } from "@/filters/note";
+import { userPage } from "@/filters/user";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import { useTooltip } from "@/scripts/use-tooltip";
+import { $i } from "@/account";
 
-const props = withDefaults(defineProps<{
-	notification: misskey.entities.Notification;
-	withTime?: boolean;
-	full?: boolean;
-}>(), {
-	withTime: false,
-	full: false,
-});
+const props = withDefaults(
+	defineProps<{
+		notification: misskey.entities.Notification;
+		withTime?: boolean;
+		full?: boolean;
+	}>(),
+	{
+		withTime: false,
+		full: false,
+	},
+);
 
 const elRef = shallowRef<HTMLElement>(null);
 const reactionRef = ref(null);
@@ -161,43 +164,49 @@ const followRequestDone = ref(false);
 
 const acceptFollowRequest = () => {
 	followRequestDone.value = true;
-	os.api('following/requests/accept', { userId: props.notification.user.id });
+	os.api("following/requests/accept", { userId: props.notification.user.id });
 };
 
 const rejectFollowRequest = () => {
 	followRequestDone.value = true;
-	os.api('following/requests/reject', { userId: props.notification.user.id });
+	os.api("following/requests/reject", { userId: props.notification.user.id });
 };
 
 const getUser = async (userId) => {
-	return await os.api('users/show', {
+	return await os.api("users/show", {
 		userId: userId,
 	});
 };
 
 useTooltip(reactionRef, (showing) => {
-	os.popup(XReactionTooltip, {
-		showing,
-		reaction: props.notification.reaction ? props.notification.reaction.replace(/^:(\w+):$/, ':$1@.:') : props.notification.reaction,
-		emojis: props.notification.note.emojis,
-		targetElement: reactionRef.value.$el,
-	}, {}, 'closed');
+	os.popup(
+		XReactionTooltip,
+		{
+			showing,
+			reaction: props.notification.reaction
+				? props.notification.reaction.replace(/^:(\w+):$/, ":$1@.:")
+				: props.notification.reaction,
+			emojis: props.notification.note.emojis,
+			targetElement: reactionRef.value.$el,
+		},
+		{},
+		"closed",
+	);
 });
 
 onMounted(async () => {
-	if (props.notification.type === 'point') {
-		if (props.notification.pointType === 'sendPoints') {
+	if (props.notification.type === "point") {
+		if (props.notification.pointType === "sendPoints") {
 			if (props.notification.pointReceiveUserId) {
 				user.value = await getUser(props.notification.pointReceiveUserId);
 			}
-		} else if (props.notification.pointType === 'receivePoints') {
+		} else if (props.notification.pointType === "receivePoints") {
 			if (props.notification.pointSendUserId) {
 				user.value = await getUser(props.notification.pointSendUserId);
 			}
 		}
 	}
 });
-
 </script>
 
 <style lang="scss" module>

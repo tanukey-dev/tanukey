@@ -26,16 +26,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
-import XHeader from './_header_.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import * as os from '@/os';
-import { fetchInstance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { useInterval } from '@/scripts/use-interval';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkButton from '@/components/MkButton.vue';
+import { ref, computed } from "vue";
+import XHeader from "./_header_.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import * as os from "@/os";
+import { fetchInstance } from "@/instance";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { useInterval } from "@/scripts/use-interval";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkButton from "@/components/MkButton.vue";
 
 let enableChartsForRemoteUser: boolean = $ref(false);
 let enableChartsForFederatedInstances: boolean = $ref(false);
@@ -45,17 +45,17 @@ const index = ref(0);
 const indexingError = ref(false);
 const progress = computed(() => {
 	if (index.value > total.value) return 100;
-	return (index.value / total.value) * 100; 
+	return (index.value / total.value) * 100;
 });
 
 async function init() {
-	const meta = await os.api('admin/meta');
+	const meta = await os.api("admin/meta");
 	enableChartsForRemoteUser = meta.enableChartsForRemoteUser;
 	enableChartsForFederatedInstances = meta.enableChartsForFederatedInstances;
 }
 
 function save() {
-	os.apiWithDialog('admin/update-meta', {
+	os.apiWithDialog("admin/update-meta", {
 		enableChartsForRemoteUser,
 		enableChartsForFederatedInstances,
 	}).then(() => {
@@ -64,11 +64,11 @@ function save() {
 }
 
 function startFullIndex() {
-	os.apiWithDialog('admin/full-index');
+	os.apiWithDialog("admin/full-index");
 }
 
 const getIndexStats = async () => {
-	const ret = await os.api('admin/full-index-stats')
+	const ret = await os.api("admin/full-index-stats");
 	running.value = ret.running;
 	total.value = ret.total;
 	index.value = ret.index;
@@ -80,18 +80,20 @@ useInterval(getIndexStats, 10000, {
 	afterMounted: true,
 });
 
-const headerActions = $computed(() => [{
-	asFullButton: true,
-	icon: 'ti ti-check',
-	text: i18n.ts.save,
-	handler: save,
-}]);
+const headerActions = $computed(() => [
+	{
+		asFullButton: true,
+		icon: "ti ti-check",
+		text: i18n.ts.save,
+		handler: save,
+	},
+]);
 
 const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.other,
-	icon: 'ti ti-adjustments',
+	icon: "ti ti-adjustments",
 });
 </script>
 

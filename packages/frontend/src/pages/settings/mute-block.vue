@@ -93,37 +93,40 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import MkPagination from '@/components/MkPagination.vue';
-import MkTab from '@/components/MkTab.vue';
-import FormInfo from '@/components/MkInfo.vue';
-import FormLink from '@/components/form/link.vue';
-import { userPage } from '@/filters/user';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkUserCardMini from '@/components/MkUserCardMini.vue';
-import * as os from '@/os';
-import { infoImageUrl } from '@/instance';
+import { ref } from "vue";
+import MkPagination from "@/components/MkPagination.vue";
+import MkTab from "@/components/MkTab.vue";
+import FormInfo from "@/components/MkInfo.vue";
+import FormLink from "@/components/form/link.vue";
+import { userPage } from "@/filters/user";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkUserCardMini from "@/components/MkUserCardMini.vue";
+import * as os from "@/os";
+import { infoImageUrl } from "@/instance";
 
-let tab = $ref('renoteMute');
+let tab = $ref("renoteMute");
 const tabs = ref([
-	{ value: 'renoteMute', label: i18n.ts.mutedUsers + ' (' + i18n.ts.renote + ')' },
-	{ value: 'mute', label: i18n.ts.mutedUsers },
-	{ value: 'block', label: i18n.ts.blockedUsers },
+	{
+		value: "renoteMute",
+		label: i18n.ts.mutedUsers + " (" + i18n.ts.renote + ")",
+	},
+	{ value: "mute", label: i18n.ts.mutedUsers },
+	{ value: "block", label: i18n.ts.blockedUsers },
 ]);
 
 const renoteMutingPagination = {
-	endpoint: 'renote-mute/list' as const,
+	endpoint: "renote-mute/list" as const,
 	limit: 10,
 };
 
 const mutingPagination = {
-	endpoint: 'mute/list' as const,
+	endpoint: "mute/list" as const,
 	limit: 10,
 };
 
 const blockingPagination = {
-	endpoint: 'blocking/list' as const,
+	endpoint: "blocking/list" as const,
 	limit: 10,
 };
 
@@ -132,41 +135,58 @@ let expandedMuteItems = $ref([]);
 let expandedBlockItems = $ref([]);
 
 async function unrenoteMute(user, ev) {
-	os.popupMenu([{
-		text: i18n.ts.renoteUnmute,
-		icon: 'ti ti-x',
-		action: async () => {
-			await os.apiWithDialog('renote-mute/delete', { userId: user.id });
-			//role.users = role.users.filter(u => u.id !== user.id);
-		},
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.renoteUnmute,
+				icon: "ti ti-x",
+				action: async () => {
+					await os.apiWithDialog("renote-mute/delete", { userId: user.id });
+					//role.users = role.users.filter(u => u.id !== user.id);
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 async function unmute(user, ev) {
-	os.popupMenu([{
-		text: i18n.ts.unmute,
-		icon: 'ti ti-x',
-		action: async () => {
-			await os.apiWithDialog('mute/delete', { userId: user.id });
-			//role.users = role.users.filter(u => u.id !== user.id);
-		},
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.unmute,
+				icon: "ti ti-x",
+				action: async () => {
+					await os.apiWithDialog("mute/delete", { userId: user.id });
+					//role.users = role.users.filter(u => u.id !== user.id);
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 async function unblock(user, ev) {
-	os.popupMenu([{
-		text: i18n.ts.unblock,
-		icon: 'ti ti-x',
-		action: async () => {
-			await os.apiWithDialog('blocking/delete', { userId: user.id });
-			//role.users = role.users.filter(u => u.id !== user.id);
-		},
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.unblock,
+				icon: "ti ti-x",
+				action: async () => {
+					await os.apiWithDialog("blocking/delete", { userId: user.id });
+					//role.users = role.users.filter(u => u.id !== user.id);
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 async function toggleRenoteMuteItem(item) {
 	if (expandedRenoteMuteItems.includes(item.id)) {
-		expandedRenoteMuteItems = expandedRenoteMuteItems.filter(x => x !== item.id);
+		expandedRenoteMuteItems = expandedRenoteMuteItems.filter(
+			(x) => x !== item.id,
+		);
 	} else {
 		expandedRenoteMuteItems.push(item.id);
 	}
@@ -174,7 +194,7 @@ async function toggleRenoteMuteItem(item) {
 
 async function toggleMuteItem(item) {
 	if (expandedMuteItems.includes(item.id)) {
-		expandedMuteItems = expandedMuteItems.filter(x => x !== item.id);
+		expandedMuteItems = expandedMuteItems.filter((x) => x !== item.id);
 	} else {
 		expandedMuteItems.push(item.id);
 	}
@@ -182,7 +202,7 @@ async function toggleMuteItem(item) {
 
 async function toggleBlockItem(item) {
 	if (expandedBlockItems.includes(item.id)) {
-		expandedBlockItems = expandedBlockItems.filter(x => x !== item.id);
+		expandedBlockItems = expandedBlockItems.filter((x) => x !== item.id);
 	} else {
 		expandedBlockItems.push(item.id);
 	}
@@ -194,7 +214,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.muteAndBlock,
-	icon: 'ti ti-ban',
+	icon: "ti ti-ban",
 });
 </script>
 

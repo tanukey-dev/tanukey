@@ -36,29 +36,29 @@
 </template>
 
 <script lang="ts" setup>
-import MkButton from '@/components/MkButton.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { dateString } from '@/filters/date';
+import MkButton from "@/components/MkButton.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { dateString } from "@/filters/date";
 
 const props = defineProps<{
 	report: any;
 }>();
 
 const emit = defineEmits<{
-	(ev: 'resolved', reportId: string): void;
+	(ev: "resolved", reportId: string): void;
 }>();
 
 let forward = $ref(props.report.forwarded);
 
 function resolve() {
-	os.apiWithDialog('admin/resolve-abuse-user-report', {
+	os.apiWithDialog("admin/resolve-abuse-user-report", {
 		forward: forward,
 		reportId: props.report.id,
 	}).then(() => {
-		emit('resolved', props.report.id);
+		emit("resolved", props.report.id);
 	});
 }
 </script>

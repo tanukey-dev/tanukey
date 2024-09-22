@@ -1,17 +1,24 @@
-import { PrimaryColumn, Entity, Index, JoinColumn, Column, ManyToOne } from 'typeorm';
-import { id } from '../id.js';
-import { User } from './User.js';
-import { Channel } from './Channel.js';
+import {
+	PrimaryColumn,
+	Entity,
+	Index,
+	JoinColumn,
+	Column,
+	ManyToOne,
+} from "typeorm";
+import { id } from "../id.js";
+import { User } from "./User.js";
+import { Channel } from "./Channel.js";
 
 @Entity()
-@Index(['userId', 'channelId'], { unique: true })
+@Index(["userId", "channelId"], { unique: true })
 export class ChannelFavorite {
 	@PrimaryColumn(id())
 	public id: string;
 
 	@Index()
-	@Column('timestamp with time zone', {
-		comment: 'The created date of the ChannelFavorite.',
+	@Column("timestamp with time zone", {
+		comment: "The created date of the ChannelFavorite.",
 	})
 	public createdAt: Date;
 
@@ -19,10 +26,10 @@ export class ChannelFavorite {
 	@Column({
 		...id(),
 	})
-	public channelId: Channel['id'];
+	public channelId: Channel["id"];
 
-	@ManyToOne(type => Channel, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => Channel, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public channel: Channel | null;
@@ -31,10 +38,10 @@ export class ChannelFavorite {
 	@Column({
 		...id(),
 	})
-	public userId: User['id'];
+	public userId: User["id"];
 
-	@ManyToOne(type => User, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => User, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public user: User | null;

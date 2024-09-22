@@ -13,16 +13,18 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkRadios from '@/components/MkRadios.vue';
-import { deckStore } from '@/ui/deck/deck-store';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { computed } from "vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkRadios from "@/components/MkRadios.vue";
+import { deckStore } from "@/ui/deck/deck-store";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
-const navWindow = computed(deckStore.makeGetterSetter('navWindow'));
-const alwaysShowMainColumn = computed(deckStore.makeGetterSetter('alwaysShowMainColumn'));
-const columnAlign = computed(deckStore.makeGetterSetter('columnAlign'));
+const navWindow = computed(deckStore.makeGetterSetter("navWindow"));
+const alwaysShowMainColumn = computed(
+	deckStore.makeGetterSetter("alwaysShowMainColumn"),
+);
+const columnAlign = computed(deckStore.makeGetterSetter("columnAlign"));
 
 const headerActions = $computed(() => []);
 
@@ -30,6 +32,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.deck,
-	icon: 'ti ti-columns',
+	icon: "ti ti-columns",
 });
 </script>

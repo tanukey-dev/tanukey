@@ -38,13 +38,13 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import MkSignin from '@/components/MkSignin.vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { $i, login } from '@/account';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import {} from "vue";
+import MkSignin from "@/components/MkSignin.vue";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { $i, login } from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
 const props = defineProps<{
 	session: string;
@@ -54,30 +54,35 @@ const props = defineProps<{
 	permission: string; // コンマ区切り
 }>();
 
-const _permissions = props.permission ? props.permission.split(',') : [];
+const _permissions = props.permission ? props.permission.split(",") : [];
 
 let state = $ref<string | null>(null);
 
 async function accept(): Promise<void> {
-	state = 'waiting';
-	await os.api('miauth/gen-token', {
+	state = "waiting";
+	await os.api("miauth/gen-token", {
 		session: props.session,
 		name: props.name,
 		iconUrl: props.icon,
 		permission: _permissions,
 	});
 
-	state = 'accepted';
+	state = "accepted";
 	if (props.callback) {
 		const cbUrl = new URL(props.callback);
-		if (['javascript:', 'file:', 'data:', 'mailto:', 'tel:'].includes(cbUrl.protocol)) throw new Error('invalid url');
-		cbUrl.searchParams.set('session', props.session);
+		if (
+			["javascript:", "file:", "data:", "mailto:", "tel:"].includes(
+				cbUrl.protocol,
+			)
+		)
+			throw new Error("invalid url");
+		cbUrl.searchParams.set("session", props.session);
 		location.href = cbUrl.href;
 	}
 }
 
 function deny(): void {
-	state = 'denied';
+	state = "denied";
 }
 
 function onLogin(res): void {
@@ -89,8 +94,8 @@ const headerActions = $computed(() => []);
 const headerTabs = $computed(() => []);
 
 definePageMetadata({
-	title: 'MiAuth',
-	icon: 'ti ti-apps',
+	title: "MiAuth",
+	icon: "ti ti-apps",
 });
 </script>
 

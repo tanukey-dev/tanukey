@@ -12,19 +12,19 @@
 </template>
 
 <script lang="ts" setup>
-import * as os from '@/os';
-import { useInterval } from '@/scripts/use-interval';
-import MkUserCardMini from '@/components/MkUserCardMini.vue';
-import { defaultStore } from '@/store';
+import * as os from "@/os";
+import { useInterval } from "@/scripts/use-interval";
+import MkUserCardMini from "@/components/MkUserCardMini.vue";
+import { defaultStore } from "@/store";
 
 let newUsers = $ref(null);
 let fetching = $ref(true);
 
 const fetch = async () => {
-	const _newUsers = await os.api('admin/show-users', {
+	const _newUsers = await os.api("admin/show-users", {
 		limit: 5,
-		sort: '+createdAt',
-		origin: 'local',
+		sort: "+createdAt",
+		origin: "local",
 	});
 	newUsers = _newUsers;
 	fetching = false;

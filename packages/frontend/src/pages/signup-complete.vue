@@ -20,12 +20,12 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import MkAnimBg from '@/components/MkAnimBg.vue';
-import { login } from '@/account';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
+import {} from "vue";
+import MkButton from "@/components/MkButton.vue";
+import MkAnimBg from "@/components/MkAnimBg.vue";
+import { login } from "@/account";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
 
 let submitting = $ref(false);
 
@@ -37,18 +37,20 @@ function submit() {
 	if (submitting) return;
 	submitting = true;
 
-	os.api('signup-pending', {
+	os.api("signup-pending", {
 		code: props.code,
-	}).then(res => {
-		return login(res.i, '/');
-	}).catch(() => {
-		submitting = false;
+	})
+		.then((res) => {
+			return login(res.i, "/");
+		})
+		.catch(() => {
+			submitting = false;
 
-		os.alert({
-			type: 'error',
-			text: i18n.ts.somethingHappened,
+			os.alert({
+				type: "error",
+				text: i18n.ts.somethingHappened,
+			});
 		});
-	});
 }
 </script>
 

@@ -10,49 +10,56 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
-import XText from './els/page-editor.el.text.vue';
-import XSection from './els/page-editor.el.section.vue';
-import XImage from './els/page-editor.el.image.vue';
-import XNote from './els/page-editor.el.note.vue';
+import { defineAsyncComponent } from "vue";
+import XText from "./els/page-editor.el.text.vue";
+import XSection from "./els/page-editor.el.section.vue";
+import XImage from "./els/page-editor.el.image.vue";
+import XNote from "./els/page-editor.el.note.vue";
 
 function getComponent(type: string) {
 	switch (type) {
-		case 'section': return XSection;
-		case 'text': return XText;
-		case 'image': return XImage;
-		case 'note': return XNote;
-		default: return null;
+		case "section":
+			return XSection;
+		case "text":
+			return XText;
+		case "image":
+			return XImage;
+		case "note":
+			return XNote;
+		default:
+			return null;
 	}
 }
 
-const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
+const Sortable = defineAsyncComponent(() =>
+	import("vuedraggable").then((x) => x.default),
+);
 
 const props = defineProps<{
 	modelValue: any[];
 }>();
 
 const emit = defineEmits<{
-	(ev: 'update:modelValue', value: any[]): void;
+	(ev: "update:modelValue", value: any[]): void;
 }>();
 
 function updateItem(v) {
-	const i = props.modelValue.findIndex(x => x.id === v.id);
+	const i = props.modelValue.findIndex((x) => x.id === v.id);
 	const newValue = [
 		...props.modelValue.slice(0, i),
 		v,
 		...props.modelValue.slice(i + 1),
 	];
-	emit('update:modelValue', newValue);
+	emit("update:modelValue", newValue);
 }
 
 function removeItem(el) {
-	const i = props.modelValue.findIndex(x => x.id === el.id);
+	const i = props.modelValue.findIndex((x) => x.id === el.id);
 	const newValue = [
 		...props.modelValue.slice(0, i),
 		...props.modelValue.slice(i + 1),
 	];
-	emit('update:modelValue', newValue);
+	emit("update:modelValue", newValue);
 }
 </script>
 

@@ -7,33 +7,40 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, ref } from 'vue';
-import FormLink from '@/components/form/link.vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { defineAsyncComponent, ref } from "vue";
+import FormLink from "@/components/form/link.vue";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
 const isDesktop = ref(window.innerWidth >= 1100);
 
 function generateToken() {
-	os.popup(defineAsyncComponent(() => import('@/components/MkTokenGenerateWindow.vue')), {}, {
-		done: async result => {
-			const { name, permissions } = result;
-			const { token } = await os.api('miauth/gen-token', {
-				session: null,
-				name: name,
-				permission: permissions,
-			});
+	os.popup(
+		defineAsyncComponent(
+			() => import("@/components/MkTokenGenerateWindow.vue"),
+		),
+		{},
+		{
+			done: async (result) => {
+				const { name, permissions } = result;
+				const { token } = await os.api("miauth/gen-token", {
+					session: null,
+					name: name,
+					permission: permissions,
+				});
 
-			os.alert({
-				type: 'success',
-				title: i18n.ts.token,
-				text: token,
-			});
+				os.alert({
+					type: "success",
+					title: i18n.ts.token,
+					text: token,
+				});
+			},
 		},
-	}, 'closed');
+		"closed",
+	);
 }
 
 const headerActions = $computed(() => []);
@@ -41,7 +48,7 @@ const headerActions = $computed(() => []);
 const headerTabs = $computed(() => []);
 
 definePageMetadata({
-	title: 'API',
-	icon: 'ti ti-api',
+	title: "API",
+	icon: "ti ti-api",
 });
 </script>

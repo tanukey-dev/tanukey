@@ -50,26 +50,26 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, shallowRef } from 'vue';
-import XHeader from './_header_.vue';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import MkButton from '@/components/MkButton.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkPagination, { Paging } from '@/components/MkPagination.vue';
-import MkInviteCode from '@/components/MkInviteCode.vue';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { computed, ref, shallowRef } from "vue";
+import XHeader from "./_header_.vue";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import MkButton from "@/components/MkButton.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkPagination, { Paging } from "@/components/MkPagination.vue";
+import MkInviteCode from "@/components/MkInviteCode.vue";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
 const pagingComponent = shallowRef<InstanceType<typeof MkPagination>>();
 
-let type = ref('all');
-let sort = ref('+createdAt');
+let type = ref("all");
+let sort = ref("+createdAt");
 
 const pagination: Paging = {
-	endpoint: 'admin/invite/list' as const,
+	endpoint: "admin/invite/list" as const,
 	limit: 10,
 	params: computed(() => ({
 		type: type.value,
@@ -78,7 +78,7 @@ const pagination: Paging = {
 	offsetMode: true,
 };
 
-const expiresAt = ref('');
+const expiresAt = ref("");
 const noExpirationDate = ref(true);
 const createCount = ref(1);
 
@@ -88,14 +88,14 @@ async function createWithOptions() {
 		count: createCount.value,
 	};
 
-	const tickets = await os.api('admin/invite/create', options);
+	const tickets = await os.api("admin/invite/create", options);
 	os.alert({
-		type: 'success',
+		type: "success",
 		title: i18n.ts.inviteCodeCreated,
-		text: tickets?.map(x => x.code).join('\n'),
+		text: tickets?.map((x) => x.code).join("\n"),
 	});
 
-	tickets?.forEach(ticket => pagingComponent.value?.prepend(ticket));
+	tickets?.forEach((ticket) => pagingComponent.value?.prepend(ticket));
 }
 
 function deleted(id: string) {
@@ -109,7 +109,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.invite,
-	icon: 'ti ti-user-plus',
+	icon: "ti ti-user-plus",
 });
 </script>
 

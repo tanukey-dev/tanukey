@@ -17,10 +17,10 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import MkTooltip from './MkTooltip.vue';
-import MkReactionIcon from '@/components/MkReactionIcon.vue';
-import { getEmojiName } from '@/scripts/emojilist';
+import {} from "vue";
+import MkTooltip from "./MkTooltip.vue";
+import MkReactionIcon from "@/components/MkReactionIcon.vue";
+import { getEmojiName } from "@/scripts/emojilist";
 
 defineProps<{
 	showing: boolean;
@@ -31,12 +31,12 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+	(ev: "closed"): void;
 }>();
 
 function getReactionName(reaction: string): string {
-	const trimLocal = reaction.replace('@.', '');
-	if (trimLocal.startsWith(':')) {
+	const trimLocal = reaction.replace("@.", "");
+	if (trimLocal.startsWith(":")) {
 		return trimLocal;
 	}
 	return getEmojiName(reaction) ?? reaction;

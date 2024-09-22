@@ -1,8 +1,8 @@
-import { notificationTypes, pointTypes } from '@/types.js';
-import { User } from './User.js';
-import { Note } from './Note.js';
-import { FollowRequest } from './FollowRequest.js';
-import { AccessToken } from './AccessToken.js';
+import { notificationTypes, pointTypes } from "@/types.js";
+import { User } from "./User.js";
+import { Note } from "./Note.js";
+import { FollowRequest } from "./FollowRequest.js";
+import { AccessToken } from "./AccessToken.js";
 
 export type Notification = {
 	id: string;
@@ -13,7 +13,7 @@ export type Notification = {
 	/**
 	 * 通知の送信者(initiator)
 	 */
-	notifierId: User['id'] | null;
+	notifierId: User["id"] | null;
 
 	/**
 	 * 通知の種類。
@@ -29,11 +29,11 @@ export type Notification = {
 	 * achievementEarned - 実績を獲得
 	 * app - アプリ通知
 	 */
-	type: typeof notificationTypes[number];
+	type: (typeof notificationTypes)[number];
 
-	noteId: Note['id'] | null;
+	noteId: Note["id"] | null;
 
-	followRequestId: FollowRequest['id'] | null;
+	followRequestId: FollowRequest["id"] | null;
 
 	reaction: string | null;
 
@@ -42,9 +42,9 @@ export type Notification = {
 	achievement: string | null;
 
 	point: number | null;
-	pointType: typeof pointTypes[number];
-	pointReceiveUserId: User['id'] | null;
-	pointSendUserId: User['id'] | null;
+	pointType: (typeof pointTypes)[number];
+	pointReceiveUserId: User["id"] | null;
+	pointSendUserId: User["id"] | null;
 
 	/**
 	 * アプリ通知のbody
@@ -66,5 +66,5 @@ export type Notification = {
 	/**
 	 * アプリ通知のアプリ(のトークン)
 	 */
-	appAccessTokenId: AccessToken['id'] | null;
-}
+	appAccessTokenId: AccessToken["id"] | null;
+};

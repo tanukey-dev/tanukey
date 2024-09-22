@@ -25,13 +25,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef } from 'vue';
-import * as Misskey from 'misskey-js';
-import MkWindow from '@/components/MkWindow.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import { ref, shallowRef } from "vue";
+import * as Misskey from "misskey-js";
+import MkWindow from "@/components/MkWindow.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	user: Misskey.entities.User;
@@ -39,23 +39,27 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+	(ev: "closed"): void;
 }>();
 
 const uiWindow = shallowRef<InstanceType<typeof MkWindow>>();
-const comment = ref(props.initialComment ?? '');
+const comment = ref(props.initialComment ?? "");
 
 function send() {
-	os.apiWithDialog('users/report-abuse', {
-		userId: props.user.id,
-		comment: comment.value,
-	}, undefined).then(res => {
+	os.apiWithDialog(
+		"users/report-abuse",
+		{
+			userId: props.user.id,
+			comment: comment.value,
+		},
+		undefined,
+	).then((res) => {
 		os.alert({
-			type: 'success',
+			type: "success",
 			text: i18n.ts.abuseReported,
 		});
 		uiWindow.value?.close();
-		emit('closed');
+		emit("closed");
 	});
 }
 </script>

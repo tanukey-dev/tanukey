@@ -36,33 +36,35 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onMounted } from 'vue';
-import { i18n } from '@/i18n.js';
-import * as os from '@/os.js';
-import { infoImageUrl } from '@/instance.js';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import FormPagination from '@/components/MkPagination.vue';
-import MkButton from '@/components/MkButton.vue';
-import { definePageMetadata } from '@/scripts/page-metadata.js';
+import { computed, ref, onMounted } from "vue";
+import { i18n } from "@/i18n.js";
+import * as os from "@/os.js";
+import { infoImageUrl } from "@/instance.js";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import FormPagination from "@/components/MkPagination.vue";
+import MkButton from "@/components/MkButton.vue";
+import { definePageMetadata } from "@/scripts/page-metadata.js";
 
 const list = ref<InstanceType<typeof FormPagination>>();
-const statuses = ref<{ planId: string, status: string }[]>([]);
+const statuses = ref<{ planId: string; status: string }[]>([]);
 
 const pagination = {
-	endpoint: 'subscription-plans/list' as const,
+	endpoint: "subscription-plans/list" as const,
 	limit: 10,
 	noPaging: true,
 };
 
 async function subscribe(plan) {
-	const redirect = await os.apiWithDialog('subscription/create', { planId: plan.id });
+	const redirect = await os.apiWithDialog("subscription/create", {
+		planId: plan.id,
+	});
 	if (redirect) {
 		location.href = redirect.redirect.destination;
 	}
 }
 
 onMounted(async () => {
-	const userSubsctiptionStatuses = await os.api('subscription/status');
+	const userSubsctiptionStatuses = await os.api("subscription/status");
 	statuses.value = userSubsctiptionStatuses;
 });
 
@@ -72,7 +74,7 @@ const headerTabs = computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.subscription,
-	icon: 'ti ti-credit-card',
+	icon: "ti ti-credit-card",
 });
 </script>
 

@@ -135,47 +135,58 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, onMounted, ref, shallowRef, Ref, defineAsyncComponent } from 'vue';
-import * as mfm from 'tfm-js';
-import * as misskey from 'misskey-js';
-import MkNoteSub from '@/components/MkNoteSub.vue';
-import MkNoteHeader from '@/components/MkNoteHeader.vue';
-import MkNoteSimple from '@/components/MkNoteSimple.vue';
-import MkReactionsViewer from '@/components/MkReactionsViewer.vue';
-import MkMediaList from '@/components/MkMediaList.vue';
-import MkCwButton from '@/components/MkCwButton.vue';
-import MkPoll from '@/components/MkPoll.vue';
-import MkUsersTooltip from '@/components/MkUsersTooltip.vue';
-import MkUrlPreview from '@/components/MkUrlPreview.vue';
-import MkInstanceTicker from '@/components/MkInstanceTicker.vue';
-import { pleaseLogin } from '@/scripts/please-login';
-import { focusPrev, focusNext } from '@/scripts/focus';
-import { checkWordMute } from '@/scripts/check-word-mute';
-import { userPage } from '@/filters/user';
-import * as os from '@/os';
-import { defaultStore, noteViewInterruptors } from '@/store';
-import { reactionPicker } from '@/scripts/reaction-picker';
-import { extractUrlFromMfm } from '@/scripts/extract-url-from-mfm';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
-import { getNoteClipMenu, getNoteMenu } from '@/scripts/get-note-menu';
-import { useNoteCapture } from '@/scripts/use-note-capture';
-import { deepClone } from '@/scripts/clone';
-import { useTooltip } from '@/scripts/use-tooltip';
-import { claimAchievement } from '@/scripts/achievements';
-import { getNoteSummary } from '@/scripts/get-note-summary';
-import { MenuItem } from '@/types/menu';
-import MkRippleEffect from '@/components/MkRippleEffect.vue';
-import { showMovedDialog } from '@/scripts/show-moved-dialog';
-import { readNoteCache, ReadNote } from '@/scripts/read-note';
+import {
+	computed,
+	inject,
+	onMounted,
+	ref,
+	shallowRef,
+	Ref,
+	defineAsyncComponent,
+} from "vue";
+import * as mfm from "tfm-js";
+import * as misskey from "misskey-js";
+import MkNoteSub from "@/components/MkNoteSub.vue";
+import MkNoteHeader from "@/components/MkNoteHeader.vue";
+import MkNoteSimple from "@/components/MkNoteSimple.vue";
+import MkReactionsViewer from "@/components/MkReactionsViewer.vue";
+import MkMediaList from "@/components/MkMediaList.vue";
+import MkCwButton from "@/components/MkCwButton.vue";
+import MkPoll from "@/components/MkPoll.vue";
+import MkUsersTooltip from "@/components/MkUsersTooltip.vue";
+import MkUrlPreview from "@/components/MkUrlPreview.vue";
+import MkInstanceTicker from "@/components/MkInstanceTicker.vue";
+import { pleaseLogin } from "@/scripts/please-login";
+import { focusPrev, focusNext } from "@/scripts/focus";
+import { checkWordMute } from "@/scripts/check-word-mute";
+import { userPage } from "@/filters/user";
+import * as os from "@/os";
+import { defaultStore, noteViewInterruptors } from "@/store";
+import { reactionPicker } from "@/scripts/reaction-picker";
+import { extractUrlFromMfm } from "@/scripts/extract-url-from-mfm";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
+import { getNoteClipMenu, getNoteMenu } from "@/scripts/get-note-menu";
+import { useNoteCapture } from "@/scripts/use-note-capture";
+import { deepClone } from "@/scripts/clone";
+import { useTooltip } from "@/scripts/use-tooltip";
+import { claimAchievement } from "@/scripts/achievements";
+import { getNoteSummary } from "@/scripts/get-note-summary";
+import { MenuItem } from "@/types/menu";
+import MkRippleEffect from "@/components/MkRippleEffect.vue";
+import { showMovedDialog } from "@/scripts/show-moved-dialog";
+import { readNoteCache, ReadNote } from "@/scripts/read-note";
 
 const props = defineProps<{
 	note: misskey.entities.Note;
 	pinned?: boolean;
 }>();
 
-const inChannel = inject('inChannel', null);
-const currentClip = inject<Ref<misskey.entities.Clip> | null>('currentClip', null);
+const inChannel = inject("inChannel", null);
+const currentClip = inject<Ref<misskey.entities.Clip> | null>(
+	"currentClip",
+	null,
+);
 
 let note = $ref(deepClone(props.note));
 
@@ -194,12 +205,11 @@ onMounted(async () => {
 	isReadNote.value = await checkReadNote();
 });
 
-const isRenote = (
+const isRenote =
 	note.renote != null &&
 	note.text == null &&
 	note.fileIds.length === 0 &&
-	note.poll == null
-);
+	note.poll == null;
 
 const el = shallowRef<HTMLElement>();
 const menuButton = shallowRef<HTMLElement>();
@@ -207,32 +217,49 @@ const renoteButton = shallowRef<HTMLElement>();
 const renoteTime = shallowRef<HTMLElement>();
 const reactButton = shallowRef<HTMLElement>();
 const clipButton = shallowRef<HTMLElement>();
-let appearNote = $computed(() => isRenote ? note.renote as misskey.entities.Note : note);
-const isMyRenote = $i && ($i.id === note.userId);
+let appearNote = $computed(() =>
+	isRenote ? (note.renote as misskey.entities.Note) : note,
+);
+const isMyRenote = $i && $i.id === note.userId;
 const showContent = ref(false);
-const urls = appearNote.text ? extractUrlFromMfm(mfm.parse(appearNote.text)) : null;
-const isLong = (appearNote.cw == null && appearNote.text != null && (
-	(appearNote.text.includes('$[x2')) ||
-	(appearNote.text.includes('$[x3')) ||
-	(appearNote.text.includes('$[x4')) ||
-	(appearNote.text.includes('$[scale')) ||
-	(appearNote.text.includes('$[position')) ||
-	(appearNote.text.split('\n').length > 9) ||
-	(appearNote.text.length > 500) ||
-	(appearNote.files.length >= 5) ||
-	(urls && urls.length >= 4)
-));
-const isNoteCollapsed = !appearNote.channel || (!appearNote.channel && appearNote.channel?.isNoteCollapsed);
+const urls = appearNote.text
+	? extractUrlFromMfm(mfm.parse(appearNote.text))
+	: null;
+const isLong =
+	appearNote.cw == null &&
+	appearNote.text != null &&
+	(appearNote.text.includes("$[x2") ||
+		appearNote.text.includes("$[x3") ||
+		appearNote.text.includes("$[x4") ||
+		appearNote.text.includes("$[scale") ||
+		appearNote.text.includes("$[position") ||
+		appearNote.text.split("\n").length > 9 ||
+		appearNote.text.length > 500 ||
+		appearNote.files.length >= 5 ||
+		(urls && urls.length >= 4));
+const isNoteCollapsed =
+	!appearNote.channel ||
+	(!appearNote.channel && appearNote.channel?.isNoteCollapsed);
 const collapsed = ref(appearNote.cw == null && isLong && isNoteCollapsed);
 const isDeleted = ref(false);
 const muted = ref(checkWordMute(appearNote, $i, defaultStore.state.mutedWords));
 const translation = ref<any>(null);
 const translating = ref(false);
-const showTicker = (defaultStore.state.instanceTicker === 'always') || (defaultStore.state.instanceTicker === 'remote' && appearNote.user.instance);
-const canRenote = computed(() => ['public', 'home'].includes(appearNote.visibility) || appearNote.userId === $i.id);
+const showTicker =
+	defaultStore.state.instanceTicker === "always" ||
+	(defaultStore.state.instanceTicker === "remote" && appearNote.user.instance);
+const canRenote = computed(
+	() =>
+		["public", "home"].includes(appearNote.visibility) ||
+		appearNote.userId === $i.id,
+);
 const isReadNote = ref(false);
 
-let renoteCollapsed = $ref(defaultStore.state.collapseRenotes && isRenote && (($i && ($i.id === note.userId)) || isReadNote));
+let renoteCollapsed = $ref(
+	defaultStore.state.collapseRenotes &&
+		isRenote &&
+		(($i && $i.id === note.userId) || isReadNote),
+);
 
 //Renoteが既読かのチェック
 async function checkReadNote() {
@@ -247,14 +274,14 @@ async function checkReadNote() {
 }
 
 const keymap = {
-	'r': () => reply(true),
-	'e|a|plus': () => react(true),
-	'q': () => renoteButton.value.renote(true),
-	'up|k|shift+tab': focusBefore,
-	'down|j|tab': focusAfter,
-	'esc': blur,
-	'm|o': () => menu(true),
-	's': () => showContent.value !== showContent.value,
+	r: () => reply(true),
+	"e|a|plus": () => react(true),
+	q: () => renoteButton.value.renote(true),
+	"up|k|shift+tab": focusBefore,
+	"down|j|tab": focusAfter,
+	esc: blur,
+	"m|o": () => menu(true),
+	s: () => showContent.value !== showContent.value,
 };
 
 useNoteCapture({
@@ -264,21 +291,26 @@ useNoteCapture({
 });
 
 useTooltip(renoteButton, async (showing) => {
-	const renotes = await os.api('notes/renotes', {
+	const renotes = await os.api("notes/renotes", {
 		noteId: appearNote.id,
 		limit: 11,
 	});
 
-	const users = renotes.map(x => x.user);
+	const users = renotes.map((x) => x.user);
 
 	if (users.length < 1) return;
 
-	os.popup(MkUsersTooltip, {
-		showing,
-		users,
-		count: appearNote.renoteCount,
-		targetElement: renoteButton.value,
-	}, {}, 'closed');
+	os.popup(
+		MkUsersTooltip,
+		{
+			showing,
+			users,
+			count: appearNote.renoteCount,
+			targetElement: renoteButton.value,
+		},
+		{},
+		"closed",
+	);
 });
 
 function renote(viaKeyboard = false) {
@@ -288,64 +320,71 @@ function renote(viaKeyboard = false) {
 	let items = [] as MenuItem[];
 
 	if (appearNote.channel) {
-		items = items.concat([{
-			text: i18n.ts.inChannelRenote,
-			icon: 'ti ti-repeat',
+		items = items.concat([
+			{
+				text: i18n.ts.inChannelRenote,
+				icon: "ti ti-repeat",
+				action: () => {
+					const el = renoteButton.value as HTMLElement | null | undefined;
+					if (el) {
+						const rect = el.getBoundingClientRect();
+						const x = rect.left + el.offsetWidth / 2;
+						const y = rect.top + el.offsetHeight / 2;
+						os.popup(MkRippleEffect, { x, y }, {}, "end");
+					}
+
+					os.api("notes/create", {
+						renoteId: appearNote.id,
+						channelId: appearNote.channelId,
+					}).then(() => {
+						os.toast(i18n.ts.renoted);
+					});
+				},
+			},
+			{
+				text: i18n.ts.inChannelQuote,
+				icon: "ti ti-quote",
+				action: () => {
+					os.post({
+						renote: appearNote,
+						channel: appearNote.channel,
+					});
+				},
+			},
+			null,
+		]);
+	}
+
+	items = items.concat([
+		{
+			text: i18n.ts.renote,
+			icon: "ti ti-repeat",
 			action: () => {
 				const el = renoteButton.value as HTMLElement | null | undefined;
 				if (el) {
 					const rect = el.getBoundingClientRect();
-					const x = rect.left + (el.offsetWidth / 2);
-					const y = rect.top + (el.offsetHeight / 2);
-					os.popup(MkRippleEffect, { x, y }, {}, 'end');
+					const x = rect.left + el.offsetWidth / 2;
+					const y = rect.top + el.offsetHeight / 2;
+					os.popup(MkRippleEffect, { x, y }, {}, "end");
 				}
 
-				os.api('notes/create', {
+				os.api("notes/create", {
 					renoteId: appearNote.id,
-					channelId: appearNote.channelId,
 				}).then(() => {
 					os.toast(i18n.ts.renoted);
 				});
 			},
-		}, {
-			text: i18n.ts.inChannelQuote,
-			icon: 'ti ti-quote',
+		},
+		{
+			text: i18n.ts.quote,
+			icon: "ti ti-quote",
 			action: () => {
 				os.post({
 					renote: appearNote,
-					channel: appearNote.channel,
 				});
 			},
-		}, null]);
-	}
-
-	items = items.concat([{
-		text: i18n.ts.renote,
-		icon: 'ti ti-repeat',
-		action: () => {
-			const el = renoteButton.value as HTMLElement | null | undefined;
-			if (el) {
-				const rect = el.getBoundingClientRect();
-				const x = rect.left + (el.offsetWidth / 2);
-				const y = rect.top + (el.offsetHeight / 2);
-				os.popup(MkRippleEffect, { x, y }, {}, 'end');
-			}
-
-			os.api('notes/create', {
-				renoteId: appearNote.id,
-			}).then(() => {
-				os.toast(i18n.ts.renoted);
-			});
 		},
-	}, {
-		text: i18n.ts.quote,
-		icon: 'ti ti-quote',
-		action: () => {
-			os.post({
-				renote: appearNote,
-			});
-		},
-	}]);
+	]);
 
 	os.popupMenu(items, renoteButton.value, {
 		viaKeyboard,
@@ -354,101 +393,141 @@ function renote(viaKeyboard = false) {
 
 function reply(viaKeyboard = false): void {
 	pleaseLogin();
-	os.post({
-		reply: appearNote,
-		animation: !viaKeyboard,
-	}, () => {
-		focus();
-	});
+	os.post(
+		{
+			reply: appearNote,
+			animation: !viaKeyboard,
+		},
+		() => {
+			focus();
+		},
+	);
 }
 
 function react(viaKeyboard = false): void {
 	pleaseLogin();
 	showMovedDialog();
-	if (appearNote.reactionAcceptance === 'likeOnly') {
-		os.api('notes/reactions/create', {
+	if (appearNote.reactionAcceptance === "likeOnly") {
+		os.api("notes/reactions/create", {
 			noteId: appearNote.id,
-			reaction: '❤️',
+			reaction: "❤️",
 		});
 		const el = reactButton.value as HTMLElement | null | undefined;
 		if (el) {
 			const rect = el.getBoundingClientRect();
-			const x = rect.left + (el.offsetWidth / 2);
-			const y = rect.top + (el.offsetHeight / 2);
-			os.popup(MkRippleEffect, { x, y }, {}, 'end');
+			const x = rect.left + el.offsetWidth / 2;
+			const y = rect.top + el.offsetHeight / 2;
+			os.popup(MkRippleEffect, { x, y }, {}, "end");
 		}
 	} else {
 		blur();
-		reactionPicker.show(reactButton.value, reaction => {
-			os.api('notes/reactions/create', {
-				noteId: appearNote.id,
-				reaction: reaction,
-			});
-			if (appearNote.text && appearNote.text.length > 100 && (Date.now() - new Date(appearNote.createdAt).getTime() < 1000 * 3)) {
-				claimAchievement('reactWithoutRead');
-			}
-		}, () => {
-			focus();
-		});
+		reactionPicker.show(
+			reactButton.value,
+			(reaction) => {
+				os.api("notes/reactions/create", {
+					noteId: appearNote.id,
+					reaction: reaction,
+				});
+				if (
+					appearNote.text &&
+					appearNote.text.length > 100 &&
+					Date.now() - new Date(appearNote.createdAt).getTime() < 1000 * 3
+				) {
+					claimAchievement("reactWithoutRead");
+				}
+			},
+			() => {
+				focus();
+			},
+		);
 	}
 }
 
 function undoReact(note): void {
 	const oldReaction = note.myReaction;
 	if (!oldReaction) return;
-	os.api('notes/reactions/delete', {
+	os.api("notes/reactions/delete", {
 		noteId: note.id,
 	});
 }
 
 function onContextmenu(ev: MouseEvent): void {
 	const isLink = (el: HTMLElement) => {
-		if (el.tagName === 'A') return true;
+		if (el.tagName === "A") return true;
 		// 再生速度の選択などのために、Audio要素のコンテキストメニューはブラウザデフォルトとする。
-		if (el.tagName === 'AUDIO') return true;
+		if (el.tagName === "AUDIO") return true;
 		if (el.parentElement) {
 			return isLink(el.parentElement);
 		}
 	};
 	if (isLink(ev.target)) return;
-	if (window.getSelection().toString() !== '') return;
+	if (window.getSelection().toString() !== "") return;
 
 	if (defaultStore.state.useReactionPickerForContextMenu) {
 		ev.preventDefault();
 		react();
 	} else {
-		const { menu, cleanup } = getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClip: currentClip?.value });
+		const { menu, cleanup } = getNoteMenu({
+			note: note,
+			translating,
+			translation,
+			menuButton,
+			isDeleted,
+			currentClip: currentClip?.value,
+		});
 		os.contextMenu(menu, ev).then(focus).finally(cleanup);
 	}
 }
 
 function menu(viaKeyboard = false): void {
-	const { menu, cleanup } = getNoteMenu({ note: note, translating, translation, menuButton, isDeleted, currentClip: currentClip?.value });
+	const { menu, cleanup } = getNoteMenu({
+		note: note,
+		translating,
+		translation,
+		menuButton,
+		isDeleted,
+		currentClip: currentClip?.value,
+	});
 	os.popupMenu(menu, menuButton.value, {
 		viaKeyboard,
-	}).then(focus).finally(cleanup);
+	})
+		.then(focus)
+		.finally(cleanup);
 }
 
 async function clip() {
-	os.popupMenu(await getNoteClipMenu({ note: note, isDeleted, currentClip: currentClip?.value }), clipButton.value).then(focus);
+	os.popupMenu(
+		await getNoteClipMenu({
+			note: note,
+			isDeleted,
+			currentClip: currentClip?.value,
+		}),
+		clipButton.value,
+	).then(focus);
 }
 
 function showRenoteMenu(viaKeyboard = false): void {
 	if (!isMyRenote) return;
 	pleaseLogin();
-	os.popupMenu([{
-		text: i18n.ts.unrenote,
-		icon: 'ti ti-trash',
-		danger: true,
-		action: () => {
-			os.api('notes/delete', {
-				noteId: note.id,
-			});
-			isDeleted.value = true;
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.unrenote,
+				icon: "ti ti-trash",
+				danger: true,
+				action: () => {
+					os.api("notes/delete", {
+						noteId: note.id,
+					});
+					isDeleted.value = true;
+				},
+			},
+		],
+		renoteTime.value,
+		{
+			viaKeyboard: viaKeyboard,
 		},
-	}], renoteTime.value, {
-		viaKeyboard: viaKeyboard,
-	});
+	);
 }
 
 function focus() {
@@ -468,16 +547,21 @@ function focusAfter() {
 }
 
 function readPromo() {
-	os.api('promo/read', {
+	os.api("promo/read", {
 		noteId: appearNote.id,
 	});
 	isDeleted.value = true;
 }
 
 function showReactions(): void {
-	os.popup(defineAsyncComponent(() => import('@/components/MkReactedUsersDialog.vue')), {
-		noteId: appearNote.id,
-	}, {}, 'closed');
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkReactedUsersDialog.vue")),
+		{
+			noteId: appearNote.id,
+		},
+		{},
+		"closed",
+	);
 }
 </script>
 

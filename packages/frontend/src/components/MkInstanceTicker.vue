@@ -6,28 +6,36 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import { instanceName } from '@/config';
-import { instance as Instance } from '@/instance';
-import { getProxiedImageUrlNullable } from '@/scripts/media-proxy';
+import {} from "vue";
+import { instanceName } from "@/config";
+import { instance as Instance } from "@/instance";
+import { getProxiedImageUrlNullable } from "@/scripts/media-proxy";
 
 const props = defineProps<{
 	instance?: {
-		faviconUrl?: string
-		name: string
-		themeColor?: string
-	}
+		faviconUrl?: string;
+		name: string;
+		themeColor?: string;
+	};
 }>();
 
 // if no instance data is given, this is for the local instance
 const instance = props.instance ?? {
 	name: instanceName,
-	themeColor: (document.querySelector('meta[name="theme-color-orig"]') as HTMLMetaElement).content,
+	themeColor: (
+		document.querySelector('meta[name="theme-color-orig"]') as HTMLMetaElement
+	).content,
 };
 
-const faviconUrl = $computed(() => props.instance ? getProxiedImageUrlNullable(props.instance.faviconUrl, 'preview') : getProxiedImageUrlNullable(Instance.iconUrl, 'preview') ?? getProxiedImageUrlNullable(Instance.faviconUrl, 'preview') ?? '/favicon.ico');
+const faviconUrl = $computed(() =>
+	props.instance
+		? getProxiedImageUrlNullable(props.instance.faviconUrl, "preview")
+		: (getProxiedImageUrlNullable(Instance.iconUrl, "preview") ??
+			getProxiedImageUrlNullable(Instance.faviconUrl, "preview") ??
+			"/favicon.ico"),
+);
 
-const themeColor = instance.themeColor ?? '#777777';
+const themeColor = instance.themeColor ?? "#777777";
 
 const bg = {
 	background: `linear-gradient(90deg, ${themeColor}, ${themeColor}00)`,

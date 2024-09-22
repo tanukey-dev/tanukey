@@ -33,57 +33,65 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import MkFlashPreview from '@/components/MkFlashPreview.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import MkButton from '@/components/MkButton.vue';
-import { useRouter } from '@/router';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { computed } from "vue";
+import MkFlashPreview from "@/components/MkFlashPreview.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import MkButton from "@/components/MkButton.vue";
+import { useRouter } from "@/router";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
 const router = useRouter();
 
-let tab = $ref('featured');
+let tab = $ref("featured");
 
 const featuredFlashsPagination = {
-	endpoint: 'flash/featured' as const,
+	endpoint: "flash/featured" as const,
 	noPaging: true,
 };
 const myFlashsPagination = {
-	endpoint: 'flash/my' as const,
+	endpoint: "flash/my" as const,
 	limit: 5,
 };
 const likedFlashsPagination = {
-	endpoint: 'flash/my-likes' as const,
+	endpoint: "flash/my-likes" as const,
 	limit: 5,
 };
 
 function create() {
-	router.push('/play/new');
+	router.push("/play/new");
 }
 
-const headerActions = $computed(() => [{
-	icon: 'ti ti-plus',
-	text: i18n.ts.create,
-	handler: create,
-}]);
+const headerActions = $computed(() => [
+	{
+		icon: "ti ti-plus",
+		text: i18n.ts.create,
+		handler: create,
+	},
+]);
 
-const headerTabs = $computed(() => [{
-	key: 'featured',
-	title: i18n.ts._play.featured,
-	icon: 'ti ti-flare',
-}, {
-	key: 'my',
-	title: i18n.ts._play.my,
-	icon: 'ti ti-edit',
-}, {
-	key: 'liked',
-	title: i18n.ts._play.liked,
-	icon: 'ti ti-heart',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "featured",
+		title: i18n.ts._play.featured,
+		icon: "ti ti-flare",
+	},
+	{
+		key: "my",
+		title: i18n.ts._play.my,
+		icon: "ti ti-edit",
+	},
+	{
+		key: "liked",
+		title: i18n.ts._play.liked,
+		icon: "ti ti-heart",
+	},
+]);
 
-definePageMetadata(computed(() => ({
-	title: 'Play',
-	icon: 'ti ti-player-play',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: "Play",
+		icon: "ti ti-player-play",
+	})),
+);
 </script>

@@ -47,25 +47,25 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 
-import XHeader from './_header_.vue';
-import MkSelect from '@/components/MkSelect.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import XAbuseReport from '@/components/MkAbuseReport.vue';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import XHeader from "./_header_.vue";
+import MkSelect from "@/components/MkSelect.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import XAbuseReport from "@/components/MkAbuseReport.vue";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
 let reports = $shallowRef<InstanceType<typeof MkPagination>>();
 
-let state = $ref('unresolved');
-let reporterOrigin = $ref('combined');
-let targetUserOrigin = $ref('combined');
-let searchUsername = $ref('');
-let searchHost = $ref('');
+let state = $ref("unresolved");
+let reporterOrigin = $ref("combined");
+let targetUserOrigin = $ref("combined");
+let searchUsername = $ref("");
+let searchHost = $ref("");
 
 const pagination = {
-	endpoint: 'admin/abuse-user-reports' as const,
+	endpoint: "admin/abuse-user-reports" as const,
 	limit: 10,
 	params: computed(() => ({
 		state,
@@ -75,7 +75,7 @@ const pagination = {
 };
 
 function resolved(reportId) {
-	reports.removeItem(item => item.id === reportId);
+	reports.removeItem((item) => item.id === reportId);
 }
 
 const headerActions = $computed(() => []);
@@ -84,6 +84,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.abuseReports,
-	icon: 'ti ti-exclamation-circle',
+	icon: "ti ti-exclamation-circle",
 });
 </script>

@@ -8,8 +8,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed } from 'vue';
-import { defaultStore } from '@/store';
+import { defineAsyncComponent, computed } from "vue";
+import { defaultStore } from "@/store";
 
 defineProps<{
 	code: string;
@@ -17,11 +17,13 @@ defineProps<{
 	inline?: boolean;
 }>();
 
-const disableSwipe = computed(defaultStore.makeGetterSetter('disableSwipe'));
+const disableSwipe = computed(defaultStore.makeGetterSetter("disableSwipe"));
 
 const onTouchTap = (): void => {
 	disableSwipe.value = true;
 };
 
-const XCode = defineAsyncComponent(() => import('@/components/MkCode.core.vue'));
+const XCode = defineAsyncComponent(
+	() => import("@/components/MkCode.core.vue"),
+);
 </script>

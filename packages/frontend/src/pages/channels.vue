@@ -60,17 +60,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue';
-import MkChannelList from '@/components/MkChannelList.vue';
-import MkChannelItem from '@/components/MkChannelItem.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkRadios from '@/components/MkRadios.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import { useRouter } from '@/router';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { i18n } from '@/i18n';
+import { computed, onMounted } from "vue";
+import MkChannelList from "@/components/MkChannelList.vue";
+import MkChannelItem from "@/components/MkChannelItem.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkRadios from "@/components/MkRadios.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import { useRouter } from "@/router";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { i18n } from "@/i18n";
 
 const router = useRouter();
 
@@ -79,34 +79,34 @@ const props = defineProps<{
 	type?: string;
 }>();
 
-let key = $ref('');
-let tab = $ref('featured');
-let searchQuery = $ref('');
-let searchType = $ref('nameAndDescription');
+let key = $ref("");
+let tab = $ref("featured");
+let searchQuery = $ref("");
+let searchType = $ref("nameAndDescription");
 let channelPagination = $ref();
 
 onMounted(() => {
-	searchQuery = props.query ?? '';
-	searchType = props.type ?? 'nameAndDescription';
+	searchQuery = props.query ?? "";
+	searchType = props.type ?? "nameAndDescription";
 });
 
 const featuredPagination = {
-	endpoint: 'channels/featured' as const,
+	endpoint: "channels/featured" as const,
 	limit: 10,
 	noPaging: true,
 };
 const favoritesPagination = {
-	endpoint: 'channels/my-favorites' as const,
+	endpoint: "channels/my-favorites" as const,
 	limit: 10,
 	noPaging: true,
 };
 const followingPagination = {
-	endpoint: 'channels/followed' as const,
+	endpoint: "channels/followed" as const,
 	limit: 10,
 	noPaging: true,
 };
 const ownedPagination = {
-	endpoint: 'channels/owned' as const,
+	endpoint: "channels/owned" as const,
 	limit: 10,
 	noPaging: true,
 };
@@ -119,7 +119,7 @@ async function search() {
 	const type = searchType.toString().trim();
 
 	channelPagination = {
-		endpoint: 'channels/search',
+		endpoint: "channels/search",
 		limit: 10,
 		params: {
 			query: searchQuery,
@@ -131,39 +131,49 @@ async function search() {
 }
 
 function create() {
-	router.push('/channels/new');
+	router.push("/channels/new");
 }
 
-const headerActions = $computed(() => [{
-	icon: 'ti ti-plus',
-	text: i18n.ts.create,
-	handler: create,
-}]);
+const headerActions = $computed(() => [
+	{
+		icon: "ti ti-plus",
+		text: i18n.ts.create,
+		handler: create,
+	},
+]);
 
-const headerTabs = $computed(() => [{
-	key: 'search',
-	title: i18n.ts.search,
-	icon: 'ti ti-search',
-}, {
-	key: 'featured',
-	title: i18n.ts._channel.threads,
-	icon: 'ti ti-comet',
-}, {
-	key: 'favorites',
-	title: i18n.ts.favorites,
-	icon: 'ti ti-star',
-}, {
-	key: 'following',
-	title: i18n.ts._channel.following,
-	icon: 'ti ti-eye',
-}, {
-	key: 'owned',
-	title: i18n.ts._channel.owned,
-	icon: 'ti ti-edit',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "search",
+		title: i18n.ts.search,
+		icon: "ti ti-search",
+	},
+	{
+		key: "featured",
+		title: i18n.ts._channel.threads,
+		icon: "ti ti-comet",
+	},
+	{
+		key: "favorites",
+		title: i18n.ts.favorites,
+		icon: "ti ti-star",
+	},
+	{
+		key: "following",
+		title: i18n.ts._channel.following,
+		icon: "ti ti-eye",
+	},
+	{
+		key: "owned",
+		title: i18n.ts._channel.owned,
+		icon: "ti ti-edit",
+	},
+]);
 
-definePageMetadata(computed(() => ({
-	title: i18n.ts.channel,
-	icon: 'ti ti-device-tv',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: i18n.ts.channel,
+		icon: "ti ti-device-tv",
+	})),
+);
 </script>

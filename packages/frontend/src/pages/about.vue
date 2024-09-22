@@ -91,67 +91,77 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
-import XEmojis from './about.emojis.vue';
-import XFederation from './about.federation.vue';
-import { version, host } from '@/config';
-import FormLink from '@/components/form/link.vue';
-import FormSection from '@/components/form/section.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import FormSplit from '@/components/form/split.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import MkKeyValue from '@/components/MkKeyValue.vue';
-import MkInstanceStats from '@/components/MkInstanceStats.vue';
-import * as os from '@/os';
-import number from '@/filters/number';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { claimAchievement } from '@/scripts/achievements';
-import { instance } from '@/instance';
+import { computed, watch } from "vue";
+import XEmojis from "./about.emojis.vue";
+import XFederation from "./about.federation.vue";
+import { version, host } from "@/config";
+import FormLink from "@/components/form/link.vue";
+import FormSection from "@/components/form/section.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import FormSplit from "@/components/form/split.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import MkKeyValue from "@/components/MkKeyValue.vue";
+import MkInstanceStats from "@/components/MkInstanceStats.vue";
+import * as os from "@/os";
+import number from "@/filters/number";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { claimAchievement } from "@/scripts/achievements";
+import { instance } from "@/instance";
 
-const props = withDefaults(defineProps<{
-	initialTab?: string;
-}>(), {
-	initialTab: 'overview',
-});
+const props = withDefaults(
+	defineProps<{
+		initialTab?: string;
+	}>(),
+	{
+		initialTab: "overview",
+	},
+);
 
 let stats = $ref(null);
 let tab = $ref(props.initialTab);
 
 watch($$(tab), () => {
-	if (tab === 'charts') {
-		claimAchievement('viewInstanceChart');
+	if (tab === "charts") {
+		claimAchievement("viewInstanceChart");
 	}
 });
 
-const initStats = () => os.api('stats', {
-}).then((res) => {
-	stats = res;
-});
+const initStats = () =>
+	os.api("stats", {}).then((res) => {
+		stats = res;
+	});
 
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => [{
-	key: 'overview',
-	title: i18n.ts.overview,
-}, {
-	key: 'emojis',
-	title: i18n.ts.customEmojis,
-	icon: 'ti ti-icons',
-}, {
-	key: 'federation',
-	title: i18n.ts.federation,
-	icon: 'ti ti-whirl',
-}, {
-	key: 'charts',
-	title: i18n.ts.charts,
-	icon: 'ti ti-chart-line',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "overview",
+		title: i18n.ts.overview,
+	},
+	{
+		key: "emojis",
+		title: i18n.ts.customEmojis,
+		icon: "ti ti-icons",
+	},
+	{
+		key: "federation",
+		title: i18n.ts.federation,
+		icon: "ti ti-whirl",
+	},
+	{
+		key: "charts",
+		title: i18n.ts.charts,
+		icon: "ti ti-chart-line",
+	},
+]);
 
-definePageMetadata(computed(() => ({
-	title: i18n.ts.instanceInfo,
-	icon: 'ti ti-info-circle',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: i18n.ts.instanceInfo,
+		icon: "ti ti-info-circle",
+	})),
+);
 </script>
 
 <style lang="scss" module>

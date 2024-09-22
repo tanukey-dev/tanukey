@@ -28,23 +28,26 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import { $ref } from 'vue/macros';
-import XSignup from '@/components/MkSignupDialog.form.vue';
-import XServerRules from '@/components/MkSignupDialog.rules.vue';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
+import {} from "vue";
+import { $ref } from "vue/macros";
+import XSignup from "@/components/MkSignupDialog.form.vue";
+import XServerRules from "@/components/MkSignupDialog.rules.vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
 
-const props = withDefaults(defineProps<{
-	autoSet?: boolean;
-}>(), {
-	autoSet: false,
-});
+const props = withDefaults(
+	defineProps<{
+		autoSet?: boolean;
+	}>(),
+	{
+		autoSet: false,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'done'): void;
-	(ev: 'closed'): void;
+	(ev: "done"): void;
+	(ev: "closed"): void;
 }>();
 
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
@@ -52,7 +55,7 @@ const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
 const isAcceptedServerRule = $ref(false);
 
 function onSignup(res) {
-	emit('done', res);
+	emit("done", res);
 	dialog.close();
 }
 

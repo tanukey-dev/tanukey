@@ -36,36 +36,43 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef } from 'vue';
-import * as Misskey from 'misskey-js';
-import MkInput from './MkInput.vue';
-import MkSwitch from './MkSwitch.vue';
-import MkButton from './MkButton.vue';
-import MkInfo from './MkInfo.vue';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import { i18n } from '@/i18n';
+import { ref, shallowRef } from "vue";
+import * as Misskey from "misskey-js";
+import MkInput from "./MkInput.vue";
+import MkSwitch from "./MkSwitch.vue";
+import MkButton from "./MkButton.vue";
+import MkInfo from "./MkInfo.vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	title?: string | null;
-	information?: string | null;
-	initialName?: string | null;
-	initialPermissions?: (typeof Misskey.permissions)[number][] | null;
-}>(), {
-	title: null,
-	information: null,
-	initialName: null,
-	initialPermissions: null,
-});
+const props = withDefaults(
+	defineProps<{
+		title?: string | null;
+		information?: string | null;
+		initialName?: string | null;
+		initialPermissions?: (typeof Misskey.permissions)[number][] | null;
+	}>(),
+	{
+		title: null,
+		information: null,
+		initialName: null,
+		initialPermissions: null,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
-	(ev: 'done', result: { name: string | null, permissions: string[] }): void;
+	(ev: "closed"): void;
+	(ev: "done", result: { name: string | null; permissions: string[] }): void;
 }>();
 
-const defaultPermissions = Misskey.permissions.filter(p => !p.startsWith('read:admin') && !p.startsWith('write:admin'));
+const defaultPermissions = Misskey.permissions.filter(
+	(p) => !p.startsWith("read:admin") && !p.startsWith("write:admin"),
+);
 const dialog = shallowRef<InstanceType<typeof MkModalWindow>>();
 const name = ref(props.initialName);
-const permissions = $ref(<Record<(typeof Misskey.permissions)[number], boolean>>{});
+const permissions = $ref(
+	<Record<(typeof Misskey.permissions)[number], boolean>>{},
+);
 
 if (props.initialPermissions) {
 	for (const kind of props.initialPermissions) {
@@ -78,9 +85,9 @@ if (props.initialPermissions) {
 }
 
 function ok(): void {
-	emit('done', {
+	emit("done", {
 		name: name.value,
-		permissions: Object.keys(permissions).filter(p => permissions[p]),
+		permissions: Object.keys(permissions).filter((p) => permissions[p]),
 	});
 	dialog.value?.close();
 }

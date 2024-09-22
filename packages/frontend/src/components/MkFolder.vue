@@ -45,29 +45,40 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, watch } from 'vue';
-import { defaultStore } from '@/store';
+import { nextTick, onMounted, watch } from "vue";
+import { defaultStore } from "@/store";
 
-const props = withDefaults(defineProps<{
-	defaultOpen?: boolean;
-	maxHeight?: number | null;
-}>(), {
-	defaultOpen: false,
-	maxHeight: null,
-});
+const props = withDefaults(
+	defineProps<{
+		defaultOpen?: boolean;
+		maxHeight?: number | null;
+	}>(),
+	{
+		defaultOpen: false,
+		maxHeight: null,
+	},
+);
 
-watch(() => props.defaultOpen, () => {
-	if (props.defaultOpen) {
-		opened = props.defaultOpen;
-	}
-});
+watch(
+	() => props.defaultOpen,
+	() => {
+		if (props.defaultOpen) {
+			opened = props.defaultOpen;
+		}
+	},
+);
 
 const getBgColor = (el: HTMLElement) => {
 	const style = window.getComputedStyle(el);
-	if (style.backgroundColor && !['rgba(0, 0, 0, 0)', 'rgba(0,0,0,0)', 'transparent'].includes(style.backgroundColor)) {
+	if (
+		style.backgroundColor &&
+		!["rgba(0, 0, 0, 0)", "rgba(0,0,0,0)", "transparent"].includes(
+			style.backgroundColor,
+		)
+	) {
 		return style.backgroundColor;
 	} else {
-		return el.parentElement ? getBgColor(el.parentElement) : 'transparent';
+		return el.parentElement ? getBgColor(el.parentElement) : "transparent";
 	}
 };
 
@@ -80,7 +91,7 @@ function enter(el) {
 	const elementHeight = el.getBoundingClientRect().height;
 	el.style.height = 0;
 	el.offsetHeight; // reflow
-	el.style.height = Math.min(elementHeight, props.maxHeight ?? Infinity) + 'px';
+	el.style.height = Math.min(elementHeight, props.maxHeight ?? Infinity) + "px";
 }
 
 function afterEnter(el) {
@@ -89,7 +100,7 @@ function afterEnter(el) {
 
 function leave(el) {
 	const elementHeight = el.getBoundingClientRect().height;
-	el.style.height = elementHeight + 'px';
+	el.style.height = elementHeight + "px";
 	el.offsetHeight; // reflow
 	el.style.height = 0;
 }
@@ -111,7 +122,7 @@ function toggle() {
 onMounted(() => {
 	const computedStyle = getComputedStyle(document.documentElement);
 	const parentBg = getBgColor(rootEl.parentElement);
-	const myBg = computedStyle.getPropertyValue('--panel');
+	const myBg = computedStyle.getPropertyValue("--panel");
 	bgSame = parentBg === myBg;
 });
 </script>

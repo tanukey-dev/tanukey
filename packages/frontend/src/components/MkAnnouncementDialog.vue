@@ -22,18 +22,20 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef } from 'vue';
-import * as misskey from 'misskey-js';
-import * as os from '@/os';
-import MkModal from '@/components/MkModal.vue';
-import MkButton from '@/components/MkButton.vue';
-import { i18n } from '@/i18n';
-import { $i, updateAccount } from '@/account';
+import { onMounted, shallowRef } from "vue";
+import * as misskey from "misskey-js";
+import * as os from "@/os";
+import MkModal from "@/components/MkModal.vue";
+import MkButton from "@/components/MkButton.vue";
+import { i18n } from "@/i18n";
+import { $i, updateAccount } from "@/account";
 
-const props = withDefaults(defineProps<{
-	announcement: misskey.entities.Announcement;
-}>(), {
-});
+const props = withDefaults(
+	defineProps<{
+		announcement: misskey.entities.Announcement;
+	}>(),
+	{},
+);
 
 const rootEl = shallowRef<HTMLDivElement>();
 const modal = shallowRef<InstanceType<typeof MkModal>>();
@@ -41,37 +43,47 @@ const modal = shallowRef<InstanceType<typeof MkModal>>();
 async function ok() {
 	if (props.announcement.needConfirmationToRead) {
 		const confirm = await os.confirm({
-			type: 'question',
+			type: "question",
 			title: i18n.ts._announcement.readConfirmTitle,
-			text: i18n.t('_announcement.readConfirmText', { title: props.announcement.title }),
+			text: i18n.t("_announcement.readConfirmText", {
+				title: props.announcement.title,
+			}),
 		});
 		if (confirm.canceled) return;
 	}
 
 	modal.value.close();
-	os.api('i/read-announcement', { announcementId: props.announcement.id });
+	os.api("i/read-announcement", { announcementId: props.announcement.id });
 	updateAccount({
-		unreadAnnouncements: $i!.unreadAnnouncements.filter(a => a.id !== props.announcement.id),
+		unreadAnnouncements: $i!.unreadAnnouncements.filter(
+			(a) => a.id !== props.announcement.id,
+		),
 	});
 }
 
 function onBgClick() {
-	rootEl.value.animate([{
-		offset: 0,
-		transform: 'scale(1)',
-	}, {
-		offset: 0.5,
-		transform: 'scale(1.1)',
-	}, {
-		offset: 1,
-		transform: 'scale(1)',
-	}], {
-		duration: 100,
-	});
+	rootEl.value.animate(
+		[
+			{
+				offset: 0,
+				transform: "scale(1)",
+			},
+			{
+				offset: 0.5,
+				transform: "scale(1.1)",
+			},
+			{
+				offset: 1,
+				transform: "scale(1)",
+			},
+		],
+		{
+			duration: 100,
+		},
+	);
 }
 
-onMounted(() => {
-});
+onMounted(() => {});
 </script>
 
 <style lang="scss" module>

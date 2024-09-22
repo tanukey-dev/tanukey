@@ -10,11 +10,17 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XColumn from './column.vue';
-import { addColumnWidget, Column, removeColumnWidget, setColumnWidgets, updateColumnWidget } from './deck-store';
-import XWidgets from '@/components/MkWidgets.vue';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import XColumn from "./column.vue";
+import {
+	addColumnWidget,
+	Column,
+	removeColumnWidget,
+	setColumnWidgets,
+	updateColumnWidget,
+} from "./deck-store";
+import XWidgets from "@/components/MkWidgets.vue";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	column: Column;
@@ -43,11 +49,13 @@ function func() {
 	edit = !edit;
 }
 
-const menu = [{
-	icon: 'ti ti-pencil',
-	text: i18n.ts.editWidgets,
-	action: func,
-}];
+const menu = [
+	{
+		icon: "ti ti-pencil",
+		text: i18n.ts.editWidgets,
+		action: func,
+	},
+];
 </script>
 
 <style lang="scss" module>

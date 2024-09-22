@@ -26,33 +26,36 @@
 </template>
 
 <script lang="ts" setup>
-import { shallowRef } from 'vue';
-import MkModal from '@/components/MkModal.vue';
-import MkEmojiPicker from '@/components/MkEmojiPicker.vue';
-import { defaultStore } from '@/store';
+import { shallowRef } from "vue";
+import MkModal from "@/components/MkModal.vue";
+import MkEmojiPicker from "@/components/MkEmojiPicker.vue";
+import { defaultStore } from "@/store";
 
-withDefaults(defineProps<{
-	manualShowing?: boolean | null;
-	src?: HTMLElement;
-	showPinned?: boolean;
-	asReactionPicker?: boolean;
-}>(), {
-	manualShowing: null,
-	showPinned: true,
-	asReactionPicker: false,
-});
+withDefaults(
+	defineProps<{
+		manualShowing?: boolean | null;
+		src?: HTMLElement;
+		showPinned?: boolean;
+		asReactionPicker?: boolean;
+	}>(),
+	{
+		manualShowing: null,
+		showPinned: true,
+		asReactionPicker: false,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'done', v: any): void;
-	(ev: 'close'): void;
-	(ev: 'closed'): void;
+	(ev: "done", v: any): void;
+	(ev: "close"): void;
+	(ev: "closed"): void;
 }>();
 
 const modal = shallowRef<InstanceType<typeof MkModal>>();
 const picker = shallowRef<InstanceType<typeof MkEmojiPicker>>();
 
 function chosen(emoji: any) {
-	emit('done', emoji);
+	emit("done", emoji);
 	modal.value?.close();
 }
 

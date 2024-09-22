@@ -57,19 +57,19 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive } from 'vue';
-import XHeader from './_header_.vue';
-import XEditor from './roles.editor.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { useRouter } from '@/router';
-import MkButton from '@/components/MkButton.vue';
-import MkUserCardMini from '@/components/MkUserCardMini.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import MkPagination, { Paging } from '@/components/MkPagination.vue';
-import { infoImageUrl } from '@/instance';
+import { computed, reactive } from "vue";
+import XHeader from "./_header_.vue";
+import XEditor from "./roles.editor.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { useRouter } from "@/router";
+import MkButton from "@/components/MkButton.vue";
+import MkUserCardMini from "@/components/MkUserCardMini.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import MkPagination, { Paging } from "@/components/MkPagination.vue";
+import { infoImageUrl } from "@/instance";
 
 const router = useRouter();
 
@@ -78,7 +78,7 @@ const props = defineProps<{
 }>();
 
 const usersPagination = {
-	endpoint: 'admin/roles/users' as const,
+	endpoint: "admin/roles/users" as const,
 	limit: 20,
 	params: computed(() => ({
 		roleId: props.id,
@@ -87,26 +87,28 @@ const usersPagination = {
 
 let expandedItems = $ref([]);
 
-const role = reactive(await os.api('admin/roles/show', {
-	roleId: props.id,
-}));
+const role = reactive(
+	await os.api("admin/roles/show", {
+		roleId: props.id,
+	}),
+);
 
 function edit() {
-	router.push('/admin/roles/' + role.id + '/edit');
+	router.push("/admin/roles/" + role.id + "/edit");
 }
 
 async function del() {
 	const { canceled } = await os.confirm({
-		type: 'warning',
-		text: i18n.t('deleteAreYouSure', { x: role.name }),
+		type: "warning",
+		text: i18n.t("deleteAreYouSure", { x: role.name }),
 	});
 	if (canceled) return;
 
-	await os.apiWithDialog('admin/roles/delete', {
+	await os.apiWithDialog("admin/roles/delete", {
 		roleId: role.id,
 	});
 
-	router.push('/admin/roles');
+	router.push("/admin/roles");
 }
 
 async function assign() {
@@ -116,47 +118,76 @@ async function assign() {
 
 	const { canceled: canceled2, result: period } = await os.select({
 		title: i18n.ts.period,
-		items: [{
-			value: 'indefinitely', text: i18n.ts.indefinitely,
-		}, {
-			value: 'oneHour', text: i18n.ts.oneHour,
-		}, {
-			value: 'oneDay', text: i18n.ts.oneDay,
-		}, {
-			value: 'oneWeek', text: i18n.ts.oneWeek,
-		}, {
-			value: 'oneMonth', text: i18n.ts.oneMonth,
-		}],
-		default: 'indefinitely',
+		items: [
+			{
+				value: "indefinitely",
+				text: i18n.ts.indefinitely,
+			},
+			{
+				value: "oneHour",
+				text: i18n.ts.oneHour,
+			},
+			{
+				value: "oneDay",
+				text: i18n.ts.oneDay,
+			},
+			{
+				value: "oneWeek",
+				text: i18n.ts.oneWeek,
+			},
+			{
+				value: "oneMonth",
+				text: i18n.ts.oneMonth,
+			},
+		],
+		default: "indefinitely",
 	});
 	if (canceled2) return;
 
-	const expiresAt = period === 'indefinitely' ? null
-		: period === 'oneHour' ? Date.now() + (1000 * 60 * 60)
-		: period === 'oneDay' ? Date.now() + (1000 * 60 * 60 * 24)
-		: period === 'oneWeek' ? Date.now() + (1000 * 60 * 60 * 24 * 7)
-		: period === 'oneMonth' ? Date.now() + (1000 * 60 * 60 * 24 * 30)
-		: null;
+	const expiresAt =
+		period === "indefinitely"
+			? null
+			: period === "oneHour"
+				? Date.now() + 1000 * 60 * 60
+				: period === "oneDay"
+					? Date.now() + 1000 * 60 * 60 * 24
+					: period === "oneWeek"
+						? Date.now() + 1000 * 60 * 60 * 24 * 7
+						: period === "oneMonth"
+							? Date.now() + 1000 * 60 * 60 * 24 * 30
+							: null;
 
-	await os.apiWithDialog('admin/roles/assign', { roleId: role.id, userId: user.id, expiresAt });
+	await os.apiWithDialog("admin/roles/assign", {
+		roleId: role.id,
+		userId: user.id,
+		expiresAt,
+	});
 	//role.users.push(user);
 }
 
 async function unassign(user, ev) {
-	os.popupMenu([{
-		text: i18n.ts.unassign,
-		icon: 'ti ti-x',
-		danger: true,
-		action: async () => {
-			await os.apiWithDialog('admin/roles/unassign', { roleId: role.id, userId: user.id });
-			//role.users = role.users.filter(u => u.id !== user.id);
-		},
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.unassign,
+				icon: "ti ti-x",
+				danger: true,
+				action: async () => {
+					await os.apiWithDialog("admin/roles/unassign", {
+						roleId: role.id,
+						userId: user.id,
+					});
+					//role.users = role.users.filter(u => u.id !== user.id);
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 async function toggleItem(item) {
 	if (expandedItems.includes(item.id)) {
-		expandedItems = expandedItems.filter(x => x !== item.id);
+		expandedItems = expandedItems.filter((x) => x !== item.id);
 	} else {
 		expandedItems.push(item.id);
 	}
@@ -166,10 +197,12 @@ const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => ({
-	title: i18n.ts.role + ': ' + role.name,
-	icon: 'ti ti-badge',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: i18n.ts.role + ": " + role.name,
+		icon: "ti ti-badge",
+	})),
+);
 </script>
 
 <style lang="scss" module>

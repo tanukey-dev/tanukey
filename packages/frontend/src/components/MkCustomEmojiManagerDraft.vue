@@ -35,56 +35,67 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, shallowRef } from 'vue';
-import MkMention from './MkMention.vue';
-import MkPagination from '@/components/MkPagination.vue';
-import { host } from '@/config';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import { computed, defineAsyncComponent, ref, shallowRef } from "vue";
+import MkMention from "./MkMention.vue";
+import MkPagination from "@/components/MkPagination.vue";
+import { host } from "@/config";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
-const emojisDraftPaginationComponent = shallowRef<InstanceType<typeof MkPagination>>();
+const emojisDraftPaginationComponent =
+	shallowRef<InstanceType<typeof MkPagination>>();
 
 const query = ref(null);
 
 const paginationDraft = {
-	endpoint: 'admin/emoji/list' as const,
+	endpoint: "admin/emoji/list" as const,
 	limit: 30,
 	params: computed(() => ({
-		query: (query.value && query.value !== '') ? query.value : null,
+		query: query.value && query.value !== "" ? query.value : null,
 		draft: true,
 	})),
 };
 
 const editDraft = (emoji) => {
-	os.apiGet('emoji', { name: emoji.name }).then(res => {
-		os.popup(defineAsyncComponent(() => import('@/components/MkEmojiEditDialog.vue')), {
-			emoji: res,
-			isRequest: false,
-		}, {
-			done: result => {
-				if (result.updated) {
-					emojisDraftPaginationComponent.value.updateItem(result.updated.id, (oldEmoji: any) => ({
-						...oldEmoji,
-						...result.updated,
-					}));
-					emojisDraftPaginationComponent.value.reload();
-				} else if (result.deleted) {
-					emojisDraftPaginationComponent.value.removeItem((item) => item.id === emoji.id);
-					emojisDraftPaginationComponent.value.reload();
-				}
+	os.apiGet("emoji", { name: emoji.name }).then((res) => {
+		os.popup(
+			defineAsyncComponent(() => import("@/components/MkEmojiEditDialog.vue")),
+			{
+				emoji: res,
+				isRequest: false,
 			},
-		}, 'closed');
+			{
+				done: (result) => {
+					if (result.updated) {
+						emojisDraftPaginationComponent.value.updateItem(
+							result.updated.id,
+							(oldEmoji: any) => ({
+								...oldEmoji,
+								...result.updated,
+							}),
+						);
+						emojisDraftPaginationComponent.value.reload();
+					} else if (result.deleted) {
+						emojisDraftPaginationComponent.value.removeItem(
+							(item) => item.id === emoji.id,
+						);
+						emojisDraftPaginationComponent.value.reload();
+					}
+				},
+			},
+			"closed",
+		);
 	});
 };
 
 async function undrafted(emoji) {
 	const { canceled } = await os.confirm({
-		type: 'warning',
-		text: i18n.t('undraftAreYouSure', { x: emoji.name }),
+		type: "warning",
+		text: i18n.t("undraftAreYouSure", { x: emoji.name }),
 	});
 	if (canceled) return;
 
-	await os.api('admin/emoji/update', {
+	await os.api("admin/emoji/update", {
 		id: emoji.id,
 		name: emoji.name,
 		category: emoji.category,
@@ -92,25 +103,30 @@ async function undrafted(emoji) {
 		license: emoji.license,
 		draft: false,
 		isSensitive: emoji.isSensitive,
-		localOnly: emoji.localOnly, 
-		roleIdsThatCanBeUsedThisEmojiAsReaction: emoji.roleIdsThatCanBeUsedThisEmojiAsReaction,
+		localOnly: emoji.localOnly,
+		roleIdsThatCanBeUsedThisEmojiAsReaction:
+			emoji.roleIdsThatCanBeUsedThisEmojiAsReaction,
 	});
 
-	emojisDraftPaginationComponent.value.removeItem((item) => item.id === emoji.id);
+	emojisDraftPaginationComponent.value.removeItem(
+		(item) => item.id === emoji.id,
+	);
 	emojisDraftPaginationComponent.value.reload();
 }
 
 async function deleteDraft(emoji) {
 	const { canceled } = await os.confirm({
-		type: 'warning',
-		text: i18n.t('removeAreYouSure', { x: emoji.name }),
+		type: "warning",
+		text: i18n.t("removeAreYouSure", { x: emoji.name }),
 	});
 	if (canceled) return;
 
-	os.api('admin/emoji/delete', {
+	os.api("admin/emoji/delete", {
 		id: emoji.id,
 	}).then(() => {
-		emojisDraftPaginationComponent.value.removeItem((item) => item.id === emoji.id);
+		emojisDraftPaginationComponent.value.removeItem(
+			(item) => item.id === emoji.id,
+		);
 		emojisDraftPaginationComponent.value.reload();
 	});
 }

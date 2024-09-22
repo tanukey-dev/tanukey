@@ -13,12 +13,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount } from 'vue';
-import MkMenu from './MkMenu.vue';
-import { MenuItem } from './types/menu.vue';
-import contains from '@/scripts/contains';
-import { defaultStore } from '@/store';
-import * as os from '@/os';
+import { onMounted, onBeforeUnmount } from "vue";
+import MkMenu from "./MkMenu.vue";
+import { MenuItem } from "./types/menu.vue";
+import contains from "@/scripts/contains";
+import { defaultStore } from "@/store";
+import * as os from "@/os";
 
 const props = defineProps<{
 	items: MenuItem[];
@@ -26,12 +26,12 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+	(ev: "closed"): void;
 }>();
 
 let rootEl = $shallowRef<HTMLDivElement>();
 
-let zIndex = $ref<number>(os.claimZIndex('high'));
+let zIndex = $ref<number>(os.claimZIndex("high"));
 
 const SCROLLBAR_THICKNESS = 16;
 
@@ -42,12 +42,19 @@ onMounted(() => {
 	const width = rootEl.offsetWidth;
 	const height = rootEl.offsetHeight;
 
-	if (left + width - window.pageXOffset >= (window.innerWidth - SCROLLBAR_THICKNESS)) {
-		left = (window.innerWidth - SCROLLBAR_THICKNESS) - width + window.pageXOffset;
+	if (
+		left + width - window.pageXOffset >=
+		window.innerWidth - SCROLLBAR_THICKNESS
+	) {
+		left = window.innerWidth - SCROLLBAR_THICKNESS - width + window.pageXOffset;
 	}
 
-	if (top + height - window.pageYOffset >= (window.innerHeight - SCROLLBAR_THICKNESS)) {
-		top = (window.innerHeight - SCROLLBAR_THICKNESS) - height + window.pageYOffset;
+	if (
+		top + height - window.pageYOffset >=
+		window.innerHeight - SCROLLBAR_THICKNESS
+	) {
+		top =
+			window.innerHeight - SCROLLBAR_THICKNESS - height + window.pageYOffset;
 	}
 
 	if (top < 0) {
@@ -61,19 +68,19 @@ onMounted(() => {
 	rootEl.style.top = `${top}px`;
 	rootEl.style.left = `${left}px`;
 
-	for (const el of Array.from(document.querySelectorAll('body *'))) {
-		el.addEventListener('mousedown', onMousedown);
+	for (const el of Array.from(document.querySelectorAll("body *"))) {
+		el.addEventListener("mousedown", onMousedown);
 	}
 });
 
 onBeforeUnmount(() => {
-	for (const el of Array.from(document.querySelectorAll('body *'))) {
-		el.removeEventListener('mousedown', onMousedown);
+	for (const el of Array.from(document.querySelectorAll("body *"))) {
+		el.removeEventListener("mousedown", onMousedown);
 	}
 });
 
 function onMousedown(evt: Event) {
-	if (!contains(rootEl, evt.target) && (rootEl !== evt.target)) emit('closed');
+	if (!contains(rootEl, evt.target) && rootEl !== evt.target) emit("closed");
 }
 </script>
 

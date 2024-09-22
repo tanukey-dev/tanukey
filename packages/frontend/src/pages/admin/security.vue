@@ -77,23 +77,23 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XBotProtection from './bot-protection.vue';
-import XHeader from './_header_.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import MkRadios from '@/components/MkRadios.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import MkRange from '@/components/MkRange.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import * as os from '@/os';
-import { fetchInstance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import {} from "vue";
+import XBotProtection from "./bot-protection.vue";
+import XHeader from "./_header_.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import MkRadios from "@/components/MkRadios.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import MkRange from "@/components/MkRange.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import * as os from "@/os";
+import { fetchInstance } from "@/instance";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
-let summalyProxy: string = $ref('');
+let summalyProxy: string = $ref("");
 let enableHcaptcha: boolean = $ref(false);
 let enableRecaptcha: boolean = $ref(false);
 let enableTurnstile: boolean = $ref(false);
@@ -101,10 +101,10 @@ let enableIpLogging: boolean = $ref(false);
 let enableActiveEmailValidation: boolean = $ref(false);
 let enableVerifymailApi: boolean = $ref(false);
 let verifymailAuthKey: string | null = $ref(null);
-let bannedEmailDomains = $ref<string>('');
+let bannedEmailDomains = $ref<string>("");
 
 async function init() {
-	const meta = await os.api('admin/meta');
+	const meta = await os.api("admin/meta");
 	summalyProxy = meta.summalyProxy;
 	enableHcaptcha = meta.enableHcaptcha;
 	enableRecaptcha = meta.enableRecaptcha;
@@ -113,17 +113,17 @@ async function init() {
 	enableActiveEmailValidation = meta.enableActiveEmailValidation;
 	enableVerifymailApi = meta.enableVerifymailApi;
 	verifymailAuthKey = meta.verifymailAuthKey;
-	bannedEmailDomains = meta.bannedEmailDomains.join('\n');
+	bannedEmailDomains = meta.bannedEmailDomains.join("\n");
 }
 
 function save() {
-	os.apiWithDialog('admin/update-meta', {
+	os.apiWithDialog("admin/update-meta", {
 		summalyProxy,
 		enableIpLogging,
 		enableActiveEmailValidation,
 		enableVerifymailApi,
 		verifymailAuthKey,
-		bannedEmailDomains: bannedEmailDomains.split('\n'),
+		bannedEmailDomains: bannedEmailDomains.split("\n"),
 	}).then(() => {
 		fetchInstance();
 	});
@@ -135,6 +135,6 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.security,
-	icon: 'ti ti-lock',
+	icon: "ti ti-lock",
 });
 </script>

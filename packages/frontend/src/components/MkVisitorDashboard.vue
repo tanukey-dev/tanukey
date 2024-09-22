@@ -46,71 +46,88 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import { Instance } from 'misskey-js/built/entities';
-import XTimeline from './welcome.timeline.vue';
-import XSigninDialog from '@/components/MkSigninDialog.vue';
-import XSignupDialog from '@/components/MkSignupDialog.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkTimeline from '@/components/MkTimeline.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import { instanceName } from '@/config';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
-import number from '@/filters/number';
-import MkNumber from '@/components/MkNumber.vue';
-import XActiveUsersChart from '@/components/MkVisitorDashboard.ActiveUsersChart.vue';
+import {} from "vue";
+import { Instance } from "misskey-js/built/entities";
+import XTimeline from "./welcome.timeline.vue";
+import XSigninDialog from "@/components/MkSigninDialog.vue";
+import XSignupDialog from "@/components/MkSignupDialog.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkTimeline from "@/components/MkTimeline.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import { instanceName } from "@/config";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
+import number from "@/filters/number";
+import MkNumber from "@/components/MkNumber.vue";
+import XActiveUsersChart from "@/components/MkVisitorDashboard.ActiveUsersChart.vue";
 
 let meta = $ref<Instance>();
 let stats = $ref(null);
 
-os.api('meta', { detail: true }).then(_meta => {
+os.api("meta", { detail: true }).then((_meta) => {
 	meta = _meta;
 });
 
-os.api('stats', {
-}).then((res) => {
+os.api("stats", {}).then((res) => {
 	stats = res;
 });
 
 function signin() {
-	os.popup(XSigninDialog, {
-		autoSet: true,
-	}, {}, 'closed');
+	os.popup(
+		XSigninDialog,
+		{
+			autoSet: true,
+		},
+		{},
+		"closed",
+	);
 }
 
 function signup() {
-	os.popup(XSignupDialog, {
-		autoSet: true,
-	}, {}, 'closed');
+	os.popup(
+		XSignupDialog,
+		{
+			autoSet: true,
+		},
+		{},
+		"closed",
+	);
 }
 
 function showMenu(ev) {
-	os.popupMenu([{
-		text: i18n.ts.instanceInfo,
-		icon: 'ti ti-info-circle',
-		action: () => {
-			os.pageWindow('/about');
-		},
-	}, {
-		text: i18n.ts.aboutTanukey,
-		icon: 'ti ti-info-circle',
-		action: () => {
-			os.pageWindow('/about-tanukey');
-		},
-	}, null, {
-		text: i18n.ts.help,
-		icon: 'ti ti-help-circle',
-		action: () => {
-			window.open('https://misskey-hub.net/help.md', '_blank');
-		},
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: i18n.ts.instanceInfo,
+				icon: "ti ti-info-circle",
+				action: () => {
+					os.pageWindow("/about");
+				},
+			},
+			{
+				text: i18n.ts.aboutTanukey,
+				icon: "ti ti-info-circle",
+				action: () => {
+					os.pageWindow("/about-tanukey");
+				},
+			},
+			null,
+			{
+				text: i18n.ts.help,
+				icon: "ti ti-help-circle",
+				action: () => {
+					window.open("https://misskey-hub.net/help.md", "_blank");
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 function exploreOtherServers() {
 	// TODO: 言語をよしなに
-	window.open('https://join.misskey.page/ja-JP/instances', '_blank');
+	window.open("https://join.misskey.page/ja-JP/instances", "_blank");
 }
 </script>
 

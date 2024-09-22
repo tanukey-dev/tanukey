@@ -1,58 +1,85 @@
-import { parse } from 'acorn';
-import { generate } from 'astring';
-import { describe, expect, it } from 'vitest';
-import { normalizeClass, unwindCssModuleClassName } from './rollup-plugin-unwind-css-module-class-name';
-import type * as estree from 'estree';
+import { parse } from "acorn";
+import { generate } from "astring";
+import { describe, expect, it } from "vitest";
+import {
+	normalizeClass,
+	unwindCssModuleClassName,
+} from "./rollup-plugin-unwind-css-module-class-name";
+import type * as estree from "estree";
 
 function parseExpression(code: string): estree.Expression {
-	const program = parse(code, { ecmaVersion: 'latest', sourceType: 'module' }) as unknown as estree.Program;
+	const program = parse(code, {
+		ecmaVersion: "latest",
+		sourceType: "module",
+	}) as unknown as estree.Program;
 	const statement = program.body[0] as estree.ExpressionStatement;
 	return statement.expression;
 }
 
 describe(normalizeClass.name, () => {
-	it('should normalize string', () => {
-		expect(normalizeClass(parseExpression('"a b c"'))).toBe('a b c');
+	it("should normalize string", () => {
+		expect(normalizeClass(parseExpression('"a b c"'))).toBe("a b c");
 	});
-	it('should trim redundant spaces', () => {
-		expect(normalizeClass(parseExpression('" a b  c "'))).toBe('a b c');
+	it("should trim redundant spaces", () => {
+		expect(normalizeClass(parseExpression('" a b  c "'))).toBe("a b c");
 	});
-	it('should ignore undefined', () => {
-		expect(normalizeClass(parseExpression('undefined'))).toBe('');
+	it("should ignore undefined", () => {
+		expect(normalizeClass(parseExpression("undefined"))).toBe("");
 	});
-	it('should ignore non string literals', () => {
-		expect(normalizeClass(parseExpression('0'))).toBe('');
-		expect(normalizeClass(parseExpression('true'))).toBe('');
-		expect(normalizeClass(parseExpression('null'))).toBe('');
-		expect(normalizeClass(parseExpression('/I.D/'))).toBe('');
+	it("should ignore non string literals", () => {
+		expect(normalizeClass(parseExpression("0"))).toBe("");
+		expect(normalizeClass(parseExpression("true"))).toBe("");
+		expect(normalizeClass(parseExpression("null"))).toBe("");
+		expect(normalizeClass(parseExpression("/I.D/"))).toBe("");
 	});
-	it('should not normalize identifiers', () => {
-		expect(normalizeClass(parseExpression('EScape'))).toBeNull();
+	it("should not normalize identifiers", () => {
+		expect(normalizeClass(parseExpression("EScape"))).toBeNull();
 	});
-	it('should normalize recursively array', () => {
-		expect(normalizeClass(parseExpression('["from", ...["Utopia"]]'))).toBe('from Utopia');
+	it("should normalize recursively array", () => {
+		expect(normalizeClass(parseExpression('["from", ...["Utopia"]]'))).toBe(
+			"from Utopia",
+		);
 		expect(normalizeClass(parseExpression('["from", ...[Utopia]]'))).toBeNull();
 	});
-	it('should normalize recursively template literal', () => {
-		expect(normalizeClass(parseExpression('`name ${"shiho"} code ${33}`'))).toBe('name shiho code');
-		expect(normalizeClass(parseExpression('`name ${shiho.name} code ${33}`'))).toBeNull();
+	it("should normalize recursively template literal", () => {
+		expect(
+			normalizeClass(parseExpression('`name ${"shiho"} code ${33}`')),
+		).toBe("name shiho code");
+		expect(
+			normalizeClass(parseExpression("`name ${shiho.name} code ${33}`")),
+		).toBeNull();
 	});
-	it('should normalize recursively binary expression', () => {
-		expect(normalizeClass(parseExpression('"mirage" + "mirror"'))).toBe('miragemirror');
+	it("should normalize recursively binary expression", () => {
+		expect(normalizeClass(parseExpression('"mirage" + "mirror"'))).toBe(
+			"miragemirror",
+		);
 		expect(normalizeClass(parseExpression('"mirage" + mirror'))).toBeNull();
 	});
-	it('should normalize recursively object expression', () => {
-		expect(normalizeClass(parseExpression('({ a: true, b: "c" })'))).toBe('a b');
-		expect(normalizeClass(parseExpression('({ a: false, b: "c" })'))).toBe('b');
-		expect(normalizeClass(parseExpression('({ a: true, b: c })'))).toBeNull();
-		expect(normalizeClass(parseExpression('({ a: true, b: "c", ...({ d: true }) })'))).toBe('a b d');
-		expect(normalizeClass(parseExpression('({ a: true, [b]: "c" })'))).toBeNull();
-		expect(normalizeClass(parseExpression('({ a: true, b: false, c: !false, d: !!0 })'))).toBe('a c');
+	it("should normalize recursively object expression", () => {
+		expect(normalizeClass(parseExpression('({ a: true, b: "c" })'))).toBe(
+			"a b",
+		);
+		expect(normalizeClass(parseExpression('({ a: false, b: "c" })'))).toBe("b");
+		expect(normalizeClass(parseExpression("({ a: true, b: c })"))).toBeNull();
+		expect(
+			normalizeClass(
+				parseExpression('({ a: true, b: "c", ...({ d: true }) })'),
+			),
+		).toBe("a b d");
+		expect(
+			normalizeClass(parseExpression('({ a: true, [b]: "c" })')),
+		).toBeNull();
+		expect(
+			normalizeClass(
+				parseExpression("({ a: true, b: false, c: !false, d: !!0 })"),
+			),
+		).toBe("a c");
 	});
 });
 
-it('Composition API (standard)', () => {
-	const ast = parse(`
+it("Composition API (standard)", () => {
+	const ast = parse(
+		`
 import { c as api, d as defaultStore, i as i18n, aD as notePage, bN as ImgWithBlurhash, bY as getStaticImageUrl, _ as _export_sfc } from './app-!~{001}~.js';
 import { M as MkContainer } from './MkContainer-!~{03M}~.js';
 import { b as defineComponent, a as ref, e as onMounted, z as resolveComponent, g as openBlock, h as createBlock, i as withCtx, K as createTextVNode, E as toDisplayString, u as unref, l as createBaseVNode, q as normalizeClass, B as createCommentVNode, k as createElementBlock, F as Fragment, C as renderList, A as createVNode } from './vue-!~{002}~.js';
@@ -166,9 +193,12 @@ const cssModules = {
 const index_photos = /* @__PURE__ */ _export_sfc(_sfc_main, [["__cssModules", cssModules]]);
 
 export { index_photos as default };
-`.slice(1), { ecmaVersion: 'latest', sourceType: 'module' });
+`.slice(1),
+		{ ecmaVersion: "latest", sourceType: "module" },
+	);
 	unwindCssModuleClassName(ast);
-	expect(generate(ast)).toBe(`
+	expect(generate(ast)).toBe(
+		`
 import {c as api, d as defaultStore, i as i18n, aD as notePage, bN as ImgWithBlurhash, bY as getStaticImageUrl, _ as _export_sfc} from './app-!~{001}~.js';
 import {M as MkContainer} from './MkContainer-!~{03M}~.js';
 import {b as defineComponent, a as ref, e as onMounted, z as resolveComponent, g as openBlock, h as createBlock, i as withCtx, K as createTextVNode, E as toDisplayString, u as unref, l as createBaseVNode, q as normalizeClass, B as createCommentVNode, k as createElementBlock, F as Fragment, C as renderList, A as createVNode} from './vue-!~{002}~.js';
@@ -260,11 +290,13 @@ const cssModules = {
 };
 const index_photos = _sfc_main;
 export {index_photos as default};
-`.slice(1));
+`.slice(1),
+	);
 });
 
-it('Composition API (with `useCssModule()`)', () => {
-	const ast = parse(`
+it("Composition API (with `useCssModule()`)", () => {
+	const ast = parse(
+		`
 import { a7 as getCurrentInstance, b as defineComponent, G as useCssModule, a1 as h, H as TransitionGroup } from './!~{002}~.js';
 import { d as defaultStore, aK as toast, b5 as MkAd, i as i18n, _ as _export_sfc } from './app-!~{001}~.js';
 
@@ -435,9 +467,12 @@ const cssModules = {
 const MkDateSeparatedList = /* @__PURE__ */ _export_sfc(_sfc_main, [["__cssModules", cssModules]]);
 
 export { MkDateSeparatedList as M };
-`.slice(1), { ecmaVersion: 'latest', sourceType: 'module' });
+`.slice(1),
+		{ ecmaVersion: "latest", sourceType: "module" },
+	);
 	unwindCssModuleClassName(ast);
-	expect(generate(ast)).toBe(`
+	expect(generate(ast)).toBe(
+		`
 import {a7 as getCurrentInstance, b as defineComponent, G as useCssModule, a1 as h, H as TransitionGroup} from './!~{002}~.js';
 import {d as defaultStore, aK as toast, b5 as MkAd, i as i18n, _ as _export_sfc} from './app-!~{001}~.js';
 function isDebuggerEnabled(id) {
@@ -593,5 +628,6 @@ const cssModules = {
 };
 const MkDateSeparatedList = _export_sfc(_sfc_main, [["__cssModules", cssModules]]);
 export {MkDateSeparatedList as M};
-`.slice(1));
+`.slice(1),
+	);
 });

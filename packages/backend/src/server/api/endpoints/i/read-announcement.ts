@@ -1,32 +1,29 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { AnnouncementService } from '@/core/AnnouncementService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { AnnouncementService } from "@/core/AnnouncementService.js";
 
 export const meta = {
-	tags: ['account'],
+	tags: ["account"],
 
 	requireCredential: true,
 
-	kind: 'write:account',
+	kind: "write:account",
 
-	errors: {
-	},
+	errors: {},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		announcementId: { type: 'string', format: 'misskey:id' },
+		announcementId: { type: "string", format: "misskey:id" },
 	},
-	required: ['announcementId'],
+	required: ["announcementId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor(
-		private announcementService: AnnouncementService,
-	) {
+	constructor(private announcementService: AnnouncementService) {
 		super(meta, paramDef, async (ps, me) => {
 			await this.announcementService.read(me, ps.announcementId);
 		});

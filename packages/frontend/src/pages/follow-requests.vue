@@ -32,30 +32,30 @@
 </template>
 
 <script lang="ts" setup>
-import { shallowRef, computed } from 'vue';
-import MkPagination from '@/components/MkPagination.vue';
-import MkButton from '@/components/MkButton.vue';
-import { userPage, acct } from '@/filters/user';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { infoImageUrl } from '@/instance';
+import { shallowRef, computed } from "vue";
+import MkPagination from "@/components/MkPagination.vue";
+import MkButton from "@/components/MkButton.vue";
+import { userPage, acct } from "@/filters/user";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { infoImageUrl } from "@/instance";
 
 const paginationComponent = shallowRef<InstanceType<typeof MkPagination>>();
 
 const pagination = {
-	endpoint: 'following/requests/list' as const,
+	endpoint: "following/requests/list" as const,
 	limit: 10,
 };
 
 function accept(user) {
-	os.api('following/requests/accept', { userId: user.id }).then(() => {
+	os.api("following/requests/accept", { userId: user.id }).then(() => {
 		paginationComponent.value.reload();
 	});
 }
 
 function reject(user) {
-	os.api('following/requests/reject', { userId: user.id }).then(() => {
+	os.api("following/requests/reject", { userId: user.id }).then(() => {
 		paginationComponent.value.reload();
 	});
 }
@@ -64,10 +64,12 @@ const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => ({
-	title: i18n.ts.followRequests,
-	icon: 'ti ti-user-plus',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: i18n.ts.followRequests,
+		icon: "ti ti-user-plus",
+	})),
+);
 </script>
 
 <style lang="scss" scoped>

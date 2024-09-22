@@ -6,8 +6,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { i18n } from '@/i18n';
+import { ref } from "vue";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	q: string;
@@ -16,7 +16,7 @@ const props = defineProps<{
 const query = ref(props.q);
 
 const search = () => {
-	window.open(`https://www.google.com/search?q=${query.value}`, '_blank');
+	window.open(`https://www.google.com/search?q=${query.value}`, "_blank");
 };
 </script>
 

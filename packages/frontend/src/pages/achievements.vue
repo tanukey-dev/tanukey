@@ -8,21 +8,22 @@
 </template>
 
 <script lang="ts" setup>
-import { onActivated, onDeactivated, onMounted, onUnmounted } from 'vue';
-import MkAchievements from '@/components/MkAchievements.vue';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { $i } from '@/account';
-import { claimAchievement } from '@/scripts/achievements';
+import { onActivated, onDeactivated, onMounted, onUnmounted } from "vue";
+import MkAchievements from "@/components/MkAchievements.vue";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { $i } from "@/account";
+import { claimAchievement } from "@/scripts/achievements";
 
 let timer: number | null;
 
 function viewAchievements3min() {
-	claimAchievement('viewAchievements3min');
+	claimAchievement("viewAchievements3min");
 }
 
 onMounted(() => {
-	if (timer == null) timer = window.setTimeout(viewAchievements3min, 1000 * 60 * 3);
+	if (timer == null)
+		timer = window.setTimeout(viewAchievements3min, 1000 * 60 * 3);
 });
 
 onUnmounted(() => {
@@ -33,7 +34,8 @@ onUnmounted(() => {
 });
 
 onActivated(() => {
-	if (timer == null) timer = window.setTimeout(viewAchievements3min, 1000 * 60 * 3);
+	if (timer == null)
+		timer = window.setTimeout(viewAchievements3min, 1000 * 60 * 3);
 });
 
 onDeactivated(() => {
@@ -45,7 +47,7 @@ onDeactivated(() => {
 
 definePageMetadata({
 	title: i18n.ts.achievements,
-	icon: 'ti ti-medal',
+	icon: "ti ti-medal",
 });
 </script>
 

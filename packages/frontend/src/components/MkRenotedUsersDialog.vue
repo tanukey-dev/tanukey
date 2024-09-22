@@ -28,21 +28,21 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import * as misskey from 'misskey-js';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import MkUserCardMini from '@/components/MkUserCardMini.vue';
-import { userPage } from '@/filters/user';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import { infoImageUrl } from '@/instance';
+import { onMounted } from "vue";
+import * as misskey from "misskey-js";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import MkUserCardMini from "@/components/MkUserCardMini.vue";
+import { userPage } from "@/filters/user";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import { infoImageUrl } from "@/instance";
 
 const emit = defineEmits<{
-	(ev: 'closed'): void,
+	(ev: "closed"): void;
 }>();
 
 const props = defineProps<{
-	noteId: misskey.entities.Note['id'];
+	noteId: misskey.entities.Note["id"];
 }>();
 
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
@@ -52,13 +52,13 @@ let renotes = $ref();
 let users = $ref();
 
 onMounted(async () => {
-	const res = await os.api('notes/renotes', {
+	const res = await os.api("notes/renotes", {
 		noteId: props.noteId,
 		limit: 30,
 	});
 
 	renotes = res;
-	users = res.map(x => x.user);
+	users = res.map((x) => x.user);
 });
 </script>
 

@@ -26,34 +26,37 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import * as misskey from 'misskey-js';
-import MkNoteHeader from '@/components/MkNoteHeader.vue';
-import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
-import MkCwButton from '@/components/MkCwButton.vue';
-import { notePage } from '@/filters/note';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
+import {} from "vue";
+import * as misskey from "misskey-js";
+import MkNoteHeader from "@/components/MkNoteHeader.vue";
+import MkSubNoteContent from "@/components/MkSubNoteContent.vue";
+import MkCwButton from "@/components/MkCwButton.vue";
+import { notePage } from "@/filters/note";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
 
-const props = withDefaults(defineProps<{
-	note: misskey.entities.Note;
-	detail?: boolean;
+const props = withDefaults(
+	defineProps<{
+		note: misskey.entities.Note;
+		detail?: boolean;
 
-	// how many notes are in between this one and the note being viewed in detail
-	depth?: number;
-}>(), {
-	depth: 1,
-});
+		// how many notes are in between this one and the note being viewed in detail
+		depth?: number;
+	}>(),
+	{
+		depth: 1,
+	},
+);
 
 let showContent = $ref(false);
 let replies: misskey.entities.Note[] = $ref([]);
 
 if (props.detail) {
-	os.api('notes/children', {
+	os.api("notes/children", {
 		noteId: props.note.id,
 		limit: 5,
-	}).then(res => {
+	}).then((res) => {
 		replies = res;
 	});
 }

@@ -74,15 +74,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
-import tinycolor from 'tinycolor2';
-import { globalEvents } from '@/events.js';
-import { defaultIdlingRenderScheduler } from '@/scripts/idle-render.js';
+import { computed, onMounted, onBeforeUnmount, ref } from "vue";
+import tinycolor from "tinycolor2";
+import { globalEvents } from "@/events.js";
+import { defaultIdlingRenderScheduler } from "@/scripts/idle-render.js";
 
 // https://stackoverflow.com/questions/1878907/how-can-i-find-the-difference-between-two-angles
 const angleDiff = (a: number, b: number) => {
 	const x = Math.abs(a - b);
-	return Math.abs((x + Math.PI) % (Math.PI * 2) - Math.PI);
+	return Math.abs(((x + Math.PI) % (Math.PI * 2)) - Math.PI);
 };
 
 const graduationsPadding = 0.5;
@@ -94,30 +94,33 @@ const mHandLengthRatio = 1;
 const sHandLengthRatio = 1;
 const numbersOpacityFactor = 0.35;
 
-const props = withDefaults(defineProps<{
-	thickness?: number;
-	offset?: number;
-	twentyfour?: boolean;
-	graduations?: 'none' | 'dots' | 'numbers';
-	fadeGraduations?: boolean;
-	sAnimation?: 'none' | 'elastic' | 'easeOut';
-	now?: () => Date;
-}>(), {
-	numbers: false,
-	thickness: 0.1,
-	offset: 0 - new Date().getTimezoneOffset(),
-	twentyfour: false,
-	graduations: 'dots',
-	fadeGraduations: true,
-	sAnimation: 'elastic',
-	now: () => new Date(),
-});
+const props = withDefaults(
+	defineProps<{
+		thickness?: number;
+		offset?: number;
+		twentyfour?: boolean;
+		graduations?: "none" | "dots" | "numbers";
+		fadeGraduations?: boolean;
+		sAnimation?: "none" | "elastic" | "easeOut";
+		now?: () => Date;
+	}>(),
+	{
+		numbers: false,
+		thickness: 0.1,
+		offset: 0 - new Date().getTimezoneOffset(),
+		twentyfour: false,
+		graduations: "dots",
+		fadeGraduations: true,
+		sAnimation: "elastic",
+		now: () => new Date(),
+	},
+);
 
 const graduationsMajor = computed(() => {
 	const angles: number[] = [];
 	const times = props.twentyfour ? 24 : 12;
 	for (let i = 0; i < times; i++) {
-		const angle = Math.PI * i / (times / 2);
+		const angle = (Math.PI * i) / (times / 2);
 		angles.push(angle);
 	}
 	return angles;
@@ -126,7 +129,7 @@ const texts = computed(() => {
 	const angles: number[] = [];
 	const times = props.twentyfour ? 24 : 12;
 	for (let i = 0; i < times; i++) {
-		const angle = Math.PI * i / (times / 2);
+		const angle = (Math.PI * i) / (times / 2);
 		angles.push(angle);
 	}
 	return angles;
@@ -161,25 +164,32 @@ function tick() {
 	if (previousS === s && previousM === m && previousH === h) {
 		return;
 	}
-	hAngle = Math.PI * (h % (props.twentyfour ? 24 : 12) + (m + s / 60) / 60) / (props.twentyfour ? 12 : 6);
-	mAngle = Math.PI * (m + s / 60) / 30;
-	if (sOneRound && sLine.value) { // 秒針が一周した際のアニメーションをよしなに処理する(これが無いと秒が59->0になったときに期待したアニメーションにならない)
-		sAngle = Math.PI * 60 / 30;
+	hAngle =
+		(Math.PI * ((h % (props.twentyfour ? 24 : 12)) + (m + s / 60) / 60)) /
+		(props.twentyfour ? 12 : 6);
+	mAngle = (Math.PI * (m + s / 60)) / 30;
+	if (sOneRound && sLine.value) {
+		// 秒針が一周した際のアニメーションをよしなに処理する(これが無いと秒が59->0になったときに期待したアニメーションにならない)
+		sAngle = (Math.PI * 60) / 30;
 		defaultIdlingRenderScheduler.delete(tick);
-		sLine.value.addEventListener('transitionend', () => {
-			disableSAnimate = true;
-			requestAnimationFrame(() => {
-				sAngle = 0;
+		sLine.value.addEventListener(
+			"transitionend",
+			() => {
+				disableSAnimate = true;
 				requestAnimationFrame(() => {
-					disableSAnimate = false;
-					if (enabled) {
-						defaultIdlingRenderScheduler.add(tick);
-					}
+					sAngle = 0;
+					requestAnimationFrame(() => {
+						disableSAnimate = false;
+						if (enabled) {
+							defaultIdlingRenderScheduler.add(tick);
+						}
+					});
 				});
-			});
-		}, { once: true });
+			},
+			{ once: true },
+		);
 	} else {
-		sAngle = Math.PI * s / 30;
+		sAngle = (Math.PI * s) / 30;
 	}
 	sOneRound = s === 59;
 }
@@ -188,12 +198,16 @@ tick();
 
 function calcColors() {
 	const computedStyle = getComputedStyle(document.documentElement);
-	const dark = tinycolor(computedStyle.getPropertyValue('--bg')).isDark();
-	const accent = tinycolor(computedStyle.getPropertyValue('--accent')).toHexString();
-	majorGraduationColor = dark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)';
+	const dark = tinycolor(computedStyle.getPropertyValue("--bg")).isDark();
+	const accent = tinycolor(
+		computedStyle.getPropertyValue("--accent"),
+	).toHexString();
+	majorGraduationColor = dark
+		? "rgba(255, 255, 255, 0.3)"
+		: "rgba(0, 0, 0, 0.3)";
 	//minorGraduationColor = dark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)';
-	sHandColor = dark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)';
-	mHandColor = tinycolor(computedStyle.getPropertyValue('--fg')).toHexString();
+	sHandColor = dark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.3)";
+	mHandColor = tinycolor(computedStyle.getPropertyValue("--fg")).toHexString();
 	hHandColor = accent;
 	nowColor = accent;
 }
@@ -202,13 +216,13 @@ calcColors();
 
 onMounted(() => {
 	defaultIdlingRenderScheduler.add(tick);
-	globalEvents.on('themeChanged', calcColors);
+	globalEvents.on("themeChanged", calcColors);
 });
 
 onBeforeUnmount(() => {
 	enabled = false;
 	defaultIdlingRenderScheduler.delete(tick);
-	globalEvents.off('themeChanged', calcColors);
+	globalEvents.off("themeChanged", calcColors);
 });
 </script>
 

@@ -14,28 +14,30 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, ref } from 'vue';
-import MkModal from '@/components/MkModal.vue';
+import { nextTick, ref } from "vue";
+import MkModal from "@/components/MkModal.vue";
 
 const modal = $shallowRef<InstanceType<typeof MkModal>>();
 
-const props = withDefaults(defineProps<{
-	currentKey: string|null;
-	tabs: { key: string, title: string, icon: string }[];
-	src?: HTMLElement;
-}>(), {
-});
+const props = withDefaults(
+	defineProps<{
+		currentKey: string | null;
+		tabs: { key: string; title: string; icon: string }[];
+		src?: HTMLElement;
+	}>(),
+	{},
+);
 
 const emit = defineEmits<{
-	(ev: 'changeKey', key: string|null): void;
-	(ev: 'closed'): void;
+	(ev: "changeKey", key: string | null): void;
+	(ev: "closed"): void;
 }>();
 
-let currentKey = ref<string|null>(props.currentKey);
+let currentKey = ref<string | null>(props.currentKey);
 
-function choose(key: string|null): void {
+function choose(key: string | null): void {
 	currentKey.value = key;
-	emit('changeKey', key);
+	emit("changeKey", key);
 	nextTick(() => {
 		if (modal) modal.close();
 	});

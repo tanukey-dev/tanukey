@@ -1,9 +1,13 @@
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted } from "vue";
 
-export function useInterval(fn: () => void, interval: number, options: {
-	immediate: boolean;
-	afterMounted: boolean;
-}): (() => void) | undefined {
+export function useInterval(
+	fn: () => void,
+	interval: number,
+	options: {
+		immediate: boolean;
+		afterMounted: boolean;
+	},
+): (() => void) | undefined {
 	if (Number.isNaN(interval)) return;
 
 	let intervalId: number | null = null;

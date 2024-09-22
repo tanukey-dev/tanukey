@@ -11,28 +11,30 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue';
-import * as os from '@/os';
-import MkUserList from '@/components/MkUserList.vue';
-import { definePageMetadata } from '@/scripts/page-metadata';
+import { computed, watch } from "vue";
+import * as os from "@/os";
+import MkUserList from "@/components/MkUserList.vue";
+import { definePageMetadata } from "@/scripts/page-metadata";
 
 const props = defineProps<{
 	tag: string;
 }>();
 
 const tagUsers = $computed(() => ({
-	endpoint: 'hashtags/users' as const,
+	endpoint: "hashtags/users" as const,
 	limit: 30,
 	params: {
 		tag: props.tag,
-		origin: 'combined',
-		sort: '+follower',
+		origin: "combined",
+		sort: "+follower",
 	},
 }));
 
-definePageMetadata(computed(() => ({
-	title: props.tag,
-	icon: 'ti ti-user-search',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: props.tag,
+		icon: "ti ti-user-search",
+	})),
+);
 </script>
 

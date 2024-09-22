@@ -101,39 +101,39 @@
 </template>
 
 <script lang="ts" setup>
-import XHeader from './_header_.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import FormSection from '@/components/form/section.vue';
-import FormSplit from '@/components/form/split.vue';
-import FormSuspense from '@/components/form/suspense.vue';
-import * as os from '@/os';
-import { fetchInstance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkButton from '@/components/MkButton.vue';
+import XHeader from "./_header_.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import FormSection from "@/components/form/section.vue";
+import FormSplit from "@/components/form/split.vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import * as os from "@/os";
+import { fetchInstance } from "@/instance";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkButton from "@/components/MkButton.vue";
 
 let name: string | null = $ref(null);
 let description: string | null = $ref(null);
 let maintainerName: string | null = $ref(null);
 let maintainerEmail: string | null = $ref(null);
-let pinnedUsers: string = $ref('');
+let pinnedUsers: string = $ref("");
 let cacheRemoteFiles: boolean = $ref(false);
 let enableServiceWorker: boolean = $ref(false);
 let swPublicKey: any = $ref(null);
 let swPrivateKey: any = $ref(null);
-let deeplAuthKey: string = $ref('');
+let deeplAuthKey: string = $ref("");
 let deeplIsPro: boolean = $ref(false);
 let enableSubscriptions: boolean = $ref(false);
 
 async function init() {
-	const meta = await os.api('admin/meta');
+	const meta = await os.api("admin/meta");
 	name = meta.name;
 	description = meta.description;
 	maintainerName = meta.maintainerName;
 	maintainerEmail = meta.maintainerEmail;
-	pinnedUsers = meta.pinnedUsers.join('\n');
+	pinnedUsers = meta.pinnedUsers.join("\n");
 	cacheRemoteFiles = meta.cacheRemoteFiles;
 	enableServiceWorker = meta.enableServiceWorker;
 	swPublicKey = meta.swPublickey;
@@ -144,12 +144,12 @@ async function init() {
 }
 
 function save() {
-	os.apiWithDialog('admin/update-meta', {
+	os.apiWithDialog("admin/update-meta", {
 		name,
 		description,
 		maintainerName,
 		maintainerEmail,
-		pinnedUsers: pinnedUsers.split('\n'),
+		pinnedUsers: pinnedUsers.split("\n"),
 		cacheRemoteFiles,
 		enableServiceWorker,
 		swPublicKey,
@@ -166,7 +166,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.general,
-	icon: 'ti ti-settings',
+	icon: "ti ti-settings",
 });
 </script>
 

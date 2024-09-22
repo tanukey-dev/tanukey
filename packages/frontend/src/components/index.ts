@@ -1,26 +1,26 @@
-import { App } from 'vue';
+import { App } from "vue";
 
-import Mfm from './global/MkMisskeyFlavoredMarkdown.ts';
-import MkA from './global/MkA.vue';
-import MkAcct from './global/MkAcct.vue';
-import MkAvatar from './global/MkAvatar.vue';
-import MkEmoji from './global/MkEmoji.vue';
-import MkCondensedLine from './global/MkCondensedLine.vue';
-import MkCustomEmoji from './global/MkCustomEmoji.vue';
-import MkUserName from './global/MkUserName.vue';
-import MkEllipsis from './global/MkEllipsis.vue';
-import MkTime from './global/MkTime.vue';
-import MkUrl from './global/MkUrl.vue';
-import I18n from './global/i18n';
-import RouterView from './global/RouterView.vue';
-import MkLoading from './global/MkLoading.vue';
-import MkError from './global/MkError.vue';
-import MkAd from './global/MkAd.vue';
-import MkPageHeader from './global/MkPageHeader.vue';
-import MkSpacer from './global/MkSpacer.vue';
-import MkStickyContainer from './global/MkStickyContainer.vue';
+import Mfm from "./global/MkMisskeyFlavoredMarkdown.ts";
+import MkA from "./global/MkA.vue";
+import MkAcct from "./global/MkAcct.vue";
+import MkAvatar from "./global/MkAvatar.vue";
+import MkEmoji from "./global/MkEmoji.vue";
+import MkCondensedLine from "./global/MkCondensedLine.vue";
+import MkCustomEmoji from "./global/MkCustomEmoji.vue";
+import MkUserName from "./global/MkUserName.vue";
+import MkEllipsis from "./global/MkEllipsis.vue";
+import MkTime from "./global/MkTime.vue";
+import MkUrl from "./global/MkUrl.vue";
+import I18n from "./global/i18n";
+import RouterView from "./global/RouterView.vue";
+import MkLoading from "./global/MkLoading.vue";
+import MkError from "./global/MkError.vue";
+import MkAd from "./global/MkAd.vue";
+import MkPageHeader from "./global/MkPageHeader.vue";
+import MkSpacer from "./global/MkSpacer.vue";
+import MkStickyContainer from "./global/MkStickyContainer.vue";
 
-export default function(app: App) {
+export default function (app: App) {
 	for (const [key, value] of Object.entries(components)) {
 		app.component(key, value);
 	}
@@ -48,7 +48,7 @@ export const components = {
 	MkStickyContainer: MkStickyContainer,
 };
 
-declare module '@vue/runtime-core' {
+declare module "@vue/runtime-core" {
 	export interface GlobalComponents {
 		I18n: typeof I18n;
 		RouterView: typeof RouterView;

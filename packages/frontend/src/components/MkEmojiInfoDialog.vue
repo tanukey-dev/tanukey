@@ -16,15 +16,14 @@
 </template>
 
 <script lang="ts" setup>
-import MkMention from './MkMention.vue';
-import MkModalWindow from '@/components/MkModalWindow.vue';
-import { host } from '@/config';
-import { i18n } from '@/i18n';
+import MkMention from "./MkMention.vue";
+import MkModalWindow from "@/components/MkModalWindow.vue";
+import { host } from "@/config";
+import { i18n } from "@/i18n";
 
 defineProps<{
-	emoji?: any,
+	emoji?: any;
 }>();
 
 let dialog = $ref(null);
-
 </script>

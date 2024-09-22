@@ -22,51 +22,57 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue';
-import { useWidgetPropsManager, Widget, WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget';
-import MarqueeText from '@/components/MkMarquee.vue';
-import { GetFormResultType } from '@/scripts/form';
-import MkContainer from '@/components/MkContainer.vue';
-import { shuffle } from '@/scripts/shuffle';
-import { url as base } from '@/config';
-import { useInterval } from '@/scripts/use-interval';
+import { ref, watch, computed } from "vue";
+import {
+	useWidgetPropsManager,
+	Widget,
+	WidgetComponentEmits,
+	WidgetComponentExpose,
+	WidgetComponentProps,
+} from "./widget";
+import MarqueeText from "@/components/MkMarquee.vue";
+import { GetFormResultType } from "@/scripts/form";
+import MkContainer from "@/components/MkContainer.vue";
+import { shuffle } from "@/scripts/shuffle";
+import { url as base } from "@/config";
+import { useInterval } from "@/scripts/use-interval";
 
-const name = 'rssTicker';
+const name = "rssTicker";
 
 const widgetPropsDef = {
 	url: {
-		type: 'string' as const,
-		default: 'http://feeds.afpbb.com/rss/afpbb/afpbbnews',
+		type: "string" as const,
+		default: "http://feeds.afpbb.com/rss/afpbb/afpbbnews",
 	},
 	shuffle: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: true,
 	},
 	refreshIntervalSec: {
-		type: 'number' as const,
+		type: "number" as const,
 		default: 60,
 	},
 	maxEntries: {
-		type: 'number' as const,
+		type: "number" as const,
 		default: 15,
 	},
 	duration: {
-		type: 'range' as const,
+		type: "range" as const,
 		default: 70,
 		step: 1,
 		min: 5,
 		max: 200,
 	},
 	reverse: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: false,
 	},
 	showHeader: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: false,
 	},
 	transparent: {
-		type: 'boolean' as const,
+		type: "boolean" as const,
 		default: false,
 	},
 };
@@ -76,7 +82,8 @@ type WidgetProps = GetFormResultType<typeof widgetPropsDef>;
 const props = defineProps<WidgetComponentProps<WidgetProps>>();
 const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 
-const { widgetProps, configure } = useWidgetPropsManager(name,
+const { widgetProps, configure } = useWidgetPropsManager(
+	name,
 	widgetPropsDef,
 	props,
 	emit,
@@ -92,8 +99,8 @@ const items = computed(() => {
 });
 const fetching = ref(true);
 const fetchEndpoint = computed(() => {
-	const url = new URL('/api/fetch-rss', base);
-	url.searchParams.set('url', widgetProps.url);
+	const url = new URL("/api/fetch-rss", base);
+	url.searchParams.set("url", widgetProps.url);
 	return url;
 });
 let intervalClear = $ref<(() => void) | undefined>();
@@ -101,11 +108,13 @@ let intervalClear = $ref<(() => void) | undefined>();
 let key = $ref(0);
 
 const tick = () => {
-	if (document.visibilityState === 'hidden' && rawItems.value.length !== 0) return;
+	if (document.visibilityState === "hidden" && rawItems.value.length !== 0)
+		return;
 
-	window.fetch(fetchEndpoint.value, {})
-		.then(res => res.json())
-		.then(feed => {
+	window
+		.fetch(fetchEndpoint.value, {})
+		.then((res) => res.json())
+		.then((feed) => {
 			rawItems.value = feed.items ?? [];
 			fetching.value = false;
 			key++;
@@ -113,15 +122,23 @@ const tick = () => {
 };
 
 watch(() => fetchEndpoint, tick);
-watch(() => widgetProps.refreshIntervalSec, () => {
-	if (intervalClear) {
-		intervalClear();
-	}
-	intervalClear = useInterval(tick, Math.max(10000, widgetProps.refreshIntervalSec * 1000), {
-		immediate: true,
-		afterMounted: true,
-	});
-}, { immediate: true });
+watch(
+	() => widgetProps.refreshIntervalSec,
+	() => {
+		if (intervalClear) {
+			intervalClear();
+		}
+		intervalClear = useInterval(
+			tick,
+			Math.max(10000, widgetProps.refreshIntervalSec * 1000),
+			{
+				immediate: true,
+				afterMounted: true,
+			},
+		);
+	},
+	{ immediate: true },
+);
 
 defineExpose<WidgetComponentExpose>({
 	name,

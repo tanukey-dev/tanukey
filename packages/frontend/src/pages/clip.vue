@@ -21,46 +21,52 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, provide } from 'vue';
-import * as misskey from 'misskey-js';
-import MkNotes from '@/components/MkNotes.vue';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { url } from '@/config';
-import MkButton from '@/components/MkButton.vue';
-import { clipsCache } from '@/cache';
+import { computed, watch, provide } from "vue";
+import * as misskey from "misskey-js";
+import MkNotes from "@/components/MkNotes.vue";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { url } from "@/config";
+import MkButton from "@/components/MkButton.vue";
+import { clipsCache } from "@/cache";
 
 const props = defineProps<{
-	clipId: string,
+	clipId: string;
 }>();
 
 let clip: misskey.entities.Clip = $ref<misskey.entities.Clip>();
 let favorited = $ref(false);
 const pagination = {
-	endpoint: 'clips/notes' as const,
+	endpoint: "clips/notes" as const,
 	limit: 10,
 	params: computed(() => ({
 		clipId: props.clipId,
 	})),
 };
 
-const isOwned: boolean | null = $computed<boolean | null>(() => $i && clip && ($i.id === clip.userId));
+const isOwned: boolean | null = $computed<boolean | null>(
+	() => $i && clip && $i.id === clip.userId,
+);
 
-watch(() => props.clipId, async () => {
-	clip = await os.api('clips/show', {
-		clipId: props.clipId,
-	});
-	favorited = clip.isFavorited;
-}, {
-	immediate: true,
-}); 
+watch(
+	() => props.clipId,
+	async () => {
+		clip = await os.api("clips/show", {
+			clipId: props.clipId,
+		});
+		favorited = clip.isFavorited;
+	},
+	{
+		immediate: true,
+	},
+);
 
-provide('currentClip', $$(clip));
+provide("currentClip", $$(clip));
 
 function favorite() {
-	os.apiWithDialog('clips/favorite', {
+	os.apiWithDialog("clips/favorite", {
 		clipId: props.clipId,
 	}).then(() => {
 		favorited = true;
@@ -69,82 +75,100 @@ function favorite() {
 
 async function unfavorite() {
 	const confirm = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		text: i18n.ts.unfavoriteConfirm,
 	});
 	if (confirm.canceled) return;
-	os.apiWithDialog('clips/unfavorite', {
+	os.apiWithDialog("clips/unfavorite", {
 		clipId: props.clipId,
 	}).then(() => {
 		favorited = false;
 	});
 }
 
-const headerActions = $computed(() => clip && isOwned ? [{
-	icon: 'ti ti-pencil',
-	text: i18n.ts.edit,
-	handler: async (): Promise<void> => {
-		const { canceled, result } = await os.form(clip.name, {
-			name: {
-				type: 'string',
-				label: i18n.ts.name,
-				default: clip.name,
-			},
-			description: {
-				type: 'string',
-				required: false,
-				multiline: true,
-				label: i18n.ts.description,
-				default: clip.description,
-			},
-			isPublic: {
-				type: 'boolean',
-				label: i18n.ts.public,
-				default: clip.isPublic,
-			},
-		});
-		if (canceled) return;
+const headerActions = $computed(() =>
+	clip && isOwned
+		? [
+				{
+					icon: "ti ti-pencil",
+					text: i18n.ts.edit,
+					handler: async (): Promise<void> => {
+						const { canceled, result } = await os.form(clip.name, {
+							name: {
+								type: "string",
+								label: i18n.ts.name,
+								default: clip.name,
+							},
+							description: {
+								type: "string",
+								required: false,
+								multiline: true,
+								label: i18n.ts.description,
+								default: clip.description,
+							},
+							isPublic: {
+								type: "boolean",
+								label: i18n.ts.public,
+								default: clip.isPublic,
+							},
+						});
+						if (canceled) return;
 
-		os.apiWithDialog('clips/update', {
-			clipId: clip.id,
-			...result,
-		});
+						os.apiWithDialog("clips/update", {
+							clipId: clip.id,
+							...result,
+						});
 
-		clipsCache.delete();
-	},
-}, ...(clip.isPublic ? [{
-	icon: 'ti ti-share',
-	text: i18n.ts.share,
-	handler: async (): Promise<void> => {
-		navigator.share({
-			title: clip.name,
-			text: clip.description,
-			url: `${url}/clips/${clip.id}`,
-		});
-	},
-}] : []), {
-	icon: 'ti ti-trash',
-	text: i18n.ts.delete,
-	danger: true,
-	handler: async (): Promise<void> => {
-		const { canceled } = await os.confirm({
-			type: 'warning',
-			text: i18n.t('deleteAreYouSure', { x: clip.name }),
-		});
-		if (canceled) return;
+						clipsCache.delete();
+					},
+				},
+				...(clip.isPublic
+					? [
+							{
+								icon: "ti ti-share",
+								text: i18n.ts.share,
+								handler: async (): Promise<void> => {
+									navigator.share({
+										title: clip.name,
+										text: clip.description,
+										url: `${url}/clips/${clip.id}`,
+									});
+								},
+							},
+						]
+					: []),
+				{
+					icon: "ti ti-trash",
+					text: i18n.ts.delete,
+					danger: true,
+					handler: async (): Promise<void> => {
+						const { canceled } = await os.confirm({
+							type: "warning",
+							text: i18n.t("deleteAreYouSure", { x: clip.name }),
+						});
+						if (canceled) return;
 
-		await os.apiWithDialog('clips/delete', {
-			clipId: clip.id,
-		});
+						await os.apiWithDialog("clips/delete", {
+							clipId: clip.id,
+						});
 
-		clipsCache.delete();
-	},
-}] : null);
+						clipsCache.delete();
+					},
+				},
+			]
+		: null,
+);
 
-definePageMetadata(computed(() => clip ? {
-	title: clip.name,
-	icon: 'ti ti-paperclip',
-} : null));
+definePageMetadata(
+	computed(() =>
+		clip
+			? {
+					title: clip.name,
+					icon: "ti ti-paperclip",
+				}
+			: null,
+	),
+);
 </script>
 
 <style lang="scss" module>

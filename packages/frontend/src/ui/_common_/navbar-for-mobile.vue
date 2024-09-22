@@ -41,16 +41,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, toRef } from 'vue';
-import { openInstanceMenu } from './common';
-import * as os from '@/os';
-import { navbarItemDef } from '@/navbar';
-import { $i, openAccountMenu as openAccountMenu_ } from '@/account';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
-import { instance } from '@/instance';
+import { computed, defineAsyncComponent, toRef } from "vue";
+import { openInstanceMenu } from "./common";
+import * as os from "@/os";
+import { navbarItemDef } from "@/navbar";
+import { $i, openAccountMenu as openAccountMenu_ } from "@/account";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
 
-const menu = toRef(defaultStore.state, 'menu');
+const menu = toRef(defaultStore.state, "menu");
 const otherMenuItemIndicated = computed(() => {
 	for (const def in navbarItemDef) {
 		if (menu.value.includes(def)) continue;
@@ -60,14 +60,21 @@ const otherMenuItemIndicated = computed(() => {
 });
 
 function openAccountMenu(ev: MouseEvent) {
-	openAccountMenu_({
-		withExtraOperation: true,
-	}, ev);
+	openAccountMenu_(
+		{
+			withExtraOperation: true,
+		},
+		ev,
+	);
 }
 
 function more() {
-	os.popup(defineAsyncComponent(() => import('@/components/MkLaunchPad.vue')), {}, {
-	}, 'closed');
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkLaunchPad.vue")),
+		{},
+		{},
+		"closed",
+	);
 }
 </script>
 

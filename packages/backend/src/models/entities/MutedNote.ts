@@ -1,11 +1,18 @@
-import { Entity, Index, JoinColumn, Column, ManyToOne, PrimaryColumn } from 'typeorm';
-import { id } from '../id.js';
-import { mutedNoteReasons } from '../../types.js';
-import { Note } from './Note.js';
-import { User } from './User.js';
+import {
+	Entity,
+	Index,
+	JoinColumn,
+	Column,
+	ManyToOne,
+	PrimaryColumn,
+} from "typeorm";
+import { id } from "../id.js";
+import { mutedNoteReasons } from "../../types.js";
+import { Note } from "./Note.js";
+import { User } from "./User.js";
 
 @Entity()
-@Index(['noteId', 'userId'], { unique: true })
+@Index(["noteId", "userId"], { unique: true })
 export class MutedNote {
 	@PrimaryColumn(id())
 	public id: string;
@@ -13,12 +20,12 @@ export class MutedNote {
 	@Index()
 	@Column({
 		...id(),
-		comment: 'The note ID.',
+		comment: "The note ID.",
 	})
-	public noteId: Note['id'];
+	public noteId: Note["id"];
 
-	@ManyToOne(type => Note, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => Note, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public note: Note | null;
@@ -26,12 +33,12 @@ export class MutedNote {
 	@Index()
 	@Column({
 		...id(),
-		comment: 'The user ID.',
+		comment: "The user ID.",
 	})
-	public userId: User['id'];
+	public userId: User["id"];
 
-	@ManyToOne(type => User, {
-		onDelete: 'CASCADE',
+	@ManyToOne((type) => User, {
+		onDelete: "CASCADE",
 	})
 	@JoinColumn()
 	public user: User | null;
@@ -40,9 +47,9 @@ export class MutedNote {
 	 * ミュートされた理由。
 	 */
 	@Index()
-	@Column('enum', {
+	@Column("enum", {
 		enum: mutedNoteReasons,
-		comment: 'The reason of the MutedNote.',
+		comment: "The reason of the MutedNote.",
 	})
-	public reason: typeof mutedNoteReasons[number];
+	public reason: (typeof mutedNoteReasons)[number];
 }

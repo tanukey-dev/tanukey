@@ -12,10 +12,10 @@
 </template>
 
 <script lang="ts" setup>
-import MkHeatmap from '@/components/MkHeatmap.vue';
-import MkSelect from '@/components/MkSelect.vue';
+import MkHeatmap from "@/components/MkHeatmap.vue";
+import MkSelect from "@/components/MkSelect.vue";
 
-let src = $ref('active-users');
+let src = $ref("active-users");
 </script>
 
 <style lang="scss" module>

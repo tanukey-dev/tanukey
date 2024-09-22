@@ -24,19 +24,19 @@
 </template>
 
 <script lang="ts" setup>
-import { onActivated } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import MkAvatars from '@/components/MkAvatars.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { userListsCache } from '@/cache';
-import { infoImageUrl } from '@/instance';
+import { onActivated } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import MkAvatars from "@/components/MkAvatars.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { userListsCache } from "@/cache";
+import { infoImageUrl } from "@/instance";
 
 const items = $computed(() => userListsCache.value.value ?? []);
 
 function fetch() {
-	userListsCache.fetch(() => os.api('users/lists/list'));
+	userListsCache.fetch(() => os.api("users/lists/list"));
 }
 
 fetch();
@@ -46,28 +46,30 @@ async function create() {
 		title: i18n.ts.enterListName,
 	});
 	if (canceled) return;
-	await os.apiWithDialog('users/lists/create', { name: name });
+	await os.apiWithDialog("users/lists/create", { name: name });
 	userListsCache.delete();
 	fetch();
 }
 
-const headerActions = $computed(() => [{
-	asFullButton: true,
-	icon: 'ti ti-refresh',
-	text: i18n.ts.reload,
-	handler: () => {
-		userListsCache.delete();
-		fetch();
+const headerActions = $computed(() => [
+	{
+		asFullButton: true,
+		icon: "ti ti-refresh",
+		text: i18n.ts.reload,
+		handler: () => {
+			userListsCache.delete();
+			fetch();
+		},
 	},
-}]);
+]);
 
 const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.manageLists,
-	icon: 'ti ti-list',
+	icon: "ti ti-list",
 	action: {
-		icon: 'ti ti-plus',
+		icon: "ti ti-plus",
 		handler: create,
 	},
 });

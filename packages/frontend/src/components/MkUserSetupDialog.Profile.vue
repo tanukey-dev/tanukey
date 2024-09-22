@@ -25,23 +25,23 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
-import { instance } from '@/instance';
-import { i18n } from '@/i18n';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkTextarea from '@/components/MkTextarea.vue';
-import FormSlot from '@/components/form/slot.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import { chooseFileFromPc } from '@/scripts/select-file';
-import * as os from '@/os';
-import { $i } from '@/account';
+import { computed, ref, watch } from "vue";
+import { instance } from "@/instance";
+import { i18n } from "@/i18n";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import FormSlot from "@/components/form/slot.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import { chooseFileFromPc } from "@/scripts/select-file";
+import * as os from "@/os";
+import { $i } from "@/account";
 
-const name = ref($i.name ?? '');
-const description = ref($i.description ?? '');
+const name = ref($i.name ?? "");
+const description = ref($i.description ?? "");
 
 watch(name, () => {
-	os.apiWithDialog('i/update', {
+	os.apiWithDialog("i/update", {
 		// 空文字列をnullにしたいので??は使うな
 		// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 		name: name.value || null,
@@ -49,7 +49,7 @@ watch(name, () => {
 });
 
 watch(description, () => {
-	os.apiWithDialog('i/update', {
+	os.apiWithDialog("i/update", {
 		// 空文字列をnullにしたいので??は使うな
 		// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 		description: description.value || null,
@@ -63,8 +63,8 @@ function setAvatar(ev) {
 		let originalOrCropped = file;
 
 		const { canceled } = await os.confirm({
-			type: 'question',
-			text: i18n.t('cropImageAsk'),
+			type: "question",
+			text: i18n.t("cropImageAsk"),
 			okText: i18n.ts.cropYes,
 			cancelText: i18n.ts.cropNo,
 		});
@@ -75,7 +75,7 @@ function setAvatar(ev) {
 			});
 		}
 
-		const i = await os.apiWithDialog('i/update', {
+		const i = await os.apiWithDialog("i/update", {
 			avatarId: originalOrCropped.id,
 		});
 		$i.avatarId = i.avatarId;

@@ -19,8 +19,16 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, nextTick, ref, shallowRef, watch, computed, toRefs } from 'vue';
-import { i18n } from '@/i18n';
+import {
+	onMounted,
+	nextTick,
+	ref,
+	shallowRef,
+	watch,
+	computed,
+	toRefs,
+} from "vue";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	modelValue: string | null;
@@ -30,7 +38,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'update:modelValue', value: string): void;
+	(ev: "update:modelValue", value: string): void;
 }>();
 
 const { modelValue } = toRefs(props);
@@ -38,7 +46,7 @@ const v = ref(modelValue.value);
 const inputEl = shallowRef<HTMLElement>();
 
 const onInput = (ev: KeyboardEvent) => {
-	emit('update:modelValue', v.value);
+	emit("update:modelValue", v.value);
 };
 </script>
 

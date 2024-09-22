@@ -41,24 +41,30 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, computed, watch, nextTick } from 'vue';
-import { openInstanceMenu } from './_common_/common';
+import {
+	defineAsyncComponent,
+	onMounted,
+	computed,
+	watch,
+	nextTick,
+} from "vue";
+import { openInstanceMenu } from "./_common_/common";
 // import { host } from '@/config';
-import * as os from '@/os';
-import { navbarItemDef } from '@/navbar';
-import { openAccountMenu as openAccountMenu_, $i } from '@/account';
-import MkButton from '@/components/MkButton.vue';
+import * as os from "@/os";
+import { navbarItemDef } from "@/navbar";
+import { openAccountMenu as openAccountMenu_, $i } from "@/account";
+import MkButton from "@/components/MkButton.vue";
 // import { StickySidebar } from '@/scripts/sticky-sidebar';
 // import { mainRouter } from '@/router';
 //import MisskeyLogo from '@assets/client/misskey.svg';
-import { defaultStore } from '@/store';
-import { instance } from '@/instance';
-import { i18n } from '@/i18n';
+import { defaultStore } from "@/store";
+import { instance } from "@/instance";
+import { i18n } from "@/i18n";
 
 const WINDOW_THRESHOLD = 1400;
 
 const menu = $ref(defaultStore.state.menu);
-const menuDisplay = computed(defaultStore.makeGetterSetter('menuDisplay'));
+const menuDisplay = computed(defaultStore.makeGetterSetter("menuDisplay"));
 const otherNavItemIndicated = computed<boolean>(() => {
 	for (const def in navbarItemDef) {
 		if (menu.includes(def)) continue;
@@ -73,26 +79,34 @@ let iconOnly = $ref(false);
 let settingsWindowed = $ref(false);
 
 function calcViewState() {
-	iconOnly = (window.innerWidth <= WINDOW_THRESHOLD) || (menuDisplay.value === 'sideIcon');
-	settingsWindowed = (window.innerWidth > WINDOW_THRESHOLD);
+	iconOnly =
+		window.innerWidth <= WINDOW_THRESHOLD || menuDisplay.value === "sideIcon";
+	settingsWindowed = window.innerWidth > WINDOW_THRESHOLD;
 }
 
 function more(ev: MouseEvent) {
-	os.popup(defineAsyncComponent(() => import('@/components/MkLaunchPad.vue')), {
-		src: ev.currentTarget ?? ev.target,
-	}, {}, 'closed');
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkLaunchPad.vue")),
+		{
+			src: ev.currentTarget ?? ev.target,
+		},
+		{},
+		"closed",
+	);
 }
 
 function openAccountMenu(ev: MouseEvent) {
-	openAccountMenu_({
-		withExtraOperation: true,
-	}, ev);
+	openAccountMenu_(
+		{
+			withExtraOperation: true,
+		},
+		ev,
+	);
 }
 
 watch(defaultStore.reactiveState.menuDisplay, () => {
 	calcViewState();
 });
-
 </script>
 
 <style lang="scss" scoped>

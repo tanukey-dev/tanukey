@@ -9,12 +9,12 @@
 </template>
 
 <script lang="ts" setup>
-import { toUnicode } from 'punycode';
-import { } from 'vue';
-import tinycolor from 'tinycolor2';
-import { host as localHost } from '@/config';
-import { $i } from '@/account';
-import { defaultStore } from '@/store';
+import { toUnicode } from "punycode";
+import {} from "vue";
+import tinycolor from "tinycolor2";
+import { host as localHost } from "@/config";
+import { $i } from "@/account";
+import { defaultStore } from "@/store";
 
 const props = defineProps<{
 	username: string;
@@ -22,15 +22,23 @@ const props = defineProps<{
 	external?: boolean;
 }>();
 
-const canonical = props.host === localHost ? `@${props.username}` : `@${props.username}@${toUnicode(props.host)}`;
+const canonical =
+	props.host === localHost
+		? `@${props.username}`
+		: `@${props.username}@${toUnicode(props.host)}`;
 
 const url = `/${canonical}`;
 
-const isMe = $i && (
-	`@${props.username}@${toUnicode(props.host)}` === `@${$i.username}@${toUnicode(localHost)}`.toLowerCase()
-);
+const isMe =
+	$i &&
+	`@${props.username}@${toUnicode(props.host)}` ===
+		`@${$i.username}@${toUnicode(localHost)}`.toLowerCase();
 
-const bg = tinycolor(getComputedStyle(document.documentElement).getPropertyValue(isMe ? '--mentionMe' : '--mention'));
+const bg = tinycolor(
+	getComputedStyle(document.documentElement).getPropertyValue(
+		isMe ? "--mentionMe" : "--mention",
+	),
+);
 bg.setAlpha(0.1);
 const bgCss = bg.toRgbString();
 </script>

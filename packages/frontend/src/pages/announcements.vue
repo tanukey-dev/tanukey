@@ -35,17 +35,17 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import MkPagination from '@/components/MkPagination.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { $i, updateAccount } from '@/account';
+import { ref } from "vue";
+import MkPagination from "@/components/MkPagination.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { $i, updateAccount } from "@/account";
 
 const paginationCurrent = {
-	endpoint: 'announcements' as const,
+	endpoint: "announcements" as const,
 	limit: 10,
 	params: {
 		isActive: true,
@@ -53,7 +53,7 @@ const paginationCurrent = {
 };
 
 const paginationPast = {
-	endpoint: 'announcements' as const,
+	endpoint: "announcements" as const,
 	limit: 10,
 	params: {
 		isActive: false,
@@ -62,44 +62,51 @@ const paginationPast = {
 
 const paginationEl = ref<InstanceType<typeof MkPagination>>();
 
-const tab = ref('current');
+const tab = ref("current");
 
 async function read(announcement) {
 	if (announcement.needConfirmationToRead) {
 		const confirm = await os.confirm({
-			type: 'question',
+			type: "question",
 			title: i18n.ts._announcement.readConfirmTitle,
-			text: i18n.t('_announcement.readConfirmText', { title: announcement.title }),
+			text: i18n.t("_announcement.readConfirmText", {
+				title: announcement.title,
+			}),
 		});
 		if (confirm.canceled) return;
 	}
 
 	if (!paginationEl.value) return;
-	paginationEl.value.updateItem(announcement.id, a => {
+	paginationEl.value.updateItem(announcement.id, (a) => {
 		a.isRead = true;
 		return a;
 	});
-	os.api('i/read-announcement', { announcementId: announcement.id });
+	os.api("i/read-announcement", { announcementId: announcement.id });
 	updateAccount({
-		unreadAnnouncements: $i!.unreadAnnouncements.filter(a => a.id !== announcement.id),
+		unreadAnnouncements: $i!.unreadAnnouncements.filter(
+			(a) => a.id !== announcement.id,
+		),
 	});
 }
 
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => [{
-	key: 'current',
-	title: i18n.ts.currentAnnouncements,
-	icon: 'ti ti-flare',
-}, {
-	key: 'past',
-	title: i18n.ts.pastAnnouncements,
-	icon: 'ti ti-point',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "current",
+		title: i18n.ts.currentAnnouncements,
+		icon: "ti ti-flare",
+	},
+	{
+		key: "past",
+		title: i18n.ts.pastAnnouncements,
+		icon: "ti ti-point",
+	},
+]);
 
 definePageMetadata({
 	title: i18n.ts.announcements,
-	icon: 'ti ti-speakerphone',
+	icon: "ti ti-speakerphone",
 });
 </script>
 

@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import si from 'systeminformation';
-import Xev from 'xev';
-import * as osUtils from 'os-utils';
-import { bindThis } from '@/decorators.js';
-import type { OnApplicationShutdown } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
+import si from "systeminformation";
+import Xev from "xev";
+import * as osUtils from "os-utils";
+import { bindThis } from "@/decorators.js";
+import type { OnApplicationShutdown } from "@nestjs/common";
 
 const ev = new Xev();
 
@@ -16,9 +16,7 @@ const round = (num: number) => Math.round(num * 10) / 10;
 export class ServerStatsService implements OnApplicationShutdown {
 	private intervalId: NodeJS.Timer;
 
-	constructor(
-	) {
-	}
+	constructor() {}
 
 	/**
 	 * Report server stats regularly
@@ -27,7 +25,7 @@ export class ServerStatsService implements OnApplicationShutdown {
 	public start(): void {
 		const log = [] as any[];
 
-		ev.on('requestServerStatsLog', x => {
+		ev.on("requestServerStatsLog", (x) => {
 			ev.emit(`serverStatsLog:${x.id}`, log.slice(0, x.length ?? 50));
 		});
 
@@ -52,7 +50,7 @@ export class ServerStatsService implements OnApplicationShutdown {
 					w: round(Math.max(0, fsStats.wIO_sec ?? 0)),
 				},
 			};
-			ev.emit('serverStats', stats);
+			ev.emit("serverStats", stats);
 			log.unshift(stats);
 			if (log.length > 200) log.pop();
 		};

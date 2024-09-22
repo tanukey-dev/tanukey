@@ -228,55 +228,59 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue';
-import XHeader from './_header_.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkRange from '@/components/MkRange.vue';
-import MkRolePreview from '@/components/MkRolePreview.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { instance } from '@/instance';
-import { useRouter } from '@/router';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
-import { ROLE_POLICIES } from '@/const';
+import { computed, reactive, ref } from "vue";
+import XHeader from "./_header_.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkRange from "@/components/MkRange.vue";
+import MkRolePreview from "@/components/MkRolePreview.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { instance } from "@/instance";
+import { useRouter } from "@/router";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import { ROLE_POLICIES } from "@/const";
 
 const router = useRouter();
-const baseRoleQ = ref('');
+const baseRoleQ = ref("");
 
-const roles = await os.api('admin/roles/list');
+const roles = await os.api("admin/roles/list");
 
-const policies = reactive<Record<typeof ROLE_POLICIES[number], any>>({});
+const policies = reactive<Record<(typeof ROLE_POLICIES)[number], any>>({});
 for (const ROLE_POLICY of ROLE_POLICIES) {
 	policies[ROLE_POLICY] = instance.policies[ROLE_POLICY];
 }
 
 function matchQuery(keywords: string[]): boolean {
 	if (baseRoleQ.value.trim().length === 0) return true;
-	return keywords.some(keyword => keyword.toLowerCase().includes(baseRoleQ.value.toLowerCase()));
+	return keywords.some((keyword) =>
+		keyword.toLowerCase().includes(baseRoleQ.value.toLowerCase()),
+	);
 }
 
 async function updateBaseRole() {
-	await os.apiWithDialog('admin/roles/update-default-policies', {
+	await os.apiWithDialog("admin/roles/update-default-policies", {
 		policies,
 	});
 }
 
 function create() {
-	router.push('/admin/roles/new');
+	router.push("/admin/roles/new");
 }
 
 const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => ({
-	title: i18n.ts.roles,
-	icon: 'ti ti-badges',
-})));
+definePageMetadata(
+	computed(() => ({
+		title: i18n.ts.roles,
+		icon: "ti ti-badges",
+	})),
+);
 </script>
 
 <style lang="scss" module>

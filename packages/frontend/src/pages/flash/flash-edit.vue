@@ -24,14 +24,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkTextarea from '@/components/MkTextarea.vue';
-import MkInput from '@/components/MkInput.vue';
-import { useRouter } from '@/router';
+import { computed } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkTextarea from "@/components/MkTextarea.vue";
+import MkInput from "@/components/MkInput.vue";
+import { useRouter } from "@/router";
 
 const PRESET_DEFAULT = `/// @ 0.15.0
 
@@ -355,43 +355,51 @@ const props = defineProps<{
 let flash = $ref(null);
 
 if (props.id) {
-	flash = await os.api('flash/show', {
+	flash = await os.api("flash/show", {
 		flashId: props.id,
 	});
 }
 
-let title = $ref(flash?.title ?? 'New Play');
-let summary = $ref(flash?.summary ?? '');
+let title = $ref(flash?.title ?? "New Play");
+let summary = $ref(flash?.summary ?? "");
 let permissions = $ref(flash?.permissions ?? []);
 let script = $ref(flash?.script ?? PRESET_DEFAULT);
 
 function selectPreset(ev: MouseEvent) {
-	os.popupMenu([{
-		text: 'Omikuji',
-		action: () => {
-			script = PRESET_OMIKUJI;
-		},
-	}, {
-		text: 'Shuffle',
-		action: () => {
-			script = PRESET_SHUFFLE;
-		},
-	}, {
-		text: 'Quiz',
-		action: () => {
-			script = PRESET_QUIZ;
-		},
-	}, {
-		text: 'Timeline viewer',
-		action: () => {
-			script = PRESET_TIMELINE;
-		},
-	}], ev.currentTarget ?? ev.target);
+	os.popupMenu(
+		[
+			{
+				text: "Omikuji",
+				action: () => {
+					script = PRESET_OMIKUJI;
+				},
+			},
+			{
+				text: "Shuffle",
+				action: () => {
+					script = PRESET_SHUFFLE;
+				},
+			},
+			{
+				text: "Quiz",
+				action: () => {
+					script = PRESET_QUIZ;
+				},
+			},
+			{
+				text: "Timeline viewer",
+				action: () => {
+					script = PRESET_TIMELINE;
+				},
+			},
+		],
+		ev.currentTarget ?? ev.target,
+	);
 }
 
 async function save() {
 	if (flash) {
-		os.apiWithDialog('flash/update', {
+		os.apiWithDialog("flash/update", {
 			flashId: props.id,
 			title,
 			summary,
@@ -399,20 +407,20 @@ async function save() {
 			script,
 		});
 	} else {
-		const created = await os.apiWithDialog('flash/create', {
+		const created = await os.apiWithDialog("flash/create", {
 			title,
 			summary,
 			permissions,
 			script,
 		});
-		router.push('/play/' + created.id + '/edit');
+		router.push("/play/" + created.id + "/edit");
 	}
 }
 
 function show() {
 	if (flash == null) {
 		os.alert({
-			text: 'Please save',
+			text: "Please save",
 		});
 	} else {
 		os.pageWindow(`/play/${flash.id}`);
@@ -421,24 +429,30 @@ function show() {
 
 async function del() {
 	const { canceled } = await os.confirm({
-		type: 'warning',
-		text: i18n.t('deleteAreYouSure', { x: flash.title }),
+		type: "warning",
+		text: i18n.t("deleteAreYouSure", { x: flash.title }),
 	});
 	if (canceled) return;
 
-	await os.apiWithDialog('flash/delete', {
+	await os.apiWithDialog("flash/delete", {
 		flashId: props.id,
 	});
-	router.push('/play');
+	router.push("/play");
 }
 
 const headerActions = $computed(() => []);
 
 const headerTabs = $computed(() => []);
 
-definePageMetadata(computed(() => flash ? {
-	title: i18n.ts._play.edit + ': ' + flash.title,
-} : {
-	title: i18n.ts._play.new,
-}));
+definePageMetadata(
+	computed(() =>
+		flash
+			? {
+					title: i18n.ts._play.edit + ": " + flash.title,
+				}
+			: {
+					title: i18n.ts._play.new,
+				},
+	),
+);
 </script>

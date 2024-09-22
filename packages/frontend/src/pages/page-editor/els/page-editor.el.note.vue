@@ -18,37 +18,41 @@
 
 <script lang="ts" setup>
 /* eslint-disable vue/no-mutating-props */
-import { watch } from 'vue';
-import XContainer from '../page-editor.container.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkNote from '@/components/MkNote.vue';
-import MkNoteDetailed from '@/components/MkNoteDetailed.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import { watch } from "vue";
+import XContainer from "../page-editor.container.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkNote from "@/components/MkNote.vue";
+import MkNoteDetailed from "@/components/MkNoteDetailed.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
-	modelValue: any
+	modelValue: any;
 }>();
 
 const emit = defineEmits<{
-	(ev: 'update:modelValue', value: any): void;
+	(ev: "update:modelValue", value: any): void;
 }>();
 
 let id: any = $ref(props.modelValue.note);
 let note: any = $ref(null);
 
-watch($$(id), async () => {
-	if (id && (id.startsWith('http://') || id.startsWith('https://'))) {
-		id = (id.endsWith('/') ? id.slice(0, -1) : id).split('/').pop();
-	}
+watch(
+	$$(id),
+	async () => {
+		if (id && (id.startsWith("http://") || id.startsWith("https://"))) {
+			id = (id.endsWith("/") ? id.slice(0, -1) : id).split("/").pop();
+		}
 
-	emit('update:modelValue', {
-		...props.modelValue,
-		note: id,
-	});
-	note = await os.api('notes/show', { noteId: id });
-}, {
-	immediate: true,
-});
+		emit("update:modelValue", {
+			...props.modelValue,
+			note: id,
+		});
+		note = await os.api("notes/show", { noteId: id });
+	},
+	{
+		immediate: true,
+	},
+);
 </script>

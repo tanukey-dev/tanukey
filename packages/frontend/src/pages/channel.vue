@@ -62,26 +62,26 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, onActivated, onDeactivated, onMounted } from 'vue';
-import MkPostForm from '@/components/MkPostForm.vue';
-import MkTimeline from '@/components/MkTimeline.vue';
-import XChannelFollowButton from '@/components/MkChannelFollowButton.vue';
-import * as misskey from 'misskey-js';
-import * as os from '@/os';
-import { useRouter } from '@/router';
-import { $i, iAmModerator } from '@/account';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import { deviceKind } from '@/scripts/device-kind';
-import MkNotes from '@/components/MkNotes.vue';
-import { url, host } from '@/config';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
-import { defaultStore } from '@/store';
-import MkNote from '@/components/MkNote.vue';
-import MkInfo from '@/components/MkInfo.vue';
-import MkMention from '@/components/MkMention.vue';
-import MkFoldableSection from '@/components/MkFoldableSection.vue';
+import { computed, watch, onActivated, onDeactivated, onMounted } from "vue";
+import MkPostForm from "@/components/MkPostForm.vue";
+import MkTimeline from "@/components/MkTimeline.vue";
+import XChannelFollowButton from "@/components/MkChannelFollowButton.vue";
+import * as misskey from "misskey-js";
+import * as os from "@/os";
+import { useRouter } from "@/router";
+import { $i, iAmModerator } from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { deviceKind } from "@/scripts/device-kind";
+import MkNotes from "@/components/MkNotes.vue";
+import { url, host } from "@/config";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
+import { defaultStore } from "@/store";
+import MkNote from "@/components/MkNote.vue";
+import MkInfo from "@/components/MkInfo.vue";
+import MkMention from "@/components/MkMention.vue";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
 
 const router = useRouter();
 
@@ -89,15 +89,15 @@ const props = defineProps<{
 	channelId: string;
 }>();
 
-let tab = $ref('timeline');
+let tab = $ref("timeline");
 let channel = $ref<null | misskey.entities.Channel>(null);
 let favorited = $ref(false);
-let searchQuery = $ref('');
+let searchQuery = $ref("");
 let searchPagination = $ref();
-let searchKey = $ref('');
+let searchKey = $ref("");
 let moderators = $ref(null);
 const featuredPagination = $computed(() => ({
-	endpoint: 'notes/featured' as const,
+	endpoint: "notes/featured" as const,
 	limit: 10,
 	offsetMode: true,
 	params: {
@@ -107,10 +107,10 @@ const featuredPagination = $computed(() => ({
 const tags = computed(() => {
 	return channel?.tags;
 });
-let postChannel = computed(defaultStore.makeGetterSetter('postChannel'));
+let postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
 
 onActivated(async () => {
-	postChannel.value = await os.api('channels/show', {
+	postChannel.value = await os.api("channels/show", {
 		channelId: props.channelId,
 	});
 });
@@ -119,33 +119,37 @@ onDeactivated(() => {
 	postChannel.value = null;
 });
 
-watch(() => props.channelId, async () => {
-	channel = await os.api('channels/show', {
-		channelId: props.channelId,
-	});
-	favorited = channel.isFavorited;
-	if (favorited || channel.isFollowing) {
-		tab = 'timeline';
-	}
+watch(
+	() => props.channelId,
+	async () => {
+		channel = await os.api("channels/show", {
+			channelId: props.channelId,
+		});
+		favorited = channel.isFavorited;
+		if (favorited || channel.isFollowing) {
+			tab = "timeline";
+		}
 
-	let userIds: string[] = [];
-	if (channel && channel.userId) {
-		userIds.push(channel.userId);
-	}
-	if (channel && channel.moderatorUserIds.length > 0) {
-		userIds.push(...channel.moderatorUserIds);
-	}
-	moderators = await os.api('users/show', {
-		userIds: userIds,
-	});
-}, { immediate: true });
+		let userIds: string[] = [];
+		if (channel && channel.userId) {
+			userIds.push(channel.userId);
+		}
+		if (channel && channel.moderatorUserIds.length > 0) {
+			userIds.push(...channel.moderatorUserIds);
+		}
+		moderators = await os.api("users/show", {
+			userIds: userIds,
+		});
+	},
+	{ immediate: true },
+);
 
 function edit() {
 	router.push(`/channels/${channel.id}/edit`);
 }
 
 function favorite() {
-	os.apiWithDialog('channels/favorite', {
+	os.apiWithDialog("channels/favorite", {
 		channelId: channel.id,
 	}).then(() => {
 		favorited = true;
@@ -154,11 +158,11 @@ function favorite() {
 
 async function unfavorite() {
 	const confirm = await os.confirm({
-		type: 'warning',
+		type: "warning",
 		text: i18n.ts.unfavoriteConfirm,
 	});
 	if (confirm.canceled) return;
-	os.apiWithDialog('channels/unfavorite', {
+	os.apiWithDialog("channels/unfavorite", {
 		channelId: channel.id,
 	}).then(() => {
 		favorited = false;
@@ -171,7 +175,7 @@ async function search() {
 	if (query == null) return;
 
 	searchPagination = {
-		endpoint: 'notes/search',
+		endpoint: "notes/search",
 		limit: 10,
 		params: {
 			query: query,
@@ -186,7 +190,7 @@ async function search() {
 const headerActions = $computed(() => {
 	if (channel) {
 		const share = {
-			icon: 'ti ti-share',
+			icon: "ti ti-share",
 			text: i18n.ts.share,
 			handler: async (): Promise<void> => {
 				navigator.share({
@@ -197,39 +201,59 @@ const headerActions = $computed(() => {
 			},
 		};
 
-		const canEdit = ($i && ($i.id === channel.userId || channel.moderatorUserIds.includes($i.id))) || iAmModerator;
-		return canEdit ? [share, {
-			icon: 'ti ti-settings',
-			text: i18n.ts.edit,
-			handler: edit,
-		}] : [share];
+		const canEdit =
+			($i &&
+				($i.id === channel.userId ||
+					channel.moderatorUserIds.includes($i.id))) ||
+			iAmModerator;
+		return canEdit
+			? [
+					share,
+					{
+						icon: "ti ti-settings",
+						text: i18n.ts.edit,
+						handler: edit,
+					},
+				]
+			: [share];
 	} else {
 		return null;
 	}
 });
 
-const headerTabs = $computed(() => [{
-	key: 'overview',
-	title: i18n.ts.overview,
-	icon: 'ti ti-info-circle',
-}, {
-	key: 'timeline',
-	title: i18n.ts.timeline,
-	icon: 'ti ti-home',
-}, {
-	key: 'featured',
-	title: i18n.ts.featured,
-	icon: 'ti ti-bolt',
-}, {
-	key: 'search',
-	title: i18n.ts.search,
-	icon: 'ti ti-search',
-}]);
+const headerTabs = $computed(() => [
+	{
+		key: "overview",
+		title: i18n.ts.overview,
+		icon: "ti ti-info-circle",
+	},
+	{
+		key: "timeline",
+		title: i18n.ts.timeline,
+		icon: "ti ti-home",
+	},
+	{
+		key: "featured",
+		title: i18n.ts.featured,
+		icon: "ti ti-bolt",
+	},
+	{
+		key: "search",
+		title: i18n.ts.search,
+		icon: "ti ti-search",
+	},
+]);
 
-definePageMetadata(computed(() => channel ? {
-	title: channel.name,
-	icon: 'ti ti-device-tv',
-} : null));
+definePageMetadata(
+	computed(() =>
+		channel
+			? {
+					title: channel.name,
+					icon: "ti ti-device-tv",
+				}
+			: null,
+	),
+);
 </script>
 
 <style lang="scss" module>

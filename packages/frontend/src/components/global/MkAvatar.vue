@@ -22,40 +22,43 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
-import * as misskey from 'misskey-js';
-import MkA from './MkA.vue';
-import { instance } from '@/instance';
-import { getStaticImageUrl } from '@/scripts/media-proxy';
-import { extractAvgColorFromBlurhash } from '@/scripts/extract-avg-color-from-blurhash';
-import { acct, userPage } from '@/filters/user';
-import MkUserOnlineIndicator from '@/components/MkUserOnlineIndicator.vue';
-import { defaultStore } from '@/store';
+import { watch } from "vue";
+import * as misskey from "misskey-js";
+import MkA from "./MkA.vue";
+import { instance } from "@/instance";
+import { getStaticImageUrl } from "@/scripts/media-proxy";
+import { extractAvgColorFromBlurhash } from "@/scripts/extract-avg-color-from-blurhash";
+import { acct, userPage } from "@/filters/user";
+import MkUserOnlineIndicator from "@/components/MkUserOnlineIndicator.vue";
+import { defaultStore } from "@/store";
 
 const animation = $ref(defaultStore.state.animation);
 const squareAvatars = $ref(defaultStore.state.squareAvatars);
 const useBlurEffect = $ref(defaultStore.state.useBlurEffect);
 
-const props = withDefaults(defineProps<{
-	user: misskey.entities.User;
-	target?: string | null;
-	link?: boolean;
-	preview?: boolean;
-	indicator?: boolean;
-}>(), {
-	target: null,
-	link: false,
-	preview: false,
-	indicator: false,
-});
+const props = withDefaults(
+	defineProps<{
+		user: misskey.entities.User;
+		target?: string | null;
+		link?: boolean;
+		preview?: boolean;
+		indicator?: boolean;
+	}>(),
+	{
+		target: null,
+		link: false,
+		preview: false,
+		indicator: false,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'click', v: MouseEvent): void;
+	(ev: "click", v: MouseEvent): void;
 }>();
 
-const bound = $computed(() => props.link
-	? { to: userPage(props.user), target: props.target }
-	: {});
+const bound = $computed(() =>
+	props.link ? { to: userPage(props.user), target: props.target } : {},
+);
 
 const url = $computed(() => {
 	const u = defaultStore.state.disableShowingAnimatedImages
@@ -71,16 +74,20 @@ const url = $computed(() => {
 
 function onClick(ev: MouseEvent): void {
 	if (props.link) return;
-	emit('click', ev);
+	emit("click", ev);
 }
 
 let color = $ref<string | undefined>();
 
-watch(() => props.user.avatarBlurhash, () => {
-	color = extractAvgColorFromBlurhash(props.user.avatarBlurhash);
-}, {
-	immediate: true,
-});
+watch(
+	() => props.user.avatarBlurhash,
+	() => {
+		color = extractAvgColorFromBlurhash(props.user.avatarBlurhash);
+	},
+	{
+		immediate: true,
+	},
+);
 </script>
 
 <style lang="scss" module>

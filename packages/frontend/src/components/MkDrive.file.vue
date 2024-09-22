@@ -33,39 +33,47 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import * as Misskey from 'misskey-js';
-import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
-import bytes from '@/filters/bytes';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import { $i } from '@/account';
-import { getDriveFileMenu } from '@/scripts/get-drive-file-menu';
+import { computed, ref } from "vue";
+import * as Misskey from "misskey-js";
+import MkDriveFileThumbnail from "@/components/MkDriveFileThumbnail.vue";
+import bytes from "@/filters/bytes";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import { $i } from "@/account";
+import { getDriveFileMenu } from "@/scripts/get-drive-file-menu";
 
-const props = withDefaults(defineProps<{
-	file: Misskey.entities.DriveFile;
-	isSelected?: boolean;
-	selectMode?: boolean;
-}>(), {
-	isSelected: false,
-	selectMode: false,
-});
+const props = withDefaults(
+	defineProps<{
+		file: Misskey.entities.DriveFile;
+		isSelected?: boolean;
+		selectMode?: boolean;
+	}>(),
+	{
+		isSelected: false,
+		selectMode: false,
+	},
+);
 
 const emit = defineEmits<{
-	(ev: 'chosen', r: Misskey.entities.DriveFile): void;
-	(ev: 'dragstart'): void;
-	(ev: 'dragend'): void;
+	(ev: "chosen", r: Misskey.entities.DriveFile): void;
+	(ev: "dragstart"): void;
+	(ev: "dragend"): void;
 }>();
 
 const isDragging = ref(false);
 
-const title = computed(() => `${props.file.name}\n${props.file.type} ${bytes(props.file.size)}`);
+const title = computed(
+	() => `${props.file.name}\n${props.file.type} ${bytes(props.file.size)}`,
+);
 
 function onClick(ev: MouseEvent) {
 	if (props.selectMode) {
-		emit('chosen', props.file);
+		emit("chosen", props.file);
 	} else {
-		os.popupMenu(getDriveFileMenu(props.file), (ev.currentTarget ?? ev.target ?? undefined) as HTMLElement | undefined);
+		os.popupMenu(
+			getDriveFileMenu(props.file),
+			(ev.currentTarget ?? ev.target ?? undefined) as HTMLElement | undefined,
+		);
 	}
 }
 
@@ -75,17 +83,20 @@ function onContextmenu(ev: MouseEvent) {
 
 function onDragstart(ev: DragEvent) {
 	if (ev.dataTransfer) {
-		ev.dataTransfer.effectAllowed = 'move';
-		ev.dataTransfer.setData(_DATA_TRANSFER_DRIVE_FILE_, JSON.stringify(props.file));
+		ev.dataTransfer.effectAllowed = "move";
+		ev.dataTransfer.setData(
+			_DATA_TRANSFER_DRIVE_FILE_,
+			JSON.stringify(props.file),
+		);
 	}
 	isDragging.value = true;
 
-	emit('dragstart');
+	emit("dragstart");
 }
 
 function onDragend() {
 	isDragging.value = false;
-	emit('dragend');
+	emit("dragend");
 }
 </script>
 

@@ -52,13 +52,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import { instance } from '@/instance';
-import { i18n } from '@/i18n';
-import MkButton from '@/components/MkButton.vue';
-import MkFolder from '@/components/MkFolder.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkInfo from '@/components/MkInfo.vue';
+import { computed, ref } from "vue";
+import { instance } from "@/instance";
+import { i18n } from "@/i18n";
+import MkButton from "@/components/MkButton.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkInfo from "@/components/MkInfo.vue";
 
 const availableServerRules = instance.serverRules.length > 0;
 const availableTos = instance.tosUrl != null;
@@ -68,12 +68,16 @@ const agreeTos = ref(false);
 const agreeNote = ref(false);
 
 const agreed = computed(() => {
-	return (!availableServerRules || agreeServerRules.value) && (!availableTos || agreeTos.value) && agreeNote.value;
+	return (
+		(!availableServerRules || agreeServerRules.value) &&
+		(!availableTos || agreeTos.value) &&
+		agreeNote.value
+	);
 });
 
 const emit = defineEmits<{
-	(ev: 'cancel'): void;
-	(ev: 'done'): void;
+	(ev: "cancel"): void;
+	(ev: "done"): void;
 }>();
 </script>
 

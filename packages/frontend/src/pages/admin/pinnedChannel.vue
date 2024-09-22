@@ -41,36 +41,43 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, defineAsyncComponent } from 'vue';
-import MkButton from '@/components/MkButton.vue';
-import FormSlot from '@/components/form/slot.vue';
-import { fetchInstance } from '@/instance';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
-import FormSuspense from '@/components/form/suspense.vue';
+import { computed, ref, defineAsyncComponent } from "vue";
+import MkButton from "@/components/MkButton.vue";
+import FormSlot from "@/components/form/slot.vue";
+import { fetchInstance } from "@/instance";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
+import FormSuspense from "@/components/form/suspense.vue";
 
-const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
+const Sortable = defineAsyncComponent(() =>
+	import("vuedraggable").then((x) => x.default),
+);
 
 const fields = ref([]);
-const fieldSet = computed(() => new Set(fields.value.map(ch => ch.value)));
+const fieldSet = computed(() => new Set(fields.value.map((ch) => ch.value)));
 const fieldEditMode = ref(false);
 
 function addField() {
-	os.popup(defineAsyncComponent(() => import('@/components/MkChannelDialog.vue')), {}, {
-		done: values => {
-			if (values !== null && values !== undefined) {
-				for (const value of values) {
-					if (!fieldSet.value.has(value.value)) {
-						fields.value.push({
-							id: Math.random().toString(),
-							name: value.label,
-							value: value.value,
-						});
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkChannelDialog.vue")),
+		{},
+		{
+			done: (values) => {
+				if (values !== null && values !== undefined) {
+					for (const value of values) {
+						if (!fieldSet.value.has(value.value)) {
+							fields.value.push({
+								id: Math.random().toString(),
+								name: value.label,
+								value: value.value,
+							});
+						}
 					}
 				}
-			}
+			},
 		},
-	}, 'closed');
+		"closed",
+	);
 }
 
 function deleteField(index: number) {
@@ -78,30 +85,33 @@ function deleteField(index: number) {
 }
 
 function saveFields() {
-	os.apiWithDialog('admin/update-meta', {
-		pinnedLtlChannelIds: fields.value.map(c => c.value),
+	os.apiWithDialog("admin/update-meta", {
+		pinnedLtlChannelIds: fields.value.map((c) => c.value),
 	}).then(() => {
 		fetchInstance();
 	});
 }
 
 async function init() {
-	const meta = await os.api('admin/meta');
+	const meta = await os.api("admin/meta");
 
-	let chs: { value: string, label: string }[] = [];
+	let chs: { value: string; label: string }[] = [];
 	for (let id of meta.pinnedLtlChannelIds) {
-		let ch = await os.api('channels/show', {
+		let ch = await os.api("channels/show", {
 			channelId: id,
 		});
 		if (ch != null) {
 			chs.push({ value: ch.id, label: ch.name });
 		}
 	}
-	fields.value = chs.map(ch => ({ id: Math.random().toString(), name: ch.label, value: ch.value }));
+	fields.value = chs.map((ch) => ({
+		id: Math.random().toString(),
+		name: ch.label,
+		value: ch.value,
+	}));
 }
 
 const headerTabs = $computed(() => []);
-
 </script>
 
 <style lang="scss" module>

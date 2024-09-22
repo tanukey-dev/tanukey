@@ -5,10 +5,10 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import * as misskey from 'misskey-js';
-import MkModal from '@/components/MkModal.vue';
-import MkPostForm from '@/components/MkPostForm.vue';
+import {} from "vue";
+import * as misskey from "misskey-js";
+import MkModal from "@/components/MkModal.vue";
+import MkPostForm from "@/components/MkPostForm.vue";
 
 const props = defineProps<{
 	reply?: misskey.entities.Note;
@@ -28,7 +28,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+	(ev: "closed"): void;
 }>();
 
 let modal = $shallowRef<InstanceType<typeof MkModal>>();
@@ -41,6 +41,6 @@ function onPosted() {
 }
 
 function onModalClosed() {
-	emit('closed');
+	emit("closed");
 }
 </script>

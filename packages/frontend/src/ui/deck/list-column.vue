@@ -9,12 +9,12 @@
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import XColumn from './column.vue';
-import { updateColumn, Column } from './deck-store';
-import MkTimeline from '@/components/MkTimeline.vue';
-import * as os from '@/os';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import XColumn from "./column.vue";
+import { updateColumn, Column } from "./deck-store";
+import MkTimeline from "@/components/MkTimeline.vue";
+import * as os from "@/os";
+import { i18n } from "@/i18n";
 
 const props = defineProps<{
 	column: Column;
@@ -28,11 +28,12 @@ if (props.column.listId == null) {
 }
 
 async function setList() {
-	const lists = await os.api('users/lists/list');
+	const lists = await os.api("users/lists/list");
 	const { canceled, result: list } = await os.select({
 		title: i18n.ts.selectList,
-		items: lists.map(x => ({
-			value: x, text: x.name,
+		items: lists.map((x) => ({
+			value: x,
+			text: x.name,
 		})),
 		default: props.column.listId,
 	});
@@ -42,9 +43,11 @@ async function setList() {
 	});
 }
 
-const menu = [{
-	icon: 'ti ti-pencil',
-	text: i18n.ts.selectList,
-	action: setList,
-}];
+const menu = [
+	{
+		icon: "ti ti-pencil",
+		text: i18n.ts.selectList,
+		action: setList,
+	},
+];
 </script>

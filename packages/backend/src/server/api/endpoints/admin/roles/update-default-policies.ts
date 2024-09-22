@@ -1,26 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { MetaService } from '@/core/MetaService.js';
+import { Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { MetaService } from "@/core/MetaService.js";
 
 export const meta = {
-	tags: ['admin', 'role'],
+	tags: ["admin", "role"],
 
 	requireCredential: true,
 	requireAdmin: true,
-	kind: 'write:admin:roles',
+	kind: "write:admin:roles",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
 		policies: {
-			type: 'object',
+			type: "object",
 		},
 	},
-	required: [
-		'policies',
-	],
+	required: ["policies"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -34,7 +32,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			await this.metaService.update({
 				policies: ps.policies,
 			});
-			this.globalEventService.publishInternalEvent('policiesUpdated', ps.policies);
+			this.globalEventService.publishInternalEvent(
+				"policiesUpdated",
+				ps.policies,
+			);
 		});
 	}
 }

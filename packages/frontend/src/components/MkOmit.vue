@@ -8,14 +8,17 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted } from 'vue';
-import { i18n } from '@/i18n';
+import { onMounted, onUnmounted } from "vue";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	maxHeight?: number;
-}>(), {
-	maxHeight: 200,
-});
+const props = withDefaults(
+	defineProps<{
+		maxHeight?: number;
+	}>(),
+	{
+		maxHeight: 200,
+	},
+);
 
 let content = $shallowRef<HTMLElement>();
 let omitted = $ref(false);

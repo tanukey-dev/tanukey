@@ -7,20 +7,24 @@
 </template>
 
 <script lang="ts" setup>
-import { inject } from 'vue';
-import { deviceKind } from '@/scripts/device-kind';
+import { inject } from "vue";
+import { deviceKind } from "@/scripts/device-kind";
 
-const props = withDefaults(defineProps<{
-	contentMax?: number | null;
-	marginMin?: number;
-	marginMax?: number;
-}>(), {
-	contentMax: null,
-	marginMin: 12,
-	marginMax: 24,
-});
+const props = withDefaults(
+	defineProps<{
+		contentMax?: number | null;
+		marginMin?: number;
+		marginMax?: number;
+	}>(),
+	{
+		contentMax: null,
+		marginMin: 12,
+		marginMax: 24,
+	},
+);
 
-const forceSpacerMin = inject('forceSpacerMin', false) || deviceKind === 'smartphone';
+const forceSpacerMin =
+	inject("forceSpacerMin", false) || deviceKind === "smartphone";
 </script>
 
 <style lang="scss" module>

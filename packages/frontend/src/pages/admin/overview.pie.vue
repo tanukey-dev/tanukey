@@ -3,10 +3,10 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef } from 'vue';
-import { Chart } from 'chart.js';
-import { useChartTooltip } from '@/scripts/use-chart-tooltip';
-import { initChart } from '@/scripts/init-chart';
+import { onMounted, shallowRef } from "vue";
+import { Chart } from "chart.js";
+import { useChartTooltip } from "@/scripts/use-chart-tooltip";
+import { initChart } from "@/scripts/init-chart";
 
 initChart();
 
@@ -17,23 +17,27 @@ const props = defineProps<{
 const chartEl = shallowRef<HTMLCanvasElement>(null);
 
 const { handler: externalTooltipHandler } = useChartTooltip({
-	position: 'middle',
+	position: "middle",
 });
 
 let chartInstance: Chart;
 
 onMounted(() => {
 	chartInstance = new Chart(chartEl.value, {
-		type: 'doughnut',
+		type: "doughnut",
 		data: {
-			labels: props.data.map(x => x.name),
-			datasets: [{
-				backgroundColor: props.data.map(x => x.color),
-				borderColor: getComputedStyle(document.documentElement).getPropertyValue('--panel'),
-				borderWidth: 2,
-				hoverOffset: 0,
-				data: props.data.map(x => x.value),
-			}],
+			labels: props.data.map((x) => x.name),
+			datasets: [
+				{
+					backgroundColor: props.data.map((x) => x.color),
+					borderColor: getComputedStyle(
+						document.documentElement,
+					).getPropertyValue("--panel"),
+					borderWidth: 2,
+					hoverOffset: 0,
+					data: props.data.map((x) => x.value),
+				},
+			],
 		},
 		options: {
 			layout: {
@@ -45,7 +49,12 @@ onMounted(() => {
 				},
 			},
 			onClick: (ev) => {
-				const hit = chartInstance.getElementsAtEventForMode(ev, 'nearest', { intersect: true }, false)[0];
+				const hit = chartInstance.getElementsAtEventForMode(
+					ev,
+					"nearest",
+					{ intersect: true },
+					false,
+				)[0];
 				if (hit && props.data[hit.index].onClick) {
 					props.data[hit.index].onClick();
 				}
@@ -56,7 +65,7 @@ onMounted(() => {
 				},
 				tooltip: {
 					enabled: false,
-					mode: 'index',
+					mode: "index",
 					animation: {
 						duration: 0,
 					},

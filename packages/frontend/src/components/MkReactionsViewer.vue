@@ -13,55 +13,72 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from 'misskey-js';
-import { watch } from 'vue';
-import XReaction from '@/components/MkReactionsViewer.reaction.vue';
-import { defaultStore } from '@/store';
+import * as misskey from "misskey-js";
+import { watch } from "vue";
+import XReaction from "@/components/MkReactionsViewer.reaction.vue";
+import { defaultStore } from "@/store";
 
-const props = withDefaults(defineProps<{
-	note: misskey.entities.Note;
-	maxNumber?: number;
-}>(), {
-	maxNumber: Infinity,
-});
+const props = withDefaults(
+	defineProps<{
+		note: misskey.entities.Note;
+		maxNumber?: number;
+	}>(),
+	{
+		maxNumber: Infinity,
+	},
+);
 
 const initialReactions = new Set(Object.keys(props.note.reactions));
 
 let reactions = $ref<[string, number][]>([]);
 let hasMoreReactions = $ref(false);
 
-if (props.note.myReaction && !Object.keys(reactions).includes(props.note.myReaction)) {
-	reactions[props.note.myReaction] = props.note.reactions[props.note.myReaction];
+if (
+	props.note.myReaction &&
+	!Object.keys(reactions).includes(props.note.myReaction)
+) {
+	reactions[props.note.myReaction] =
+		props.note.reactions[props.note.myReaction];
 }
 
-watch([() => props.note.reactions, () => props.maxNumber], ([newSource, maxNumber]) => {
-	let newReactions: [string, number][] = [];
-	hasMoreReactions = Object.keys(newSource).length > maxNumber;
+watch(
+	[() => props.note.reactions, () => props.maxNumber],
+	([newSource, maxNumber]) => {
+		let newReactions: [string, number][] = [];
+		hasMoreReactions = Object.keys(newSource).length > maxNumber;
 
-	for (let i = 0; i < reactions.length; i++) {
-		const reaction = reactions[i][0];
-		if (reaction in newSource && newSource[reaction] !== 0) {
-			reactions[i][1] = newSource[reaction];
-			newReactions.push(reactions[i]);
+		for (let i = 0; i < reactions.length; i++) {
+			const reaction = reactions[i][0];
+			if (reaction in newSource && newSource[reaction] !== 0) {
+				reactions[i][1] = newSource[reaction];
+				newReactions.push(reactions[i]);
+			}
 		}
-	}
 
-	const newReactionsNames = newReactions.map(([x]) => x);
-	newReactions = [
-		...newReactions,
-		...Object.entries(newSource)
-			.sort(([, a], [, b]) => b - a)
-			.filter(([y], i) => i < maxNumber && !newReactionsNames.includes(y)),
-	];
+		const newReactionsNames = newReactions.map(([x]) => x);
+		newReactions = [
+			...newReactions,
+			...Object.entries(newSource)
+				.sort(([, a], [, b]) => b - a)
+				.filter(([y], i) => i < maxNumber && !newReactionsNames.includes(y)),
+		];
 
-	newReactions = newReactions.slice(0, props.maxNumber);
+		newReactions = newReactions.slice(0, props.maxNumber);
 
-	if (props.note.myReaction && !newReactions.map(([x]) => x).includes(props.note.myReaction)) {
-		newReactions.push([props.note.myReaction, newSource[props.note.myReaction]]);
-	}
+		if (
+			props.note.myReaction &&
+			!newReactions.map(([x]) => x).includes(props.note.myReaction)
+		) {
+			newReactions.push([
+				props.note.myReaction,
+				newSource[props.note.myReaction],
+			]);
+		}
 
-	reactions = newReactions;
-}, { immediate: true, deep: true });
+		reactions = newReactions;
+	},
+	{ immediate: true, deep: true },
+);
 </script>
 
 <style lang="scss" module>

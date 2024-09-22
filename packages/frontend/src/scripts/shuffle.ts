@@ -2,7 +2,8 @@
  * 配列をシャッフル (破壊的)
  */
 export function shuffle<T extends any[]>(array: T): T {
-	let currentIndex = array.length, randomIndex;
+	let currentIndex = array.length,
+		randomIndex;
 
 	// While there remain elements to shuffle.
 	while (currentIndex !== 0) {
@@ -12,7 +13,9 @@ export function shuffle<T extends any[]>(array: T): T {
 
 		// And swap it with the current element.
 		[array[currentIndex], array[randomIndex]] = [
-			array[randomIndex], array[currentIndex]];
+			array[randomIndex],
+			array[currentIndex],
+		];
 	}
 
 	return array;

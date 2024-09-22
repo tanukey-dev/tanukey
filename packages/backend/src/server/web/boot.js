@@ -9,67 +9,73 @@
  * 注: webpackは介さないため、このファイルではrequireやimportは使えません。
  */
 
-'use strict';
+"use strict";
 
 // ブロックの中に入れないと、定義した変数がブラウザのグローバルスコープに登録されてしまい邪魔なので
 (async () => {
 	window.onerror = (e) => {
 		console.error(e);
-		renderError('SOMETHING_HAPPENED', e);
+		renderError("SOMETHING_HAPPENED", e);
 	};
 	window.onunhandledrejection = (e) => {
 		console.error(e);
-		renderError('SOMETHING_HAPPENED_IN_PROMISE', e);
+		renderError("SOMETHING_HAPPENED_IN_PROMISE", e);
 	};
 
-	let forceError = localStorage.getItem('forceError');
+	let forceError = localStorage.getItem("forceError");
 	if (forceError != null) {
-		renderError('FORCED_ERROR', 'This error is forced by having forceError in local storage.')
+		renderError(
+			"FORCED_ERROR",
+			"This error is forced by having forceError in local storage.",
+		);
 	}
 
 	//#region Detect language & fetch translations
-	if (!localStorage.hasOwnProperty('locale')) {
-		let lang = localStorage.getItem('lang');
+	if (!localStorage.hasOwnProperty("locale")) {
+		let lang = localStorage.getItem("lang");
 		if (!lang) {
-			lang = 'en-US';
-			if (window.navigator.language === 'ja' || window.navigator.language === 'ja-JP') {
-				lang = 'ja-JP';
+			lang = "en-US";
+			if (
+				window.navigator.language === "ja" ||
+				window.navigator.language === "ja-JP"
+			) {
+				lang = "ja-JP";
 			}
 		}
 
-		const metaRes = await window.fetch('/api/meta', {
-			method: 'POST',
+		const metaRes = await window.fetch("/api/meta", {
+			method: "POST",
 			body: JSON.stringify({}),
-			credentials: 'omit',
-			cache: 'no-cache',
+			credentials: "omit",
+			cache: "no-cache",
 			headers: {
-				'Content-Type': 'application/json',
+				"Content-Type": "application/json",
 			},
 		});
 		if (metaRes.status !== 200) {
-			renderError('META_FETCH');
+			renderError("META_FETCH");
 			return;
 		}
 		const meta = await metaRes.json();
 		const v = meta.version;
 		if (v == null) {
-			renderError('META_FETCH_V');
+			renderError("META_FETCH_V");
 			return;
 		}
 
 		// for https://github.com/misskey-dev/misskey/issues/10202
-		if (lang == null || lang.toString == null || lang.toString() === 'null') {
-			console.error('invalid lang value detected!!!', typeof lang, lang);
-			lang = 'en-US';
+		if (lang == null || lang.toString == null || lang.toString() === "null") {
+			console.error("invalid lang value detected!!!", typeof lang, lang);
+			lang = "en-US";
 		}
 
 		const localRes = await window.fetch(`/assets/locales/${lang}.${v}.json`);
 		if (localRes.status === 200) {
-			localStorage.setItem('lang', lang);
-			localStorage.setItem('locale', await localRes.text());
-			localStorage.setItem('localeVersion', v);
+			localStorage.setItem("lang", lang);
+			localStorage.setItem("locale", await localRes.text());
+			localStorage.setItem("localeVersion", v);
 		} else {
-			renderError('LOCALE_FETCH');
+			renderError("LOCALE_FETCH");
 			return;
 		}
 	}
@@ -77,76 +83,78 @@
 
 	//#region Script
 	function importAppScript() {
-		import(`/vite/${CLIENT_ENTRY}`)
-			.catch(async e => {
-				console.error(e);
-				renderError('APP_IMPORT', e);
-			});
+		import(`/vite/${CLIENT_ENTRY}`).catch(async (e) => {
+			console.error(e);
+			renderError("APP_IMPORT", e);
+		});
 	}
 
 	// タイミングによっては、この時点でDOMの構築が済んでいる場合とそうでない場合とがある
-	if (document.readyState !== 'loading') {
+	if (document.readyState !== "loading") {
 		importAppScript();
 	} else {
-		window.addEventListener('DOMContentLoaded', () => {
+		window.addEventListener("DOMContentLoaded", () => {
 			importAppScript();
 		});
 	}
 	//#endregion
 
 	//#region Theme
-	const theme = localStorage.getItem('theme');
+	const theme = localStorage.getItem("theme");
 	if (theme) {
 		for (const [k, v] of Object.entries(JSON.parse(theme))) {
 			document.documentElement.style.setProperty(`--${k}`, v.toString());
 
 			// HTMLの theme-color 適用
-			if (k === 'htmlThemeColor') {
+			if (k === "htmlThemeColor") {
 				for (const tag of document.head.children) {
-					if (tag.tagName === 'META' && tag.getAttribute('name') === 'theme-color') {
-						tag.setAttribute('content', v);
+					if (
+						tag.tagName === "META" &&
+						tag.getAttribute("name") === "theme-color"
+					) {
+						tag.setAttribute("content", v);
 						break;
 					}
 				}
 			}
 		}
 	}
-	const colorScheme = localStorage.getItem('colorScheme');
+	const colorScheme = localStorage.getItem("colorScheme");
 	if (colorScheme) {
-		document.documentElement.style.setProperty('color-scheme', colorScheme);
+		document.documentElement.style.setProperty("color-scheme", colorScheme);
 	}
 	//#endregion
 
-	const fontSize = localStorage.getItem('fontSize');
+	const fontSize = localStorage.getItem("fontSize");
 	if (fontSize) {
-		document.documentElement.classList.add('f-' + fontSize);
+		document.documentElement.classList.add("f-" + fontSize);
 	}
 
-	const useSystemFont = localStorage.getItem('useSystemFont');
+	const useSystemFont = localStorage.getItem("useSystemFont");
 	if (useSystemFont) {
-		document.documentElement.classList.add('useSystemFont');
+		document.documentElement.classList.add("useSystemFont");
 	}
 
-	const wallpaper = localStorage.getItem('wallpaper');
+	const wallpaper = localStorage.getItem("wallpaper");
 	if (wallpaper) {
 		document.documentElement.style.backgroundImage = `url(${wallpaper})`;
 	}
 
-	const customCss = localStorage.getItem('customCss');
+	const customCss = localStorage.getItem("customCss");
 	if (customCss && customCss.length > 0) {
-		const style = document.createElement('style');
+		const style = document.createElement("style");
 		style.innerHTML = customCss;
 		document.head.appendChild(style);
 	}
 
 	async function addStyle(styleText) {
-		let css = document.createElement('style');
+		let css = document.createElement("style");
 		css.appendChild(document.createTextNode(styleText));
 		document.head.appendChild(css);
 	}
 
 	function renderError(code, details) {
-		let errorsElement = document.getElementById('errors');
+		let errorsElement = document.getElementById("errors");
 
 		if (!errorsElement) {
 			document.body.innerHTML = `
@@ -186,10 +194,10 @@
 			<br>
 			<div id="errors"></div>
 			`;
-			errorsElement = document.getElementById('errors');
+			errorsElement = document.getElementById("errors");
 		}
-		const detailsElement = document.createElement('details');
-		detailsElement.id = 'errorInfo';
+		const detailsElement = document.createElement("details");
+		detailsElement.id = "errorInfo";
 		detailsElement.innerHTML = `
 		<br>
 		<summary>
@@ -303,6 +311,6 @@
 			#errorInfo {
 				width: 50%;
 			}
-		`)
+		`);
 	}
 })();

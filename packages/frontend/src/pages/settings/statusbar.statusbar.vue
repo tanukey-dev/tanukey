@@ -81,59 +81,67 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch } from 'vue';
-import MkSelect from '@/components/MkSelect.vue';
-import MkInput from '@/components/MkInput.vue';
-import MkSwitch from '@/components/MkSwitch.vue';
-import MkRadios from '@/components/MkRadios.vue';
-import MkButton from '@/components/MkButton.vue';
-import MkRange from '@/components/MkRange.vue';
-import { defaultStore } from '@/store';
-import { i18n } from '@/i18n';
-import { deepClone } from '@/scripts/clone';
+import { reactive, watch } from "vue";
+import MkSelect from "@/components/MkSelect.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkRadios from "@/components/MkRadios.vue";
+import MkButton from "@/components/MkButton.vue";
+import MkRange from "@/components/MkRange.vue";
+import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
+import { deepClone } from "@/scripts/clone";
 
 const props = defineProps<{
 	_id: string;
 	userLists: any[] | null;
 }>();
 
-const statusbar = reactive(deepClone(defaultStore.state.statusbars.find(x => x.id === props._id)));
+const statusbar = reactive(
+	deepClone(defaultStore.state.statusbars.find((x) => x.id === props._id)),
+);
 
-watch(() => statusbar.type, () => {
-	if (statusbar.type === 'rss') {
-		statusbar.name = 'NEWS';
-		statusbar.props.url = 'http://feeds.afpbb.com/rss/afpbb/afpbbnews';
-		statusbar.props.shuffle = true;
-		statusbar.props.refreshIntervalSec = 120;
-		statusbar.props.display = 'marquee';
-		statusbar.props.marqueeDuration = 100;
-		statusbar.props.marqueeReverse = false;
-	} else if (statusbar.type === 'federation') {
-		statusbar.name = 'FEDERATION';
-		statusbar.props.refreshIntervalSec = 120;
-		statusbar.props.display = 'marquee';
-		statusbar.props.marqueeDuration = 100;
-		statusbar.props.marqueeReverse = false;
-		statusbar.props.colored = false;
-	} else if (statusbar.type === 'userList') {
-		statusbar.name = 'LIST TL';
-		statusbar.props.refreshIntervalSec = 120;
-		statusbar.props.display = 'marquee';
-		statusbar.props.marqueeDuration = 100;
-		statusbar.props.marqueeReverse = false;
-	}
-});
+watch(
+	() => statusbar.type,
+	() => {
+		if (statusbar.type === "rss") {
+			statusbar.name = "NEWS";
+			statusbar.props.url = "http://feeds.afpbb.com/rss/afpbb/afpbbnews";
+			statusbar.props.shuffle = true;
+			statusbar.props.refreshIntervalSec = 120;
+			statusbar.props.display = "marquee";
+			statusbar.props.marqueeDuration = 100;
+			statusbar.props.marqueeReverse = false;
+		} else if (statusbar.type === "federation") {
+			statusbar.name = "FEDERATION";
+			statusbar.props.refreshIntervalSec = 120;
+			statusbar.props.display = "marquee";
+			statusbar.props.marqueeDuration = 100;
+			statusbar.props.marqueeReverse = false;
+			statusbar.props.colored = false;
+		} else if (statusbar.type === "userList") {
+			statusbar.name = "LIST TL";
+			statusbar.props.refreshIntervalSec = 120;
+			statusbar.props.display = "marquee";
+			statusbar.props.marqueeDuration = 100;
+			statusbar.props.marqueeReverse = false;
+		}
+	},
+);
 
 watch(statusbar, save);
 
 async function save() {
-	const i = defaultStore.state.statusbars.findIndex(x => x.id === props._id);
+	const i = defaultStore.state.statusbars.findIndex((x) => x.id === props._id);
 	const statusbars = deepClone(defaultStore.state.statusbars);
 	statusbars[i] = deepClone(statusbar);
-	defaultStore.set('statusbars', statusbars);
+	defaultStore.set("statusbars", statusbars);
 }
 
 function del() {
-	defaultStore.set('statusbars', defaultStore.state.statusbars.filter(x => x.id !== props._id));
+	defaultStore.set(
+		"statusbars",
+		defaultStore.state.statusbars.filter((x) => x.id !== props._id),
+	);
 }
 </script>

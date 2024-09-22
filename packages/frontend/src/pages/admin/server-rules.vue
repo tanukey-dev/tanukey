@@ -36,21 +36,23 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
-import XHeader from './_header_.vue';
-import * as os from '@/os';
-import { fetchInstance, instance } from '@/instance';
-import { i18n } from '@/i18n';
-import { definePageMetadata } from '@/scripts/page-metadata';
-import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
+import { defineAsyncComponent } from "vue";
+import XHeader from "./_header_.vue";
+import * as os from "@/os";
+import { fetchInstance, instance } from "@/instance";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import MkButton from "@/components/MkButton.vue";
+import MkInput from "@/components/MkInput.vue";
 
-const Sortable = defineAsyncComponent(() => import('vuedraggable').then(x => x.default));
+const Sortable = defineAsyncComponent(() =>
+	import("vuedraggable").then((x) => x.default),
+);
 
 let serverRules: string[] = $ref(instance.serverRules);
 
 const save = async () => {
-	await os.apiWithDialog('admin/update-meta', {
+	await os.apiWithDialog("admin/update-meta", {
 		serverRules,
 	});
 	fetchInstance();
@@ -64,7 +66,7 @@ const headerTabs = $computed(() => []);
 
 definePageMetadata({
 	title: i18n.ts.serverRules,
-	icon: 'ti ti-checkbox',
+	icon: "ti ti-checkbox",
 });
 </script>
 

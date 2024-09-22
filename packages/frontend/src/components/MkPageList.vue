@@ -14,17 +14,20 @@
 </template>
 
 <script lang="ts" setup>
-import MkPagePreview from '@/components/MkPagePreview.vue';
-import MkPagination, { Paging } from '@/components/MkPagination.vue';
-import { i18n } from '@/i18n';
+import MkPagePreview from "@/components/MkPagePreview.vue";
+import MkPagination, { Paging } from "@/components/MkPagination.vue";
+import { i18n } from "@/i18n";
 
-const props = withDefaults(defineProps<{
-	pagination: Paging;
-	noGap?: boolean;
-	extractor?: (item: any) => any;
-}>(), {
-	extractor: (item) => item,
-});
+const props = withDefaults(
+	defineProps<{
+		pagination: Paging;
+		noGap?: boolean;
+		extractor?: (item: any) => any;
+	}>(),
+	{
+		extractor: (item) => item,
+	},
+);
 </script>
 
 <style lang="scss" scoped>

@@ -24,23 +24,25 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, ref } from 'vue';
-import * as misskey from 'misskey-js';
-import { instance } from '@/instance';
-import * as os from '@/os';
-import { defaultStore } from '@/store';
-import MkModal from '@/components/MkModal.vue';
-import { i18n } from '@/i18n';
+import { nextTick, onMounted, ref } from "vue";
+import * as misskey from "misskey-js";
+import { instance } from "@/instance";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
+import MkModal from "@/components/MkModal.vue";
+import { i18n } from "@/i18n";
 
 const modal = $shallowRef<InstanceType<typeof MkModal>>();
 const channels = ref<any[]>([]);
 const loading = ref<boolean>(true);
 
-const props = withDefaults(defineProps<{
-	currentChannel: misskey.entities.Channel | null;
-	src?: HTMLElement;
-}>(), {
-});
+const props = withDefaults(
+	defineProps<{
+		currentChannel: misskey.entities.Channel | null;
+		src?: HTMLElement;
+	}>(),
+	{},
+);
 
 onMounted(async () => {
 	loading.value = true;
@@ -54,7 +56,9 @@ onMounted(async () => {
 		s.add(id);
 	}
 
-	let userPinnedLtlChannelIds = defaultStore.makeGetterSetter('userPinnedLtlChannelIds');
+	let userPinnedLtlChannelIds = defaultStore.makeGetterSetter(
+		"userPinnedLtlChannelIds",
+	);
 	let userPinnedChIds = userPinnedLtlChannelIds.get();
 	for (let id of userPinnedChIds) {
 		if (!s.has(id.value)) {
@@ -63,7 +67,7 @@ onMounted(async () => {
 		}
 	}
 
-	let pinnedChs = await os.api('channels/show', {
+	let pinnedChs = await os.api("channels/show", {
 		channelIds: ids,
 	});
 
@@ -71,18 +75,28 @@ onMounted(async () => {
 		for (let ch of pinnedChs) {
 			if (ch != null) {
 				if (instance.pinnedLtlChannelIds.includes(ch.id)) {
-					t.push({ id: ch.id, name: ch.name, icon: 'ti ti-device-tv-old', data: ch });
+					t.push({
+						id: ch.id,
+						name: ch.name,
+						icon: "ti ti-device-tv-old",
+						data: ch,
+					});
 				} else {
-					t.push({ id: ch.id, name: ch.name, icon: 'ti ti-device-tv', data: ch });
+					t.push({
+						id: ch.id,
+						name: ch.name,
+						icon: "ti ti-device-tv",
+						data: ch,
+					});
 				}
 			}
 		}
 	}
 
-	let favorites = await os.api('channels/my-favorites', {});
+	let favorites = await os.api("channels/my-favorites", {});
 	for (let ch of favorites) {
 		if (!s.has(ch.id)) {
-			t.push({ id: ch.id, name: ch.name, icon: 'ti ti-device-tv', data: ch });
+			t.push({ id: ch.id, name: ch.name, icon: "ti ti-device-tv", data: ch });
 			s.add(ch.id);
 		}
 	}
@@ -93,15 +107,15 @@ onMounted(async () => {
 });
 
 const emit = defineEmits<{
-	(ev: 'changeChannel', channel: misskey.entities.Channel|null): void;
-	(ev: 'closed'): void;
+	(ev: "changeChannel", channel: misskey.entities.Channel | null): void;
+	(ev: "closed"): void;
 }>();
 
 let ch = $ref(props.currentChannel);
 
-function choose(channel: misskey.entities.Channel|null): void {
+function choose(channel: misskey.entities.Channel | null): void {
 	ch = channel;
-	emit('changeChannel', channel);
+	emit("changeChannel", channel);
 	nextTick(() => {
 		if (modal) modal.close();
 	});

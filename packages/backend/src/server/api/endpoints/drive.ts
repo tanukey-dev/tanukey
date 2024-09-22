@@ -1,34 +1,37 @@
-import { Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { MetaService } from '@/core/MetaService.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import { RoleService } from '@/core/RoleService.js';
+import { Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { MetaService } from "@/core/MetaService.js";
+import { DriveFileEntityService } from "@/core/entities/DriveFileEntityService.js";
+import { RoleService } from "@/core/RoleService.js";
 
 export const meta = {
-	tags: ['drive', 'account'],
+	tags: ["drive", "account"],
 
 	requireCredential: true,
 
-	kind: 'read:drive',
+	kind: "read:drive",
 
 	res: {
-		type: 'object',
-		optional: false, nullable: false,
+		type: "object",
+		optional: false,
+		nullable: false,
 		properties: {
 			capacity: {
-				type: 'number',
-				optional: false, nullable: false,
+				type: "number",
+				optional: false,
+				nullable: false,
 			},
 			usage: {
-				type: 'number',
-				optional: false, nullable: false,
+				type: "number",
+				optional: false,
+				nullable: false,
 			},
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;
@@ -50,7 +53,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const policies = await this.roleService.getUserPolicies(me.id);
 
 			return {
-				capacity: (1024 * 1024 * policies.driveCapacityMb) + (1024 * 1024 * policies.additionalDriveCapacityMb),
+				capacity:
+					1024 * 1024 * policies.driveCapacityMb +
+					1024 * 1024 * policies.additionalDriveCapacityMb,
 				usage: usage,
 			};
 		});

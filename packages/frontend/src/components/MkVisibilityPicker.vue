@@ -38,30 +38,32 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick } from 'vue';
-import * as misskey from 'misskey-js';
-import MkModal from '@/components/MkModal.vue';
-import { i18n } from '@/i18n';
+import { nextTick } from "vue";
+import * as misskey from "misskey-js";
+import MkModal from "@/components/MkModal.vue";
+import { i18n } from "@/i18n";
 
 const modal = $shallowRef<InstanceType<typeof MkModal>>();
 
-const props = withDefaults(defineProps<{
-	currentVisibility: typeof misskey.noteVisibilities[number];
-	localOnly: boolean;
-	src?: HTMLElement;
-}>(), {
-});
+const props = withDefaults(
+	defineProps<{
+		currentVisibility: (typeof misskey.noteVisibilities)[number];
+		localOnly: boolean;
+		src?: HTMLElement;
+	}>(),
+	{},
+);
 
 const emit = defineEmits<{
-	(ev: 'changeVisibility', v: typeof misskey.noteVisibilities[number]): void;
-	(ev: 'closed'): void;
+	(ev: "changeVisibility", v: (typeof misskey.noteVisibilities)[number]): void;
+	(ev: "closed"): void;
 }>();
 
 let v = $ref(props.currentVisibility);
 
-function choose(visibility: typeof misskey.noteVisibilities[number]): void {
+function choose(visibility: (typeof misskey.noteVisibilities)[number]): void {
 	v = visibility;
-	emit('changeVisibility', visibility);
+	emit("changeVisibility", visibility);
 	nextTick(() => {
 		if (modal) modal.close();
 	});

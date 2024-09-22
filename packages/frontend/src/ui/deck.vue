@@ -80,34 +80,44 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, watch } from 'vue';
-import { v4 as uuid } from 'uuid';
-import XCommon from './_common_/common.vue';
-import { deckStore, addColumn as addColumnToStore, loadDeck, getProfiles, deleteProfile as deleteProfile_ } from './deck/deck-store';
-import XSidebar from '@/ui/_common_/navbar.vue';
-import XDrawerMenu from '@/ui/_common_/navbar-for-mobile.vue';
-import MkButton from '@/components/MkButton.vue';
-import { getScrollContainer } from '@/scripts/scroll';
-import * as os from '@/os';
-import { navbarItemDef } from '@/navbar';
-import { $i } from '@/account';
-import { i18n } from '@/i18n';
-import { mainRouter } from '@/router';
-import { unisonReload } from '@/scripts/unison-reload';
-import { deviceKind } from '@/scripts/device-kind';
-import { defaultStore } from '@/store';
-import XMainColumn from '@/ui/deck/main-column.vue';
-import XTlColumn from '@/ui/deck/tl-column.vue';
-import XAntennaColumn from '@/ui/deck/antenna-column.vue';
-import XListColumn from '@/ui/deck/list-column.vue';
-import XChannelColumn from '@/ui/deck/channel-column.vue';
-import XNotificationsColumn from '@/ui/deck/notifications-column.vue';
-import XWidgetsColumn from '@/ui/deck/widgets-column.vue';
-import XMentionsColumn from '@/ui/deck/mentions-column.vue';
-import XDirectColumn from '@/ui/deck/direct-column.vue';
-import XRoleTimelineColumn from '@/ui/deck/role-timeline-column.vue';
-const XStatusBars = defineAsyncComponent(() => import('@/ui/_common_/statusbars.vue'));
-const XAnnouncements = defineAsyncComponent(() => import('@/ui/_common_/announcements.vue'));
+import { computed, defineAsyncComponent, ref, watch } from "vue";
+import { v4 as uuid } from "uuid";
+import XCommon from "./_common_/common.vue";
+import {
+	deckStore,
+	addColumn as addColumnToStore,
+	loadDeck,
+	getProfiles,
+	deleteProfile as deleteProfile_,
+} from "./deck/deck-store";
+import XSidebar from "@/ui/_common_/navbar.vue";
+import XDrawerMenu from "@/ui/_common_/navbar-for-mobile.vue";
+import MkButton from "@/components/MkButton.vue";
+import { getScrollContainer } from "@/scripts/scroll";
+import * as os from "@/os";
+import { navbarItemDef } from "@/navbar";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
+import { mainRouter } from "@/router";
+import { unisonReload } from "@/scripts/unison-reload";
+import { deviceKind } from "@/scripts/device-kind";
+import { defaultStore } from "@/store";
+import XMainColumn from "@/ui/deck/main-column.vue";
+import XTlColumn from "@/ui/deck/tl-column.vue";
+import XAntennaColumn from "@/ui/deck/antenna-column.vue";
+import XListColumn from "@/ui/deck/list-column.vue";
+import XChannelColumn from "@/ui/deck/channel-column.vue";
+import XNotificationsColumn from "@/ui/deck/notifications-column.vue";
+import XWidgetsColumn from "@/ui/deck/widgets-column.vue";
+import XMentionsColumn from "@/ui/deck/mentions-column.vue";
+import XDirectColumn from "@/ui/deck/direct-column.vue";
+import XRoleTimelineColumn from "@/ui/deck/role-timeline-column.vue";
+const XStatusBars = defineAsyncComponent(
+	() => import("@/ui/_common_/statusbars.vue"),
+);
+const XAnnouncements = defineAsyncComponent(
+	() => import("@/ui/_common_/announcements.vue"),
+);
 
 const columnComponents = {
 	main: XMainColumn,
@@ -123,8 +133,8 @@ const columnComponents = {
 };
 
 mainRouter.navHook = (path, flag): boolean => {
-	if (flag === 'forcePage') return false;
-	const noMainColumn = !deckStore.state.columns.some(x => x.type === 'main');
+	if (flag === "forcePage") return false;
+	const noMainColumn = !deckStore.state.columns.some((x) => x.type === "main");
 	if (deckStore.state.navWindow || noMainColumn) {
 		os.pageWindow(path);
 		return true;
@@ -133,14 +143,14 @@ mainRouter.navHook = (path, flag): boolean => {
 };
 
 const isMobile = ref(window.innerWidth <= 500);
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
 	isMobile.value = window.innerWidth <= 500;
 });
 
-const snapScroll = deviceKind === 'smartphone' || deviceKind === 'tablet';
+const snapScroll = deviceKind === "smartphone" || deviceKind === "tablet";
 const drawerMenuShowing = ref(false);
 
-const route = 'TODO';
+const route = "TODO";
 watch(route, () => {
 	drawerMenuShowing.value = false;
 });
@@ -156,29 +166,30 @@ const menuIndicated = computed(() => {
 });
 
 function showSettings() {
-	os.pageWindow('/settings/deck');
+	os.pageWindow("/settings/deck");
 }
 
 let columnsEl = $shallowRef<HTMLElement>();
 
 const addColumn = async (ev) => {
 	const columns = [
-		'main',
-		'widgets',
-		'notifications',
-		'tl',
-		'antenna',
-		'list',
-		'channel',
-		'mentions',
-		'direct',
-		'roleTimeline',
+		"main",
+		"widgets",
+		"notifications",
+		"tl",
+		"antenna",
+		"list",
+		"channel",
+		"mentions",
+		"direct",
+		"roleTimeline",
 	];
 
 	const { canceled, result: column } = await os.select({
 		title: i18n.ts._deck.addColumn,
-		items: columns.map(column => ({
-			value: column, text: i18n.t('_deck._columns.' + column),
+		items: columns.map((column) => ({
+			value: column,
+			text: i18n.t("_deck._columns." + column),
 		})),
 	});
 	if (canceled) return;
@@ -186,24 +197,32 @@ const addColumn = async (ev) => {
 	addColumnToStore({
 		type: column,
 		id: uuid(),
-		name: i18n.t('_deck._columns.' + column),
+		name: i18n.t("_deck._columns." + column),
 		width: 330,
 	});
 };
 
 const onContextmenu = (ev) => {
-	os.contextMenu([{
-		text: i18n.ts._deck.addColumn,
-		action: addColumn,
-	}], ev);
+	os.contextMenu(
+		[
+			{
+				text: i18n.ts._deck.addColumn,
+				action: addColumn,
+			},
+		],
+		ev,
+	);
 };
 
-document.documentElement.style.overflowY = 'hidden';
-document.documentElement.style.scrollBehavior = 'auto';
-window.addEventListener('wheel', (ev) => {
+document.documentElement.style.overflowY = "hidden";
+document.documentElement.style.scrollBehavior = "auto";
+window.addEventListener("wheel", (ev) => {
 	if (ev.target === columnsEl && ev.deltaX === 0) {
 		columnsEl.scrollLeft += ev.deltaY;
-	} else if (getScrollContainer(ev.target as HTMLElement) == null && ev.deltaX === 0) {
+	} else if (
+		getScrollContainer(ev.target as HTMLElement) == null &&
+		ev.deltaX === 0
+	) {
 		columnsEl.scrollLeft += ev.deltaY;
 	}
 });
@@ -211,47 +230,56 @@ window.addEventListener('wheel', (ev) => {
 loadDeck();
 
 function changeProfile(ev: MouseEvent) {
-	const items = ref([{
-		text: deckStore.state.profile,
-		active: true.valueOf,
-	}]);
-	getProfiles().then(profiles => {
-		items.value = [{
+	const items = ref([
+		{
 			text: deckStore.state.profile,
 			active: true.valueOf,
-		}, ...(profiles.filter(k => k !== deckStore.state.profile).map(k => ({
-			text: k,
-			action: () => {
-				deckStore.set('profile', k);
-				unisonReload();
+		},
+	]);
+	getProfiles().then((profiles) => {
+		items.value = [
+			{
+				text: deckStore.state.profile,
+				active: true.valueOf,
 			},
-		}))), null, {
-			text: i18n.ts._deck.newProfile,
-			icon: 'ti ti-plus',
-			action: async () => {
-				const { canceled, result: name } = await os.inputText({
-					title: i18n.ts._deck.profile,
-					allowEmpty: false,
-				});
-				if (canceled) return;
+			...profiles
+				.filter((k) => k !== deckStore.state.profile)
+				.map((k) => ({
+					text: k,
+					action: () => {
+						deckStore.set("profile", k);
+						unisonReload();
+					},
+				})),
+			null,
+			{
+				text: i18n.ts._deck.newProfile,
+				icon: "ti ti-plus",
+				action: async () => {
+					const { canceled, result: name } = await os.inputText({
+						title: i18n.ts._deck.profile,
+						allowEmpty: false,
+					});
+					if (canceled) return;
 
-				deckStore.set('profile', name);
-				unisonReload();
+					deckStore.set("profile", name);
+					unisonReload();
+				},
 			},
-		}];
+		];
 	});
 	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
 async function deleteProfile() {
 	const { canceled } = await os.confirm({
-		type: 'warning',
-		text: i18n.t('deleteAreYouSure', { x: deckStore.state.profile }),
+		type: "warning",
+		text: i18n.t("deleteAreYouSure", { x: deckStore.state.profile }),
 	});
 	if (canceled) return;
 
 	deleteProfile_(deckStore.state.profile);
-	deckStore.set('profile', 'default');
+	deckStore.set("profile", "default");
 	unisonReload();
 }
 </script>

@@ -13,19 +13,19 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
+import { computed } from "vue";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
 
 const props = defineProps<{
 	eventCircle: Record<string, any>;
 }>();
 
-let circle = $ref(null); 
+let circle = $ref(null);
 
 async function fetch() {
 	if (props.eventCircle.circleId) {
-		circle = await os.api('circles/show', {
+		circle = await os.api("circles/show", {
 			circleId: props.eventCircle.circleId,
 		});
 	}

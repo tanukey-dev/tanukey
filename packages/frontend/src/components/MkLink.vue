@@ -9,29 +9,36 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
-import { url as local } from '@/config';
-import { useTooltip } from '@/scripts/use-tooltip';
-import * as os from '@/os';
+import { defineAsyncComponent } from "vue";
+import { url as local } from "@/config";
+import { useTooltip } from "@/scripts/use-tooltip";
+import * as os from "@/os";
 
-const props = withDefaults(defineProps<{
-	url: string;
-	rel?: null | string;
-}>(), {
-});
+const props = withDefaults(
+	defineProps<{
+		url: string;
+		rel?: null | string;
+	}>(),
+	{},
+);
 
 const self = props.url.startsWith(local);
-const attr = self ? 'to' : 'href';
-const target = self ? null : '_blank';
+const attr = self ? "to" : "href";
+const target = self ? null : "_blank";
 
 const el = $ref();
 
 useTooltip($$(el), (showing) => {
-	os.popup(defineAsyncComponent(() => import('@/components/MkUrlPreviewPopup.vue')), {
-		showing,
-		url: props.url,
-		source: el,
-	}, {}, 'closed');
+	os.popup(
+		defineAsyncComponent(() => import("@/components/MkUrlPreviewPopup.vue")),
+		{
+			showing,
+			url: props.url,
+			source: el,
+		},
+		{},
+		"closed",
+	);
 });
 </script>
 
