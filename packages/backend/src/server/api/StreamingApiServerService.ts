@@ -1,20 +1,20 @@
 import { EventEmitter } from 'events';
+import type * as http from 'node:http';
+import type { ParsedUrlQuery } from 'node:querystring';
+import type { Config } from '@/config.js';
+import { CacheService } from '@/core/CacheService.js';
+import { GlobalEventService } from '@/core/GlobalEventService.js';
+import { NoteReadService } from '@/core/NoteReadService.js';
+import { NotificationService } from '@/core/NotificationService.js';
+import { bindThis } from '@/decorators.js';
+import { DI } from '@/di-symbols.js';
+import type { BlockingsRepository, ChannelFollowingsRepository, FollowingsRepository, MutingsRepository, RenoteMutingsRepository, UserProfilesRepository, UsersRepository } from '@/models/index.js';
 import { Inject, Injectable } from '@nestjs/common';
 import * as Redis from 'ioredis';
 import * as websocket from 'websocket';
-import { DI } from '@/di-symbols.js';
-import type { UsersRepository, BlockingsRepository, ChannelFollowingsRepository, FollowingsRepository, MutingsRepository, UserProfilesRepository, RenoteMutingsRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import { NoteReadService } from '@/core/NoteReadService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { bindThis } from '@/decorators.js';
-import { CacheService } from '@/core/CacheService.js';
 import { AuthenticateService } from './AuthenticateService.js';
-import MainStreamConnection from './stream/index.js';
 import { ChannelsService } from './stream/ChannelsService.js';
-import type { ParsedUrlQuery } from 'querystring';
-import type * as http from 'node:http';
+import MainStreamConnection from './stream/index.js';
 
 @Injectable()
 export class StreamingApiServerService {
