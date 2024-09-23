@@ -12,8 +12,7 @@
 		"watch:swc": "swc src -d built -D -w",
 		"build:tsc": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
 		"watch": "node watch.mjs",
-		"typecheck": "tsc --noEmit",
-		"lint": "pnpm typecheck && pnpm eslint"
+		"typecheck": "tsc --noEmit"
 	},
 	"optionalDependencies": {
 		"@swc/core-android-arm64": "1.3.11",
