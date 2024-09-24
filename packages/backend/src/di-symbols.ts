@@ -82,4 +82,9 @@ export const DI = {
 	//#endregion
 
 	emojiEntityService: "EmojiEntityService",
+	noteEntityService: "NoteEntityService",
+	searchService: "SearchService",
+	activeUsersChart: "ActiveUsersChart",
+	roleService: "RoleService",
+	queryService: "QueryService",
 };

@@ -63,8 +63,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		@Inject(DI.userListJoiningsRepository)
 		private userListJoiningsRepository: UserListJoiningsRepository,
 
+		@Inject(DI.noteEntityService)
 		private noteEntityService: NoteEntityService,
+
+		@Inject(DI.searchService)
 		private searchService: SearchService,
+
+		@Inject(DI.activeUsersChart)
 		private activeUsersChart: ActiveUsersChart,
 	) {
 		super(meta, paramDef, async (ps, me) => {
@@ -89,10 +94,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				me,
 				{
 					userIds: userIds,
-					// checkChannelSearchable: ps.checkChannelSearchable ?? true,
+					checkChannelSearchable: true,
 					// createAtBegin: ps.createAtBegin ?? undefined,
 					// createAtEnd: ps.createAtEnd ?? undefined,
-					// reverseOrder: ps.reverseOrder ?? false,
+					reverseOrder: false,
 					// hasFile: ps.hasFile ?? false,
 				},
 				{
