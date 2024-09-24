@@ -3,9 +3,11 @@ import type { RoleService } from "@/core/RoleService.js";
 import type { SearchService } from "@/core/SearchService.js";
 import type { NoteEntityService } from "@/core/entities/NoteEntityService.js";
 import { DI } from "@/di-symbols.js";
-import type { User, UsersRepository } from "@/models/index.js";
+import * as Acct from "@/misc/acct.js";
+import type { UsersRepository } from "@/models/index.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
+import { IsNull } from "typeorm";
 import { ApiError } from "../../error.js";
 
 export const meta = {
@@ -102,7 +104,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				const users = await usersRepository.find({
 					where: [
 						...ps.users.map((username) => {
-							return { username: username };
+							const acct = Acct.parse(username);
+							return { username: acct.username, host: acct.host ?? IsNull() };
 						}),
 					],
 				});
