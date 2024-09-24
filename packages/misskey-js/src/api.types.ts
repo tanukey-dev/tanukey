@@ -1,5 +1,6 @@
 import type {
 	Ad,
+	AdminInstanceMetadata,
 	Announcement,
 	Antenna,
 	App,
@@ -11,33 +12,32 @@ import type {
 	DetailedInstanceMetadata,
 	DriveFile,
 	DriveFolder,
+	FollowRequest,
 	Following,
 	FollowingFolloweePopulated,
 	FollowingFollowerPopulated,
-	FollowRequest,
 	GalleryPost,
 	Instance,
+	Invite,
+	InviteLimit,
 	LiteInstanceMetadata,
 	MeDetailed,
+	MeSignup,
+	MessagingMessage,
 	Note,
 	NoteFavorite,
+	NoteReaction,
+	Notification,
 	OriginType,
 	Page,
 	ServerInfo,
+	Signin,
 	Stats,
 	User,
 	UserDetailed,
-	MeSignup,
 	UserGroup,
 	UserList,
 	UserSorting,
-	Notification,
-	NoteReaction,
-	Signin,
-	MessagingMessage,
-	Invite,
-	InviteLimit,
-	AdminInstanceMetadata,
 } from "./entities.js";
 
 type TODO = Record<string, any> | null;
@@ -93,6 +93,7 @@ export type Endpoints = {
 	"admin/emoji/copy": { req: TODO; res: TODO };
 	"admin/emoji/list-remote": { req: TODO; res: TODO };
 	"admin/emoji/list": { req: TODO; res: TODO };
+	"admin/emoji/show": { req: TODO; res: TODO };
 	"admin/emoji/remove": { req: TODO; res: TODO };
 	"admin/emoji/update": { req: TODO; res: TODO };
 	"admin/emoji/update-draft": { req: TODO; res: TODO };

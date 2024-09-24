@@ -116,11 +116,7 @@ const headerTabs = $computed(() => [
 	{
 		key: "local",
 		title: i18n.ts.local,
-	},
-	{
-		key: "remote",
-		title: i18n.ts.remote,
-	},
+	}
 ]);
 
 definePageMetadata(

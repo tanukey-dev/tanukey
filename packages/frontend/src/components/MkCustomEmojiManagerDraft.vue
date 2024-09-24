@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import type MkPagination from "@/components/MkPagination.vue";
+import MkPagination from "@/components/MkPagination.vue";
 import { host } from "@/config";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
@@ -60,7 +60,7 @@ const paginationDraft = {
 };
 
 const editDraft = (emoji) => {
-	os.apiGet("admin/emoji/emoji", { name: emoji.name }).then((res) => {
+	os.api("admin/emoji/show", { name: emoji.name }).then((res) => {
 		os.popup(
 			defineAsyncComponent(() => import("@/components/MkEmojiEditDialog.vue")),
 			{

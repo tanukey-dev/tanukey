@@ -80,4 +80,6 @@ export const DI = {
 	eventsRepository: "eventsRepository",
 	eventCirclesRepository: "eventCirclesRepository",
 	//#endregion
+
+	emojiEntityService: "EmojiEntityService",
 };

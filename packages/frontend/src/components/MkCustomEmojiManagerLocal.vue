@@ -46,7 +46,7 @@
 <script lang="ts" setup>
 import MkButton from "@/components/MkButton.vue";
 import MkInput from "@/components/MkInput.vue";
-import type MkPagination from "@/components/MkPagination.vue";
+import MkPagination from "@/components/MkPagination.vue";
 import MkSwitch from "@/components/MkSwitch.vue";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
@@ -86,7 +86,7 @@ const toggleSelect = (emoji) => {
 };
 
 const edit = (emoji) => {
-	os.apiGet("admin/emoji/emoji", { name: emoji.name }).then((res) => {
+	os.api("admin/emoji/show", { name: emoji.name }).then((res) => {
 		os.popup(
 			defineAsyncComponent(() => import("@/components/MkEmojiEditDialog.vue")),
 			{
