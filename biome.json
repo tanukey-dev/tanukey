@@ -29,5 +29,17 @@
 		"parser": {
 			"unsafeParameterDecoratorsEnabled": true
 		}
-	}
+	},
+	"overrides": [
+		{
+			"include": ["**/*.vue"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useImportType": "off"
+					}
+				}
+			}
+		}
+	]
 }
