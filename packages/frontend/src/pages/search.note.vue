@@ -7,20 +7,11 @@
 			<MkFolder :defaultOpen="optionOpen">
 				<template #label>{{ i18n.ts.options }}</template>
 
-				<MkFolder :class="$style.formContent" :defaultOpen="userOptionOpen">
-					<template #label>{{ i18n.ts.specifyUser }}</template>
-					<template v-if="user" #suffix>@{{ user.username }}</template>
-
-					<div style="text-align: center;" class="_gaps">
-						<div v-if="user">@{{ user.username }}</div>
-						<div>
-							<MkButton v-if="user == null" primary rounded inline @click="selectUser">{{
-								i18n.ts.selectUser }}
-							</MkButton>
-							<MkButton v-else danger rounded inline @click="user = null">{{ i18n.ts.remove }}</MkButton>
-						</div>
-					</div>
-				</MkFolder>
+				<MkTextarea v-model="users">
+					<template #label>{{ i18n.ts.users }}</template>
+					<template #caption>{{ i18n.ts.antennaUsersDescription }} <button class="_textButton"
+							@click="addUser">{{ i18n.ts.addUser }}</button></template>
+				</MkTextarea>
 
 				<FormSplit :class="$style.formContent">
 					<MkInput v-model="createAtBegin" type="datetime-local">
@@ -58,32 +49,33 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
-import MkNotes from "@/components/MkNotes.vue";
-import MkInput from "@/components/MkInput.vue";
-import MkRadios from "@/components/MkRadios.vue";
 import MkButton from "@/components/MkButton.vue";
+import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import MkFolder from "@/components/MkFolder.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkNotes from "@/components/MkNotes.vue";
+import MkRadios from "@/components/MkRadios.vue";
 import MkSwitch from "@/components/MkSwitch.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
 import FormSplit from "@/components/form/split.vue";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
-import MkFoldableSection from "@/components/MkFoldableSection.vue";
 import { useRouter } from "@/router";
-import MkFolder from "@/components/MkFolder.vue";
+import * as Acct from "misskey-js/built/acct";
+import { ref, watch } from "vue";
 
 const router = useRouter();
 
 let key = $ref(0);
-let searchQuery = ref("");
-let searchOrigin = ref<string>("local");
+const searchQuery = ref("");
+const searchOrigin = ref<string>("local");
 let notePagination = $ref();
-let user = ref<any>(null);
-let createAtBegin = ref<any>(null);
-let createAtEnd = ref<any>(null);
-let reverseOrder = ref<any>(false);
-let hasFile = ref<any>(false);
-let optionOpen = ref(false);
-let userOptionOpen = ref(false);
+const createAtBegin = ref<any>(null);
+const createAtEnd = ref<any>(null);
+const reverseOrder = ref<any>(false);
+const hasFile = ref<any>(false);
+const optionOpen = ref(false);
+const users = ref("");
 
 watch(searchQuery, () => {
 	updateUrlParameter();
@@ -91,7 +83,7 @@ watch(searchQuery, () => {
 watch(searchOrigin, () => {
 	updateUrlParameter();
 });
-watch(user, () => {
+watch(users, () => {
 	updateUrlParameter();
 });
 watch(createAtBegin, () => {
@@ -118,7 +110,7 @@ function updateUrlParameter(): void {
 	const searchParams = new URLSearchParams(window.location.search);
 	setSearchParams(searchParams, "q", searchQuery.value);
 	setSearchParams(searchParams, "origin", searchOrigin.value);
-	setSearchParams(searchParams, "userId", user.value?.id);
+	setSearchParams(searchParams, "users", users.value);
 	setSearchParams(searchParams, "createAtBegin", createAtBegin.value);
 	setSearchParams(searchParams, "createAtEnd", createAtEnd.value);
 	setSearchParams(searchParams, "reverseOrder", reverseOrder.value);
@@ -136,17 +128,10 @@ async function loadUrlParameter() {
 	if (origin) {
 		searchOrigin.value = origin;
 	}
-	const userId = searchParams.get("userId");
-	if (userId) {
-		user.value = await os
-			.api("users/show", {
-				userId: userId,
-			})
-			.catch(() => {
-				user.value = null;
-			});
+	const usersParam = searchParams.get("users");
+	if (usersParam) {
+		users.value = usersParam;
 		optionOpen.value = true;
-		userOptionOpen.value = true;
 	}
 	const begin = searchParams.get("createAtBegin");
 	if (begin) {
@@ -176,12 +161,6 @@ async function loadUrlParameter() {
 }
 
 await loadUrlParameter();
-
-function selectUser() {
-	os.selectUser().then((_user) => {
-		user.value = _user;
-	});
-}
 
 async function search() {
 	const query = searchQuery.value.toString().trim();
@@ -218,7 +197,10 @@ async function search() {
 		limit: 10,
 		params: {
 			query: query,
-			userId: user.value ? user.value.id : null,
+			users: users.value
+				.trim()
+				.split("\n")
+				.map((x) => x.trim()),
 			origin: searchOrigin.value,
 			createAtBegin: begin ? begin.getTime() : undefined,
 			createAtEnd: end ? end.getTime() : undefined,
@@ -228,6 +210,14 @@ async function search() {
 	};
 
 	key++;
+}
+
+function addUser() {
+	os.selectUser().then((user) => {
+		users.value = users.value.trim();
+		users.value += `\n@${Acct.toString(user)}`;
+		users.value = users.value.trim();
+	});
 }
 </script>
 
