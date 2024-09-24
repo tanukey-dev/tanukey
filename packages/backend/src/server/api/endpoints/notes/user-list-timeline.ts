@@ -1,47 +1,53 @@
-import { Brackets } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { NotesRepository, UserListsRepository, UserListJoiningsRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import ActiveUsersChart from '@/core/chart/charts/active-users.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import type { Config } from "@/config.js";
+import type { SearchService } from "@/core/SearchService.js";
+import type ActiveUsersChart from "@/core/chart/charts/active-users.js";
+import type { NoteEntityService } from "@/core/entities/NoteEntityService.js";
+import { DI } from "@/di-symbols.js";
+import type {
+	NotesRepository,
+	UserListJoiningsRepository,
+	UserListsRepository,
+} from "@/models/index.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { Inject, Injectable } from "@nestjs/common";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['notes', 'lists'],
+	tags: ["notes", "lists"],
 
 	requireCredential: true,
-	kind: 'read:account',
+	kind: "read:account",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'Note',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "Note",
 		},
 	},
 
 	errors: {
 		noSuchList: {
-			message: 'No such list.',
-			code: 'NO_SUCH_LIST',
-			id: '8fb1fbd5-e476-4c37-9fb0-43d55b63a2ff',
+			message: "No such list.",
+			code: "NO_SUCH_LIST",
+			id: "8fb1fbd5-e476-4c37-9fb0-43d55b63a2ff",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		listId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
+		listId: { type: "string", format: "misskey:id" },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 10 },
+		sinceId: { type: "string", format: "misskey:id" },
+		untilId: { type: "string", format: "misskey:id" },
 	},
-	required: ['listId'],
+	required: ["listId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -58,7 +64,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private userListJoiningsRepository: UserListJoiningsRepository,
 
 		private noteEntityService: NoteEntityService,
-		private queryService: QueryService,
+		private searchService: SearchService,
 		private activeUsersChart: ActiveUsersChart,
 	) {
 		super(meta, paramDef, async (ps, me) => {
@@ -75,32 +81,30 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				userListId: list.id,
 			});
 
-			const listUserIds = userListJoinings.map(u => u.userId);
+			const userIds = userListJoinings.map((u) => u.userId);
+			const query = "";
 
-			const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), ps.sinceId, ps.untilId)
-				.innerJoinAndSelect('note.user', 'user')
-				.leftJoinAndSelect('note.reply', 'reply')
-				.leftJoinAndSelect('note.renote', 'renote')
-				.leftJoinAndSelect('reply.user', 'replyUser')
-				.leftJoinAndSelect('renote.user', 'renoteUser')
-				.leftJoinAndSelect('note.channel', 'channel')
-				.andWhere(new Brackets(qb => {
-					qb.orWhere('channel.searchable IS NULL');
-					qb.orWhere('channel.searchable = true');
-				}))
-				.andWhere('note.userId IN (:...listUserIds)', { listUserIds: listUserIds });
-
-			this.queryService.generateVisibilityQuery(query, me);
-			this.queryService.generateMutedUserQuery(query, me);
-			this.queryService.generateMutedNoteQuery(query, me);
-			this.queryService.generateBlockedUserQuery(query, me);
-			this.queryService.generateMutedUserRenotesQueryForNotes(query, me);
-
-			const timeline = await query.limit(ps.limit).getMany();
+			const notes = await this.searchService.searchNote(
+				query,
+				me,
+				{
+					userIds: userIds,
+					// checkChannelSearchable: ps.checkChannelSearchable ?? true,
+					// createAtBegin: ps.createAtBegin ?? undefined,
+					// createAtEnd: ps.createAtEnd ?? undefined,
+					// reverseOrder: ps.reverseOrder ?? false,
+					// hasFile: ps.hasFile ?? false,
+				},
+				{
+					untilId: ps.untilId,
+					sinceId: ps.sinceId,
+					limit: ps.limit,
+				},
+			);
 
 			this.activeUsersChart.read(me);
 
-			return await this.noteEntityService.packMany(timeline, me);
+			return await this.noteEntityService.packMany(notes, me);
 		});
 	}
 }
