@@ -124,6 +124,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					createAtEnd: ps.createAtEnd ?? undefined,
 					reverseOrder: ps.reverseOrder ?? false,
 					hasFile: ps.hasFile ?? false,
+					includeReplies: true,
 				},
 				{
 					untilId: ps.untilId,

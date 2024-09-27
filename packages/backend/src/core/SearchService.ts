@@ -223,6 +223,7 @@ export class SearchService {
 			createAtEnd?: number;
 			reverseOrder?: boolean;
 			hasFile?: boolean;
+			includeReplies?: boolean;
 		},
 		pagination: {
 			untilId?: Note["id"];
@@ -369,6 +370,10 @@ export class SearchService {
 
 		if (opts.hasFile) {
 			query.andWhere("note.fileIds != '{}'");
+		}
+
+		if (!opts.includeReplies) {
+			query.andWhere("note.replyId IS NULL");
 		}
 
 		query
