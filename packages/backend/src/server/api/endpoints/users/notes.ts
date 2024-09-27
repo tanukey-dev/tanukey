@@ -71,6 +71,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					userIds: [ps.userId],
 					checkChannelSearchable: true,
 					includeReplies: ps.includeReplies,
+					reverseOrder: false,
 					hasFile: ps.withFiles,
 				},
 				{
