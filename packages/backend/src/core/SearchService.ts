@@ -54,6 +54,9 @@ export class SearchService {
 											userId: { type: "keyword" },
 											userHost: { type: "keyword" },
 											channelId: { type: "keyword" },
+											tags: { type: "array" },
+											replyId: { type: "keyword" },
+											hasFile: { type: "boolean" },
 										},
 									},
 									// see: https://aws.amazon.com/jp/blogs/psa/amazon-opensearch-service-sudachi-plugin/
@@ -98,6 +101,30 @@ export class SearchService {
 							});
 					} else {
 						console.log(`Index ${indexName} already exists`);
+						this.opensearch?.indices
+							.putMapping({
+								index: indexName,
+								body: {
+									mappings: {
+										type_name: {
+											properties: {
+												text: { type: "text" },
+												cw: { type: "text" },
+												createdAt: { type: "long" },
+												userId: { type: "keyword" },
+												userHost: { type: "keyword" },
+												channelId: { type: "keyword" },
+												tags: { type: "array" },
+												replyId: { type: "keyword" },
+												hasFile: { type: "boolean" },
+											},
+										},
+									},
+								},
+							})
+							.catch((error: any) => {
+								console.error(error);
+							});
 					}
 				})
 				.catch((error: any) => {
@@ -119,6 +146,9 @@ export class SearchService {
 				channelId: note.channelId,
 				cw: note.cw,
 				text: note.text,
+				tags: note.tags,
+				replyId: note.replyId,
+				hasFile: note.fileIds.length !== 0,
 			};
 
 			await this.opensearch
@@ -335,6 +365,18 @@ export class SearchService {
 			});
 		}
 
+		if (opts.hasFile) {
+			esFilter.bool.must.push({
+				bool: { must: [{ term: { hasFile: true } }] },
+			});
+		}
+
+		if (!opts.includeReplies) {
+			esFilter.bool.must.push({
+				bool: { must_not: [{ exists: { field: "replyId" } }] },
+			});
+		}
+
 		const res = await this.opensearch.search({
 			index: this.opensearchNoteIndex as string,
 			body: {
@@ -366,14 +408,6 @@ export class SearchService {
 					qb.orWhere("channel.searchable = true");
 				}),
 			);
-		}
-
-		if (opts.hasFile) {
-			query.andWhere("note.fileIds != '{}'");
-		}
-
-		if (!opts.includeReplies) {
-			query.andWhere("note.replyId IS NULL");
 		}
 
 		query
