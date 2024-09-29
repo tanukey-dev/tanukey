@@ -88,7 +88,7 @@ export class EmojiEntityService {
 				roleIdsThatCanBeUsedThisEmojiAsReaction:
 					emoji.emoji_roleIdsThatCanBeUsedThisEmojiAsReaction,
 				// リモートユーザーの場合、ファイルがあってもユーザー名が取れない
-				uploadedUserName: emoji.driveFileId
+				uploadedUserName: emoji.emoji_driveFileId
 					? (emoji.uploadedUserName ?? "")
 					: null,
 			};
