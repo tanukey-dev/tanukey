@@ -995,6 +995,7 @@ export interface Locale {
     "color": string;
     "newEmojis": string;
     "draftEmojis": string;
+    "deletedEmojis": string;
     "manageCustomEmojis": string;
     "requestCustomEmojis": string;
     "youCannotCreateAnymore": string;

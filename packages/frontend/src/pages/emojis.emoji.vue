@@ -16,11 +16,11 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from "vue";
+import { $i } from "@/account";
+import { i18n } from "@/i18n";
 import * as os from "@/os";
 import copyToClipboard from "@/scripts/copy-to-clipboard";
-import { i18n } from "@/i18n";
-import { $i } from "@/account";
+import { defineAsyncComponent } from "vue";
 
 const props = defineProps<{
 	emoji: {
@@ -39,12 +39,12 @@ async function menu(ev) {
 		[
 			{
 				type: "label",
-				text: ":" + props.emoji.name + ":",
+				text: `:${props.emoji.name}:`,
 			},
 			{
 				text: i18n.ts.edit,
 				icon: "ti ti-edit",
-				disabled: props.emoji.uploadedUserName !== $i?.username,
+				disabled: !(props.emoji.uploadedUserName === null || props.emoji.uploadedUserName === "") && (props.emoji.uploadedUserName !== $i?.username),
 				action: () => {
 					edit();
 				},
