@@ -62,6 +62,7 @@ export class EmojiEntityService {
 		const emojis = await this.emojisRepository
 			.createQueryBuilder("emoji")
 			.addSelect("user.username", "uploadedUserName")
+			.addSelect("file.id", "fileId")
 			.leftJoin(DriveFile, "file", "emoji.driveFileId = file.id")
 			.leftJoin(User, "user", "file.userId = user.id")
 			.andWhere("emoji.host IS NULL")
@@ -88,9 +89,7 @@ export class EmojiEntityService {
 				roleIdsThatCanBeUsedThisEmojiAsReaction:
 					emoji.emoji_roleIdsThatCanBeUsedThisEmojiAsReaction,
 				// リモートユーザーの場合、ファイルがあってもユーザー名が取れない
-				uploadedUserName: emoji.emoji_file
-					? (emoji.uploadedUserName ?? "")
-					: null,
+				uploadedUserName: emoji.fileId ? (emoji.uploadedUserName ?? "") : null,
 			};
 		});
 	}
