@@ -30,7 +30,7 @@ const props = defineProps<{
 		url: string;
 		draft: boolean;
 		license: string;
-		uploadedUserName: string;
+		uploadedUserName: string | null;
 	};
 }>();
 
@@ -44,7 +44,7 @@ async function menu(ev) {
 			{
 				text: i18n.ts.edit,
 				icon: "ti ti-edit",
-				disabled: !(props.emoji.uploadedUserName === null || props.emoji.uploadedUserName === "") && (props.emoji.uploadedUserName !== $i?.username),
+				disabled: props.emoji.uploadedUserName !== null && props.emoji.uploadedUserName !== $i?.username,
 				action: () => {
 					edit();
 				},

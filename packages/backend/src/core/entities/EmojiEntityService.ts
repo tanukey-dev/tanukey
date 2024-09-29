@@ -1,12 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { EmojisRepository, DriveFilesRepository, UsersRepository } from '@/models/index.js';
-import type { Packed } from '@/misc/json-schema.js';
-import type { } from '@/models/entities/Blocking.js';
-import type { Emoji } from '@/models/entities/Emoji.js';
-import { DriveFile } from '@/models/entities/DriveFile.js';
-import { User } from '@/models/entities/User.js';
-import { bindThis } from '@/decorators.js';
+import { bindThis } from "@/decorators.js";
+import { DI } from "@/di-symbols.js";
+import type { Packed } from "@/misc/json-schema.js";
+import type {} from "@/models/entities/Blocking.js";
+import { DriveFile } from "@/models/entities/DriveFile.js";
+import type { Emoji } from "@/models/entities/Emoji.js";
+import { User } from "@/models/entities/User.js";
+import type {
+	DriveFilesRepository,
+	EmojisRepository,
+	UsersRepository,
+} from "@/models/index.js";
+import { Inject, Injectable } from "@nestjs/common";
 
 @Injectable()
 export class EmojiEntityService {
@@ -19,14 +23,16 @@ export class EmojiEntityService {
 
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
-	) {
-	}
+	) {}
 
 	@bindThis
 	public async packSimple(
-		src: Emoji['id'] | Emoji,
-	): Promise<Packed<'EmojiSimple'>> {
-		const emoji = typeof src === 'object' ? src : await this.emojisRepository.findOneByOrFail({ id: src });
+		src: Emoji["id"] | Emoji,
+	): Promise<Packed<"EmojiSimple">> {
+		const emoji =
+			typeof src === "object"
+				? src
+				: await this.emojisRepository.findOneByOrFail({ id: src });
 
 		return {
 			id: emoji.id,
@@ -38,33 +44,37 @@ export class EmojiEntityService {
 			url: emoji.publicUrl || emoji.originalUrl,
 			draft: emoji.draft,
 			isSensitive: emoji.isSensitive ? true : undefined,
-			roleIdsThatCanBeUsedThisEmojiAsReaction: emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length > 0 ? emoji.roleIdsThatCanBeUsedThisEmojiAsReaction : undefined,
+			roleIdsThatCanBeUsedThisEmojiAsReaction:
+				emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length > 0
+					? emoji.roleIdsThatCanBeUsedThisEmojiAsReaction
+					: undefined,
 			host: emoji.host,
 		};
 	}
 
 	@bindThis
-	public packSimpleMany(
-		emojis: any[],
-	) {
-		return Promise.all(emojis.map(x => this.packSimple(x)));
+	public packSimpleMany(emojis: any[]) {
+		return Promise.all(emojis.map((x) => this.packSimple(x)));
 	}
 
 	@bindThis
-	public async packAll(): Promise<Packed<'EmojiDetailed'>[]> {
-		const emojis = await this.emojisRepository.createQueryBuilder('emoji')
-			.addSelect('user.username', 'uploadedUserName')
-			.leftJoin(DriveFile, 'file', 'emoji.driveFileId = file.id')
-			.leftJoin(User, 'user', 'file.userId = user.id')
-			.andWhere('emoji.host IS NULL')
-			.orderBy('emoji.category', 'ASC')
-			.addOrderBy('emoji.name', 'ASC')
+	public async packAll(): Promise<Packed<"EmojiDetailed">[]> {
+		const emojis = await this.emojisRepository
+			.createQueryBuilder("emoji")
+			.addSelect("user.username", "uploadedUserName")
+			.leftJoin(DriveFile, "file", "emoji.driveFileId = file.id")
+			.leftJoin(User, "user", "file.userId = user.id")
+			.andWhere("emoji.host IS NULL")
+			.orderBy("emoji.category", "ASC")
+			.addOrderBy("emoji.name", "ASC")
 			.getRawMany();
-		
-		return emojis.map(emoji => {
+
+		return emojis.map((emoji) => {
 			return {
 				id: emoji.emoji_id,
-				updatedAt: emoji.emoji_updatedAt ? emoji.emoji_updatedAt.toDateString() : null,
+				updatedAt: emoji.emoji_updatedAt
+					? emoji.emoji_updatedAt.toDateString()
+					: null,
 				aliases: emoji.emoji_aliases,
 				name: emoji.emoji_name,
 				category: emoji.emoji_category,
@@ -75,19 +85,28 @@ export class EmojiEntityService {
 				draft: emoji.emoji_draft,
 				isSensitive: emoji.emoji_isSensitive,
 				localOnly: emoji.emoji_localOnly,
-				roleIdsThatCanBeUsedThisEmojiAsReaction: emoji.emoji_roleIdsThatCanBeUsedThisEmojiAsReaction,
-				uploadedUserName: emoji.uploadedUserName,
+				roleIdsThatCanBeUsedThisEmojiAsReaction:
+					emoji.emoji_roleIdsThatCanBeUsedThisEmojiAsReaction,
+				// リモートユーザーの場合、ファイルがあってもユーザー名が取れない
+				uploadedUserName: emoji.file ? (emoji.uploadedUserName ?? "") : null,
 			};
 		});
 	}
 
 	@bindThis
 	public async packDetailed(
-		src: Emoji['id'] | Emoji,
-	): Promise<Packed<'EmojiDetailed'>> {
-		const emoji = typeof src === 'object' ? src : await this.emojisRepository.findOneByOrFail({ id: src });
-		const file = emoji.driveFileId ? await this.driveFilesRepository.findOneBy({ id: emoji.driveFileId }) : null;
-		const user = file?.userId ? await this.usersRepository.findOneBy({ id: file.userId }) : null;
+		src: Emoji["id"] | Emoji,
+	): Promise<Packed<"EmojiDetailed">> {
+		const emoji =
+			typeof src === "object"
+				? src
+				: await this.emojisRepository.findOneByOrFail({ id: src });
+		const file = emoji.driveFileId
+			? await this.driveFilesRepository.findOneBy({ id: emoji.driveFileId })
+			: null;
+		const user = file?.userId
+			? await this.usersRepository.findOneBy({ id: file.userId })
+			: null;
 
 		return {
 			id: emoji.id,
@@ -102,16 +121,15 @@ export class EmojiEntityService {
 			draft: emoji.draft,
 			isSensitive: emoji.isSensitive,
 			localOnly: emoji.localOnly,
-			roleIdsThatCanBeUsedThisEmojiAsReaction: emoji.roleIdsThatCanBeUsedThisEmojiAsReaction,
-			uploadedUserName: user?.username ?? null,
+			roleIdsThatCanBeUsedThisEmojiAsReaction:
+				emoji.roleIdsThatCanBeUsedThisEmojiAsReaction,
+			// リモートユーザーの場合、ファイルがあってもユーザー名が取れない
+			uploadedUserName: file ? (user?.username ?? "") : null,
 		};
 	}
 
 	@bindThis
-	public packDetailedMany(
-		emojis: any[],
-	) {
-		return Promise.all(emojis.map(x => this.packDetailed(x)));
+	public packDetailedMany(emojis: any[]) {
+		return Promise.all(emojis.map((x) => this.packDetailed(x)));
 	}
 }
-

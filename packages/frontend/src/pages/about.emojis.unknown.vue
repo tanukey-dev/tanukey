@@ -11,7 +11,7 @@ import { customEmojis } from "@/custom-emojis";
 import XEmoji from "./emojis.emoji.vue";
 
 const emojis = customEmojis.value.filter(
-	(emoji) => emoji.uploadedUserName === null || emoji.uploadedUserName === "",
+	(emoji) => emoji.uploadedUserName === null,
 );
 
 </script>
