@@ -2,6 +2,7 @@ import type { Config } from "@/config.js";
 import { IdService } from "@/core/IdService.js";
 import type { LoggerService } from "@/core/LoggerService.js";
 import { QueryService } from "@/core/QueryService.js";
+import type NotesChart from "@/core/chart/charts/notes.js";
 import { bindThis } from "@/decorators.js";
 import { DI } from "@/di-symbols.js";
 import type Logger from "@/logger.js";
@@ -34,6 +35,9 @@ export class SearchService {
 
 		private queryService: QueryService,
 		private idService: IdService,
+
+		@Inject(DI.notesChart)
+		private notesChart: NotesChart,
 
 		@Inject(DI.loggerService)
 		private loggerService: LoggerService,
@@ -234,6 +238,10 @@ export class SearchService {
 				const take = 10;
 				this.isIndexing = true;
 				this.indexingError = false;
+
+				const notesChart = await this.notesChart.getChart("hour", 1, null);
+				this.notesCount = notesChart.local.total[0];
+
 				let lastId = null;
 				for (this.index = 0; ; this.index = this.index + take) {
 					lastId = await this.stepFullIndex(lastId, take);

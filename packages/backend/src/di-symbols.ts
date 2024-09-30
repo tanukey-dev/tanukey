@@ -88,4 +88,5 @@ export const DI = {
 	roleService: "RoleService",
 	queryService: "QueryService",
 	loggerService: "LoggerService",
+	notesChart: "NotesChart",
 };
