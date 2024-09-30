@@ -51,11 +51,14 @@ export class SearchService {
 											text: { type: "text" },
 											cw: { type: "text" },
 											createdAt: { type: "long" },
-											userId: { type: "keyword" },
-											userHost: { type: "keyword" },
-											channelId: { type: "keyword" },
-											tags: { type: "array" },
-											replyId: { type: "keyword" },
+											userId: { type: "text" },
+											userHost: { type: "text" },
+											channelId: { type: "text" },
+											tags: { type: "text" },
+											replyId: { type: "text" },
+											renoteId: { type: "text" },
+											visibility: { type: "text" },
+											visibleUserIds: { type: "text" },
 											hasFile: { type: "boolean" },
 										},
 									},
@@ -105,20 +108,19 @@ export class SearchService {
 							.putMapping({
 								index: indexName,
 								body: {
-									mappings: {
-										type_name: {
-											properties: {
-												text: { type: "text" },
-												cw: { type: "text" },
-												createdAt: { type: "long" },
-												userId: { type: "keyword" },
-												userHost: { type: "keyword" },
-												channelId: { type: "keyword" },
-												tags: { type: "array" },
-												replyId: { type: "keyword" },
-												hasFile: { type: "boolean" },
-											},
-										},
+									properties: {
+										text: { type: "text" },
+										cw: { type: "text" },
+										createdAt: { type: "long" },
+										userId: { type: "text" },
+										userHost: { type: "text" },
+										channelId: { type: "text" },
+										tags: { type: "text" },
+										replyId: { type: "text" },
+										renoteId: { type: "text" },
+										visibility: { type: "text" },
+										visibleUserIds: { type: "text" },
+										hasFile: { type: "boolean" },
 									},
 								},
 							})
@@ -148,6 +150,9 @@ export class SearchService {
 				text: note.text,
 				tags: note.tags,
 				replyId: note.replyId,
+				renoteId: note.renoteId,
+				visibility: note.visibility,
+				visibleUserIds: note.visibleUserIds,
 				hasFile: note.fileIds.length !== 0,
 			};
 
