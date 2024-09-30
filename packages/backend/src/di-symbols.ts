@@ -87,4 +87,5 @@ export const DI = {
 	activeUsersChart: "ActiveUsersChart",
 	roleService: "RoleService",
 	queryService: "QueryService",
+	loggerService: "LoggerService",
 };

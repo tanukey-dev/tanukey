@@ -1,8 +1,10 @@
 import type { Config } from "@/config.js";
 import { IdService } from "@/core/IdService.js";
+import type { LoggerService } from "@/core/LoggerService.js";
 import { QueryService } from "@/core/QueryService.js";
 import { bindThis } from "@/decorators.js";
 import { DI } from "@/di-symbols.js";
+import type Logger from "@/logger.js";
 import { sqlLikeEscape } from "@/misc/sql-like-escape.js";
 import { Note } from "@/models/entities/Note.js";
 import { User } from "@/models/index.js";
@@ -18,6 +20,7 @@ export class SearchService {
 	private notesCount = 0;
 	private index = 0;
 	private indexingError = false;
+	private logger: Logger;
 
 	constructor(
 		@Inject(DI.config)
@@ -31,7 +34,12 @@ export class SearchService {
 
 		private queryService: QueryService,
 		private idService: IdService,
+
+		@Inject(DI.loggerService)
+		private loggerService: LoggerService,
 	) {
+		this.logger = this.loggerService.getLogger("search");
+
 		if (this.opensearch) {
 			const indexName = `${config.opensearch!.index}---notes`;
 			this.opensearchNoteIndex = indexName;
@@ -163,7 +171,7 @@ export class SearchService {
 					body: body,
 				})
 				.catch((e) => {
-					console.error("index error: " + note.id);
+					this.logger.error(`index error: ${note.id}`);
 				});
 		}
 	}
@@ -195,11 +203,22 @@ export class SearchService {
 			query.andWhere("note.id > :minId", { minId: lastId });
 		}
 
-		const notes = await query.orderBy("note.id").limit(take).getMany();
+		let notes: Note[] = [];
+		try {
+			notes = await query.orderBy("note.id").limit(take).getMany();
+		} catch (e) {
+			this.logger.error(`get note error: ${take}`);
+			throw e;
+		}
 
 		let tmplastId = null;
 		for (const note of notes) {
-			this.indexNote(note);
+			try {
+				this.indexNote(note);
+			} catch (e) {
+				this.logger.error(`index note error: ${note.id}`);
+				throw e;
+			}
 			tmplastId = note.id;
 		}
 
@@ -229,7 +248,7 @@ export class SearchService {
 				}
 			} catch (e) {
 				this.indexingError = true;
-				console.error("full index error");
+				this.logger.error("full index error");
 			} finally {
 				this.isIndexing = false;
 			}
