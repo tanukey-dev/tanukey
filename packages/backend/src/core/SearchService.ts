@@ -211,6 +211,8 @@ export class SearchService {
 			throw e;
 		}
 
+		if (notes.length === 0) return null;
+
 		let tmplastId = null;
 		for (const note of notes) {
 			try {
@@ -232,19 +234,10 @@ export class SearchService {
 				const take = 10;
 				this.isIndexing = true;
 				this.indexingError = false;
-
-				this.notesCount = await this.notesRepository
-					.createQueryBuilder("note")
-					.where("note.userHost IS NULL")
-					.getCount();
-
 				let lastId = null;
-				for (
-					this.index = 0;
-					this.index < this.notesCount;
-					this.index = this.index + take
-				) {
+				for (this.index = 0; ; this.index = this.index + take) {
 					lastId = await this.stepFullIndex(lastId, take);
+					if (lastId === null) break;
 				}
 			} catch (e) {
 				this.indexingError = true;
