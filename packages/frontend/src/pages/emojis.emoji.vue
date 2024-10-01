@@ -1,18 +1,18 @@
 <template>
-<button v-if="emoji.draft" class="_button" :class="[$style.root, $style.draft]" @click="menu">
-	<img :src="emoji.url" :class="$style.img" loading="lazy"/>
-	<div :class="$style.body">
-		<div :class="$style.name" class="_monospace">{{ '(draft) ' + emoji.name }}</div>
-		<div :class="$style.info">{{ emoji.aliases.join(' ') }}</div>
-	</div>
-</button>
-<button v-else class="_button" :class="$style.root" @click="menu">
-	<img :src="emoji.url" :class="$style.img" loading="lazy"/>
-	<div :class="$style.body">
-		<div :class="$style.name" class="_monospace">{{ emoji.name }}</div>
-		<div :class="$style.info">{{ emoji.aliases.join(' ') }}</div>
-	</div>
-</button>
+	<button v-if="emoji.draft" class="_button" :class="[$style.root, $style.draft]" @click="menu">
+		<img v-if="emoji.uploadedUserName !== null" :src="emoji.url" :class="$style.img" loading="lazy" />
+		<div :class="$style.body">
+			<div :class="$style.name" class="_monospace">{{ '(draft) ' + emoji.name }}</div>
+			<div :class="$style.info">{{ emoji.aliases.join(' ') }}</div>
+		</div>
+	</button>
+	<button v-else class="_button" :class="$style.root" @click="menu">
+		<img v-if="emoji.uploadedUserName !== null" :src="emoji.url" :class="$style.img" loading="lazy" />
+		<div :class="$style.body">
+			<div :class="$style.name" class="_monospace">{{ emoji.name }}</div>
+			<div :class="$style.info">{{ emoji.aliases.join(' ') }}</div>
+		</div>
+	</button>
 </template>
 
 <script lang="ts" setup>
@@ -85,7 +85,6 @@ const edit = () => {
 		},
 		{
 			done: (result) => {
-				window.location.reload();
 			},
 		},
 		"closed",
@@ -134,8 +133,9 @@ const edit = () => {
 }
 
 .draft {
-	--c: rgb(255 196 0 / 15%);;
-	background-image: linear-gradient(45deg,var(--c) 16.67%,transparent 16.67%,transparent 50%,var(--c) 50%,var(--c) 66.67%,transparent 66.67%,transparent 100%);
+	--c: rgb(255 196 0 / 15%);
+	;
+	background-image: linear-gradient(45deg, var(--c) 16.67%, transparent 16.67%, transparent 50%, var(--c) 50%, var(--c) 66.67%, transparent 66.67%, transparent 100%);
 	background-size: 16px 16px;
 }
 </style>

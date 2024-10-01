@@ -8,9 +8,10 @@
 
 <script lang="ts" setup>
 import { customEmojis } from "@/custom-emojis";
+import { computed } from 'vue';
 import XEmoji from "./emojis.emoji.vue";
 
-const emojis = customEmojis.value.filter((emoji) => {
+const emojis = computed(() => customEmojis.value.filter((emoji) => {
 	if (emoji.updatedAt === null) {
 		return false;
 	}
@@ -21,7 +22,7 @@ const emojis = customEmojis.value.filter((emoji) => {
 	const checkDate = new Date(emoji.updatedAt);
 	checkDate.setDate(checkDate.getDate() + 3);
 	return checkDate > new Date();
-});
+}));
 
 </script>
 
