@@ -1,41 +1,30 @@
 <template>
-<MkStickyContainer>
-	<template #header>
-		<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="tabs"/>
-	</template>
-	<MkSpacer
-		v-if="tab"
-		v-touch:swipe.left="onSwipeLeft"
-		v-touch:swipe.right="onSwipeRight"
-		:contentMax="800" 
-		style="padding: 0;"
-	>
-		<template v-for="tTab in tabs" :key="tTab.key">
-			<MkTimelineWithScroll
-				v-if="tTab.key === tab"
-				:src="srcCh"
-				:channelId="channelId"
-				:sound="true"
-			/>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="tabs" />
 		</template>
-	</MkSpacer>
-	<MkLoading v-else/>
-</MkStickyContainer>
+		<MkSpacer v-if="tab" v-touch:swipe.left="onSwipeLeft" v-touch:swipe.right="onSwipeRight" :contentMax="800"
+			style="padding: 0;">
+			<template v-for="tTab in tabs" :key="tTab.key">
+				<MkTimelineWithScroll v-if="tTab.key === tab" :src="srcCh" :channelId="channelId" :sound="true" />
+			</template>
+		</MkSpacer>
+		<MkLoading v-else />
+	</MkStickyContainer>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch, defineAsyncComponent } from "vue";
-import { Tab } from "./global/MkPageHeader.tabs.vue";
+import MkTimelineWithScroll from "@/components/MkTimelineWithScroll.vue";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import * as os from "@/os";
-import MkTimelineWithScroll from "@/components/MkTimelineWithScroll.vue";
-import { defaultStore } from "@/store";
 import { deviceKind } from "@/scripts/device-kind";
 import { scrollToTop } from "@/scripts/scroll";
+import { defaultStore } from "@/store";
+import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
+import { Tab } from "./global/MkPageHeader.tabs.vue";
 
 const tabs = ref<Tab[]>([
-	{ key: "local", title: i18n.ts._timelines.local, icon: "ti ti-planet" },
-	{ key: "social", title: i18n.ts._timelines.social, icon: "ti ti-rocket" },
+	{ key: "social", title: i18n.ts.public, icon: "ti ti-planet" },
 	{
 		key: "followdChannel",
 		title: i18n.ts._timelines.followedChannel,
@@ -43,13 +32,11 @@ const tabs = ref<Tab[]>([
 	},
 ]);
 const srcCh = computed(() =>
-	tab.value === "local"
-		? "local"
-		: tab.value === "social"
-			? "social"
-			: tab.value === "followdChannel"
-				? "followdChannel"
-				: "channel",
+	tab.value === "social"
+		? "social"
+		: tab.value === "followdChannel"
+			? "followdChannel"
+			: "channel",
 );
 const postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
 const tab = ref<string | null>(null);
@@ -190,5 +177,4 @@ const dropDownMenu = (ev) => {
 };
 </script>
 
-<style lang="scss" module>
-</style>
+<style lang="scss" module></style>

@@ -1,5 +1,5 @@
-import { markRaw, ref } from "vue";
 import * as misskey from "misskey-js";
+import { markRaw, ref } from "vue";
 import { Storage } from "./pizzax";
 
 interface PostFormAction {
@@ -166,7 +166,7 @@ export const defaultStore = markRaw(
 		tl: {
 			where: "deviceAccount",
 			default: {
-				src: "home" as "home" | "local" | "social" | "global",
+				src: "recommend" as "home" | "recommend" | "madia" | "global",
 				arg: null,
 			},
 		},
@@ -403,13 +403,13 @@ interface Watcher {
 	callback: (value: unknown) => void;
 }
 
+import darkTheme from "@/themes/d-green-lime.json5";
+import lightTheme from "@/themes/l-light.json5";
+import { Note, Page, UserDetailed } from "misskey-js/built/entities";
 /**
  * 常にメモリにロードしておく必要がないような設定情報を保管するストレージ(非リアクティブ)
  */
 import { miLocalStorage } from "./local-storage";
-import lightTheme from "@/themes/l-light.json5";
-import darkTheme from "@/themes/d-green-lime.json5";
-import { Note, UserDetailed, Page } from "misskey-js/built/entities";
 
 export class ColdDeviceStorage {
 	public static default = {

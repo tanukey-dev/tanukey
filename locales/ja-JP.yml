@@ -2108,6 +2108,7 @@ _timelines:
   local: "ローカル"
   media: "メディア"
   social: "ソーシャル"
+  recommend: "おすすめ"
   global: "グローバル"
   channel: "チャンネル"
   followedChannel: "フォローチャンネル"

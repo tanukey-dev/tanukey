@@ -1,43 +1,30 @@
 <template>
-<MkStickyContainer>
-	<template #header>
-		<MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin" :displayMyAvatar="true"/>
-	</template>
-	<div ref="rootEl">
-		<MkTimelineWithPinedChannel
-			v-if="isNeedPinnedChannels()"
-			ref="tlComponent"
-			:key="src"
-			:src="src"
-			:sound="true"
-		/>
-		<MkTimelineWithUserPinedChannel
-			v-else-if="isNeedUserPinnedChannels()"
-			ref="tlComponent"
-			:src="src"
-			:sound="true"
-		/>
-		<MkSpacer v-else :contentMax="800" style="padding: 0;">
-			<XCommonTimeline
-				ref="tlComponent"
-				:key="src"
-				:src="src"
-				:sound="true"
-			/>
-		</MkSpacer>
-	</div>
-</MkStickyContainer>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="$i ? headerTabs : headerTabsWhenNotLogin"
+				:displayMyAvatar="true" />
+		</template>
+		<div ref="rootEl">
+			<MkTimelineWithPinedChannel v-if="isNeedPinnedChannels()" ref="tlComponent" :key="src" :src="src"
+				:sound="true" />
+			<MkTimelineWithUserPinedChannel v-else-if="isNeedUserPinnedChannels()" ref="tlComponent" :src="src"
+				:sound="true" />
+			<MkSpacer v-else :contentMax="800" style="padding: 0;">
+				<XCommonTimeline ref="tlComponent" :key="src" :src="src" :sound="true" />
+			</MkSpacer>
+		</div>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, provide, ref } from "vue";
+import { $i } from "@/account";
 import type { Tab } from "@/components/global/MkPageHeader.tabs.vue";
-import * as os from "@/os";
-import { defaultStore } from "@/store";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
-import { $i } from "@/account";
+import * as os from "@/os";
 import { definePageMetadata } from "@/scripts/page-metadata";
+import { defaultStore } from "@/store";
+import { computed, defineAsyncComponent, provide, ref } from "vue";
 
 provide("shouldOmitHeaderTitle", true);
 
@@ -52,11 +39,11 @@ const MkTimelineWithUserPinedChannel = defineAsyncComponent(
 );
 
 function isNeedPinnedChannels(): boolean {
-	return src === "feed";
+	return src === "recommend";
 }
 
 function isNeedUserPinnedChannels(): boolean {
-	return src === "channel";
+	return src === "feed";
 }
 
 const isLocalTimelineAvailable =
@@ -138,39 +125,39 @@ const headerTabs = $computed(
 			},
 			...(isLocalTimelineAvailable
 				? [
-						{
-							key: "feed",
-							title: i18n.ts._timelines.feed,
-							icon: "ti ti-timeline",
-							iconOnly: true,
-						},
-						...(userPinnedLtlChannelIds.get().length > 0
-							? [
-									{
-										key: "channel",
-										title: i18n.ts._timelines.channel,
-										icon: "ti ti-device-tv-old",
-										iconOnly: true,
-									},
-								]
-							: []),
-						{
-							key: "media",
-							title: i18n.ts._timelines.media,
-							icon: "ti ti-photo",
-							iconOnly: true,
-						},
-					]
+					{
+						key: "recommend",
+						title: i18n.ts._timelines.recommend,
+						icon: "ti ti-sparkles",
+						iconOnly: true,
+					},
+					...(userPinnedLtlChannelIds.get().length > 0
+						? [
+							{
+								key: "feed",
+								title: i18n.ts._timelines.feed,
+								icon: "ti ti-timeline",
+								iconOnly: true,
+							},
+						]
+						: []),
+					{
+						key: "media",
+						title: i18n.ts._timelines.media,
+						icon: "ti ti-photo",
+						iconOnly: true,
+					},
+				]
 				: []),
 			...(isGlobalTimelineAvailable
 				? [
-						{
-							key: "global",
-							title: i18n.ts._timelines.global,
-							icon: "ti ti-whirl",
-							iconOnly: true,
-						},
-					]
+					{
+						key: "global",
+						title: i18n.ts._timelines.global,
+						icon: "ti ti-whirl",
+						iconOnly: true,
+					},
+				]
 				: []),
 			{
 				icon: "ti ti-list",
@@ -198,23 +185,23 @@ const headerTabsWhenNotLogin = $computed(
 		[
 			...(isLocalTimelineAvailable
 				? [
-						{
-							key: "local",
-							title: i18n.ts._timelines.local,
-							icon: "ti ti-planet",
-							iconOnly: true,
-						},
-					]
+					{
+						key: "local",
+						title: i18n.ts._timelines.local,
+						icon: "ti ti-planet",
+						iconOnly: true,
+					},
+				]
 				: []),
 			...(isGlobalTimelineAvailable
 				? [
-						{
-							key: "global",
-							title: i18n.ts._timelines.global,
-							icon: "ti ti-whirl",
-							iconOnly: true,
-						},
-					]
+					{
+						key: "global",
+						title: i18n.ts._timelines.global,
+						icon: "ti ti-whirl",
+						iconOnly: true,
+					},
+				]
 				: []),
 		] as Tab[],
 );
@@ -234,5 +221,4 @@ definePageMetadata(
 );
 </script>
 
-<style lang="scss" module>
-</style>
+<style lang="scss" module></style>

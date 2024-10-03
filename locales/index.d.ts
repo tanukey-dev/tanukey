@@ -2190,6 +2190,7 @@ export interface Locale {
         "local": string;
         "media": string;
         "social": string;
+        "recommend": string;
         "global": string;
         "channel": string;
         "followedChannel": string;
