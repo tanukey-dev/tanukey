@@ -22,9 +22,12 @@ import type { Tab } from "@/components/global/MkPageHeader.tabs.vue";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import * as os from "@/os";
+import { useRouter } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { defaultStore } from "@/store";
 import { computed, defineAsyncComponent, provide, ref } from "vue";
+
+const router = useRouter();
 
 provide("shouldOmitHeaderTitle", true);
 
@@ -52,9 +55,6 @@ const isLocalTimelineAvailable =
 const isGlobalTimelineAvailable =
 	($i == null && instance.policies.gtlAvailable) ||
 	($i != null && $i.policies.gtlAvailable);
-const userPinnedLtlChannelIds = defaultStore.makeGetterSetter(
-	"userPinnedLtlChannelIds",
-);
 
 let srcWhenNotSignin = $ref(isLocalTimelineAvailable ? "local" : "global");
 const src = $computed({
@@ -96,7 +96,7 @@ async function chooseChannel(ev: MouseEvent): Promise<void> {
 	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
-function saveSrc(newSrc: "home" | "local" | "social" | "global"): void {
+function saveSrc(newSrc: "home" | "recommend" | "feed" | "global"): void {
 	defaultStore.set("tl", {
 		...defaultStore.state.tl,
 		src: newSrc,
@@ -105,6 +105,13 @@ function saveSrc(newSrc: "home" | "local" | "social" | "global"): void {
 }
 
 const headerActions = $computed(() => [
+	...(src === "feed" ? [{
+		icon: "ti ti-settings",
+		text: i18n.ts.edit,
+		handler: (): void => {
+			router.push('/settings/feedSettings');
+		},
+	}] : []),
 	{
 		icon: "ti ti-refresh",
 		text: i18n.ts.reload,
@@ -123,42 +130,18 @@ const headerTabs = $computed(
 				icon: "ti ti-home",
 				iconOnly: true,
 			},
-			...(isLocalTimelineAvailable
-				? [
-					{
-						key: "recommend",
-						title: i18n.ts._timelines.recommend,
-						icon: "ti ti-sparkles",
-						iconOnly: true,
-					},
-					...(userPinnedLtlChannelIds.get().length > 0
-						? [
-							{
-								key: "feed",
-								title: i18n.ts._timelines.feed,
-								icon: "ti ti-timeline",
-								iconOnly: true,
-							},
-						]
-						: []),
-					{
-						key: "media",
-						title: i18n.ts._timelines.media,
-						icon: "ti ti-photo",
-						iconOnly: true,
-					},
-				]
-				: []),
-			...(isGlobalTimelineAvailable
-				? [
-					{
-						key: "global",
-						title: i18n.ts._timelines.global,
-						icon: "ti ti-whirl",
-						iconOnly: true,
-					},
-				]
-				: []),
+			{
+				key: "recommend",
+				title: i18n.ts._timelines.recommend,
+				icon: "ti ti-sparkles",
+				iconOnly: true,
+			},
+			{
+				key: "feed",
+				title: i18n.ts._timelines.feed,
+				icon: "ti ti-timeline",
+				iconOnly: true,
+			},
 			{
 				icon: "ti ti-list",
 				title: i18n.ts.lists,

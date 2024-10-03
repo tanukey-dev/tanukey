@@ -1,27 +1,43 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="900" :marginMin="20" :marginMax="32">
-		<div ref="el" class="vvcocwet" :class="{ wide: !narrow }">
-			<div class="body">
-				<div v-if="!narrow || currentPage?.route.name == null" class="nav">
-					<div class="baaadecd">
-						<MkInfo v-if="emailNotConfigured" warn class="info">{{ i18n.ts.emailNotConfiguredWarning }} <MkA to="/settings/email" class="_link">{{ i18n.ts.configure }}</MkA></MkInfo>
-						<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="900" :marginMin="20" :marginMax="32">
+			<div ref="el" class="vvcocwet" :class="{ wide: !narrow }">
+				<div class="body">
+					<div v-if="!narrow || currentPage?.route.name == null" class="nav">
+						<div class="baaadecd">
+							<MkInfo v-if="emailNotConfigured" warn class="info">{{ i18n.ts.emailNotConfiguredWarning }}
+								<MkA to="/settings/email" class="_link">{{ i18n.ts.configure }}</MkA>
+							</MkInfo>
+							<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
+						</div>
 					</div>
-				</div>
-				<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
-					<div class="bkzroven" style="container-type: inline-size;">
-						<RouterView/>
+					<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
+						<div class="bkzroven" style="container-type: inline-size;">
+							<RouterView />
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</MkSpacer>
-</mkstickycontainer>
+		</MkSpacer>
+	</mkstickycontainer>
 </template>
 
 <script setup lang="ts">
+import { $i, signout } from "@/account";
+import MkInfo from "@/components/MkInfo.vue";
+import MkSuperMenu from "@/components/MkSuperMenu.vue";
+import { i18n } from "@/i18n";
+import { instance } from "@/instance";
+import * as os from "@/os";
+import { useRouter } from "@/router";
+import { clearCache } from "@/scripts/cache-clear";
+import {
+	definePageMetadata,
+	provideMetadataReceiver,
+} from "@/scripts/page-metadata";
 import {
 	computed,
 	onActivated,
@@ -31,18 +47,6 @@ import {
 	shallowRef,
 	watch,
 } from "vue";
-import { i18n } from "@/i18n";
-import MkInfo from "@/components/MkInfo.vue";
-import MkSuperMenu from "@/components/MkSuperMenu.vue";
-import { signout, $i } from "@/account";
-import { instance } from "@/instance";
-import { useRouter } from "@/router";
-import {
-	definePageMetadata,
-	provideMetadataReceiver,
-} from "@/scripts/page-metadata";
-import * as os from "@/os";
-import { clearCache } from "@/scripts/cache-clear";
 
 const indexInfo = {
 	title: i18n.ts.settings,
@@ -123,10 +127,10 @@ const menuDef = computed(() => [
 				active: currentPage?.route.name === "general",
 			},
 			{
-				icon: "ti ti-device-tv",
-				text: i18n.ts.pinnedChannel,
-				to: "/settings/pinnedChannel",
-				active: currentPage?.route.name === "pinnedChannel",
+				icon: "ti ti-timeline",
+				text: i18n.ts.feedSettings,
+				to: "/settings/feedSettings",
+				active: currentPage?.route.name === "feedSettings",
 			},
 			{
 				icon: "ti ti-palette",
@@ -165,11 +169,11 @@ const menuDef = computed(() => [
 		items: [
 			instance.enableSubscriptions
 				? {
-						icon: "ti ti-credit-card",
-						text: i18n.ts.subscription,
-						to: "/settings/subscription",
-						active: currentPage?.route.name === "subscription",
-					}
+					icon: "ti ti-credit-card",
+					text: i18n.ts.subscription,
+					to: "/settings/subscription",
+					active: currentPage?.route.name === "subscription",
+				}
 				: undefined,
 			{
 				icon: "ti ti-parking",
@@ -265,7 +269,7 @@ const menuDef = computed(() => [
 	},
 ]);
 
-watch($$(narrow), () => {});
+watch($$(narrow), () => { });
 
 onMounted(() => {
 	ro.observe(el.value);
@@ -318,15 +322,15 @@ definePageMetadata(INFO);
 
 <style lang="scss" scoped>
 .vvcocwet {
-	> .body {
-		> .nav {
+	>.body {
+		>.nav {
 			.baaadecd {
-				> .info {
+				>.info {
 					margin: 16px 0;
 				}
 
-				> .accounts {
-					> .avatar {
+				>.accounts {
+					>.avatar {
 						display: block;
 						width: 50px;
 						height: 50px;
@@ -336,24 +340,23 @@ definePageMetadata(INFO);
 			}
 		}
 
-		> .main {
-			.bkzroven {
-			}
+		>.main {
+			.bkzroven {}
 		}
 	}
 
 	&.wide {
-		> .body {
+		>.body {
 			display: flex;
 			height: 100%;
 
-			> .nav {
+			>.nav {
 				width: 34%;
 				padding-right: 32px;
 				box-sizing: border-box;
 			}
 
-			> .main {
+			>.main {
 				flex: 1;
 				min-width: 0;
 			}

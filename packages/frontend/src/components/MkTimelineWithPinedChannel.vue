@@ -44,13 +44,11 @@ const selectedTab = computed(
 	defaultStore.makeGetterSetter("selectedChannelTab"),
 );
 const channelId = computed(() =>
-	tab.value === "local"
+	tab.value === "social"
 		? null
-		: tab.value === "social"
-			? null
-			: tab.value === "followdChannel"
-				? "followdChannel"
-				: tab.value,
+		: tab.value === "followdChannel"
+			? "followdChannel"
+			: tab.value,
 );
 const disableSwipe = computed(defaultStore.makeGetterSetter("disableSwipe"));
 
@@ -58,11 +56,10 @@ watch(tab, async () => {
 	selectedTab.value = tab.value;
 
 	if (tab.value == null) {
-		tab.value = "local";
+		tab.value = "social";
 	}
 
 	if (
-		tab.value !== "local" &&
 		tab.value !== "social" &&
 		tab.value !== "followdChannel"
 	) {

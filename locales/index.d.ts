@@ -661,6 +661,7 @@ export interface Locale {
     "database": string;
     "channel": string;
     "pinnedChannel": string;
+    "feedSettings": string;
     "create": string;
     "notificationSetting": string;
     "notificationSettingDesc": string;

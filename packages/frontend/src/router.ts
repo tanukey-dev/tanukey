@@ -1,8 +1,8 @@
-import { AsyncComponentLoader, defineAsyncComponent, inject } from "vue";
+import { $i, iAmAdmin, iAmModerator } from "@/account";
 import { Router } from "@/nirax";
-import { $i, iAmModerator, iAmAdmin } from "@/account";
-import MkLoading from "@/pages/_loading_.vue";
 import MkError from "@/pages/_error_.vue";
+import MkLoading from "@/pages/_loading_.vue";
+import { AsyncComponentLoader, defineAsyncComponent, inject } from "vue";
 
 const page = (loader: AsyncComponentLoader<any>) =>
 	defineAsyncComponent({
@@ -113,9 +113,9 @@ export const routes = [
 				component: page(() => import("./pages/settings/general.vue")),
 			},
 			{
-				path: "/pinnedChannel",
-				name: "pinnedChannel",
-				component: page(() => import("./pages/settings/pinnedChannel.vue")),
+				path: "/feedSettings",
+				name: "feedSettings",
+				component: page(() => import("./pages/settings/feedSettings.vue")),
 			},
 			{
 				path: "/theme/install",

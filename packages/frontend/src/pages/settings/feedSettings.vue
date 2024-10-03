@@ -1,45 +1,47 @@
 <template>
-<div class="_gaps_m">
-	<FormSlot>
-		<div :class="$style.metadataRoot">
-			<div :class="$style.metadataMargin">
-				<MkButton :disabled="fields.length >= 50" inline style="margin-right: 8px;" @click="addField"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
-				<MkButton v-if="!fieldEditMode" :disabled="fields.length <= 1" inline danger style="margin-right: 8px;" @click="fieldEditMode = !fieldEditMode"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
-				<MkButton v-else inline style="margin-right: 8px;" @click="fieldEditMode = !fieldEditMode"><i class="ti ti-arrows-sort"></i> {{ i18n.ts.rearrange }}</MkButton>
-				<MkButton inline primary @click="saveFields"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
-			</div>
+	<div class="_gaps_m">
+		<FormSlot>
+			<div :class="$style.metadataRoot">
+				<div :class="$style.metadataMargin">
+					<MkButton :disabled="fields.length >= 50" inline style="margin-right: 8px;" @click="addField"><i
+							class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
+					<MkButton v-if="!fieldEditMode" :disabled="fields.length <= 1" inline danger
+						style="margin-right: 8px;" @click="fieldEditMode = !fieldEditMode"><i class="ti ti-trash"></i>
+						{{ i18n.ts.delete }}</MkButton>
+					<MkButton v-else inline style="margin-right: 8px;" @click="fieldEditMode = !fieldEditMode"><i
+							class="ti ti-arrows-sort"></i> {{ i18n.ts.rearrange }}</MkButton>
+					<MkButton inline primary @click="saveFields"><i class="ti ti-check"></i> {{ i18n.ts.save }}
+					</MkButton>
+				</div>
 
-			<Sortable
-				v-model="fields"
-				class="_gaps_s"
-				itemKey="id"
-				:animation="150"
-				:handle="'.' + $style.dragItemHandle"
-				@start="e => e.item.classList.add('active')"
-				@end="e => e.item.classList.remove('active')"
-			>
-				<template #item="{element, index}">
-					<div :class="$style.fieldDragItem">
-						<button v-if="!fieldEditMode" class="_button" :class="$style.dragItemHandle" tabindex="-1"><i class="ti ti-menu"></i></button>
-						<button v-if="fieldEditMode" :disabled="fields.length <= 1" class="_button" :class="$style.dragItemRemove" @click="deleteField(index)"><i class="ti ti-x"></i></button>
-						<div :class="$style.dragItemForm">
-							{{ element.name }}
+				<Sortable v-model="fields" class="_gaps_s" itemKey="id" :animation="150"
+					:handle="'.' + $style.dragItemHandle" @start="e => e.item.classList.add('active')"
+					@end="e => e.item.classList.remove('active')">
+					<template #item="{ element, index }">
+						<div :class="$style.fieldDragItem">
+							<button v-if="!fieldEditMode" class="_button" :class="$style.dragItemHandle"
+								tabindex="-1"><i class="ti ti-menu"></i></button>
+							<button v-if="fieldEditMode" :disabled="fields.length <= 1" class="_button"
+								:class="$style.dragItemRemove" @click="deleteField(index)"><i
+									class="ti ti-x"></i></button>
+							<div :class="$style.dragItemForm">
+								{{ element.name }}
+							</div>
 						</div>
-					</div>
-				</template>
-			</Sortable>
-		</div>
-	</FormSlot>
-</div>
+					</template>
+				</Sortable>
+			</div>
+		</FormSlot>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, defineAsyncComponent } from "vue";
 import MkButton from "@/components/MkButton.vue";
 import FormSlot from "@/components/form/slot.vue";
-import { defaultStore } from "@/store";
-import * as os from "@/os";
 import { i18n } from "@/i18n";
+import * as os from "@/os";
+import { defaultStore } from "@/store";
+import { computed, defineAsyncComponent, ref } from "vue";
 
 const Sortable = defineAsyncComponent(() =>
 	import("vuedraggable").then((x) => x.default),
@@ -93,7 +95,6 @@ function saveFields() {
 </script>
 
 <style lang="scss" module>
-
 .metadataRoot {
 	container-type: inline-size;
 }
@@ -138,9 +139,11 @@ function saveFields() {
 	opacity: 1;
 	cursor: pointer;
 
-	&:hover, &:focus {
+	&:hover,
+	&:focus {
 		opacity: .7;
 	}
+
 	&:active {
 		cursor: pointer;
 	}

@@ -1,51 +1,69 @@
 <template>
-<MkStickyContainer>
-	<template #header>
-		<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="tabs"/>
-	</template>
-	<MkSpacer
-		v-if="tab"
-		v-touch:swipe.left="onSwipeLeft"
-		v-touch:swipe.right="onSwipeRight"
-		:contentMax="800" 
-		style="padding: 0;"
-	>
-		<template v-for="tTab in tabs" :key="tTab.key">
-			<MkTimelineWithScroll
-				v-if="tTab.key === tab"
-				:src="srcCh"
-				:channelId="channelId"
-				:sound="true"
-			/>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="tabs" />
 		</template>
-	</MkSpacer>
-	<MkLoading v-else/>
-</MkStickyContainer>
+		<MkSpacer v-if="tab" v-touch:swipe.left="onSwipeLeft" v-touch:swipe.right="onSwipeRight" :contentMax="800"
+			style="padding: 0;">
+			<template v-for="tTab in tabs" :key="tTab.key">
+				<MkTimelineWithScroll v-if="tTab.key === tab" :src="srcCh" :channelId="channelId" :sound="true" />
+			</template>
+		</MkSpacer>
+		<MkLoading v-else />
+	</MkStickyContainer>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch, defineAsyncComponent } from "vue";
-import { Tab } from "./global/MkPageHeader.tabs.vue";
+import MkTimelineWithScroll from "@/components/MkTimelineWithScroll.vue";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
-import MkTimelineWithScroll from "@/components/MkTimelineWithScroll.vue";
-import { defaultStore } from "@/store";
 import { deviceKind } from "@/scripts/device-kind";
 import { scrollToTop } from "@/scripts/scroll";
+import { defaultStore } from "@/store";
+import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
+import { Tab } from "./global/MkPageHeader.tabs.vue";
 
-const tabs = ref<Tab[]>([]);
-const srcCh = computed(() => "channel");
+const tabs = ref<Tab[]>([
+	{ key: "social", title: i18n.ts.public, icon: "ti ti-planet" },
+	{
+		key: "followdChannel",
+		title: i18n.ts._timelines.followedChannel,
+		icon: "ti ti-device-tv",
+	},
+]);
+const srcCh = computed(() =>
+	tab.value === "social"
+		? "social"
+		: tab.value === "followdChannel"
+			? "followdChannel"
+			: "channel",
+);
 const postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
 const tab = ref<string | null>(null);
 const selectedTab = computed(
 	defaultStore.makeGetterSetter("selectedUserChannelTab"),
 );
-const channelId = computed(() => tab.value);
+const channelId = computed(() =>
+	tab.value === "local"
+		? null
+		: tab.value === "social"
+			? null
+			: tab.value === "followdChannel"
+				? "followdChannel"
+				: tab.value,
+);
 const disableSwipe = computed(defaultStore.makeGetterSetter("disableSwipe"));
 
 watch(tab, async () => {
 	selectedTab.value = tab.value;
 
-	if (tab.value !== null) {
+	if (tab.value == null) {
+		tab.value = "social";
+	}
+
+	if (
+		tab.value !== "social" &&
+		tab.value !== "followdChannel"
+	) {
 		let ch = await os.api("channels/show", {
 			channelId: tab.value,
 		});
@@ -169,5 +187,4 @@ const dropDownMenu = (ev) => {
 };
 </script>
 
-<style lang="scss" module>
-</style>
+<style lang="scss" module></style>
