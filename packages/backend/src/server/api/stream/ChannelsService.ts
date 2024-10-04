@@ -1,5 +1,6 @@
 import { bindThis } from "@/decorators.js";
-import { Injectable } from "@nestjs/common";
+import { DI } from "@/di-symbols.js";
+import { Inject, Injectable } from "@nestjs/common";
 import type { AdminChannelService } from "./channels/admin.js";
 import type { AntennaChannelService } from "./channels/antenna.js";
 import type { ChannelChannelService } from "./channels/channel.js";
@@ -17,18 +18,31 @@ import type { UserListChannelService } from "./channels/user-list.js";
 @Injectable()
 export class ChannelsService {
 	constructor(
+		@Inject(DI.mainChannelService)
 		private mainChannelService: MainChannelService,
+		@Inject(DI.homeTimelineChannelService)
 		private homeTimelineChannelService: HomeTimelineChannelService,
+		@Inject(DI.localTimelineChannelService)
 		private localTimelineChannelService: LocalTimelineChannelService,
+		@Inject(DI.hybridTimelineChannelService)
 		private hybridTimelineChannelService: HybridTimelineChannelService,
+		@Inject(DI.userListChannelService)
 		private userListChannelService: UserListChannelService,
+		@Inject(DI.hashtagChannelService)
 		private hashtagChannelService: HashtagChannelService,
+		@Inject(DI.roleTimelineChannelService)
 		private roleTimelineChannelService: RoleTimelineChannelService,
+		@Inject(DI.antennaChannelService)
 		private antennaChannelService: AntennaChannelService,
+		@Inject(DI.channelChannelService)
 		private channelChannelService: ChannelChannelService,
+		@Inject(DI.driveChannelService)
 		private driveChannelService: DriveChannelService,
+		@Inject(DI.serverStatsChannelService)
 		private serverStatsChannelService: ServerStatsChannelService,
+		@Inject(DI.queueStatsChannelService)
 		private queueStatsChannelService: QueueStatsChannelService,
+		@Inject(DI.adminChannelService)
 		private adminChannelService: AdminChannelService,
 	) {}
 
