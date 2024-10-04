@@ -69,7 +69,7 @@ async function setType() {
 			},
 			{
 				value: "public" as const,
-				text: i18n.ts._timelines.social,
+				text: i18n.ts.public,
 			},
 		],
 	});
