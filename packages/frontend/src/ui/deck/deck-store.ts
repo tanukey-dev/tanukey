@@ -1,9 +1,9 @@
-import { throttle } from "throttle-debounce";
-import { markRaw } from "vue";
-import { notificationTypes } from "misskey-js";
-import { Storage } from "../../pizzax";
 import { api } from "@/os";
 import { deepClone } from "@/scripts/clone";
+import { notificationTypes } from "misskey-js";
+import { throttle } from "throttle-debounce";
+import { markRaw } from "vue";
+import { Storage } from "../../pizzax";
 
 type ColumnWidget = {
 	name: string;
@@ -33,7 +33,7 @@ export type Column = {
 	channelId?: string;
 	roleId?: string;
 	includingTypes?: (typeof notificationTypes)[number][];
-	tl?: "home" | "local" | "media" | "social" | "global";
+	tl?: "home" | "local" | "public";
 };
 
 export const deckStore = markRaw(

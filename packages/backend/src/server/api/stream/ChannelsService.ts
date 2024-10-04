@@ -1,20 +1,18 @@
 import { bindThis } from "@/decorators.js";
 import { Injectable } from "@nestjs/common";
-import { AdminChannelService } from "./channels/admin.js";
-import { AntennaChannelService } from "./channels/antenna.js";
-import { ChannelChannelService } from "./channels/channel.js";
-import { DriveChannelService } from "./channels/drive.js";
-import { GlobalTimelineChannelService } from "./channels/global-timeline.js";
-import { HashtagChannelService } from "./channels/hashtag.js";
-import { HomeTimelineChannelService } from "./channels/home-timeline.js";
-import { HybridTimelineChannelService } from "./channels/hybrid-timeline.js";
-import { LocalTimelineChannelService } from "./channels/local-timeline.js";
-import { MainChannelService } from "./channels/main.js";
-import { MediaTimelineChannelService } from "./channels/media-timeline.js";
-import { QueueStatsChannelService } from "./channels/queue-stats.js";
-import { RoleTimelineChannelService } from "./channels/role-timeline.js";
-import { ServerStatsChannelService } from "./channels/server-stats.js";
-import { UserListChannelService } from "./channels/user-list.js";
+import type { AdminChannelService } from "./channels/admin.js";
+import type { AntennaChannelService } from "./channels/antenna.js";
+import type { ChannelChannelService } from "./channels/channel.js";
+import type { DriveChannelService } from "./channels/drive.js";
+import type { HashtagChannelService } from "./channels/hashtag.js";
+import type { HomeTimelineChannelService } from "./channels/home-timeline.js";
+import type { HybridTimelineChannelService } from "./channels/hybrid-timeline.js";
+import type { LocalTimelineChannelService } from "./channels/local-timeline.js";
+import type { MainChannelService } from "./channels/main.js";
+import type { QueueStatsChannelService } from "./channels/queue-stats.js";
+import type { RoleTimelineChannelService } from "./channels/role-timeline.js";
+import type { ServerStatsChannelService } from "./channels/server-stats.js";
+import type { UserListChannelService } from "./channels/user-list.js";
 
 @Injectable()
 export class ChannelsService {
@@ -22,9 +20,7 @@ export class ChannelsService {
 		private mainChannelService: MainChannelService,
 		private homeTimelineChannelService: HomeTimelineChannelService,
 		private localTimelineChannelService: LocalTimelineChannelService,
-		private mediaTimelineChannelService: MediaTimelineChannelService,
 		private hybridTimelineChannelService: HybridTimelineChannelService,
-		private globalTimelineChannelService: GlobalTimelineChannelService,
 		private userListChannelService: UserListChannelService,
 		private hashtagChannelService: HashtagChannelService,
 		private roleTimelineChannelService: RoleTimelineChannelService,
@@ -45,12 +41,8 @@ export class ChannelsService {
 				return this.homeTimelineChannelService;
 			case "localTimeline":
 				return this.localTimelineChannelService;
-			case "mediaTimeline":
-				return this.mediaTimelineChannelService;
 			case "hybridTimeline":
 				return this.hybridTimelineChannelService;
-			case "globalTimeline":
-				return this.globalTimelineChannelService;
 			case "userList":
 				return this.userListChannelService;
 			case "hashtag":

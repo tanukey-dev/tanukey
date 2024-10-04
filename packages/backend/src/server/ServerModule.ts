@@ -23,13 +23,11 @@ import { AdminChannelService } from "./api/stream/channels/admin.js";
 import { AntennaChannelService } from "./api/stream/channels/antenna.js";
 import { ChannelChannelService } from "./api/stream/channels/channel.js";
 import { DriveChannelService } from "./api/stream/channels/drive.js";
-import { GlobalTimelineChannelService } from "./api/stream/channels/global-timeline.js";
 import { HashtagChannelService } from "./api/stream/channels/hashtag.js";
 import { HomeTimelineChannelService } from "./api/stream/channels/home-timeline.js";
 import { HybridTimelineChannelService } from "./api/stream/channels/hybrid-timeline.js";
 import { LocalTimelineChannelService } from "./api/stream/channels/local-timeline.js";
 import { MainChannelService } from "./api/stream/channels/main.js";
-import { MediaTimelineChannelService } from "./api/stream/channels/media-timeline.js";
 import { QueueStatsChannelService } from "./api/stream/channels/queue-stats.js";
 import { RoleTimelineChannelService } from "./api/stream/channels/role-timeline.js";
 import { ServerStatsChannelService } from "./api/stream/channels/server-stats.js";
@@ -67,13 +65,11 @@ import { UrlPreviewService } from "./web/UrlPreviewService.js";
 		AntennaChannelService,
 		ChannelChannelService,
 		DriveChannelService,
-		GlobalTimelineChannelService,
 		HashtagChannelService,
 		RoleTimelineChannelService,
 		HomeTimelineChannelService,
 		HybridTimelineChannelService,
 		LocalTimelineChannelService,
-		MediaTimelineChannelService,
 		QueueStatsChannelService,
 		ServerStatsChannelService,
 		UserListChannelService,

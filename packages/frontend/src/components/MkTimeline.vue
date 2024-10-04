@@ -110,15 +110,6 @@ const setupStream = () => {
 			withReplies: defaultStore.state.showTimelineReplies,
 		});
 		connection.on("note", prepend);
-	} else if (props.src === "media") {
-		endpoint = "notes/media-timeline";
-		query = {
-			withReplies: defaultStore.state.showTimelineReplies,
-		};
-		connection = stream.useChannel("mediaTimeline", {
-			withReplies: defaultStore.state.showTimelineReplies,
-		});
-		connection.on("note", prependFilterdMedia);
 	} else if (props.src === "public") {
 		endpoint = "notes/hybrid-timeline";
 		query = {
@@ -132,15 +123,6 @@ const setupStream = () => {
 			withLocal: defaultStore.state.publicTlShowLocalPost,
 			withRemote: defaultStore.state.publicTlShowRemoteFollowPost,
 			withChannel: defaultStore.state.publicTlShowChannelFollowPost,
-		});
-		connection.on("note", prepend);
-	} else if (props.src === "global") {
-		endpoint = "notes/global-timeline";
-		query = {
-			withReplies: defaultStore.state.showTimelineReplies,
-		};
-		connection = stream.useChannel("globalTimeline", {
-			withReplies: defaultStore.state.showTimelineReplies,
 		});
 		connection.on("note", prepend);
 	} else if (props.src === "mentions") {

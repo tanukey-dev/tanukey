@@ -2194,7 +2194,6 @@ export interface Locale {
         "recommend": string;
         "global": string;
         "channel": string;
-        "followedChannel": string;
     };
     "_play": {
         "new": string;
