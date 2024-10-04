@@ -19,11 +19,12 @@ import * as os from "@/os";
 import { deviceKind } from "@/scripts/device-kind";
 import { scrollToTop } from "@/scripts/scroll";
 import { defaultStore } from "@/store";
+import { MenuItem } from "@/types/menu";
 import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import { Tab } from "./global/MkPageHeader.tabs.vue";
 
 const tabs = ref<Tab[]>([
-	{ key: "social", title: i18n.ts.public, icon: "ti ti-planet" },
+	{ key: "public", title: i18n.ts.public, icon: "ti ti-planet" },
 	{
 		key: "followdChannel",
 		title: i18n.ts._timelines.followedChannel,
@@ -31,8 +32,8 @@ const tabs = ref<Tab[]>([
 	},
 ]);
 const srcCh = computed(() =>
-	tab.value === "social"
-		? "social"
+	tab.value === "public"
+		? "public"
 		: tab.value === "followdChannel"
 			? "followdChannel"
 			: "channel",
@@ -43,13 +44,11 @@ const selectedTab = computed(
 	defaultStore.makeGetterSetter("selectedUserChannelTab"),
 );
 const channelId = computed(() =>
-	tab.value === "local"
+	tab.value === "public"
 		? null
-		: tab.value === "social"
-			? null
-			: tab.value === "followdChannel"
-				? "followdChannel"
-				: tab.value,
+		: tab.value === "followdChannel"
+			? "followdChannel"
+			: tab.value,
 );
 const disableSwipe = computed(defaultStore.makeGetterSetter("disableSwipe"));
 
@@ -57,14 +56,14 @@ watch(tab, async () => {
 	selectedTab.value = tab.value;
 
 	if (tab.value == null) {
-		tab.value = "social";
+		tab.value = "public";
 	}
 
 	if (
-		tab.value !== "social" &&
+		tab.value !== "public" &&
 		tab.value !== "followdChannel"
 	) {
-		let ch = await os.api("channels/show", {
+		const ch = await os.api("channels/show", {
 			channelId: tab.value,
 		});
 		postChannel.value = ch;
@@ -154,7 +153,36 @@ const onSwipeRight = (): void => {
 	}
 };
 
+const publicTlShowRemoteFollowPost = computed<boolean>(defaultStore.makeGetterSetter("publicTlShowRemoteFollowPost"));
+const publicTlShowChannelFollowPost = computed<boolean>(defaultStore.makeGetterSetter("publicTlShowChannelFollowPost"));
+
 const headerActions = computed(() => [
+	...(tab.value === 'public' ? [{
+		icon: 'ti ti-dots',
+		text: i18n.ts.options,
+		handler: (ev) => {
+			const menuItems: MenuItem[] = [];
+
+			menuItems.push({
+				type: 'label',
+				text: i18n.ts._publicSettings.label,
+			});
+
+			menuItems.push({
+				type: 'switch',
+				text: i18n.ts._publicSettings.remote,
+				ref: publicTlShowRemoteFollowPost,
+			});
+
+			menuItems.push({
+				type: 'switch',
+				text: i18n.ts._publicSettings.channel,
+				ref: publicTlShowChannelFollowPost,
+			});
+
+			os.popupMenu(menuItems, ev.currentTarget ?? ev.target);
+		},
+	}] : []),
 	{
 		icon: "ti ti-caret-down",
 		text: i18n.ts.menu,

@@ -170,6 +170,14 @@ export const defaultStore = markRaw(
 				arg: null,
 			},
 		},
+		publicTlShowRemoteFollowPost: {
+			where: "account",
+			default: false,
+		},
+		publicTlShowChannelFollowPost: {
+			where: "account",
+			default: false,
+		},
 
 		overridedDeviceKind: {
 			where: "device",

@@ -1,12 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import { checkWordMute } from "@/misc/check-word-mute.js";
-import { isUserRelated } from "@/misc/is-user-related.js";
-import { isInstanceMuted } from "@/misc/is-instance-muted.js";
-import type { Packed } from "@/misc/json-schema.js";
 import { MetaService } from "@/core/MetaService.js";
+import { RoleService } from "@/core/RoleService.js";
 import { NoteEntityService } from "@/core/entities/NoteEntityService.js";
 import { bindThis } from "@/decorators.js";
-import { RoleService } from "@/core/RoleService.js";
+import { checkWordMute } from "@/misc/check-word-mute.js";
+import { isInstanceMuted } from "@/misc/is-instance-muted.js";
+import { isUserRelated } from "@/misc/is-user-related.js";
+import type { Packed } from "@/misc/json-schema.js";
+import { Injectable } from "@nestjs/common";
 import Channel from "../channel.js";
 
 class HybridTimelineChannel extends Channel {
@@ -15,6 +15,8 @@ class HybridTimelineChannel extends Channel {
 	public static requireCredential = true;
 	public static kind = "read:account";
 	private withReplies: boolean;
+	private withRemote: boolean;
+	private withChannel: boolean;
 
 	constructor(
 		private metaService: MetaService,
@@ -36,6 +38,8 @@ class HybridTimelineChannel extends Channel {
 		if (!policies.ltlAvailable) return;
 
 		this.withReplies = params.withReplies as boolean;
+		this.withRemote = params.withRemote as boolean;
+		this.withChannel = params.withChannel as boolean;
 
 		// Subscribe events
 		this.subscriber.on("notesStream", this.onNote);
@@ -56,8 +60,23 @@ class HybridTimelineChannel extends Channel {
 					note.visibility === "public") ||
 				(note.channelId != null && this.followingChannels.has(note.channelId))
 			)
-		)
+		) {
 			return;
+		}
+
+		// リモートユーザーを表示が無効の場合は、リモートユーザーの投稿は除外
+		if (!this.withRemote) {
+			if (note.user.host !== null) {
+				return;
+			}
+		}
+
+		// チャンネルの表示が無効の場合は、チャンネルの投稿は除外
+		if (!this.withChannel) {
+			if (note.channelId !== null) {
+				return;
+			}
+		}
 
 		// DMはタイムラインに表示しない
 		if (["specified"].includes(note.visibility)) {

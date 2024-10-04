@@ -1,49 +1,66 @@
 <template>
-<Transition :enterActiveClass="defaultStore.state.animation ? $style.transition_fade_enterActive : ''"
-	:leaveActiveClass="defaultStore.state.animation ? $style.transition_fade_leaveActive : ''"
-	:enterFromClass="defaultStore.state.animation ? $style.transition_fade_enterFrom : ''"
-	:leaveToClass="defaultStore.state.animation ? $style.transition_fade_leaveTo : ''" mode="out-in">
-	<MkLoading v-if="fetching" />
+	<Transition :enterActiveClass="defaultStore.state.animation ? $style.transition_fade_enterActive : ''"
+		:leaveActiveClass="defaultStore.state.animation ? $style.transition_fade_leaveActive : ''"
+		:enterFromClass="defaultStore.state.animation ? $style.transition_fade_enterFrom : ''"
+		:leaveToClass="defaultStore.state.animation ? $style.transition_fade_leaveTo : ''" mode="out-in">
+		<MkLoading v-if="fetching" />
 
-	<MkError v-else-if="error" @retry="init()" />
+		<MkError v-else-if="error" @retry="init()" />
 
-	<div v-else-if="empty" key="_empty_" class="empty">
-		<slot name="empty">
-			<div class="_fullinfo">
-				<img :src="infoImageUrl" class="_ghost" />
-				<div>{{ i18n.ts.nothing }}</div>
+		<div v-else-if="empty" key="_empty_" class="empty">
+			<slot name="empty">
+				<div class="_fullinfo">
+					<img :src="infoImageUrl" class="_ghost" />
+					<div>{{ i18n.ts.nothing }}</div>
+				</div>
+			</slot>
+		</div>
+
+		<div v-else ref="rootEl">
+			<div v-show="pagination.reversed && more" key="_more_" class="_margin">
+				<MkButton v-if="!moreFetching"
+					v-appear="(enableInfiniteScroll && !props.disableAutoLoad) ? appearFetchMoreAhead : null"
+					:class="$style.more" :disabled="moreFetching" :style="{ cursor: moreFetching ? 'wait' : 'pointer' }"
+					primary rounded @click="fetchMoreAhead">
+					{{ i18n.ts.loadMore }}
+				</MkButton>
+				<MkLoading v-else class="loading" />
 			</div>
-		</slot>
-	</div>
-
-	<div v-else ref="rootEl">
-		<div v-show="pagination.reversed && more" key="_more_" class="_margin">
-			<MkButton v-if="!moreFetching"
-				v-appear="(enableInfiniteScroll && !props.disableAutoLoad) ? appearFetchMoreAhead : null" :class="$style.more"
-				:disabled="moreFetching" :style="{ cursor: moreFetching ? 'wait' : 'pointer' }" primary rounded
-				@click="fetchMoreAhead">
-				{{ i18n.ts.loadMore }}
-			</MkButton>
-			<MkLoading v-else class="loading" />
+			<slot :items="Array.from(items.values())" :fetching="fetching || moreFetching"></slot>
+			<div v-show="!pagination.reversed && more" key="_more_" class="_margin">
+				<MkButton v-if="!moreFetching"
+					v-appear="(enableInfiniteScroll && !props.disableAutoLoad) ? appearFetchMore : null"
+					:class="$style.more" :disabled="moreFetching" :style="{ cursor: moreFetching ? 'wait' : 'pointer' }"
+					primary rounded @click="fetchMore">
+					{{ i18n.ts.loadMore }}
+				</MkButton>
+				<MkLoading v-else class="loading" />
+			</div>
 		</div>
-		<slot :items="Array.from(items.values())" :fetching="fetching || moreFetching"></slot>
-		<div v-show="!pagination.reversed && more" key="_more_" class="_margin">
-			<MkButton v-if="!moreFetching"
-				v-appear="(enableInfiniteScroll && !props.disableAutoLoad) ? appearFetchMore : null" :class="$style.more"
-				:disabled="moreFetching" :style="{ cursor: moreFetching ? 'wait' : 'pointer' }" primary rounded
-				@click="fetchMore">
-				{{ i18n.ts.loadMore }}
-			</MkButton>
-			<MkLoading v-else class="loading" />
-		</div>
-	</div>
-</Transition>
+	</Transition>
 </template>
-	
+
 <script lang="ts">
+import MkButton from "@/components/MkButton.vue";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
 import {
-	computed,
+	getBodyScrollHeight,
+	getScrollContainer,
+	isBottomVisible,
+	isTopVisible,
+	onScrollBottom,
+	onScrollTop,
+	scroll,
+	scrollToBottom,
+} from "@/scripts/scroll";
+import { useDocumentVisibility } from "@/scripts/use-document-visibility";
+import { defaultStore } from "@/store";
+import { MisskeyEntity } from "@/types/date-separated-list";
+import * as misskey from "misskey-js";
+import {
 	ComputedRef,
+	computed,
 	isRef,
 	nextTick,
 	onActivated,
@@ -53,23 +70,6 @@ import {
 	ref,
 	watch,
 } from "vue";
-import * as misskey from "misskey-js";
-import * as os from "@/os";
-import {
-	onScrollTop,
-	isTopVisible,
-	getBodyScrollHeight,
-	getScrollContainer,
-	onScrollBottom,
-	scrollToBottom,
-	scroll,
-	isBottomVisible,
-} from "@/scripts/scroll";
-import { useDocumentVisibility } from "@/scripts/use-document-visibility";
-import MkButton from "@/components/MkButton.vue";
-import { defaultStore } from "@/store";
-import { MisskeyEntity } from "@/types/date-separated-list";
-import { i18n } from "@/i18n";
 
 const SECOND_FETCH_LIMIT = 30;
 const TOLERANCE = 16;
@@ -81,8 +81,8 @@ export type Paging<
 	endpoint: E;
 	limit: number;
 	params?:
-		| misskey.Endpoints[E]["req"]
-		| ComputedRef<misskey.Endpoints[E]["req"]>;
+	| misskey.Endpoints[E]["req"]
+	| ComputedRef<misskey.Endpoints[E]["req"]>;
 
 	/**
 	 * 検索APIのような、ページング不可なエンドポイントを利用する場合
@@ -93,7 +93,7 @@ export type Paging<
 	/**
 	 * items 配列の中身を逆順にする(新しい方が最後)
 	 */
-	reversed?: boolean;
+	reversed: boolean;
 
 	offsetMode?: boolean;
 
@@ -513,7 +513,7 @@ defineExpose({
 	updateItem,
 });
 </script>
-	
+
 <style lang="scss" module>
 .transition_fade_enterActive,
 .transition_fade_leaveActive {

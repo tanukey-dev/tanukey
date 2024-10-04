@@ -2368,6 +2368,11 @@ export interface Locale {
             "mention": string;
         };
     };
+    "_publicSettings": {
+        "label": string;
+        "remote": string;
+        "channel": string;
+    };
 }
 declare const locales: {
     [lang: string]: Locale;
