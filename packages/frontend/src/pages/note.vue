@@ -94,11 +94,12 @@ const nextPagination: Paging = {
 		note
 			? {
 				userId: note.userId,
-				sinceId: note.id,
+				untilId: note.id,
+				reverseOrder: true,
 			}
 			: null,
 	),
-	reversed: false,
+	reversed: true,
 };
 
 function fetchNote() {

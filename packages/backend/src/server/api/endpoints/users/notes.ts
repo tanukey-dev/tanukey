@@ -49,6 +49,7 @@ export const paramDef = {
 			},
 		},
 		excludeNsfw: { type: "boolean", default: false },
+		reverseOrder: { type: "boolean", default: false },
 	},
 	required: ["userId"],
 } as const;
@@ -71,7 +72,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					userIds: [ps.userId],
 					checkChannelSearchable: true,
 					includeReplies: ps.includeReplies,
-					reverseOrder: false,
+					reverseOrder: ps.reverseOrder,
 					hasFile: ps.withFiles,
 				},
 				{
