@@ -1,21 +1,20 @@
-import { Injectable } from "@nestjs/common";
 import { bindThis } from "@/decorators.js";
-import { HybridTimelineChannelService } from "./channels/hybrid-timeline.js";
-import { FollowedChannelTimelineChannelService } from "./channels/followed-channel-timeline.js";
-import { LocalTimelineChannelService } from "./channels/local-timeline.js";
-import { MediaTimelineChannelService } from "./channels/media-timeline.js";
-import { HomeTimelineChannelService } from "./channels/home-timeline.js";
-import { GlobalTimelineChannelService } from "./channels/global-timeline.js";
-import { MainChannelService } from "./channels/main.js";
-import { ChannelChannelService } from "./channels/channel.js";
+import { Injectable } from "@nestjs/common";
 import { AdminChannelService } from "./channels/admin.js";
-import { ServerStatsChannelService } from "./channels/server-stats.js";
-import { QueueStatsChannelService } from "./channels/queue-stats.js";
-import { UserListChannelService } from "./channels/user-list.js";
 import { AntennaChannelService } from "./channels/antenna.js";
+import { ChannelChannelService } from "./channels/channel.js";
 import { DriveChannelService } from "./channels/drive.js";
+import { GlobalTimelineChannelService } from "./channels/global-timeline.js";
 import { HashtagChannelService } from "./channels/hashtag.js";
+import { HomeTimelineChannelService } from "./channels/home-timeline.js";
+import { HybridTimelineChannelService } from "./channels/hybrid-timeline.js";
+import { LocalTimelineChannelService } from "./channels/local-timeline.js";
+import { MainChannelService } from "./channels/main.js";
+import { MediaTimelineChannelService } from "./channels/media-timeline.js";
+import { QueueStatsChannelService } from "./channels/queue-stats.js";
 import { RoleTimelineChannelService } from "./channels/role-timeline.js";
+import { ServerStatsChannelService } from "./channels/server-stats.js";
+import { UserListChannelService } from "./channels/user-list.js";
 
 @Injectable()
 export class ChannelsService {
@@ -25,7 +24,6 @@ export class ChannelsService {
 		private localTimelineChannelService: LocalTimelineChannelService,
 		private mediaTimelineChannelService: MediaTimelineChannelService,
 		private hybridTimelineChannelService: HybridTimelineChannelService,
-		private followedChannelTimelineChannelService: FollowedChannelTimelineChannelService,
 		private globalTimelineChannelService: GlobalTimelineChannelService,
 		private userListChannelService: UserListChannelService,
 		private hashtagChannelService: HashtagChannelService,
@@ -51,8 +49,6 @@ export class ChannelsService {
 				return this.mediaTimelineChannelService;
 			case "hybridTimeline":
 				return this.hybridTimelineChannelService;
-			case "followedChannelTimeline":
-				return this.followedChannelTimelineChannelService;
 			case "globalTimeline":
 				return this.globalTimelineChannelService;
 			case "userList":

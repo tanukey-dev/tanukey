@@ -283,7 +283,6 @@ import * as ep___notes_delete from "./endpoints/notes/delete.js";
 import * as ep___notes_favorites_create from "./endpoints/notes/favorites/create.js";
 import * as ep___notes_favorites_delete from "./endpoints/notes/favorites/delete.js";
 import * as ep___notes_featured from "./endpoints/notes/featured.js";
-import * as ep___notes_followedChannelTimeline from "./endpoints/notes/followed-channel-timeline.js";
 import * as ep___notes_globalTimeline from "./endpoints/notes/global-timeline.js";
 import * as ep___notes_hybridTimeline from "./endpoints/notes/hybrid-timeline.js";
 import * as ep___notes_localTimeline from "./endpoints/notes/local-timeline.js";
@@ -647,7 +646,6 @@ const eps = [
 	["notes/featured", ep___notes_featured],
 	["notes/global-timeline", ep___notes_globalTimeline],
 	["notes/hybrid-timeline", ep___notes_hybridTimeline],
-	["notes/followed-channel-timeline", ep___notes_followedChannelTimeline],
 	["notes/local-timeline", ep___notes_localTimeline],
 	["notes/media-timeline", ep___notes_mediaTimeline],
 	["notes/mentions", ep___notes_mentions],

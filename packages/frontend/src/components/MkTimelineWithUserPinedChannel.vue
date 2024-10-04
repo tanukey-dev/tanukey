@@ -25,18 +25,11 @@ import { Tab } from "./global/MkPageHeader.tabs.vue";
 
 const tabs = ref<Tab[]>([
 	{ key: "public", title: i18n.ts.public, icon: "ti ti-planet" },
-	{
-		key: "followdChannel",
-		title: i18n.ts._timelines.followedChannel,
-		icon: "ti ti-device-tv",
-	},
 ]);
 const srcCh = computed(() =>
 	tab.value === "public"
 		? "public"
-		: tab.value === "followdChannel"
-			? "followdChannel"
-			: "channel",
+		: "channel",
 );
 const postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
 const tab = ref<string | null>(null);
@@ -46,9 +39,7 @@ const selectedTab = computed(
 const channelId = computed(() =>
 	tab.value === "public"
 		? null
-		: tab.value === "followdChannel"
-			? "followdChannel"
-			: tab.value,
+		: tab.value,
 );
 const disableSwipe = computed(defaultStore.makeGetterSetter("disableSwipe"));
 
@@ -60,8 +51,7 @@ watch(tab, async () => {
 	}
 
 	if (
-		tab.value !== "public" &&
-		tab.value !== "followdChannel"
+		tab.value !== "public"
 	) {
 		const ch = await os.api("channels/show", {
 			channelId: tab.value,
@@ -153,6 +143,7 @@ const onSwipeRight = (): void => {
 	}
 };
 
+const publicTlShowLocalPost = computed<boolean>(defaultStore.makeGetterSetter("publicTlShowLocalPost"));
 const publicTlShowRemoteFollowPost = computed<boolean>(defaultStore.makeGetterSetter("publicTlShowRemoteFollowPost"));
 const publicTlShowChannelFollowPost = computed<boolean>(defaultStore.makeGetterSetter("publicTlShowChannelFollowPost"));
 
@@ -171,13 +162,19 @@ const headerActions = computed(() => [
 			menuItems.push({
 				type: 'switch',
 				text: i18n.ts._publicSettings.remote,
-				ref: publicTlShowRemoteFollowPost,
+				ref: publicTlShowRemoteFollowPost
+			});
+
+			menuItems.push({
+				type: 'switch',
+				text: i18n.ts._publicSettings.local,
+				ref: publicTlShowLocalPost
 			});
 
 			menuItems.push({
 				type: 'switch',
 				text: i18n.ts._publicSettings.channel,
-				ref: publicTlShowChannelFollowPost,
+				ref: publicTlShowChannelFollowPost
 			});
 
 			os.popupMenu(menuItems, ev.currentTarget ?? ev.target);

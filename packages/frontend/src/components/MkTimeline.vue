@@ -68,6 +68,7 @@ const onUserRemoved = () => {
 watch([
 	defaultStore.reactiveState.publicTlShowRemoteFollowPost,
 	defaultStore.reactiveState.publicTlShowChannelFollowPost,
+	defaultStore.reactiveState.publicTlShowLocalPost,
 ], () => {
 	connection.dispose();
 	key.value++;
@@ -122,21 +123,16 @@ const setupStream = () => {
 		endpoint = "notes/hybrid-timeline";
 		query = {
 			withReplies: defaultStore.state.showTimelineReplies,
+			withLocal: defaultStore.state.publicTlShowLocalPost,
 			withRemote: defaultStore.state.publicTlShowRemoteFollowPost,
 			withChannel: defaultStore.state.publicTlShowChannelFollowPost,
 		};
 		connection = stream.useChannel("hybridTimeline", {
 			withReplies: defaultStore.state.showTimelineReplies,
+			withLocal: defaultStore.state.publicTlShowLocalPost,
 			withRemote: defaultStore.state.publicTlShowRemoteFollowPost,
 			withChannel: defaultStore.state.publicTlShowChannelFollowPost,
 		});
-		connection.on("note", prepend);
-	} else if (props.src === "followdChannel") {
-		endpoint = "notes/followed-channel-timeline";
-		query = {
-			withReplies: defaultStore.state.showTimelineReplies,
-		};
-		connection = stream.useChannel("followedChannelTimeline", {});
 		connection.on("note", prepend);
 	} else if (props.src === "global") {
 		endpoint = "notes/global-timeline";

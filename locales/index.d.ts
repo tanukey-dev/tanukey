@@ -2371,6 +2371,7 @@ export interface Locale {
     "_publicSettings": {
         "label": string;
         "remote": string;
+        "local": string;
         "channel": string;
     };
 }

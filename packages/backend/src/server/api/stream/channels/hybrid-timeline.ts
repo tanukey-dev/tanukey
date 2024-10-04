@@ -15,6 +15,7 @@ class HybridTimelineChannel extends Channel {
 	public static requireCredential = true;
 	public static kind = "read:account";
 	private withReplies: boolean;
+	private withLocal: boolean;
 	private withRemote: boolean;
 	private withChannel: boolean;
 
@@ -38,6 +39,7 @@ class HybridTimelineChannel extends Channel {
 		if (!policies.ltlAvailable) return;
 
 		this.withReplies = params.withReplies as boolean;
+		this.withLocal = params.withLocal as boolean;
 		this.withRemote = params.withRemote as boolean;
 		this.withChannel = params.withChannel as boolean;
 
@@ -62,6 +64,13 @@ class HybridTimelineChannel extends Channel {
 			)
 		) {
 			return;
+		}
+
+		// ローカルを表示が無効の場合は、ローカルの投稿は除外
+		if (!this.withLocal) {
+			if (note.user.host == null && !note.channelId) {
+				return;
+			}
 		}
 
 		// リモートユーザーを表示が無効の場合は、リモートユーザーの投稿は除外

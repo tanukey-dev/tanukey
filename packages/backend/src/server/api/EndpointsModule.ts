@@ -285,7 +285,6 @@ import * as ep___notes_delete from "./endpoints/notes/delete.js";
 import * as ep___notes_favorites_create from "./endpoints/notes/favorites/create.js";
 import * as ep___notes_favorites_delete from "./endpoints/notes/favorites/delete.js";
 import * as ep___notes_featured from "./endpoints/notes/featured.js";
-import * as ep___notes_followedChannelTimeline from "./endpoints/notes/followed-channel-timeline.js";
 import * as ep___notes_globalTimeline from "./endpoints/notes/global-timeline.js";
 import * as ep___notes_hybridTimeline from "./endpoints/notes/hybrid-timeline.js";
 import * as ep___notes_localTimeline from "./endpoints/notes/local-timeline.js";
@@ -1416,10 +1415,6 @@ const $notes_hybridTimeline: Provider = {
 	provide: "ep:notes/hybrid-timeline",
 	useClass: ep___notes_hybridTimeline.default,
 };
-const $notes_followedChannelTimeline: Provider = {
-	provide: "ep:notes/followed-channel-timeline",
-	useClass: ep___notes_followedChannelTimeline.default,
-};
 const $notes_localTimeline: Provider = {
 	provide: "ep:notes/local-timeline",
 	useClass: ep___notes_localTimeline.default,
@@ -2098,7 +2093,6 @@ const $events_update: Provider = {
 		$notes_featured,
 		$notes_globalTimeline,
 		$notes_hybridTimeline,
-		$notes_followedChannelTimeline,
 		$notes_localTimeline,
 		$notes_mediaTimeline,
 		$notes_mentions,
@@ -2470,7 +2464,6 @@ const $events_update: Provider = {
 		$notes_featured,
 		$notes_globalTimeline,
 		$notes_hybridTimeline,
-		$notes_followedChannelTimeline,
 		$notes_localTimeline,
 		$notes_mediaTimeline,
 		$notes_mentions,

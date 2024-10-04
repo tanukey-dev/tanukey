@@ -170,6 +170,10 @@ export const defaultStore = markRaw(
 				arg: null,
 			},
 		},
+		publicTlShowLocalPost: {
+			where: "account",
+			default: true,
+		},
 		publicTlShowRemoteFollowPost: {
 			where: "account",
 			default: false,

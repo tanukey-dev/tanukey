@@ -51,6 +51,7 @@ export const paramDef = {
 		includeLocalRenotes: { type: "boolean", default: true },
 		withFiles: { type: "boolean", default: false },
 		withReplies: { type: "boolean", default: false },
+		withLocal: { type: "boolean", default: false },
 		withRemote: { type: "boolean", default: false },
 		withChannel: { type: "boolean", default: false },
 	},
@@ -120,6 +121,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				.leftJoinAndSelect("reply.user", "replyUser")
 				.leftJoinAndSelect("renote.user", "renoteUser")
 				.setParameters(followingQuery.getParameters());
+
+			if (!ps.withLocal) {
+				query.andWhere(
+					new Brackets((qb) => {
+						qb.where("note.userHost IS NOT NULL");
+						qb.orWhere("note.channelId IS NOT NULL");
+					}),
+				);
+			}
 
 			if (ps.withChannel) {
 				this.queryService.generateChannelQuery(query, me);
