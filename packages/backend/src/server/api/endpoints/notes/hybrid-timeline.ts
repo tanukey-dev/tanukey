@@ -87,7 +87,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				.where("following.followerId = :followerId", { followerId: me.id });
 
 			if (!ps.withRemote) {
-				followingQuery.where("following.followeeHost IS NULL");
+				followingQuery.andWhere("following.followeeHost IS NULL");
 			}
 
 			const query = this.queryService
