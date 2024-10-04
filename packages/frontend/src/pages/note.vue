@@ -1,59 +1,64 @@
 <template>
-<XNotFound v-if="localOnly"/>
-<MkStickyContainer v-else>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800">
-		<div>
-			<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
-				<div v-if="note">
-					<div v-if="showNext" class="_margin">
-						<MkNotes class="" :pagination="nextPagination" :noGap="true"/>
-					</div>
-
-					<div class="_margin">
-						<MkButton v-if="!showNext && hasNext" :class="$style.loadNext" @click="showNext = true"><i class="ti ti-chevron-up"></i></MkButton>
-						<div class="_margin _gaps_s">
-							<MkRemoteCaution v-if="note.user.host != null" :href="note.url ?? note.uri"/>
-							<MkNoteDetailed :key="note.id" v-model:note="note" :class="$style.note"/>
+	<XNotFound v-if="localOnly" />
+	<MkStickyContainer v-else>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="800">
+			<div>
+				<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
+					<div v-if="note">
+						<div v-if="showNext" class="_margin">
+							<MkNotes class="" :pagination="nextPagination" :noGap="true" />
 						</div>
-						<div v-if="clips && clips.length > 0" class="_margin">
-							<div style="font-weight: bold; padding: 12px;">{{ i18n.ts.clip }}</div>
-							<div class="_gaps">
-								<MkA v-for="item in clips" :key="item.id" :to="`/clips/${item.id}`">
-									<MkClipPreview :clip="item"/>
-								</MkA>
+
+						<div class="_margin">
+							<MkButton v-if="!showNext && hasNext" :class="$style.loadNext" @click="showNext = true"><i
+									class="ti ti-chevron-up"></i></MkButton>
+							<div class="_margin _gaps_s">
+								<MkRemoteCaution v-if="note.user.host != null" :href="note.url ?? note.uri" />
+								<MkNoteDetailed :key="note.id" v-model:note="note" :class="$style.note" />
 							</div>
+							<div v-if="clips && clips.length > 0" class="_margin">
+								<div style="font-weight: bold; padding: 12px;">{{ i18n.ts.clip }}</div>
+								<div class="_gaps">
+									<MkA v-for="item in clips" :key="item.id" :to="`/clips/${item.id}`">
+										<MkClipPreview :clip="item" />
+									</MkA>
+								</div>
+							</div>
+							<MkButton v-if="!showPrev && hasPrev" :class="$style.loadPrev" @click="showPrev = true"><i
+									class="ti ti-chevron-down"></i></MkButton>
 						</div>
-						<MkButton v-if="!showPrev && hasPrev" :class="$style.loadPrev" @click="showPrev = true"><i class="ti ti-chevron-down"></i></MkButton>
-					</div>
 
-					<div v-if="showPrev" class="_margin">
-						<MkNotes class="" :pagination="prevPagination" :noGap="true"/>
+						<div v-if="showPrev" class="_margin">
+							<MkNotes class="" :pagination="prevPagination" :noGap="true" />
+						</div>
 					</div>
-				</div>
-				<MkError v-else-if="error" @retry="fetchNote()"/>
-				<MkLoading v-else/>
-			</Transition>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+					<MkError v-else-if="error" @retry="fetchNote()" />
+					<MkLoading v-else />
+				</Transition>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from "vue";
-import * as misskey from "misskey-js";
+import { $i } from "@/account";
+import MkButton from "@/components/MkButton.vue";
+import MkClipPreview from "@/components/MkClipPreview.vue";
 import MkNoteDetailed from "@/components/MkNoteDetailed.vue";
 import MkNotes from "@/components/MkNotes.vue";
+import { Paging } from "@/components/MkPagination.vue";
 import MkRemoteCaution from "@/components/MkRemoteCaution.vue";
-import MkButton from "@/components/MkButton.vue";
-import * as os from "@/os";
-import { definePageMetadata } from "@/scripts/page-metadata";
-import { i18n } from "@/i18n";
 import { dateString } from "@/filters/date";
-import MkClipPreview from "@/components/MkClipPreview.vue";
-import { defaultStore } from "@/store";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
 import XNotFound from "@/pages/not-found.vue";
-import { $i } from "@/account";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { defaultStore } from "@/store";
+import * as misskey from "misskey-js";
+import { computed, watch } from "vue";
 
 const props = defineProps<{
 	noteId: string;
@@ -68,31 +73,32 @@ let showNext = $ref(false);
 let error = $ref();
 let localOnly = computed(() => note?.localOnly && !$i);
 
-const prevPagination = {
+const prevPagination: Paging = {
 	endpoint: "users/notes" as const,
 	limit: 10,
 	params: computed(() =>
 		note
 			? {
-					userId: note.userId,
-					untilId: note.id,
-				}
+				userId: note.userId,
+				untilId: note.id,
+			}
 			: null,
 	),
+	reversed: false
 };
 
-const nextPagination = {
-	reversed: true,
+const nextPagination: Paging = {
 	endpoint: "users/notes" as const,
 	limit: 10,
 	params: computed(() =>
 		note
 			? {
-					userId: note.userId,
-					sinceId: note.id,
-				}
+				userId: note.userId,
+				sinceId: note.id,
+			}
 			: null,
 	),
+	reversed: false,
 };
 
 function fetchNote() {
@@ -143,15 +149,15 @@ definePageMetadata(
 	computed(() =>
 		note
 			? {
-					title: i18n.ts.note,
-					subtitle: dateString(note.createdAt),
-					avatar: note.user,
-					path: `/notes/${note.id}`,
-					share: {
-						title: i18n.t("noteOf", { user: note.user.name }),
-						text: note.text,
-					},
-				}
+				title: i18n.ts.note,
+				subtitle: dateString(note.createdAt),
+				avatar: note.user,
+				path: `/notes/${note.id}`,
+				share: {
+					title: i18n.t("noteOf", { user: note.user.name }),
+					text: note.text,
+				},
+			}
 			: null,
 	),
 );
@@ -162,6 +168,7 @@ definePageMetadata(
 .fade-leave-active {
 	transition: opacity 0.125s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
 	opacity: 0;
