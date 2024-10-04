@@ -73,7 +73,8 @@ class HybridTimelineChannel extends Channel {
 
 		// チャンネルの表示が無効の場合は、チャンネルの投稿は除外
 		if (!this.withChannel) {
-			if (note.channelId !== null) {
+			// パブリック投稿の場合にはchannelIdがundefinedになる
+			if (note.channelId != null) {
 				return;
 			}
 		}
