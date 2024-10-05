@@ -20,14 +20,6 @@
 		"gulp": "pnpm exec gulp build",
 		"watch": "pnpm dev",
 		"dev": "node ./scripts/dev.js",
-		"lint": "pnpm -r lint",
-		"cy:open": "pnpm cypress open --browser --e2e --config-file=cypress.config.ts",
-		"cy:run": "pnpm cypress run",
-		"e2e": "pnpm start-server-and-test start:test http://localhost:61812 cy:run",
-		"jest": "cd packages/backend && pnpm jest",
-		"jest-and-coverage": "cd packages/backend && pnpm jest-and-coverage",
-		"test": "pnpm -r test",
-		"test-and-coverage": "pnpm -r test-and-coverage",
 		"format": "npx @biomejs/biome format --write packages",
 		"clean": "node ./scripts/clean.js",
 		"clean-all": "node ./scripts/clean-all.js",
@@ -51,8 +43,6 @@
 		"@biomejs/biome": "1.9.2",
 		"@types/gulp": "4.0.10",
 		"@types/gulp-rename": "2.0.1",
-		"cross-env": "7.0.3",
-		"cypress": "12.13.0",
-		"start-server-and-test": "2.0.0"
+		"cross-env": "7.0.3"
 	}
 }
