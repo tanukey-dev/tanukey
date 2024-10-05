@@ -272,6 +272,7 @@ export interface Locale {
     "removeAreYouSure": string;
     "deleteAreYouSure": string;
     "undraftAreYouSure": string;
+    "rejectAreYouSure": string;
     "resetAreYouSure": string;
     "saved": string;
     "messaging": string;
@@ -350,6 +351,7 @@ export interface Locale {
     "unwatch": string;
     "accept": string;
     "reject": string;
+    "rejected": string;
     "normal": string;
     "instanceName": string;
     "instanceDescription": string;

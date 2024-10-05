@@ -299,7 +299,7 @@ export type CustomEmoji = {
 	url: string;
 	category: string;
 	aliases: string[];
-	draft: boolean;
+	status: "DRAFT" | "APPROVED" | "REJECTED";
 	license: string;
 	uploadedUserName: string;
 };

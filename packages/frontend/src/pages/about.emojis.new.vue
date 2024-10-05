@@ -1,7 +1,7 @@
 <template>
 	<MkSpacer :contentMax="1000" :marginMin="20">
 		<div :class="$style.emojis">
-			<XEmoji v-for="emoji in emojis" :key="emoji.name" :emoji="emoji" :draft="emoji.draft" />
+			<XEmoji v-for="emoji in emojis" :key="emoji.name" :emoji="emoji" :draft="emoji.status === 'DRAFT'" />
 		</div>
 	</MkSpacer>
 </template>
@@ -15,7 +15,7 @@ const emojis = computed(() => customEmojis.value.filter((emoji) => {
 	if (emoji.updatedAt === null) {
 		return false;
 	}
-	if (emoji.draft) {
+	if (emoji.status !== 'APPROVED') {
 		return false;
 	}
 	// 3日以内の絵文字を抽出

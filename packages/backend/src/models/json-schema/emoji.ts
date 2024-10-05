@@ -39,8 +39,9 @@ export const packedEmojiSimpleSchema = {
 			optional: false,
 			nullable: false,
 		},
-		draft: {
-			type: "boolean",
+		status: {
+			type: "string",
+			enum: ["DRAFT", "APPROVED", "REJECTED"],
 			optional: false,
 			nullable: true,
 		},
@@ -121,8 +122,9 @@ export const packedEmojiDetailedSchema = {
 			optional: false,
 			nullable: true,
 		},
-		draft: {
-			type: "boolean",
+		status: {
+			type: "string",
+			enum: ["DRAFT", "APPROVED", "REJECTED"],
 			optional: false,
 			nullable: true,
 		},

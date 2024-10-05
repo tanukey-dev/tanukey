@@ -42,7 +42,7 @@ export class EmojiEntityService {
 			category: emoji.category,
 			// || emoji.originalUrl してるのは後方互換性のため（publicUrlはstringなので??はだめ）
 			url: emoji.publicUrl || emoji.originalUrl,
-			draft: emoji.draft,
+			status: emoji.status,
 			isSensitive: emoji.isSensitive ? true : undefined,
 			roleIdsThatCanBeUsedThisEmojiAsReaction:
 				emoji.roleIdsThatCanBeUsedThisEmojiAsReaction.length > 0
@@ -83,7 +83,7 @@ export class EmojiEntityService {
 				// || emoji.originalUrl してるのは後方互換性のため（publicUrlはstringなので??はだめ）
 				url: emoji.emoji_publicUrl || emoji.emoji_originalUrl,
 				license: emoji.emoji_license,
-				draft: emoji.emoji_draft,
+				status: emoji.emoji_status,
 				isSensitive: emoji.emoji_isSensitive,
 				localOnly: emoji.emoji_localOnly,
 				roleIdsThatCanBeUsedThisEmojiAsReaction:
@@ -119,7 +119,7 @@ export class EmojiEntityService {
 			// || emoji.originalUrl してるのは後方互換性のため（publicUrlはstringなので??はだめ）
 			url: emoji.publicUrl || emoji.originalUrl,
 			license: emoji.license,
-			draft: emoji.draft,
+			status: emoji.status,
 			isSensitive: emoji.isSensitive,
 			localOnly: emoji.localOnly,
 			roleIdsThatCanBeUsedThisEmojiAsReaction:

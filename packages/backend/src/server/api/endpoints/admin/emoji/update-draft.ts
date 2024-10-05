@@ -1,5 +1,6 @@
 import { CustomEmojiService } from "@/core/CustomEmojiService.js";
 import { DI } from "@/di-symbols.js";
+import { EmojiStatus } from "@/models/entities/Emoji.js";
 import type { DriveFilesRepository, EmojisRepository } from "@/models/index.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
@@ -63,7 +64,7 @@ export const paramDef = {
 			},
 		},
 	},
-	required: ["id", "name", "aliases", "draft"],
+	required: ["id", "name", "aliases"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -109,7 +110,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				category: ps.category ?? null,
 				aliases: ps.aliases,
 				license: ps.license ?? null,
-				draft: true,
+				status: EmojiStatus.DRAFT,
 				isSensitive: ps.isSensitive,
 				localOnly: ps.localOnly,
 				roleIdsThatCanBeUsedThisEmojiAsReaction:

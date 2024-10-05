@@ -1,6 +1,12 @@
-import { PrimaryColumn, Entity, Index, Column } from "typeorm";
+import { Column, Entity, Index, PrimaryColumn } from "typeorm";
 import { id } from "../id.js";
-import { DriveFile } from "./DriveFile.js";
+import type { DriveFile } from "./DriveFile.js";
+
+export enum EmojiStatus {
+	DRAFT = "DRAFT",
+	APPROVED = "APPROVED",
+	REJECTED = "REJECTED",
+}
 
 @Entity()
 @Index(["name", "host"], { unique: true })
@@ -76,11 +82,11 @@ export class Emoji {
 	})
 	public license: string | null;
 
-	@Column("boolean", {
-		default: false,
-		nullable: false,
+	@Column("enum", {
+		enum: EmojiStatus,
+		default: EmojiStatus.DRAFT,
 	})
-	public draft: boolean;
+	public status: EmojiStatus;
 
 	@Column("boolean", {
 		default: false,

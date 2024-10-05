@@ -1,8 +1,16 @@
 <template>
-	<button v-if="emoji.draft" class="_button" :class="[$style.root, $style.draft]" @click="menu">
+	<button v-if="emoji.status === 'DRAFT'" class="_button" :class="[$style.root, $style.draft]" @click="menu">
 		<img v-if="emoji.uploadedUserName !== null" :src="emoji.url" :class="$style.img" loading="lazy" />
 		<div :class="$style.body">
 			<div :class="$style.name" class="_monospace">{{ '(draft) ' + emoji.name }}</div>
+			<div :class="$style.info">{{ emoji.aliases.join(' ') }}</div>
+		</div>
+	</button>
+	<button v-else-if="emoji.status === 'REJECTED'" class="_button" :class="[$style.root, $style.rejected]"
+		@click="menu">
+		<img v-if="emoji.uploadedUserName !== null" :src="emoji.url" :class="$style.img" loading="lazy" />
+		<div :class="$style.body">
+			<div :class="$style.name" class="_monospace">{{ '(rejected) ' + emoji.name }}</div>
 			<div :class="$style.info">{{ emoji.aliases.join(' ') }}</div>
 		</div>
 	</button>
@@ -28,7 +36,7 @@ const props = defineProps<{
 		aliases: string[];
 		category: string;
 		url: string;
-		draft: boolean;
+		status: 'DRAFT' | 'APPROVED' | 'REJECTED';
 		license: string;
 		uploadedUserName: string | null;
 	};
@@ -134,6 +142,13 @@ const edit = () => {
 
 .draft {
 	--c: rgb(255 196 0 / 15%);
+	;
+	background-image: linear-gradient(45deg, var(--c) 16.67%, transparent 16.67%, transparent 50%, var(--c) 50%, var(--c) 66.67%, transparent 66.67%, transparent 100%);
+	background-size: 16px 16px;
+}
+
+.rejected {
+	--c: rgba(0, 55, 255, 0.15);
 	;
 	background-image: linear-gradient(45deg, var(--c) 16.67%, transparent 16.67%, transparent 50%, var(--c) 50%, var(--c) 66.67%, transparent 66.67%, transparent 100%);
 	background-size: 16px 16px;

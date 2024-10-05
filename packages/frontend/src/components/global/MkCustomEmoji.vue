@@ -1,13 +1,14 @@
 <template>
-<span v-if="errored || isDraft">:{{ customEmojiName }}:</span>
-<img v-else :class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]" :src="url" :alt="alt" :title="alt" decoding="async" @error="errored = true" @load="errored = false"/>
+	<span v-if="errored || isDraft">:{{ customEmojiName }}:</span>
+	<img v-else :class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]" :src="url" :alt="alt"
+		:title="alt" decoding="async" @error="errored = true" @load="errored = false" />
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { customEmojisMap } from "@/custom-emojis";
 import { getProxiedImageUrl, getStaticImageUrl } from "@/scripts/media-proxy";
 import { defaultStore } from "@/store";
-import { customEmojisMap } from "@/custom-emojis";
+import { computed } from "vue";
 
 const props = defineProps<{
 	name: string;
@@ -30,9 +31,11 @@ const isLocal = computed(
 		(customEmojiName.value.endsWith("@.") ||
 			!customEmojiName.value.includes("@")),
 );
-const isDraft = computed(
-	() => customEmojisMap.get(customEmojiName.value)?.draft ?? false,
-);
+const isDraft = computed(() => {
+	const emoji = customEmojisMap.get(customEmojiName.value);
+	if (!emoji) return false;
+	return emoji.status === 'DRAFT';
+});
 
 const rawUrl = computed(() => {
 	if (props.url) {
@@ -51,14 +54,14 @@ const url = computed(() => {
 
 	const proxied =
 		rawUrl.value.startsWith("/emoji/") ||
-		(props.useOriginalSize && isLocal.value)
+			(props.useOriginalSize && isLocal.value)
 			? rawUrl.value
 			: getProxiedImageUrl(
-					rawUrl.value,
-					props.useOriginalSize ? undefined : "emoji",
-					false,
-					true,
-				);
+				rawUrl.value,
+				props.useOriginalSize ? undefined : "emoji",
+				false,
+				true,
+			);
 	return defaultStore.reactiveState.disableShowingAnimatedImages.value
 		? getStaticImageUrl(proxied)
 		: proxied;

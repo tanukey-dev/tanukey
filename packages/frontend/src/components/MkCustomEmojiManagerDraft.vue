@@ -26,6 +26,9 @@
 							<button class="draft _button" @click="undrafted(emoji)">
 								{{ i18n.ts.undrafted }}
 							</button>
+							<button class="reject _button" @click="reject(emoji)">
+								{{ i18n.ts.rejected }}
+							</button>
 							<button class="delete _button" @click="deleteDraft(emoji)">
 								{{ i18n.ts.delete }}
 							</button>
@@ -104,7 +107,33 @@ async function undrafted(emoji) {
 		category: emoji.category,
 		aliases: emoji.aliases,
 		license: emoji.license,
-		draft: false,
+		status: 'APPROVED',
+		isSensitive: emoji.isSensitive,
+		localOnly: emoji.localOnly,
+		roleIdsThatCanBeUsedThisEmojiAsReaction:
+			emoji.roleIdsThatCanBeUsedThisEmojiAsReaction,
+	});
+
+	emojisDraftPaginationComponent.value.removeItem(
+		(item) => item.id === emoji.id,
+	);
+	emojisDraftPaginationComponent.value.reload();
+}
+
+async function reject(emoji) {
+	const { canceled } = await os.confirm({
+		type: "warning",
+		text: i18n.t("rejectAreYouSure", { x: emoji.name }),
+	});
+	if (canceled) return;
+
+	await os.api("admin/emoji/update", {
+		id: emoji.id,
+		name: emoji.name,
+		category: emoji.category,
+		aliases: emoji.aliases,
+		license: emoji.license,
+		status: 'REJECTED',
 		isSensitive: emoji.isSensitive,
 		localOnly: emoji.localOnly,
 		roleIdsThatCanBeUsedThisEmojiAsReaction:
@@ -244,9 +273,19 @@ async function deleteDraft(emoji) {
 				}
 			}
 
+			>.reject {
+				grid-row: 3;
+				background-color: var(--buttonBg);
+				margin: 2px;
+
+				&:hover {
+					color: var(--accent);
+				}
+			}
+
 			>.delete {
 				background-color: var(--buttonBg);
-				grid-row: 3;
+				grid-row: 4;
 				margin: 2px;
 
 				&:hover {

@@ -1,78 +1,85 @@
 <template>
-<div ref="rootEl" :class="$style.root" class="_popup _shadow" :style="{ zIndex }" @contextmenu.prevent="() => {}">
-	<ol v-if="type === 'user'" ref="suggests" :class="$style.list">
-		<li v-for="user in users" tabindex="-1" :class="$style.item" @click="complete(type, user)" @keydown="onKeydown">
-			<img :class="$style.avatar" :src="user.avatarUrl"/>
-			<span :class="$style.userName">
-				<MkUserName :key="user.id" :user="user"/>
-			</span>
-			<span>@{{ acct(user) }}</span>
-		</li>
-		<li tabindex="-1" :class="$style.item" @click="chooseUser()" @keydown="onKeydown">{{ i18n.ts.selectUser }}</li>
-	</ol>
-	<ol v-else-if="hashtags.length > 0" ref="suggests" :class="$style.list">
-		<li v-for="hashtag in hashtags" tabindex="-1" :class="$style.item" @click="complete(type, hashtag)" @keydown="onKeydown">
-			<span class="name">{{ hashtag }}</span>
-		</li>
-	</ol>
-	<ol v-else-if="emojis.length > 0" ref="suggests" :class="$style.list">
-		<li v-for="emoji in emojis" :key="emoji.emoji" :class="$style.item" tabindex="-1" @click="complete(type, emoji.emoji)" @keydown="onKeydown">
-			<MkCustomEmoji v-if="'isCustomEmoji' in emoji && emoji.isCustomEmoji" :name="emoji.emoji" :class="$style.emoji"/>
-			<MkEmoji v-else :emoji="emoji.emoji" :class="$style.emoji"/>
-			<!-- eslint-disable-next-line vue/no-v-html -->
-			<span v-if="q" :class="$style.emojiName" v-html="sanitizeHtml(emoji.name.replace(q, `<b>${q}</b>`))"></span>
-			<span v-else v-text="emoji.name"></span>
-			<span v-if="emoji.aliasOf" :class="$style.emojiAlias">({{ emoji.aliasOf }})</span>
-		</li>
-	</ol>
-	<ol v-else-if="mfmTags.length > 0" ref="suggests" :class="$style.list">
-		<li v-for="tag in mfmTags" tabindex="-1" :class="$style.item" @click="complete(type, tag)" @keydown="onKeydown">
-			<span>{{ tag }}</span>
-		</li>
-	</ol>
-</div>
+	<div ref="rootEl" :class="$style.root" class="_popup _shadow" :style="{ zIndex }" @contextmenu.prevent="() => { }">
+		<ol v-if="type === 'user'" ref="suggests" :class="$style.list">
+			<li v-for="user in users" tabindex="-1" :class="$style.item" @click="complete(type, user)"
+				@keydown="onKeydown">
+				<img :class="$style.avatar" :src="user.avatarUrl" />
+				<span :class="$style.userName">
+					<MkUserName :key="user.id" :user="user" />
+				</span>
+				<span>@{{ acct(user) }}</span>
+			</li>
+			<li tabindex="-1" :class="$style.item" @click="chooseUser()" @keydown="onKeydown">{{ i18n.ts.selectUser }}
+			</li>
+		</ol>
+		<ol v-else-if="hashtags.length > 0" ref="suggests" :class="$style.list">
+			<li v-for="hashtag in hashtags" tabindex="-1" :class="$style.item" @click="complete(type, hashtag)"
+				@keydown="onKeydown">
+				<span class="name">{{ hashtag }}</span>
+			</li>
+		</ol>
+		<ol v-else-if="emojis.length > 0" ref="suggests" :class="$style.list">
+			<li v-for="emoji in emojis" :key="emoji.emoji" :class="$style.item" tabindex="-1"
+				@click="complete(type, emoji.emoji)" @keydown="onKeydown">
+				<MkCustomEmoji v-if="'isCustomEmoji' in emoji && emoji.isCustomEmoji" :name="emoji.emoji"
+					:class="$style.emoji" />
+				<MkEmoji v-else :emoji="emoji.emoji" :class="$style.emoji" />
+				<!-- eslint-disable-next-line vue/no-v-html -->
+				<span v-if="q" :class="$style.emojiName"
+					v-html="sanitizeHtml(emoji.name.replace(q, `<b>${q}</b>`))"></span>
+				<span v-else v-text="emoji.name"></span>
+				<span v-if="emoji.aliasOf" :class="$style.emojiAlias">({{ emoji.aliasOf }})</span>
+			</li>
+		</ol>
+		<ol v-else-if="mfmTags.length > 0" ref="suggests" :class="$style.list">
+			<li v-for="tag in mfmTags" tabindex="-1" :class="$style.item" @click="complete(type, tag)"
+				@keydown="onKeydown">
+				<span>{{ tag }}</span>
+			</li>
+		</ol>
+	</div>
 </template>
 
 <script lang="ts">
-import {
-	markRaw,
-	ref,
-	shallowRef,
-	computed,
-	onUpdated,
-	onMounted,
-	onBeforeUnmount,
-	nextTick,
-	watch,
-} from "vue";
-import sanitizeHtml from "sanitize-html";
-import contains from "@/scripts/contains";
-import {
-	char2twemojiFilePath,
-	char2fluentEmojiFilePath,
-} from "@/scripts/emoji-base";
-import { acct } from "@/filters/user";
-import * as os from "@/os";
 import { MFM_TAGS } from "@/const.js";
-import { defaultStore } from "@/store";
-import { emojilist } from "@/scripts/emojilist";
+import { customEmojis } from "@/custom-emojis";
+import { acct } from "@/filters/user";
 import { i18n } from "@/i18n";
 import { miLocalStorage } from "@/local-storage";
-import { customEmojis } from "@/custom-emojis";
+import * as os from "@/os";
+import contains from "@/scripts/contains";
+import {
+	char2fluentEmojiFilePath,
+	char2twemojiFilePath,
+} from "@/scripts/emoji-base";
+import { emojilist } from "@/scripts/emojilist";
+import { defaultStore } from "@/store";
+import sanitizeHtml from "sanitize-html";
+import {
+	computed,
+	markRaw,
+	nextTick,
+	onBeforeUnmount,
+	onMounted,
+	onUpdated,
+	ref,
+	shallowRef,
+	watch,
+} from "vue";
 
 type EmojiDef =
 	| {
-			emoji: string;
-			name: string;
-			url: string;
-			aliasOf?: string;
-	  }
+		emoji: string;
+		name: string;
+		url: string;
+		aliasOf?: string;
+	}
 	| {
-			emoji: string;
-			name: string;
-			aliasOf?: string;
-			isCustomEmoji?: true;
-	  };
+		emoji: string;
+		name: string;
+		aliasOf?: string;
+		isCustomEmoji?: true;
+	};
 
 const lib = emojilist.filter((x) => x.category !== "flags");
 
@@ -109,7 +116,7 @@ const emojiDb = computed(() => {
 	const customEmojiDB: EmojiDef[] = [];
 
 	for (const x of customEmojis.value) {
-		if (x.draft) {
+		if (x.status === 'DRAFT') {
 			continue;
 		}
 

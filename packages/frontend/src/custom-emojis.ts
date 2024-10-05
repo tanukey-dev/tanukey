@@ -11,7 +11,11 @@ export const customEmojis = shallowRef<Misskey.entities.CustomEmoji[]>(
 export const customEmojiCategories = computed<[...string[], null]>(() => {
 	const categories = new Set<string>();
 	for (const emoji of customEmojis.value) {
-		if (emoji.category && emoji.category !== "null" && !emoji.draft) {
+		if (
+			emoji.category &&
+			emoji.category !== "null" &&
+			emoji.status === "APPROVED"
+		) {
 			categories.add(emoji.category);
 		}
 	}

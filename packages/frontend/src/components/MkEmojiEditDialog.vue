@@ -61,9 +61,6 @@
 					</MkFolder>
 					<MkSwitch v-model="isSensitive">{{ i18n.ts.isSensitive }}</MkSwitch>
 					<MkSwitch v-model="localOnly">{{ i18n.ts.localOnly }}</MkSwitch>
-					<MkSwitch v-if="!isRequest" v-model="draft" :disabled="isRequest">
-						{{ i18n.ts.draft }}
-					</MkSwitch>
 				</div>
 			</MkSpacer>
 			<div :class="$style.footer">
@@ -113,7 +110,6 @@ const roleIdsThatCanBeUsedThisEmojiAsReaction = $ref(
 );
 let rolesThatCanBeUsedThisEmojiAsReaction = $ref([]);
 let file = $ref<misskey.entities.DriveFile>();
-const draft = $ref(props.emoji ? props.emoji.draft : false);
 const isRequest = $ref(props.isRequest);
 
 watch(
@@ -181,7 +177,6 @@ async function done() {
 			.split(" ")
 			.filter((x) => x !== ""),
 		license: license === "" ? null : license,
-		draft: draft,
 		isSensitive,
 		localOnly,
 		roleIdsThatCanBeUsedThisEmojiAsReaction:

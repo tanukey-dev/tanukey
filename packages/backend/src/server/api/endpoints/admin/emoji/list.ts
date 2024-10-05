@@ -103,9 +103,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			if (ps.draft !== null) {
 				if (ps.draft) {
-					q.andWhere("emoji.draft = TRUE");
+					q.andWhere("emoji.status = 'DRAFT'");
 				} else {
-					q.andWhere("emoji.draft = FALSE");
+					q.andWhere("emoji.status = 'APPROVED'");
 				}
 			}
 
