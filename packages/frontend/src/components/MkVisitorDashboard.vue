@@ -2,8 +2,6 @@
 	<div v-if="meta" :class="$style.root">
 		<div :class="[$style.main, $style.panel]">
 			<img :src="instance.iconUrl || instance.faviconUrl || '/favicon.ico'" alt="" :class="$style.mainIcon" />
-			<button class="_button _acrylic" :class="$style.mainMenu" @click="showMenu"><i
-					class="ti ti-dots"></i></button>
 			<div :class="$style.mainFg">
 				<h1 :class="$style.mainTitle">
 					<!-- 背景色によってはロゴが見えなくなるのでとりあえず無効に -->
@@ -39,15 +37,6 @@
 				</div>
 			</div>
 		</div>
-		<div v-if="instance.policies.ltlAvailable" :class="[$style.tl, $style.panel]">
-			<div :class="$style.tlHeader">{{ i18n.ts.letsLookAtTimeline }}</div>
-			<div :class="$style.tlBody">
-				<MkTimeline src="local" />
-			</div>
-		</div>
-		<div :class="$style.panel">
-			<XActiveUsersChart />
-		</div>
 	</div>
 </template>
 
@@ -57,10 +46,7 @@ import MkInfo from "@/components/MkInfo.vue";
 import MkNumber from "@/components/MkNumber.vue";
 import XSigninDialog from "@/components/MkSigninDialog.vue";
 import XSignupDialog from "@/components/MkSignupDialog.vue";
-import MkTimeline from "@/components/MkTimeline.vue";
-import XActiveUsersChart from "@/components/MkVisitorDashboard.ActiveUsersChart.vue";
 import { instanceName } from "@/config";
-import number from "@/filters/number";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import * as os from "@/os";
@@ -100,40 +86,6 @@ function signup() {
 	);
 }
 
-function showMenu(ev) {
-	os.popupMenu(
-		[
-			{
-				text: i18n.ts.instanceInfo,
-				icon: "ti ti-info-circle",
-				action: () => {
-					os.pageWindow("/about");
-				},
-			},
-			{
-				text: i18n.ts.aboutTanukey,
-				icon: "ti ti-info-circle",
-				action: () => {
-					os.pageWindow("/about-tanukey");
-				},
-			},
-			null,
-			{
-				text: i18n.ts.help,
-				icon: "ti ti-help-circle",
-				action: () => {
-					window.open("https://misskey-hub.net/help.md", "_blank");
-				},
-			},
-		],
-		ev.currentTarget ?? ev.target,
-	);
-}
-
-function exploreOtherServers() {
-	// TODO: 言語をよしなに
-	window.open("https://join.misskey.page/ja-JP/instances", "_blank");
-}
 </script>
 
 <style lang="scss" module>
