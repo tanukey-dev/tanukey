@@ -1,5 +1,14 @@
 <template>
 	<div class="mk-app">
+		<div v-if="!narrow && !root" class="side">
+			<div class="banner"
+				:style="{ backgroundImage: instance.backgroundImageUrl ? `url(${instance.backgroundImageUrl})` : 'none' }">
+			</div>
+			<div class="dashboard">
+				<MkVisitorDashboard />
+			</div>
+		</div>
+
 		<div class="main">
 			<div v-if="!root" class="header">
 				<div v-if="narrow === false" class="wide">
@@ -63,6 +72,7 @@
 <script lang="ts" setup>
 import XSigninDialog from "@/components/MkSigninDialog.vue";
 import XSignupDialog from "@/components/MkSignupDialog.vue";
+import MkVisitorDashboard from "@/components/MkVisitorDashboard.vue";
 import { host, instanceName } from "@/config";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
