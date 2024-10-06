@@ -1,183 +1,209 @@
 <template>
-<div v-if="meta" class="rsqzvsbo">
-	<MkFeaturedPhotos class="bg"/>
-	<XTimeline class="tl"/>
-	<div class="shape1"></div>
-	<div class="shape2"></div>
-	<img src="/client-assets/tanukey.svg" class="misskey"/>
-	<div class="emojis">
-		<MkEmoji :normal="true" :noStyle="true" emoji="👍"/>
-		<MkEmoji :normal="true" :noStyle="true" emoji="❤"/>
-		<MkEmoji :normal="true" :noStyle="true" emoji="😆"/>
-		<MkEmoji :normal="true" :noStyle="true" emoji="🎉"/>
-		<MkEmoji :normal="true" :noStyle="true" emoji="🍮"/>
+	<div v-if="meta" :class="$style.root">
+		<img v-if="meta.bannerUrl" :class="$style.banner" :src="meta.bannerUrl">
+		<div :class="$style.catchcopy">
+			<div v-if="host === 'novelskey.tarbin.net' || host === 'dev.tarbin.net'">本が好きなひとたちと、雑談できるSNS</div>
+		</div>
+		<div :class="$style.catchcopy">
+			<div v-if="host === 'otoskey.tarbin.net' || host === 'dev.tarbin.net'">音が好きなひとたちと、雑談できるSNS</div>
+		</div>
+		<div :class="$style.buttons">
+			<MkButton :class="$style.button" rounded gradate data-cy-signup @click="signup()">{{
+				i18n.ts.joinThisServer }}</MkButton>
+			<MkButton :class="$style.button" rounded data-cy-signin @click="signin()">{{ i18n.ts.login }}
+			</MkButton>
+		</div>
+		<div v-if="host === 'novelskey.tarbin.net' || host === 'dev.tarbin.net'" :class="$style.mainDescription">
+			<div :class="[$style.mainDescriptionItem, $style.panel]">
+				<div :class="$style.headerText">ノベルスキーとは</div>
+				<img :class="$style.descriptionImage" src="https://ostanukey.tarbin.net/assets/Novelskey_logo_B_4c.png">
+				<div :class="$style.mainText">
+					<p>ノベルスキーは、作家・字書きや、小説など文字が好きな人のためのコミュニティです。</p>
+				</div>
+			</div>
+		</div>
+		<div v-if="host === 'otoskey.tarbin.net' || host === 'dev.tarbin.net'" :class="$style.mainDescription">
+			<div :class="[$style.mainDescriptionItem, $style.panel]">
+				<div :class="$style.headerText">おとすきーとは</div>
+				<img :class="$style.descriptionImage" src="https://ostanukey.tarbin.net/assets/Otoskey.png">
+				<div :class="$style.mainText">
+					<p>おとすきーは、音楽が好きな人や音楽関係の創作者のためのコミュニティです。</p>
+				</div>
+			</div>
+		</div>
+		<div :class="$style.mainDescription">
+			<div :class="[$style.mainDescriptionItem, $style.panel]">
+				<div :class="$style.headerText">ActivityPubに対応した分散型SNS</div>
+				<img :class="$style.descriptionImage" src="https://ostanukey.tarbin.net/assets/landing-fediverse.png">
+				<div :class="$style.mainText">
+					<p>Misskey fork の Tanukey を利用した分散型SNSサービスで ActivityPub に対応しており、Mastodon,
+						MisskeyなどのActivityPubに対応した他のSNSと相互にメッセージのやりとりが可能です。</p>
+				</div>
+			</div>
+		</div>
+		<div :class="$style.mainDescription">
+			<div :class="[$style.mainDescriptionItem, $style.panel]">
+				<div :class="$style.headerText">OpenSearchを利用した高速な検索</div>
+				<img :class="$style.descriptionImage"
+					src="https://ostanukey.tarbin.net/assets/opensearch_logo_default.png">
+				<div :class="$style.mainText">
+					<p>OpenSearchを利用しており、Fediverse内に投稿されたノートの高速な検索が可能です。</p>
+				</div>
+			</div>
+		</div>
+		<div :class="$style.mainDescription">
+			<div :class="[$style.mainDescriptionItem, $style.panel]">
+				<div :class="$style.headerText">公開タイムラインを見てみる</div>
+				<div :class="$style.tlBody">
+					<MkTimeline src="local" />
+				</div>
+			</div>
+		</div>
 	</div>
-	<div class="contents">
-		<MkVisitorDashboard/>
+	<div :class="$style.footer">
+		<div>© 2024 Novelskey / Otoskey Project</div>
 	</div>
-	<div v-if="instances && instances.length > 0" class="federation">
-		<MarqueeText :duration="40">
-			<MkA v-for="instance in instances" :key="instance.id" :class="$style.federationInstance" :to="`/instance-info/${instance.host}`" behavior="window">
-				<!--<MkInstanceCardMini :instance="instance"/>-->
-				<img v-if="instance.iconUrl" class="icon" :src="instance.iconUrl" alt=""/>
-				<span class="name _monospace">{{ instance.host }}</span>
-			</MkA>
-		</MarqueeText>
-	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue";
-import { Instance } from "misskey-js/built/entities";
-import XTimeline from "./welcome.timeline.vue";
-import MarqueeText from "@/components/MkMarquee.vue";
-import MkFeaturedPhotos from "@/components/MkFeaturedPhotos.vue";
-import MkInfo from "@/components/MkInfo.vue";
-import { instanceName } from "@/config";
-import * as os from "@/os";
+import MkButton from "@/components/MkButton.vue";
+import XSigninDialog from "@/components/MkSigninDialog.vue";
+import XSignupDialog from "@/components/MkSignupDialog.vue";
+import MkTimeline from "@/components/MkTimeline.vue";
+import { host } from "@/config";
 import { i18n } from "@/i18n";
-import { instance } from "@/instance";
-import number from "@/filters/number";
-import MkNumber from "@/components/MkNumber.vue";
-import MkVisitorDashboard from "@/components/MkVisitorDashboard.vue";
+import * as os from "@/os";
+import { DetailedInstanceMetadata } from "misskey-js/built/entities";
 
-let meta = $ref<Instance>();
-let instances = $ref<any[]>();
+let meta = $ref<DetailedInstanceMetadata>();
 
 os.api("meta", { detail: true }).then((_meta) => {
 	meta = _meta;
 });
 
-os.apiGet("federation/instances", {
-	sort: "+pubSub",
-	limit: 20,
-}).then((_instances) => {
-	instances = _instances;
-});
+function signin() {
+	os.popup(
+		XSigninDialog,
+		{
+			autoSet: true,
+		},
+		{},
+		"closed",
+	);
+}
+
+function signup() {
+	os.popup(
+		XSignupDialog,
+		{
+			autoSet: true,
+		},
+		{},
+		"closed",
+	);
+}
+
 </script>
 
-<style lang="scss" scoped>
-.rsqzvsbo {
-	> .bg {
-		position: fixed;
-		top: 0;
-		right: 0;
-		width: 80vw; // 100%からshapeの幅を引いている
-		height: 100vh;
-	}
-
-	> .tl {
-		position: fixed;
-		top: 0;
-		bottom: 0;
-		right: 64px;
-		margin: auto;
-		padding: 128px 0;
-		width: 500px;
-		height: calc(100% - 256px);
-		overflow: hidden;
-		-webkit-mask-image: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 128px, rgba(0,0,0,1) calc(100% - 128px), rgba(0,0,0,0) 100%);
-		mask-image: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 128px, rgba(0,0,0,1) calc(100% - 128px), rgba(0,0,0,0) 100%);
-
-		@media (max-width: 1200px) {
-			display: none;
-		}
-	}
-
-	> .shape1 {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		background: var(--accent);
-		clip-path: polygon(0% 0%, 45% 0%, 20% 100%, 0% 100%);
-	}
-	> .shape2 {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		background: var(--accent);
-		clip-path: polygon(0% 0%, 25% 0%, 35% 100%, 0% 100%);
-		opacity: 0.5;
-	}
-
-	> .misskey {
-		position: fixed;
-		top: 42px;
-		left: 42px;
-		width: 140px;
-
-		@media (max-width: 450px) {
-			width: 130px;
-		}
-	}
-
-	> .emojis {
-		position: fixed;
-		bottom: 32px;
-		left: 35px;
-
-		> * {
-			margin-right: 8px;
-		}
-
-		@media (max-width: 1200px) {
-			display: none;
-		}
-	}
-
-	> .contents {
-		position: relative;
-		width: min(430px, calc(100% - 32px));
-		margin-left: 128px;
-		padding: 100px 0 100px 0;
-
-		@media (max-width: 1200px) {
-			margin: auto;
-		}
-	}
-
-	> .federation {
-		position: fixed;
-		bottom: 16px;
-		left: 0;
-		right: 0;
-		margin: auto;
-		background: var(--acrylicPanel);
-		-webkit-backdrop-filter: var(--blur, blur(15px));
-		backdrop-filter: var(--blur, blur(15px));
-		border-radius: 999px;
-		overflow: clip;
-		width: 800px;
-		padding: 8px 0;
-
-		@media (max-width: 900px) {
-			display: none;
-		}
-	}
-}
-</style>
-
 <style lang="scss" module>
-.federationInstance {
-	display: inline-flex;
-	align-items: center;
-	vertical-align: bottom;
-	padding: 6px 12px 6px 6px;
-	margin: 0 10px 0 0;
-	background: var(--panel);
-	border-radius: 999px;
+@import 'https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;500;600;700;900&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap';
 
-	> :global(.icon) {
-		display: inline-block;
-		width: 20px;
-		height: 20px;
-		margin-right: 5px;
-		border-radius: 999px;
-	}
+.root {
+	background-color: rgb(241, 241, 241);
+	padding-bottom: 40px;
+}
+
+.panel {
+	background: var(--panel);
+	border-radius: var(--radius);
+	padding: 20px;
+}
+
+.banner {
+	width: 100%;
+	-webkit-mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 15%);
+	mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 15%);
+}
+
+.catchcopy {
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	padding-top: 30px;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-size: xx-large;
+	line-height: 1.4;
+
+	font-family: "Zen Old Mincho", serif;
+	font-weight: 400;
+	font-style: normal;
+}
+
+.buttons {
+	padding-top: 30px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.button {
+	width: 200px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-right: 5px;
+	margin-left: 5px;
+}
+
+.mainDescription {
+	display: flex;
+	justify-content: center;
+	padding-top: 30px;
+}
+
+.mainDescriptionItem {
+	width: 800px;
+}
+
+.headerText {
+	font-size: x-large;
+	text-align: center;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	line-height: 1.4;
+
+	font-family: "Noto Sans JP", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+}
+
+.mainText {
+	font-size: medium;
+	text-align: center;
+	line-height: 1.4;
+
+	font-family: "Noto Sans JP", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+}
+
+.footer {
+	background-color: rgb(241, 241, 241);
+	display: flex;
+	justify-content: center;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.descriptionImage {
+	width: 60%;
+	margin: auto;
+	display: block
+}
+
+.tlBody {
+	height: 350px;
+	overflow: auto;
 }
 </style>
