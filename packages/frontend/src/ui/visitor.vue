@@ -10,23 +10,6 @@
 		</div>
 
 		<div class="main">
-			<div v-if="!root" class="header">
-				<div v-if="narrow === false" class="wide">
-					<MkA to="/" class="link" activeClass="active"><i class="ti ti-home icon"></i> {{ i18n.ts.home }}
-					</MkA>
-					<MkA v-if="isTimelineAvailable" to="/timeline" class="link" activeClass="active"><i
-							class="ti ti-message icon"></i> {{ i18n.ts.timeline }}</MkA>
-					<MkA to="/explore" class="link" activeClass="active"><i class="ti ti-hash icon"></i> {{
-						i18n.ts.explore }}</MkA>
-					<MkA to="/channels" class="link" activeClass="active"><i class="ti ti-device-tv icon"></i> {{
-						i18n.ts.channel }}</MkA>
-				</div>
-				<div v-else-if="narrow === true" class="narrow">
-					<button class="menu _button" @click="showMenu = true">
-						<i class="ti ti-menu-2 icon"></i>
-					</button>
-				</div>
-			</div>
 			<div class="contents">
 				<main v-if="!root" style="container-type: inline-size;">
 					<RouterView />
@@ -35,36 +18,13 @@
 					<RouterView />
 				</main>
 			</div>
-		</div>
-
-		<Transition :name="'tray-back'">
-			<div v-if="showMenu" class="menu-back _modalBg" @click="showMenu = false"
-				@touchstart.passive="showMenu = false"></div>
-		</Transition>
-
-		<Transition :name="'tray'">
-			<div v-if="showMenu" class="menu">
-				<MkA to="/" class="link" activeClass="active"><i class="ti ti-home icon"></i>{{ i18n.ts.home }}</MkA>
-				<MkA v-if="isTimelineAvailable" to="/timeline" class="link" activeClass="active"><i
-						class="ti ti-message icon"></i>{{ i18n.ts.timeline }}</MkA>
-				<MkA to="/explore" class="link" activeClass="active"><i class="ti ti-hash icon"></i>{{ i18n.ts.explore
-					}}</MkA>
-				<MkA to="/announcements" class="link" activeClass="active"><i class="ti ti-speakerphone icon"></i>{{
-					i18n.ts.announcements }}</MkA>
-				<MkA to="/channels" class="link" activeClass="active"><i class="ti ti-device-tv icon"></i>{{
-					i18n.ts.channel }}</MkA>
-				<div class="divider"></div>
-				<MkA to="/pages" class="link" activeClass="active"><i class="ti ti-news icon"></i>{{ i18n.ts.pages }}
-				</MkA>
-				<MkA to="/play" class="link" activeClass="active"><i class="ti ti-player-play icon"></i>Play</MkA>
-				<MkA to="/gallery" class="link" activeClass="active"><i class="ti ti-icons icon"></i>{{ i18n.ts.gallery
-					}}</MkA>
-				<div class="action">
+			<div v-if="!root" class="footer">
+				<div v-if="narrow === true" class="narrow">
 					<button class="_buttonPrimary" @click="signup()">{{ i18n.ts.signup }}</button>
 					<button class="_button" @click="signin()">{{ i18n.ts.login }}</button>
 				</div>
 			</div>
-		</Transition>
+		</div>
 	</div>
 	<XCommon />
 </template>
@@ -73,13 +33,12 @@
 import XSigninDialog from "@/components/MkSigninDialog.vue";
 import XSignupDialog from "@/components/MkSignupDialog.vue";
 import MkVisitorDashboard from "@/components/MkVisitorDashboard.vue";
-import { host, instanceName } from "@/config";
+import { instanceName } from "@/config";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import * as os from "@/os";
 import { mainRouter } from "@/router";
 import { PageMetadata, provideMetadataReceiver } from "@/scripts/page-metadata";
-import { ColdDeviceStorage, defaultStore } from "@/store";
 import { ComputedRef, onMounted, provide } from "vue";
 import XCommon from "./_common_/common.vue";
 
@@ -95,31 +54,10 @@ provideMetadataReceiver((info) => {
 	}
 });
 
-const announcements = {
-	endpoint: "announcements",
-	limit: 10,
-};
-
-const isTimelineAvailable = $ref(
-	instance.policies?.ltlAvailable || instance.policies?.gtlAvailable,
-);
-
 let showMenu = $ref(false);
 let isDesktop = $ref(window.innerWidth >= DESKTOP_THRESHOLD);
 let narrow = $ref(window.innerWidth < 1280);
 let meta = $ref();
-
-const keymap = $computed(() => {
-	return {
-		d: () => {
-			if (ColdDeviceStorage.get("syncDeviceDarkMode")) return;
-			defaultStore.set("darkMode", !defaultStore.state.darkMode);
-		},
-		s: () => {
-			mainRouter.push("/search");
-		},
-	};
-});
 
 const root = $computed(() => mainRouter.currentRoute.value.name === "index");
 
@@ -227,9 +165,16 @@ defineExpose({
 	>.main {
 		flex: 1;
 		min-width: 0;
+		min-height: 100vh;
 
-		>.header {
-			background: var(--panel);
+		>.contents {
+			min-height: 100vh;
+		}
+
+		>.footer {
+			position: sticky;
+			bottom: 0;
+			background: var(--header);
 
 			>.wide {
 				line-height: 50px;
@@ -241,63 +186,22 @@ defineExpose({
 			}
 
 			>.narrow {
-				>.menu {
-					padding: 16px;
-				}
-			}
-		}
-	}
+				padding: 16px;
+				display: flex;
+				justify-content: center;
 
-	>.menu-back {
-		position: fixed;
-		z-index: 1001;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-	}
+				>button {
+					width: 40%;
+					margin-left: 10px;
+					margin-right: 10px;
+					padding: 10px;
+					box-sizing: border-box;
+					text-align: center;
+					border-radius: 999px;
 
-	>.menu {
-		position: fixed;
-		z-index: 1001;
-		top: 0;
-		left: 0;
-		width: 240px;
-		height: 100vh;
-		background: var(--panel);
-
-		>.link {
-			display: block;
-			padding: 16px;
-
-			>.icon {
-				margin-right: 1em;
-			}
-		}
-
-		>.divider {
-			margin: 8px auto;
-			width: calc(100% - 32px);
-			border-top: solid 0.5px var(--divider);
-		}
-
-		>.action {
-			padding: 16px;
-
-			>button {
-				display: block;
-				width: 100%;
-				padding: 10px;
-				box-sizing: border-box;
-				text-align: center;
-				border-radius: 999px;
-
-				&._button {
-					background: var(--panel);
-				}
-
-				&:first-child {
-					margin-bottom: 16px;
+					&._button {
+						background: var(--buttonBg);
+					}
 				}
 			}
 		}
