@@ -1,16 +1,17 @@
 import { toUnicode } from "punycode";
-import { defineAsyncComponent, ref, watch, computed } from "vue";
-import * as misskey from "misskey-js";
-import { i18n } from "@/i18n";
-import copyToClipboard from "@/scripts/copy-to-clipboard";
-import { host, url } from "@/config";
-import * as os from "@/os";
-import { defaultStore, userActions } from "@/store";
 import { $i, iAmModerator } from "@/account";
-import { mainRouter } from "@/router";
-import { Router } from "@/nirax";
 import { antennasCache, rolesCache, userListsCache } from "@/cache";
+import { url, host } from "@/config";
+import { dateString } from "@/filters/date";
+import { i18n } from "@/i18n";
+import { Router } from "@/nirax";
+import * as os from "@/os";
+import { mainRouter } from "@/router";
+import copyToClipboard from "@/scripts/copy-to-clipboard";
 import { sendMessage } from "@/scripts/send-message";
+import { defaultStore, userActions } from "@/store";
+import * as misskey from "misskey-js";
+import { computed, defineAsyncComponent, ref, watch } from "vue";
 
 export function getUserMenu(
 	user: misskey.entities.UserDetailed,
@@ -398,6 +399,38 @@ export function getUserMenu(
 				text: i18n.ts.copyUserId,
 				action: () => {
 					copyToClipboard(user.id);
+				},
+			},
+		]);
+	}
+
+	if (user.host === null) {
+		menu = menu.concat([
+			null,
+			{
+				icon: "ti ti-id-badge-2",
+				text: i18n.ts.createProfileCard,
+				action: () => {
+					const dateFormat = new Intl.DateTimeFormat("ja-JP", {
+						year: "numeric",
+						month: "numeric",
+						day: "numeric",
+					});
+					const params = {
+						imgUrl: `${user.avatarUrl}`,
+						name: `${user.name ?? user.username}`,
+						id: `@${user.username}@${toUnicode(host)}`,
+						date: `${dateFormat.format(new Date(user.createdAt))}`,
+						qrUrl: `${url}/@${user.username}`,
+					};
+					if (host === "novelskey.tarbin.net") {
+						Object.assign(params, { theme: "novelskey" });
+					} else if (host === "otoskey.tarbin.net") {
+						Object.assign(params, { theme: "otoskey" });
+					}
+					const urlSearchParam = new URLSearchParams(params).toString();
+					const prCreateUrl = `https://profile-creator.tarbin.net/?${urlSearchParam}`;
+					window.open(prCreateUrl, "_blank", "noreferrer");
 				},
 			},
 		]);

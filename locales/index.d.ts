@@ -264,6 +264,7 @@ export interface Locale {
     "featured": string;
     "usernameOrUserId": string;
     "noSuchUser": string;
+    "createProfileCard": string;
     "lookup": string;
     "announcements": string;
     "imageUrl": string;
