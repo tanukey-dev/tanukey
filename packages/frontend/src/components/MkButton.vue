@@ -1,32 +1,25 @@
 <template>
-<button
-	v-if="!link"
-	ref="el" class="_button"
-	:class="[$style.root, { [$style.inline]: inline, [$style.primary]: primary, [$style.gradate]: gradate, [$style.danger]: danger, [$style.rounded]: rounded, [$style.full]: full, [$style.small]: small, [$style.large]: large, [$style.transparent]: transparent, [$style.asLike]: asLike }]"
-	:type="type"
-	@click="emit('click', $event)"
-	@mousedown="onMousedown"
->
-	<div ref="ripples" :class="$style.ripples" :data-children-class="$style.ripple"></div>
-	<div :class="$style.content">
-		<slot></slot>
-	</div>
-</button>
-<MkA
-	v-else class="_button"
-	:class="[$style.root, { [$style.inline]: inline, [$style.primary]: primary, [$style.gradate]: gradate, [$style.danger]: danger, [$style.rounded]: rounded, [$style.full]: full, [$style.small]: small, [$style.large]: large, [$style.transparent]: transparent, [$style.asLike]: asLike }]"
-	:to="to"
-	@mousedown="onMousedown"
->
-	<div ref="ripples" :class="$style.ripples" :data-children-class="$style.ripple"></div>
-	<div :class="$style.content">
-		<slot></slot>
-	</div>
-</MkA>
+	<button v-if="!link" ref="el" class="_button"
+		:class="[$style.root, { [$style.inline]: inline, [$style.primary]: primary, [$style.gradate]: gradate, [$style.danger]: danger, [$style.rounded]: rounded, [$style.full]: full, [$style.small]: small, [$style.large]: large, [$style.transparent]: transparent, [$style.asLike]: asLike }]"
+		:type="type" @click="emit('click', $event)" @mousedown="onMousedown">
+		<div ref="ripples" :class="$style.ripples" :data-children-class="$style.ripple"></div>
+		<div :class="$style.content">
+			<slot></slot>
+		</div>
+	</button>
+	<MkA v-else class="_button"
+		:class="[$style.root, { [$style.inline]: inline, [$style.primary]: primary, [$style.gradate]: gradate, [$style.danger]: danger, [$style.rounded]: rounded, [$style.full]: full, [$style.small]: small, [$style.large]: large, [$style.transparent]: transparent, [$style.asLike]: asLike }]"
+		:to="to" :external="external" @mousedown="onMousedown">
+		<div ref="ripples" :class="$style.ripples" :data-children-class="$style.ripple"></div>
+		<div :class="$style.content">
+			<slot></slot>
+		</div>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
 import { nextTick, onMounted } from "vue";
+import MkA from "./global/MkA.vue";
 
 const props = defineProps<{
 	type?: "button" | "submit" | "reset";
@@ -36,6 +29,7 @@ const props = defineProps<{
 	inline?: boolean;
 	link?: boolean;
 	to?: string;
+	external?: boolean;
 	autofocus?: boolean;
 	wait?: boolean;
 	danger?: boolean;
@@ -179,8 +173,8 @@ function onMousedown(evt: MouseEvent): void {
 			background: rgba(224, 57, 96, 0.125);
 		}
 
-		> .ripples {
-			> .ripple {
+		>.ripples {
+			>.ripple {
 				background: rgba(255, 60, 106, 0.15);
 			}
 		}
@@ -248,7 +242,7 @@ function onMousedown(evt: MouseEvent): void {
 		min-width: 100px;
 	}
 
-	&.primary > .ripples > .ripple {
+	&.primary>.ripples>.ripple {
 		background: rgba(0, 0, 0, 0.15);
 	}
 }
@@ -273,7 +267,7 @@ function onMousedown(evt: MouseEvent): void {
 	background: rgba(0, 0, 0, 0.1);
 	opacity: 1;
 	transform: scale(1);
-	transition: all 0.5s cubic-bezier(0,.5,0,1);
+	transition: all 0.5s cubic-bezier(0, .5, 0, 1);
 }
 
 .content {

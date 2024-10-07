@@ -267,6 +267,7 @@ export interface Locale {
     "createProfileCard": string;
     "lookup": string;
     "announcements": string;
+    "oneOffSupport": string;
     "imageUrl": string;
     "remove": string;
     "removed": string;
