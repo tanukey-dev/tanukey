@@ -404,7 +404,8 @@ export function getUserMenu(
 		]);
 	}
 
-	if (user.host === null) {
+	// プロフィールカード作成（自分のみ）
+	if ($i && meId === user.id) {
 		menu = menu.concat([
 			null,
 			{
