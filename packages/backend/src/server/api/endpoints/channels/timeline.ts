@@ -1,7 +1,7 @@
-import { IdService } from "@/core/IdService.js";
-import { QueryService } from "@/core/QueryService.js";
-import ActiveUsersChart from "@/core/chart/charts/active-users.js";
-import { NoteEntityService } from "@/core/entities/NoteEntityService.js";
+import type { IdService } from "@/core/IdService.js";
+import type { QueryService } from "@/core/QueryService.js";
+import type ActiveUsersChart from "@/core/chart/charts/active-users.js";
+import type { NoteEntityService } from "@/core/entities/NoteEntityService.js";
 import { DI } from "@/di-symbols.js";
 import { normalizeForSearch } from "@/misc/normalize-for-search.js";
 import { safeForSql } from "@/misc/safe-for-sql.js";
@@ -12,7 +12,7 @@ import type {
 } from "@/models/index.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
-import * as Redis from "ioredis";
+import type * as Redis from "ioredis";
 import { Brackets } from "typeorm";
 import { ApiError } from "../../error.js";
 
@@ -121,19 +121,23 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				query.andWhere(
 					new Brackets((qb) => {
 						qb.where("note.channelId = :channelId", { channelId: channel.id });
-						qb.orWhere(
-							new Brackets((qb2) => {
-								qb2.where("note.userHost IS NOT NULL");
-								qb2.andWhere(`'{"${channel.id}"}' <@ note.antennaChannelIds`);
-							}),
-						);
 						for (const tag of channel.tags) {
 							if (!safeForSql(normalizeForSearch(tag))) continue;
 							qb.orWhere(
 								new Brackets((qb2) => {
 									qb2.where("note.userHost IS NULL");
 									qb2.andWhere("note.visibility = 'public'");
+									qb2.andWhere("note.tags != {}");
 									qb2.andWhere(`'{"${normalizeForSearch(tag)}"}' <@ note.tags`);
+								}),
+							);
+						}
+						if (channel.antennaId && channel.antennaId !== "") {
+							qb.orWhere(
+								new Brackets((qb2) => {
+									qb2.where("note.userHost IS NOT NULL");
+									qb2.andWhere("note.antennaChannelIds != {}");
+									qb2.andWhere(`'{"${channel.id}"}' <@ note.antennaChannelIds`);
 								}),
 							);
 						}
