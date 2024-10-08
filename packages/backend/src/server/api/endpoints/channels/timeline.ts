@@ -100,7 +100,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 
 			// redis から取得していないとき・取得数が足りないとき
-			if (noteIdsRes.length < limit) {
+			// チャンネル作成直後が遅いのでその場合はRedisキャッシュのみ見る
+			if (noteIdsRes.length < limit && channel.notesCount > limit) {
 				//#region Construct query
 				const query = this.queryService
 					.makePaginationQuery(
