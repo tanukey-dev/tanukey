@@ -98,8 +98,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				{
 					userIds: userIds,
 					origin: antenna.localOnly ? "local" : undefined,
-					keywords: antenna.keywords,
-					excludeKeywords: antenna.excludeKeywords,
+					keywords: antenna.keywords ?? [],
+					excludeKeywords: antenna.excludeKeywords ?? [],
 					checkChannelSearchable: true,
 					reverseOrder: false,
 					hasFile: antenna.withFile,
