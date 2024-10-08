@@ -1,131 +1,125 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div v-if="channelId == null || channel != null" class="_gaps_m">
-			<MkInput v-model="name">
-				<template #label>{{ i18n.ts.name }}</template>
-			</MkInput>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div v-if="channelId == null || channel != null" class="_gaps_m">
+				<MkInput v-model="name">
+					<template #label>{{ i18n.ts.name }}</template>
+				</MkInput>
 
-			<MkTextarea v-model="description">
-				<template #label>{{ i18n.ts.description }}</template>
-			</MkTextarea>
+				<MkTextarea v-model="description">
+					<template #label>{{ i18n.ts.description }}</template>
+				</MkTextarea>
 
-			<MkColorInput v-model="color">
-				<template #label>{{ i18n.ts.color }}</template>
-			</MkColorInput>
+				<MkColorInput v-model="color">
+					<template #label>{{ i18n.ts.color }}</template>
+				</MkColorInput>
 
-			<div>
-				<MkButton v-if="bannerId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{ i18n.ts._channel.setBanner }}</MkButton>
-				<div v-else-if="bannerUrl">
-					<img :src="bannerUrl" style="width: 100%;"/>
-					<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{ i18n.ts._channel.removeBanner }}</MkButton>
+				<div>
+					<MkButton v-if="bannerId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{
+						i18n.ts._channel.setBanner }}</MkButton>
+					<div v-else-if="bannerUrl">
+						<img :src="bannerUrl" style="width: 100%;" />
+						<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{
+							i18n.ts._channel.removeBanner }}
+						</MkButton>
+					</div>
+				</div>
+
+				<MkSwitch v-model="isPrivate" :disabled="!$i.policies.canCreatePrivateChannel">
+					{{ i18n.ts._channel.isPrivate }}
+				</MkSwitch>
+
+				<MkFolder v-if="isPrivate" :defaultOpen="true">
+					<template #label>{{ i18n.ts._channel.privateUserIds }}</template>
+
+					<div class="_gaps">
+						<Multiselect v-model="privateUserIds" mode="tags" :options="userAsyncFind"
+							:closeOnSelect="false" :searchable="true" :object="true" :resolveOnLoad="true" :delay="0"
+							:minChars="1" />
+					</div>
+				</MkFolder>
+
+				<MkInput v-model="tags">
+					<template #label>{{ i18n.ts.channelTagsSetting }}</template>
+				</MkInput>
+
+				<MkSwitch v-model="federation" :disabled="isPrivate">
+					{{ i18n.ts.channelFederation }}
+				</MkSwitch>
+
+				<MkSwitch v-model="searchable" :disabled="federation || isPrivate">
+					{{ i18n.ts.channelSearchable }}
+				</MkSwitch>
+
+				<MkSwitch v-model="isNoteCollapsed">
+					{{ i18n.ts.isNoteCollapsed }}
+				</MkSwitch>
+
+				<MkFolder :defaultOpen="true">
+					<template #label>{{ i18n.ts.pinnedNotes }}</template>
+
+					<div class="_gaps">
+						<MkButton primary rounded @click="addPinnedNote()"><i class="ti ti-plus"></i></MkButton>
+
+						<Sortable v-model="pinnedNotes" itemKey="id" :handle="'.' + $style.pinnedNoteHandle"
+							:animation="150">
+							<template #item="{ element, index }">
+								<div :class="$style.pinnedNote">
+									<button class="_button" :class="$style.pinnedNoteHandle"><i
+											class="ti ti-menu"></i></button>
+									{{ element.id }}
+									<button class="_button" :class="$style.pinnedNoteRemove"
+										@click="removePinnedNote(index)"><i class="ti ti-x"></i></button>
+								</div>
+							</template>
+						</Sortable>
+					</div>
+				</MkFolder>
+
+				<MkFolder :defaultOpen="true">
+					<template #label>{{ i18n.ts._channel.moderatorUserIds }}</template>
+
+					<div class="_gaps">
+						<Multiselect v-model="moderatorUserIds" mode="tags" :options="userAsyncFind"
+							:closeOnSelect="false" :searchable="true" :object="true" :resolveOnLoad="true" :delay="0"
+							:minChars="1" />
+					</div>
+				</MkFolder>
+
+				<MkInput v-model="antennaId">
+					<template #label>{{ i18n.ts._channel.antenna }}</template>
+				</MkInput>
+
+				<div class="_buttons">
+					<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ channelId ? i18n.ts.save :
+						i18n.ts.create }}</MkButton>
+					<MkButton v-if="channelId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive
+						}}
+					</MkButton>
 				</div>
 			</div>
-
-			<MkSwitch v-model="isPrivate" :disabled="!$i.policies.canCreatePrivateChannel">
-				{{ i18n.ts._channel.isPrivate }}
-			</MkSwitch>
-
-			<MkFolder v-if="isPrivate" :defaultOpen="true">
-				<template #label>{{ i18n.ts._channel.privateUserIds }}</template>
-				
-				<div class="_gaps">
-					<Multiselect
-						v-model="privateUserIds"
-						mode="tags"
-						:options="userAsyncFind"
-						:closeOnSelect="false"
-						:searchable="true"
-						:object="true"
-						:resolveOnLoad="true"
-						:delay="0"
-						:minChars="1"
-					/>
-				</div>
-			</MkFolder>
-
-			<MkInput v-model="tags">
-				<template #label>{{ i18n.ts.channelTagsSetting }}</template>
-			</MkInput>
-
-			<MkSwitch v-model="federation" :disabled="isPrivate">
-				{{ i18n.ts.channelFederation }}
-			</MkSwitch>
-
-			<MkSwitch v-model="searchable" :disabled="federation || isPrivate">
-				{{ i18n.ts.channelSearchable }}
-			</MkSwitch>
-
-			<MkSwitch v-model="isNoteCollapsed">
-				{{ i18n.ts.isNoteCollapsed }}
-			</MkSwitch>
-
-			<MkFolder :defaultOpen="true">
-				<template #label>{{ i18n.ts.pinnedNotes }}</template>
-				
-				<div class="_gaps">
-					<MkButton primary rounded @click="addPinnedNote()"><i class="ti ti-plus"></i></MkButton>
-
-					<Sortable 
-						v-model="pinnedNotes"
-						itemKey="id"
-						:handle="'.' + $style.pinnedNoteHandle"
-						:animation="150"
-					>
-						<template #item="{element,index}">
-							<div :class="$style.pinnedNote">
-								<button class="_button" :class="$style.pinnedNoteHandle"><i class="ti ti-menu"></i></button>
-								{{ element.id }}
-								<button class="_button" :class="$style.pinnedNoteRemove" @click="removePinnedNote(index)"><i class="ti ti-x"></i></button>
-							</div>
-						</template>
-					</Sortable>
-				</div>
-			</MkFolder>
-
-			<MkFolder :defaultOpen="true">
-				<template #label>{{ i18n.ts._channel.moderatorUserIds }}</template>
-				
-				<div class="_gaps">
-					<Multiselect
-						v-model="moderatorUserIds"
-						mode="tags"
-						:options="userAsyncFind"
-						:closeOnSelect="false"
-						:searchable="true"
-						:object="true"
-						:resolveOnLoad="true"
-						:delay="0"
-						:minChars="1"
-					/>
-				</div>
-			</MkFolder>
-
-			<div class="_buttons">
-				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ channelId ? i18n.ts.save : i18n.ts.create }}</MkButton>
-				<MkButton v-if="channelId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
-			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, defineAsyncComponent } from "vue";
-import Multiselect from "@vueform/multiselect";
-import MkTextarea from "@/components/MkTextarea.vue";
-import MkSwitch from "@/components/MkSwitch.vue";
+import { $i } from "@/account";
 import MkButton from "@/components/MkButton.vue";
-import MkInput from "@/components/MkInput.vue";
 import MkColorInput from "@/components/MkColorInput.vue";
-import { selectFile } from "@/scripts/select-file";
+import MkFolder from "@/components/MkFolder.vue";
+import MkInput from "@/components/MkInput.vue";
+import MkSwitch from "@/components/MkSwitch.vue";
+import MkTextarea from "@/components/MkTextarea.vue";
+import { i18n } from "@/i18n";
 import * as os from "@/os";
 import { useRouter } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
-import { i18n } from "@/i18n";
-import MkFolder from "@/components/MkFolder.vue";
-import { $i } from "@/account";
+import { selectFile } from "@/scripts/select-file";
+import Multiselect from "@vueform/multiselect";
+import { computed, defineAsyncComponent, ref, watch } from "vue";
 
 const Sortable = defineAsyncComponent(() =>
 	import("vuedraggable").then((x) => x.default),
@@ -144,10 +138,11 @@ let description = $ref(null);
 let bannerUrl = $ref<string | null>(null);
 let bannerId = $ref<string | null>(null);
 let color = $ref("#000");
-let federation = ref(false);
-let searchable = ref(true);
-let isNoteCollapsed = ref(true);
-let isPrivate = ref(false);
+const federation = ref(false);
+const searchable = ref(true);
+const isNoteCollapsed = ref(true);
+const isPrivate = ref(false);
+const antennaId = ref<string | null>(null);
 const privateUserIds = ref<{ value: string; label: string }[]>([]);
 const moderatorUserIds = ref<{ value: string; label: string }[]>([]);
 const pinnedNotes = ref([]);
@@ -196,6 +191,7 @@ async function fetchChannel() {
 	isNoteCollapsed.value = channel.isNoteCollapsed;
 	isPrivate.value = channel.isPrivate;
 	tags = channel.tags.join(" ");
+	antennaId.value = channel.antennaId;
 
 	const pusers = await os.api("users/show", {
 		userIds: channel.privateUserIds,
@@ -265,6 +261,7 @@ function save() {
 		moderatorUserIds: moderatorUserIds.value.map((v) => v.value),
 		color: color,
 		tags: tags.trim() === "" ? [] : tags.replace("#", "").split(/\s+/),
+		antennaId: antennaId.value ?? null,
 	};
 
 	if (props.channelId) {
@@ -315,13 +312,13 @@ definePageMetadata(
 	computed(() =>
 		props.channelId
 			? {
-					title: i18n.ts._channel.edit,
-					icon: "ti ti-device-tv",
-				}
+				title: i18n.ts._channel.edit,
+				icon: "ti ti-device-tv",
+			}
 			: {
-					title: i18n.ts._channel.create,
-					icon: "ti ti-device-tv",
-				},
+				title: i18n.ts._channel.create,
+				icon: "ti ti-device-tv",
+			},
 	),
 );
 

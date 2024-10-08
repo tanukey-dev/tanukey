@@ -1720,6 +1720,7 @@ export interface Locale {
         "title": string;
         "noteCount": string;
         "lastUpdate": string;
+        "antenna": string;
     };
     "_event": {
         "create": string;

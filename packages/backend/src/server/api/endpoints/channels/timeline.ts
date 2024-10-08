@@ -1,52 +1,58 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Brackets } from 'typeorm';
-import * as Redis from 'ioredis';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { ChannelsRepository, Note, NotesRepository } from '@/models/index.js';
-import { QueryService } from '@/core/QueryService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import ActiveUsersChart from '@/core/chart/charts/active-users.js';
-import { DI } from '@/di-symbols.js';
-import { IdService } from '@/core/IdService.js';
-import { safeForSql } from '@/misc/safe-for-sql.js';
-import { normalizeForSearch } from '@/misc/normalize-for-search.js';
-import { ApiError } from '../../error.js';
+import { IdService } from "@/core/IdService.js";
+import { QueryService } from "@/core/QueryService.js";
+import ActiveUsersChart from "@/core/chart/charts/active-users.js";
+import { NoteEntityService } from "@/core/entities/NoteEntityService.js";
+import { DI } from "@/di-symbols.js";
+import { normalizeForSearch } from "@/misc/normalize-for-search.js";
+import { safeForSql } from "@/misc/safe-for-sql.js";
+import type {
+	ChannelsRepository,
+	Note,
+	NotesRepository,
+} from "@/models/index.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { Inject, Injectable } from "@nestjs/common";
+import * as Redis from "ioredis";
+import { Brackets } from "typeorm";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['notes', 'channels'],
+	tags: ["notes", "channels"],
 
 	requireCredential: false,
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'Note',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "Note",
 		},
 	},
 
 	errors: {
 		noSuchChannel: {
-			message: 'No such channel.',
-			code: 'NO_SUCH_CHANNEL',
-			id: '4d0eeeba-a02c-4c3c-9966-ef60d38d2e7f',
+			message: "No such channel.",
+			code: "NO_SUCH_CHANNEL",
+			id: "4d0eeeba-a02c-4c3c-9966-ef60d38d2e7f",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		channelId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		sinceDate: { type: 'integer' },
-		untilDate: { type: 'integer' },
+		channelId: { type: "string", format: "misskey:id" },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 10 },
+		sinceId: { type: "string", format: "misskey:id" },
+		untilId: { type: "string", format: "misskey:id" },
+		sinceDate: { type: "integer" },
+		untilDate: { type: "integer" },
 	},
-	required: ['channelId'],
+	required: ["channelId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -80,37 +86,53 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			const limit = ps.limit + (ps.untilId ? 1 : 0); // untilIdに指定したものも含まれるため+1
 			let noteIdsRes: [string, string[]][] = [];
-			
+
 			if (!ps.sinceId && !ps.sinceDate) {
 				noteIdsRes = await this.redisClient.xrevrange(
 					`channelTimeline:${channel.id}`,
-					ps.untilId ? this.idService.parse(ps.untilId).date.getTime() : ps.untilDate ?? '+',
-					'-',
-					'COUNT', limit);
+					ps.untilId
+						? this.idService.parse(ps.untilId).date.getTime()
+						: (ps.untilDate ?? "+"),
+					"-",
+					"COUNT",
+					limit,
+				);
 			}
 
 			// redis から取得していないとき・取得数が足りないとき
 			if (noteIdsRes.length < limit) {
 				//#region Construct query
-				const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), ps.sinceId, ps.untilId, ps.sinceDate, ps.untilDate)
-					.innerJoinAndSelect('note.user', 'user')
-					.leftJoinAndSelect('note.reply', 'reply')
-					.leftJoinAndSelect('note.renote', 'renote')
-					.leftJoinAndSelect('reply.user', 'replyUser')
-					.leftJoinAndSelect('renote.user', 'renoteUser')
-					.leftJoinAndSelect('note.channel', 'channel');
+				const query = this.queryService
+					.makePaginationQuery(
+						this.notesRepository.createQueryBuilder("note"),
+						ps.sinceId,
+						ps.untilId,
+						ps.sinceDate,
+						ps.untilDate,
+					)
+					.innerJoinAndSelect("note.user", "user")
+					.leftJoinAndSelect("note.reply", "reply")
+					.leftJoinAndSelect("note.renote", "renote")
+					.leftJoinAndSelect("reply.user", "replyUser")
+					.leftJoinAndSelect("renote.user", "renoteUser")
+					.leftJoinAndSelect("note.channel", "channel");
 
-				query.andWhere(new Brackets(qb => {
-					qb.where('note.channelId = :channelId', { channelId: channel.id });
-					for (const tag of channel.tags) {
-						if (!safeForSql(normalizeForSearch(tag))) continue;
-						qb.orWhere(new Brackets(qb2 => {
-							qb2.where('note.userHost IS NULL');
-							qb2.andWhere('note.visibility = \'public\'');
-							qb2.andWhere(`'{"${normalizeForSearch(tag)}"}' <@ note.tags`);
-						}));
-					}
-				}));
+				query.andWhere(
+					new Brackets((qb) => {
+						qb.where("note.channelId = :channelId", { channelId: channel.id });
+						qb.orWhere(`'{"${channel.id}"}' <@ note.antennaChannelIds`);
+						for (const tag of channel.tags) {
+							if (!safeForSql(normalizeForSearch(tag))) continue;
+							qb.orWhere(
+								new Brackets((qb2) => {
+									qb2.where("note.userHost IS NULL");
+									qb2.andWhere("note.visibility = 'public'");
+									qb2.andWhere(`'{"${normalizeForSearch(tag)}"}' <@ note.tags`);
+								}),
+							);
+						}
+					}),
+				);
 
 				if (me) {
 					this.queryService.generateMutedUserQuery(query, me);
@@ -121,22 +143,24 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 				timeline = await query.limit(ps.limit).getMany();
 			} else {
-				const noteIds = noteIdsRes.map(x => x[1][1]).filter(x => x !== ps.untilId);
+				const noteIds = noteIdsRes
+					.map((x) => x[1][1])
+					.filter((x) => x !== ps.untilId);
 
 				if (noteIds.length === 0) {
 					return [];
 				}
 
 				//#region Construct query
-				const query = this.notesRepository.createQueryBuilder('note')
-					.where('note.id IN (:...noteIds)', { noteIds: noteIds })
-					.andWhere('note.userHost IS NULL')
-					.innerJoinAndSelect('note.user', 'user')
-					.leftJoinAndSelect('note.reply', 'reply')
-					.leftJoinAndSelect('note.renote', 'renote')
-					.leftJoinAndSelect('reply.user', 'replyUser')
-					.leftJoinAndSelect('renote.user', 'renoteUser')
-					.leftJoinAndSelect('note.channel', 'channel');
+				const query = this.notesRepository
+					.createQueryBuilder("note")
+					.where("note.id IN (:...noteIds)", { noteIds: noteIds })
+					.innerJoinAndSelect("note.user", "user")
+					.leftJoinAndSelect("note.reply", "reply")
+					.leftJoinAndSelect("note.renote", "renote")
+					.leftJoinAndSelect("reply.user", "replyUser")
+					.leftJoinAndSelect("renote.user", "renoteUser")
+					.leftJoinAndSelect("note.channel", "channel");
 
 				if (me) {
 					this.queryService.generateMutedUserQuery(query, me);
@@ -146,7 +170,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				//#endregion
 
 				timeline = await query.getMany();
-				timeline.sort((a, b) => a.id > b.id ? -1 : 1);
+				timeline.sort((a, b) => (a.id > b.id ? -1 : 1));
 			}
 
 			if (me) this.activeUsersChart.read(me);

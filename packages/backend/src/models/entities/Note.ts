@@ -1,16 +1,17 @@
 import {
+	Column,
 	Entity,
 	Index,
 	JoinColumn,
-	Column,
-	PrimaryColumn,
 	ManyToOne,
+	PrimaryColumn,
 } from "typeorm";
-import { id } from "../id.js";
 import { noteVisibilities } from "../../types.js";
-import { User } from "./User.js";
+import { id } from "../id.js";
+import { Antenna } from "./Antenna.js";
 import { Channel } from "./Channel.js";
 import type { DriveFile } from "./DriveFile.js";
+import { User } from "./User.js";
 
 @Entity()
 @Index("IDX_NOTE_TAGS", { synchronize: false })
@@ -261,6 +262,22 @@ export class Note {
 		comment: "[Denormalized]",
 	})
 	public renoteUserHost: string | null;
+
+	@Index()
+	@Column({
+		...id(),
+		array: true,
+		default: "{}",
+	})
+	public antennaIds: Antenna["id"][];
+
+	@Index()
+	@Column({
+		...id(),
+		array: true,
+		default: "{}",
+	})
+	public antennaChannelIds: Channel["id"][];
 	//#endregion
 
 	constructor(data: Partial<Note>) {

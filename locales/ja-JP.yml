@@ -1641,6 +1641,7 @@ _channel:
   title: "タイトル"
   noteCount: "ノート数"
   lastUpdate: "最終更新日"
+  antenna: "収集するアンテナIDを指定(チャンネルに表示するのはリモート投稿のみ)"
 
 _event:
   create: "イベントを作成"

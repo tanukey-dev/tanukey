@@ -98,6 +98,7 @@ export const DI = {
 	roleTimelineChannelService: "RoleTimelineChannelService",
 	antennaChannelService: "AntennaChannelService",
 	channelChannelService: "ChannelChannelService",
+	channelAntennaChannelService: "ChannelAntennaChannelService",
 	driveChannelService: "DriveChannelService",
 	serverStatsChannelService: "ServerStatsChannelService",
 	queueStatsChannelService: "QueueStatsChannelService",

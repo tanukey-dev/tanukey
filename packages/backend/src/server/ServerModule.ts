@@ -23,6 +23,7 @@ import { ChannelsService } from "./api/stream/ChannelsService.js";
 import { AdminChannelService } from "./api/stream/channels/admin.js";
 import { AntennaChannelService } from "./api/stream/channels/antenna.js";
 import { ChannelChannelService } from "./api/stream/channels/channel.js";
+import { ChannelAntennaChannelService } from "./api/stream/channels/channelAntenna.js";
 import { DriveChannelService } from "./api/stream/channels/drive.js";
 import { HashtagChannelService } from "./api/stream/channels/hashtag.js";
 import { HomeTimelineChannelService } from "./api/stream/channels/home-timeline.js";
@@ -134,6 +135,10 @@ const $ChannelChannelService: Provider = {
 	provide: "ChannelChannelService",
 	useExisting: ChannelChannelService,
 };
+const $ChannelAntennaChannelService: Provider = {
+	provide: "ChannelAntennaChannelService",
+	useExisting: ChannelAntennaChannelService,
+};
 const $DriveChannelService: Provider = {
 	provide: "DriveChannelService",
 	useExisting: DriveChannelService,
@@ -206,6 +211,7 @@ const $StripeWebhookServerService: Provider = {
 		AdminChannelService,
 		AntennaChannelService,
 		ChannelChannelService,
+		ChannelAntennaChannelService,
 		DriveChannelService,
 		HashtagChannelService,
 		RoleTimelineChannelService,
@@ -243,6 +249,7 @@ const $StripeWebhookServerService: Provider = {
 		$AdminChannelService,
 		$AntennaChannelService,
 		$ChannelChannelService,
+		$ChannelAntennaChannelService,
 		$DriveChannelService,
 		$HashtagChannelService,
 		$RoleTimelineChannelService,

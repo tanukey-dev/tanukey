@@ -4,6 +4,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import type { AdminChannelService } from "./channels/admin.js";
 import type { AntennaChannelService } from "./channels/antenna.js";
 import type { ChannelChannelService } from "./channels/channel.js";
+import type { ChannelAntennaChannelService } from "./channels/channelAntenna.js";
 import type { DriveChannelService } from "./channels/drive.js";
 import type { HashtagChannelService } from "./channels/hashtag.js";
 import type { HomeTimelineChannelService } from "./channels/home-timeline.js";
@@ -36,6 +37,8 @@ export class ChannelsService {
 		private antennaChannelService: AntennaChannelService,
 		@Inject(DI.channelChannelService)
 		private channelChannelService: ChannelChannelService,
+		@Inject(DI.channelAntennaChannelService)
+		private channelAntennaChannelService: ChannelAntennaChannelService,
 		@Inject(DI.driveChannelService)
 		private driveChannelService: DriveChannelService,
 		@Inject(DI.serverStatsChannelService)
@@ -67,6 +70,8 @@ export class ChannelsService {
 				return this.antennaChannelService;
 			case "channel":
 				return this.channelChannelService;
+			case "channelAntenna":
+				return this.channelAntennaChannelService;
 			case "drive":
 				return this.driveChannelService;
 			case "serverStats":

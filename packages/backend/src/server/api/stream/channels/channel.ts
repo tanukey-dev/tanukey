@@ -7,6 +7,7 @@ import type { Channel as _Channel } from "@/models/entities/Channel.js";
 import type { ChannelsRepository } from "@/models/index.js";
 import { Inject, Injectable } from "@nestjs/common";
 import Channel from "../channel.js";
+import type { StreamMessages } from "../types.js";
 
 class ChannelChannel extends Channel {
 	public readonly chName = "channel";
@@ -33,9 +34,6 @@ class ChannelChannel extends Channel {
 				id: this.channelId,
 			},
 		});
-
-		// Subscribe stream
-		this.subscriber.on("notesStream", this.onNote);
 	}
 
 	@bindThis
@@ -46,6 +44,11 @@ class ChannelChannel extends Channel {
 			}
 
 			if (!this.channel) return;
+
+			// 収集はローカルのみ
+			if (note.user.host !== null) {
+				return;
+			}
 
 			// 収集タグ
 			const tags: string[] = this.channel.tags;

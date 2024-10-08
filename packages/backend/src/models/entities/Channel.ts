@@ -1,14 +1,15 @@
 import {
-	PrimaryColumn,
+	Column,
 	Entity,
 	Index,
 	JoinColumn,
-	Column,
 	ManyToOne,
+	PrimaryColumn,
 } from "typeorm";
 import { id } from "../id.js";
-import { User } from "./User.js";
+import type { Antenna } from "./Antenna.js";
 import { DriveFile } from "./DriveFile.js";
+import { User } from "./User.js";
 
 @Entity()
 export class Channel {
@@ -142,4 +143,11 @@ export class Channel {
 		default: "{}",
 	})
 	public tags: string[];
+
+	@Index()
+	@Column({
+		...id(),
+		nullable: true,
+	})
+	public antennaId: Antenna["id"] | null;
 }
