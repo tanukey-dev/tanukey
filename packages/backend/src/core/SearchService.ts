@@ -501,7 +501,7 @@ export class SearchService {
 				bool: {
 					should: [
 						...opts.tags.map((tag) => {
-							return { term: { tags: tag } };
+							return { wildcard: { tags: { value: tag } } };
 						}),
 					],
 				},
@@ -543,10 +543,13 @@ export class SearchService {
 			q,
 			{
 				userIds: opts.userIds,
-				origin: opts.origin,
+				channelId: opts.channelId,
 				keywords: opts.keywords,
 				excludeKeywords: opts.excludeKeywords,
+				origin: opts.origin,
 				checkChannelSearchable: opts.checkChannelSearchable,
+				createAtBegin: opts.createAtBegin,
+				createAtEnd: opts.createAtEnd,
 				reverseOrder: opts.reverseOrder,
 				hasFile: opts.hasFile,
 				includeReplies: opts.includeReplies,
@@ -584,6 +587,8 @@ export class SearchService {
 		for (const f of esFilters) {
 			filter.bool.should.push(f);
 		}
+
+		console.log(JSON.stringify(filter, null, 2));
 
 		const res = await this.opensearch.search({
 			index: this.opensearchNoteIndex as string,
