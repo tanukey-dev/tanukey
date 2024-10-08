@@ -104,4 +104,5 @@ export const DI = {
 	queueStatsChannelService: "QueueStatsChannelService",
 	adminChannelService: "AdminChannelService",
 	idService: "IdService",
+	noteReadService: "NoteReadService",
 };
