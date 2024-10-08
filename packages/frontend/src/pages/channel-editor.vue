@@ -119,7 +119,7 @@ import { useRouter } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { selectFile } from "@/scripts/select-file";
 import Multiselect from "@vueform/multiselect";
-import { computed, defineAsyncComponent, ref, watch } from "vue";
+import { computed, defineAsyncComponent, onBeforeMount, ref, watch } from "vue";
 
 const Sortable = defineAsyncComponent(() =>
 	import("vuedraggable").then((x) => x.default),
@@ -137,7 +137,7 @@ let tags = $ref("");
 let description = $ref(null);
 let bannerUrl = $ref<string | null>(null);
 let bannerId = $ref<string | null>(null);
-let color = $ref("#000");
+const color = ref("#000");
 const federation = ref(false);
 const searchable = ref(true);
 const isNoteCollapsed = ref(true);
@@ -222,10 +222,12 @@ async function fetchChannel() {
 	pinnedNotes.value = channel.pinnedNoteIds.map((id) => ({
 		id,
 	}));
-	color = channel.color;
+	color.value = channel.color;
 }
 
-fetchChannel();
+onBeforeMount(() => {
+	fetchChannel();
+})
 
 async function addPinnedNote() {
 	const { canceled, result: value } = await os.inputText({
@@ -259,7 +261,7 @@ function save() {
 		isPrivate: isPrivate.value,
 		privateUserIds: privateUserIds.value.map((v) => v.value),
 		moderatorUserIds: moderatorUserIds.value.map((v) => v.value),
-		color: color,
+		color: color.value,
 		tags: tags.trim() === "" ? [] : tags.replace("#", "").split(/\s+/),
 		antennaId: antennaId.value ?? null,
 	};

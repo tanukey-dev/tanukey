@@ -1,53 +1,28 @@
 <template>
-<div>
-	<div :class="$style.label"><slot name="label"></slot></div>
-	<div :class="[$style.input, { disabled }]">
-		<input
-			ref="inputEl"
-			v-model="v"
-			v-adaptive-border
-			:class="$style.inputCore"
-			type="color"
-			:disabled="disabled"
-			:required="required"
-			:readonly="readonly"
-			@input="onInput"
-		>
+	<div>
+		<div :class="$style.label">
+			<slot name="label"></slot>
+		</div>
+		<div :class="[$style.input, { disabled }]">
+			<input type="color" v-model="v" v-adaptive-border :class="$style.inputCore" :disabled="disabled"
+				:required="required" :readonly="readonly">
+		</div>
+		<div :class="$style.caption">
+			<slot name="caption"></slot>
+		</div>
 	</div>
-	<div :class="$style.caption"><slot name="caption"></slot></div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import {
-	onMounted,
-	nextTick,
-	ref,
-	shallowRef,
-	watch,
-	computed,
-	toRefs,
-} from "vue";
-import { i18n } from "@/i18n";
 
-const props = defineProps<{
-	modelValue: string | null;
+defineProps<{
 	required?: boolean;
 	readonly?: boolean;
 	disabled?: boolean;
 }>();
 
-const emit = defineEmits<{
-	(ev: "update:modelValue", value: string): void;
-}>();
+const v = defineModel();
 
-const { modelValue } = toRefs(props);
-const v = ref(modelValue.value);
-const inputEl = shallowRef<HTMLElement>();
-
-const onInput = (ev: KeyboardEvent) => {
-	emit("update:modelValue", v.value);
-};
 </script>
 
 <style lang="scss" module>
@@ -75,7 +50,7 @@ const onInput = (ev: KeyboardEvent) => {
 	position: relative;
 
 	&.focused {
-		> .inputCore {
+		>.inputCore {
 			border-color: var(--accent) !important;
 			//box-shadow: 0 0 0 4px var(--focus);
 		}
@@ -85,7 +60,7 @@ const onInput = (ev: KeyboardEvent) => {
 		opacity: 0.7;
 
 		&,
-		> .inputCore {
+		>.inputCore {
 			cursor: not-allowed !important;
 		}
 	}

@@ -1,21 +1,20 @@
 <template>
-<div ref="rootEl">
-	<div ref="headerEl">
-		<slot name="header"></slot>
+	<div ref="rootEl">
+		<div ref="headerEl">
+			<slot name="header"></slot>
+		</div>
+		<div ref="bodyEl" :data-sticky-container-header-height="headerHeight">
+			<slot></slot>
+		</div>
+		<div ref="footerEl">
+			<slot name="footer"></slot>
+		</div>
 	</div>
-	<div ref="bodyEl" :data-sticky-container-header-height="headerHeight">
-		<slot></slot>
-	</div>
-	<div ref="footerEl">
-		<slot name="footer"></slot>
-	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, provide, inject, Ref, ref, watch } from "vue";
-import { $$ } from "vue/macros";
 import { CURRENT_STICKY_BOTTOM, CURRENT_STICKY_TOP } from "@/const";
+import { Ref, inject, onMounted, onUnmounted, provide, ref, watch } from "vue";
 
 const rootEl = $shallowRef<HTMLElement>();
 const headerEl = $shallowRef<HTMLElement>();

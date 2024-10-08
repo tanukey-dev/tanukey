@@ -106,4 +106,5 @@ export const DI = {
 	idService: "IdService",
 	noteReadService: "NoteReadService",
 	userPointService: "UserPointService",
+	channelEntityService: "ChannelEntityService",
 };
