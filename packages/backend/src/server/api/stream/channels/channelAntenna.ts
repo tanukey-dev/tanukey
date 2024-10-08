@@ -10,7 +10,7 @@ import Channel from "../channel.js";
 import type { StreamMessages } from "../types.js";
 
 class ChannelAntennaChannel extends Channel {
-	public readonly chName = "channel";
+	public readonly chName = "channelAntenna";
 	public static shouldShare = false;
 	public static requireCredential = false as const;
 	private channelId: string;
