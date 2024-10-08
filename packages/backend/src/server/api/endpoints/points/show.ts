@@ -1,8 +1,7 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { Endpoint } from "@/server/api/endpoint-base.js";
-import { UserPointService } from "@/core/entities/UserPointService.js";
-import type { UserPointsRepository } from "@/models/index.js";
+import type { UserPointService } from "@/core/entities/UserPointService.js";
 import { DI } from "@/di-symbols.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { Inject, Injectable } from "@nestjs/common";
 
 export const meta = {
 	tags: ["users"],
@@ -31,13 +30,15 @@ export const paramDef = {
 // eslint-disable-next-line import/no-default-export
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor(private userPointService: UserPointService) {
+	constructor(
+		@Inject(DI.userPointService)
+		private userPointService: UserPointService,
+	) {
 		super(meta, paramDef, async (ps, me) => {
 			if (ps.userId) {
 				return await userPointService.pack(ps.userId);
-			} else {
-				return await userPointService.pack(me.id);
 			}
+			return await userPointService.pack(me.id);
 		});
 	}
 }

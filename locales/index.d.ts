@@ -2153,6 +2153,7 @@ export interface Locale {
         "loginBonusMsg": string;
         "sendPointsMsg": string;
         "receivePointsMsg": string;
+        "ownPoints": string;
         "_errors": {
             "noUser": string;
             "noPoint": string;

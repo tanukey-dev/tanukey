@@ -105,4 +105,5 @@ export const DI = {
 	adminChannelService: "AdminChannelService",
 	idService: "IdService",
 	noteReadService: "NoteReadService",
+	userPointService: "UserPointService",
 };

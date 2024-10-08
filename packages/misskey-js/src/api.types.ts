@@ -1116,4 +1116,10 @@ export type Endpoints = {
 			};
 		};
 	};
+	"points/show": {
+		req: TODO;
+		res: {
+			point: number;
+		};
+	};
 };

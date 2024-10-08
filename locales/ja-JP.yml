@@ -2072,6 +2072,7 @@ _points:
   loginBonusMsg: "ログインボーナス!"
   sendPointsMsg: "ポイントを送信しました。送信先: "
   receivePointsMsg: "ポイントを受領しました。送信元: "
+  ownPoints: "保有ポイント"
   _errors:
     noUser: "ユーザーを指定してください"
     noPoint: "送信ポイントを入力してください"

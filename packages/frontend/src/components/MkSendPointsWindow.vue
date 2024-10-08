@@ -1,47 +1,46 @@
 <template>
-<MkModalWindow
-	ref="dialog"
-	:width="400"
-	:height="450"
-	:withOkButton="true"
-	:okButtonDisabled="false"
-	:canClose="false"
-	@close="dialog?.close()"
-	@closed="$emit('closed')"
-	@ok="ok()"
->
-	<template #header>{{ i18n.ts._points.send }}</template>
+	<MkModalWindow ref="dialog" :width="400" :height="450" :withOkButton="true" :okButtonDisabled="false"
+		:canClose="false" @close="dialog?.close()" @closed="$emit('closed')" @ok="ok()">
+		<template #header>{{ i18n.ts._points.send }}</template>
 
-	<MkSpacer :marginMin="20" :marginMax="28">
-		<div class="_gaps_m">
-			<div><b>{{ i18n.ts._points.target }}</b></div>
-			<div>
-				<div style="text-align: center;" class="_gaps">
-					<div v-if="target">@{{ target.username }}</div>
-					<div>
-						<MkButton v-if="target == null" primary rounded inline @click="selectUser">{{ i18n.ts.selectUser }}</MkButton>
-						<MkButton v-else-if="!user" danger rounded inline @click="target = null">{{ i18n.ts.remove }}</MkButton>
+		<MkSpacer :marginMin="20" :marginMax="28">
+			<div class="_gaps_m">
+				<div><b>{{ i18n.ts._points.target }}</b></div>
+				<div>
+					<div style="text-align: center;" class="_gaps">
+						<div v-if="target">@{{ target.username }}</div>
+						<div>
+							<MkButton v-if="target == null" primary rounded inline @click="selectUser">{{
+								i18n.ts.selectUser }}
+							</MkButton>
+							<MkButton v-else-if="!user" danger rounded inline @click="target = null">{{ i18n.ts.remove
+								}}
+							</MkButton>
+						</div>
 					</div>
 				</div>
+				<div><b>{{ i18n.ts._points.ownPoints }}</b></div>
+				<div style="text-align: center;" class="_gaps">
+					<div>{{ ownPoint }}</div>
+				</div>
+				<div><b>{{ i18n.ts._points.value }}</b></div>
+				<div>
+					<MkInput v-model="value" :type="'number'"></MkInput>
+				</div>
+				<div :style="{ color: 'red' }">{{ error }}</div>
 			</div>
-			<div><b>{{ i18n.ts._points.value }}</b></div>
-			<div>
-				<MkInput v-model="value" :type="'number'"></MkInput>
-			</div>
-			<div :style="{ color: 'red' }">{{ error }}</div>
-		</div>
-	</MkSpacer>
-</MkModalWindow>
+		</MkSpacer>
+	</MkModalWindow>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, shallowRef, watch } from "vue";
-import MkInput from "./MkInput.vue";
+import { $i } from "@/account";
 import MkButton from "@/components/MkButton.vue";
 import MkModalWindow from "@/components/MkModalWindow.vue";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
-import { $i } from "@/account";
+import { computed, onMounted, ref, shallowRef, watch } from "vue";
+import MkInput from "./MkInput.vue";
 
 const props = defineProps<{
 	user?: string;
@@ -56,6 +55,12 @@ const dialog = shallowRef<InstanceType<typeof MkModalWindow>>();
 const target = ref<any>(null);
 const value = ref(0);
 const error = ref<string | null>(null);
+const point = ref<{ point: number } | null>(null);
+const ownPoint = computed(() => point.value?.point);
+
+onMounted(async () => {
+	point.value = await os.api("points/show");
+})
 
 watch(value, (newValue, oldValue) => {
 	if (newValue <= 0) {
@@ -86,8 +91,10 @@ async function ok(): Promise<void> {
 		error.value = i18n.ts._points._errors.remoteUser;
 		return;
 	}
-	const point = await os.api("points/show");
-	if (value.value > point.point) {
+	if (!point.value) {
+		return;
+	}
+	if (value.value > point.value.point) {
 		error.value = i18n.ts._points._errors.overPoints;
 		return;
 	}
