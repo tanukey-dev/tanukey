@@ -81,7 +81,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			let userIds: string[] = [];
 			if (antenna.users) {
-				const users = await usersRepository.find({
+				const users = await this.usersRepository.find({
 					where: [
 						...antenna.users.map((username) => {
 							const acct = Acct.parse(username);
@@ -98,8 +98,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				{
 					userIds: userIds,
 					origin: antenna.localOnly ? "local" : undefined,
-					keywords: antenna.keywords ?? [],
-					excludeKeywords: antenna.excludeKeywords ?? [],
+					keywords: antenna.keywords,
+					excludeKeywords: antenna.excludeKeywords,
 					checkChannelSearchable: true,
 					reverseOrder: false,
 					hasFile: antenna.withFile,

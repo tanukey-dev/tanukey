@@ -583,9 +583,14 @@ export class SearchService {
 			return [];
 		}
 
-		const filter: any = { bool: { should: [] } };
-		for (const f of esFilters) {
-			filter.bool.should.push(f);
+		let filter: any;
+		if (esFilters.length === 1) {
+			filter = esFilters[0];
+		} else {
+			filter = { bool: { should: [], minimum_should_match: 1 } };
+			for (const f of esFilters) {
+				filter.bool.should.push(f);
+			}
 		}
 
 		console.log(JSON.stringify(filter, null, 2));
