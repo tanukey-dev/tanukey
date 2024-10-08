@@ -120,7 +120,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				query.andWhere(
 					new Brackets((qb) => {
 						qb.where("note.channelId = :channelId", { channelId: channel.id });
-						qb.orWhere(`'{"${channel.id}"}' <@ note.antennaChannelIds`);
+						qb.orWhere(
+							new Brackets((qb2) => {
+								qb2.where("note.userHost IS NOT NULL");
+								qb2.andWhere(`'{"${channel.id}"}' <@ note.antennaChannelIds`);
+							}),
+						);
 						for (const tag of channel.tags) {
 							if (!safeForSql(normalizeForSearch(tag))) continue;
 							qb.orWhere(
