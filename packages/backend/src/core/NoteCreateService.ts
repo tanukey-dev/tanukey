@@ -371,12 +371,17 @@ export class NoteCreateService implements OnApplicationShutdown {
 				(this.isQuote(data) && data.renote?.userHost === null) ||
 				false;
 
-			// いずれかのローカルユーザーがフォローしているリモートのノートのみ通知を行う
+			// スパム対策により以下のリモートのノートのみ通知を行う
+			// ・いずれかのローカルユーザーがフォローしている
+			// ・メンション対象のユーザーが3名以下である
 			if (user.host !== null && willCauseNotification) {
 				const userEntity = await this.usersRepository.findOneBy({
 					id: user.id,
 				});
-				if ((userEntity?.followersCount ?? 0) === 0) {
+				if (
+					(userEntity?.followersCount ?? 0) === 0 &&
+					mentionedUsers.length > 3
+				) {
 					this.logger.error(
 						"Request rejected because user has no local followers",
 						{ user: user.id, note: data },
