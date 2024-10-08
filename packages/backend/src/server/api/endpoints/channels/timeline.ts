@@ -98,6 +98,21 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			const filters: any[] = [];
 
+			const channelFilter = await this.searchService.getFilter(
+				"",
+				{
+					origin: "local",
+					channelId: ps.channelId,
+				},
+				{
+					untilId: ps.untilId,
+					sinceId: ps.sinceId,
+					limit: ps.limit,
+				},
+			);
+
+			filters.push(channelFilter);
+
 			if (channel.antennaId && channel.antennaId !== "") {
 				const antenna = await antennasRepository.findOne({
 					where: {
@@ -139,35 +154,22 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				}
 			}
 
-			const channelFilter = await this.searchService.getFilter(
-				"",
-				{
-					origin: "local",
-					channelId: ps.channelId,
-				},
-				{
-					untilId: ps.untilId,
-					sinceId: ps.sinceId,
-					limit: ps.limit,
-				},
-			);
+			if (channel.tags.length > 0) {
+				const tagsFilter = await this.searchService.getFilter(
+					"",
+					{
+						origin: "local",
+						tags: channel.tags,
+					},
+					{
+						untilId: ps.untilId,
+						sinceId: ps.sinceId,
+						limit: ps.limit,
+					},
+				);
 
-			filters.push(channelFilter);
-
-			const tagsFilter = await this.searchService.getFilter(
-				"",
-				{
-					origin: "local",
-					tags: channel.tags,
-				},
-				{
-					untilId: ps.untilId,
-					sinceId: ps.sinceId,
-					limit: ps.limit,
-				},
-			);
-
-			filters.push(tagsFilter);
+				filters.push(tagsFilter);
+			}
 
 			const notes = await this.searchService.searchNoteWithFilter(
 				me,
