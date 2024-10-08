@@ -3,18 +3,19 @@ import type { QueryService } from "@/core/QueryService.js";
 import type ActiveUsersChart from "@/core/chart/charts/active-users.js";
 import type { NoteEntityService } from "@/core/entities/NoteEntityService.js";
 import { DI } from "@/di-symbols.js";
-import { normalizeForSearch } from "@/misc/normalize-for-search.js";
-import { safeForSql } from "@/misc/safe-for-sql.js";
+import type { SearchService } from "@/core/SearchService.js";
 import type {
+	Antenna,
+	AntennasRepository,
 	ChannelsRepository,
-	Note,
+	UsersRepository,
 	NotesRepository,
 } from "@/models/index.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
-import type * as Redis from "ioredis";
-import { Brackets } from "typeorm";
 import { ApiError } from "../../error.js";
+import * as Acct from "@/misc/acct.js";
+import { IsNull } from "typeorm";
 
 export const meta = {
 	tags: ["notes", "channels"],
@@ -59,8 +60,8 @@ export const paramDef = {
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> {
 	constructor(
-		@Inject(DI.redis)
-		private redisClient: Redis.Redis,
+		@Inject(DI.antennasRepository)
+		private antennasRepository: AntennasRepository,
 
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
@@ -70,6 +71,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 		@Inject(DI.idService)
 		private idService: IdService,
+
+		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
+
+		@Inject(DI.searchService)
+		private searchService: SearchService,
 
 		@Inject(DI.noteEntityService)
 		private noteEntityService: NoteEntityService,
@@ -89,68 +96,90 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.noSuchChannel);
 			}
 
-			let timeline: Note[] = [];
+			const filters: any[] = [];
 
-			const query = this.queryService
-				.makePaginationQuery(
-					this.notesRepository.createQueryBuilder("note"),
-					ps.sinceId,
-					ps.untilId,
-					ps.sinceDate,
-					ps.untilDate,
-				)
-				.innerJoinAndSelect("note.user", "user")
-				.leftJoinAndSelect("note.reply", "reply")
-				.leftJoinAndSelect("note.renote", "renote")
-				.leftJoinAndSelect("reply.user", "replyUser")
-				.leftJoinAndSelect("renote.user", "renoteUser")
-				.leftJoinAndSelect("note.channel", "channel");
+			if (channel.antennaId && channel.antennaId !== "") {
+				const antenna = await antennasRepository.findOne({
+					where: {
+						id: channel.antennaId,
+					},
+				});
 
-			query.andWhere(
-				new Brackets((qb) => {
-					qb.where("note.channelId = :channelId", { channelId: channel.id });
-					if (channel.tags && channel.tags.length > 0) {
-						qb.orWhere(
-							new Brackets((qb2) => {
-								qb2.where("note.userHost IS NULL");
-								qb2.andWhere("note.visibility = 'public'");
-								qb2.andWhere("note.tags != '{}'");
-								qb2.andWhere(
-									new Brackets((qb3) => {
-										for (const tag of channel.tags) {
-											if (!safeForSql(normalizeForSearch(tag))) continue;
-											qb3.orWhere(
-												`'{"${normalizeForSearch(tag)}"}' <@ note.tags`,
-											);
-										}
-									}),
-								);
+				if (antenna?.users) {
+					const users = await usersRepository.find({
+						where: [
+							...antenna.users.map((username) => {
+								const acct = Acct.parse(username);
+								return { username: acct.username, host: acct.host ?? IsNull() };
 							}),
-						);
-					}
-					if (channel.antennaId && channel.antennaId !== "") {
-						qb.orWhere(
-							new Brackets((qb2) => {
-								qb2.where("note.userHost IS NOT NULL");
-								qb2.andWhere("note.antennaChannelIds != '{}'");
-								qb2.andWhere(`'{"${channel.id}"}' <@ note.antennaChannelIds`);
-							}),
-						);
-					}
-				}),
-			);
+						],
+					});
+					const userIds = users.map((u) => u.id);
 
-			if (me) {
-				this.queryService.generateMutedUserQuery(query, me);
-				this.queryService.generateMutedNoteQuery(query, me);
-				this.queryService.generateBlockedUserQuery(query, me);
+					const antennaFilter = await this.searchService.getFilter(
+						"",
+						{
+							userIds: userIds,
+							origin: "remote",
+							keywords: antenna.keywords,
+							excludeKeywords: antenna.excludeKeywords,
+							checkChannelSearchable: true,
+							reverseOrder: false,
+							hasFile: antenna.withFile,
+							includeReplies: antenna.withReplies,
+						},
+						{
+							untilId: ps.untilId,
+							sinceId: ps.sinceId,
+							limit: ps.limit,
+						},
+					);
+
+					filters.push(antennaFilter);
+				}
 			}
 
-			timeline = await query.limit(ps.limit).getMany();
+			const channelFilter = await this.searchService.getFilter(
+				"",
+				{
+					origin: "local",
+					channelId: ps.channelId,
+				},
+				{
+					untilId: ps.untilId,
+					sinceId: ps.sinceId,
+					limit: ps.limit,
+				},
+			);
+
+			filters.push(channelFilter);
+
+			const tagsFilter = await this.searchService.getFilter(
+				"",
+				{
+					origin: "local",
+					tags: channel.tags,
+				},
+				{
+					untilId: ps.untilId,
+					sinceId: ps.sinceId,
+					limit: ps.limit,
+				},
+			);
+
+			filters.push(tagsFilter);
+
+			const notes = await this.searchService.searchNoteWithFilter(
+				me,
+				filters,
+				true,
+				false,
+				ps.limit,
+			);
 
 			if (me) this.activeUsersChart.read(me);
 
-			return await this.noteEntityService.packMany(timeline, me);
+			return await this.noteEntityService.packMany(notes, me);
 		});
 	}
 }

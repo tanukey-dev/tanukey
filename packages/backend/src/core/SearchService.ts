@@ -271,9 +271,8 @@ export class SearchService {
 	}
 
 	@bindThis
-	public async searchNote(
+	public getFilter(
 		q: string,
-		me: User | null,
 		opts: {
 			userIds?: Note["userId"][] | null;
 			channelId?: Note["channelId"] | null;
@@ -286,6 +285,7 @@ export class SearchService {
 			reverseOrder?: boolean;
 			hasFile?: boolean;
 			includeReplies?: boolean;
+			tags?: string[];
 		},
 		pagination: {
 			equal?: Note["id"];
@@ -293,11 +293,7 @@ export class SearchService {
 			sinceId?: Note["id"];
 			limit?: number;
 		},
-	): Promise<Note[]> {
-		if (!this.opensearch) {
-			return [];
-		}
-
+	) {
 		const esFilter: any = { bool: { must: [] } };
 		if (pagination.equal) {
 			esFilter.bool.must.push({
@@ -500,33 +496,119 @@ export class SearchService {
 			});
 		}
 
-		console.log(JSON.stringify(esFilter, null, 2));
+		if (opts.tags && opts.tags.length > 0) {
+			esFilter.bool.must.push({
+				bool: {
+					should: [
+						...opts.tags.map((tag) => {
+							return { term: { tags: tag } };
+						}),
+					],
+				},
+			});
+		}
+
+		return esFilter;
+	}
+
+	@bindThis
+	public async searchNote(
+		q: string,
+		me: User | null,
+		opts: {
+			userIds?: Note["userId"][] | null;
+			channelId?: Note["channelId"] | null;
+			keywords?: string[][];
+			excludeKeywords?: string[][];
+			origin?: string;
+			checkChannelSearchable?: boolean;
+			createAtBegin?: number;
+			createAtEnd?: number;
+			reverseOrder?: boolean;
+			hasFile?: boolean;
+			includeReplies?: boolean;
+		},
+		pagination: {
+			equal?: Note["id"];
+			untilId?: Note["id"];
+			sinceId?: Note["id"];
+			limit?: number;
+		},
+	): Promise<Note[]> {
+		if (!this.opensearch) {
+			return [];
+		}
+
+		const esFilter = this.getFilter(
+			q,
+			{
+				userIds: opts.userIds,
+				origin: opts.origin,
+				keywords: opts.keywords,
+				excludeKeywords: opts.excludeKeywords,
+				checkChannelSearchable: opts.checkChannelSearchable,
+				reverseOrder: opts.reverseOrder,
+				hasFile: opts.hasFile,
+				includeReplies: opts.includeReplies,
+			},
+			{
+				equal: pagination.equal,
+				untilId: pagination.untilId,
+				sinceId: pagination.sinceId,
+				limit: pagination.limit,
+			},
+		);
+
+		return this.searchNoteWithFilter(
+			me,
+			[esFilter],
+			opts.checkChannelSearchable,
+			opts.reverseOrder,
+			pagination.limit,
+		);
+	}
+
+	@bindThis
+	public async searchNoteWithFilter(
+		me: User | null,
+		esFilters: any[],
+		checkChannelSearchable?: boolean,
+		reverseOrder?: boolean,
+		limit?: number,
+	): Promise<Note[]> {
+		if (!this.opensearch) {
+			return [];
+		}
+
+		const filter: any = { bool: { should: [] } };
+		for (const f of esFilters) {
+			filter.bool.should.push(f);
+		}
 
 		const res = await this.opensearch.search({
 			index: this.opensearchNoteIndex as string,
 			body: {
-				query: esFilter,
+				query: filter,
 				sort: [
 					{
 						createdAt: {
 							order:
-								opts.reverseOrder !== undefined && !opts.reverseOrder
-									? "desc"
-									: "asc",
+								reverseOrder !== undefined && !reverseOrder ? "desc" : "asc",
 						},
 					},
 				],
 			},
 			_source: ["id", "createdAt"],
-			size: pagination.limit,
+			size: limit,
 		});
+
 		const noteIds = res.body.hits.hits.map((hit: any) => hit._id);
 		if (noteIds.length === 0) return [];
 
 		const query = this.notesRepository.createQueryBuilder("note");
 		query.andWhereInIds(noteIds);
 
-		if (opts.checkChannelSearchable) {
+		if (checkChannelSearchable) {
 			query.leftJoinAndSelect("note.channel", "channel").andWhere(
 				new Brackets((qb) => {
 					qb.orWhere("channel.searchable IS NULL");
@@ -548,9 +630,9 @@ export class SearchService {
 
 		query.orderBy(
 			"note.createdAt",
-			opts.reverseOrder !== undefined && !opts.reverseOrder ? "DESC" : "ASC",
+			reverseOrder !== undefined && !reverseOrder ? "DESC" : "ASC",
 		);
 
-		return await query.limit(pagination.limit).getMany();
+		return await query.limit(limit).getMany();
 	}
 }
