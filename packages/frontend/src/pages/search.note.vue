@@ -13,6 +13,16 @@
 							@click="addUser">{{ i18n.ts.addUser }}</button></template>
 				</MkTextarea>
 
+				<MkTextarea v-model="keywords">
+					<template #label>{{ i18n.ts.antennaKeywords }}</template>
+					<template #caption>{{ i18n.ts.antennaKeywordsDescription }}</template>
+				</MkTextarea>
+
+				<MkTextarea v-model="excludeKeywords">
+					<template #label>{{ i18n.ts.antennaExcludeKeywords }}</template>
+					<template #caption>{{ i18n.ts.antennaKeywordsDescription }}</template>
+				</MkTextarea>
+
 				<FormSplit :class="$style.formContent">
 					<MkInput v-model="createAtBegin" type="datetime-local">
 						<template #label>{{ i18n.ts.startDate }}</template>
@@ -76,6 +86,8 @@ const reverseOrder = ref<any>(false);
 const hasFile = ref<any>(false);
 const optionOpen = ref(false);
 const users = ref("");
+const keywords = ref("");
+const excludeKeywords = ref("");
 
 watch(searchQuery, () => {
 	updateUrlParameter();
@@ -84,6 +96,12 @@ watch(searchOrigin, () => {
 	updateUrlParameter();
 });
 watch(users, () => {
+	updateUrlParameter();
+});
+watch(keywords, () => {
+	updateUrlParameter();
+});
+watch(excludeKeywords, () => {
 	updateUrlParameter();
 });
 watch(createAtBegin, () => {
@@ -111,6 +129,8 @@ function updateUrlParameter(): void {
 	setSearchParams(searchParams, "q", searchQuery.value);
 	setSearchParams(searchParams, "origin", searchOrigin.value);
 	setSearchParams(searchParams, "users", users.value);
+	setSearchParams(searchParams, "keywords", keywords.value);
+	setSearchParams(searchParams, "excludeKeywords", excludeKeywords.value);
 	setSearchParams(searchParams, "createAtBegin", createAtBegin.value);
 	setSearchParams(searchParams, "createAtEnd", createAtEnd.value);
 	setSearchParams(searchParams, "reverseOrder", reverseOrder.value);
@@ -131,6 +151,16 @@ async function loadUrlParameter() {
 	const usersParam = searchParams.get("users");
 	if (usersParam) {
 		users.value = usersParam;
+		optionOpen.value = true;
+	}
+	const keywordsParam = searchParams.get("keywords");
+	if (keywordsParam) {
+		keywords.value = keywordsParam;
+		optionOpen.value = true;
+	}
+	const excludeKeywordsParam = searchParams.get("excludeKeywords");
+	if (excludeKeywordsParam) {
+		excludeKeywords.value = excludeKeywordsParam;
 		optionOpen.value = true;
 	}
 	const begin = searchParams.get("createAtBegin");
@@ -206,6 +236,14 @@ async function search() {
 			createAtEnd: end ? end.getTime() : undefined,
 			reverseOrder: reverseOrder.value,
 			hasFile: hasFile.value,
+			keywords: keywords.value
+				.trim()
+				.split("\n")
+				.map((x) => x.trim().split(" ")),
+			excludeKeywords: excludeKeywords.value
+				.trim()
+				.split("\n")
+				.map((x) => x.trim().split(" ")),
 		},
 	};
 

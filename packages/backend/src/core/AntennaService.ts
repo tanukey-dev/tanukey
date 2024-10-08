@@ -114,24 +114,7 @@ export class AntennaService implements OnApplicationShutdown {
 
 		for (const antenna of matchedAntennas) {
 			this.globalEventService.publishAntennaStream(antenna.id, "note", note);
-
-			// リモートのノートの場合、アンテナ収集をしているチャンネルがないかチェック
-			if (note.userHost !== null) {
-				const channels = await this.channelsRepository.find({
-					where: {
-						antennaId: antenna.id,
-					},
-				});
-				note.antennaChannelIds = note.antennaChannelIds.concat(
-					channels.map((ch) => ch.id),
-				);
-			}
 		}
-
-		await this.notesRepository.update(note.id, {
-			antennaChannelIds: note.antennaChannelIds,
-			matchedAntennaIds: matchedAntennas.map((an) => an.id),
-		});
 	}
 
 	// NOTE: フォローしているユーザーのノート、リストのユーザーのノート、グループのユーザーのノート指定はパフォーマンス上の理由で無効になっている

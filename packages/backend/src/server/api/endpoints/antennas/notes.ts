@@ -1,14 +1,13 @@
-import { IdService } from "@/core/IdService.js";
-import { NoteReadService } from "@/core/NoteReadService.js";
-import { QueryService } from "@/core/QueryService.js";
-import { NoteEntityService } from "@/core/entities/NoteEntityService.js";
+import type { NoteReadService } from "@/core/NoteReadService.js";
+import type { SearchService } from "@/core/SearchService.js";
+import type { NoteEntityService } from "@/core/entities/NoteEntityService.js";
 import { DI } from "@/di-symbols.js";
-import type { AntennasRepository, NotesRepository } from "@/models/index.js";
+import type { AntennasRepository, UsersRepository } from "@/models/index.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
-import * as Redis from "ioredis";
-import { Brackets } from "typeorm";
 import { ApiError } from "../../error.js";
+import * as Acct from "@/misc/acct.js";
+import { IsNull } from "typeorm";
 
 export const meta = {
 	tags: ["antennas", "account", "notes"],
@@ -55,17 +54,17 @@ export const paramDef = {
 @Injectable()
 export default class extends Endpoint<typeof meta, typeof paramDef> {
 	constructor(
-		@Inject(DI.notesRepository)
-		private notesRepository: NotesRepository,
-
 		@Inject(DI.antennasRepository)
 		private antennasRepository: AntennasRepository,
+
+		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
 
 		@Inject(DI.noteEntityService)
 		private noteEntityService: NoteEntityService,
 
-		@Inject(DI.queryService)
-		private queryService: QueryService,
+		@Inject(DI.searchService)
+		private searchService: SearchService,
 
 		@Inject(DI.noteReadService)
 		private noteReadService: NoteReadService,
@@ -80,29 +79,38 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.noSuchAntenna);
 			}
 
-			const query = this.notesRepository
-				.createQueryBuilder("note")
-				.andWhere("note.matchedAntennaIds != '{}'")
-				.andWhere(`'{"${antenna.id}"}' <@ note.matchedAntennaIds`)
-				.innerJoinAndSelect("note.user", "user")
-				.leftJoinAndSelect("note.reply", "reply")
-				.leftJoinAndSelect("note.renote", "renote")
-				.leftJoinAndSelect("reply.user", "replyUser")
-				.leftJoinAndSelect("renote.user", "renoteUser");
+			let userIds: string[] = [];
+			if (antenna.users) {
+				const users = await usersRepository.find({
+					where: [
+						...antenna.users.map((username) => {
+							const acct = Acct.parse(username);
+							return { username: acct.username, host: acct.host ?? IsNull() };
+						}),
+					],
+				});
+				userIds = users.map((u) => u.id);
+			}
 
-			this.queryService.generateVisibilityQuery(query, me);
-			this.queryService.generateMutedUserQuery(query, me);
-			this.queryService.generateBlockedUserQuery(query, me);
-
-			//検索不可チャンネルを除外
-			query.leftJoinAndSelect("note.channel", "channel").andWhere(
-				new Brackets((qb) => {
-					qb.orWhere("channel.searchable IS NULL");
-					qb.orWhere("channel.searchable = true");
-				}),
+			const notes = await this.searchService.searchNote(
+				"",
+				me,
+				{
+					userIds: userIds,
+					origin: antenna.localOnly ? "local" : undefined,
+					keywords: antenna.keywords,
+					excludeKeywords: antenna.excludeKeywords,
+					checkChannelSearchable: true,
+					reverseOrder: false,
+					hasFile: antenna.withFile,
+					includeReplies: antenna.withReplies,
+				},
+				{
+					untilId: ps.untilId,
+					sinceId: ps.sinceId,
+					limit: ps.limit,
+				},
 			);
-
-			const notes = await query.limit(ps.limit).getMany();
 
 			if (notes.length > 0) {
 				this.noteReadService.read(me.id, notes);

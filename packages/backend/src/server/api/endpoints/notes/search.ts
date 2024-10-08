@@ -55,6 +55,24 @@ export const paramDef = {
 				type: "string",
 			},
 		},
+		keywords: {
+			type: "array",
+			items: {
+				type: "array",
+				items: {
+					type: "string",
+				},
+			},
+		},
+		excludeKeywords: {
+			type: "array",
+			items: {
+				type: "array",
+				items: {
+					type: "string",
+				},
+			},
+		},
 		channelId: {
 			type: "string",
 			format: "misskey:id",
@@ -119,6 +137,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					userIds: userIds,
 					channelId: ps.channelId,
 					origin: ps.origin,
+					keywords: ps.keywords ?? [],
+					excludeKeywords: ps.excludeKeywords ?? [],
 					checkChannelSearchable: ps.checkChannelSearchable ?? true,
 					createAtBegin: ps.createAtBegin ?? undefined,
 					createAtEnd: ps.createAtEnd ?? undefined,

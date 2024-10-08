@@ -263,23 +263,6 @@ export class Note {
 	})
 	public renoteUserHost: string | null;
 
-	@Index()
-	@Column({
-		...id(),
-		array: true,
-		default: "{}",
-	})
-	public matchedAntennaIds: Antenna["id"][];
-
-	@Index()
-	@Column({
-		...id(),
-		array: true,
-		default: "{}",
-	})
-	public antennaChannelIds: Channel["id"][];
-	//#endregion
-
 	constructor(data: Partial<Note>) {
 		if (data == null) return;
 

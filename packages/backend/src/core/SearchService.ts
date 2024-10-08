@@ -272,6 +272,8 @@ export class SearchService {
 		opts: {
 			userIds?: Note["userId"][] | null;
 			channelId?: Note["channelId"] | null;
+			keywords?: string[][];
+			excludeKeywords?: string[][];
 			origin?: string;
 			checkChannelSearchable?: boolean;
 			createAtBegin?: number;
@@ -390,6 +392,90 @@ export class SearchService {
 			});
 		}
 
+		if (opts.keywords && opts.keywords.length > 0) {
+			const keywordsList = opts.keywords
+				// Clean up
+				.map((xs) => xs.filter((x) => x !== ""))
+				.filter((xs) => xs.length > 0);
+
+			if (keywordsList.length > 0) {
+				const filter = {
+					bool: {
+						should: [] as any[],
+						minimum_should_match: 1,
+					},
+				};
+
+				for (const keywords of keywordsList) {
+					const word = keywords.join(" ");
+					filter.bool.should.push({ wildcard: { text: { value: word } } });
+					filter.bool.should.push({
+						simple_query_string: {
+							fields: ["text"],
+							query: word,
+							default_operator: "and",
+						},
+					});
+					filter.bool.should.push({ wildcard: { cw: { value: word } } });
+					filter.bool.should.push({
+						simple_query_string: {
+							fields: ["cw"],
+							query: word,
+							default_operator: "and",
+						},
+					});
+				}
+
+				esFilter.bool.must.push(filter);
+			}
+		}
+
+		if (opts.excludeKeywords && opts.excludeKeywords.length > 0) {
+			const excludeKeywordsList = opts.excludeKeywords
+				// Clean up
+				.map((xs) => xs.filter((x) => x !== ""))
+				.filter((xs) => xs.length > 0);
+
+			if (excludeKeywordsList.length > 0) {
+				const filter = {
+					bool: {
+						must_not: {
+							bool: {
+								should: [] as any[],
+								minimum_should_match: 1,
+							},
+						},
+					},
+				};
+
+				for (const keywords of excludeKeywordsList) {
+					const word = keywords.join(" ");
+					filter.bool.must_not.bool.should.push({
+						wildcard: { text: { value: word } },
+					});
+					filter.bool.must_not.bool.should.push({
+						simple_query_string: {
+							fields: ["text"],
+							query: word,
+							default_operator: "and",
+						},
+					});
+					filter.bool.must_not.bool.should.push({
+						wildcard: { cw: { value: word } },
+					});
+					filter.bool.must_not.bool.should.push({
+						simple_query_string: {
+							fields: ["cw"],
+							query: word,
+							default_operator: "and",
+						},
+					});
+				}
+
+				esFilter.bool.must.push(filter);
+			}
+		}
+
 		if (opts.hasFile) {
 			esFilter.bool.must.push({
 				bool: { must: [{ term: { hasFile: true } }] },
@@ -401,6 +487,8 @@ export class SearchService {
 				bool: { must_not: [{ exists: { field: "replyId" } }] },
 			});
 		}
+
+		// console.log(JSON.stringify(esFilter, null, 2));
 
 		const res = await this.opensearch.search({
 			index: this.opensearchNoteIndex as string,
