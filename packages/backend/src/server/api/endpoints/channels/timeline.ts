@@ -147,7 +147,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				}
 				//#endregion
 
-				timeline = await query.limit(ps.limit).getMany();
+				try {
+					// ノート数が多い場合にタイムアウトする可能性がある
+					timeline = await query.limit(ps.limit).getMany();
+				} catch {
+					timeline = [];
+				}
 			} else {
 				const noteIds = noteIdsRes
 					.map((x) => x[1][1])
