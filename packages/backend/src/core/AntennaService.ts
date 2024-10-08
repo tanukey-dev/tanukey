@@ -112,8 +112,6 @@ export class AntennaService implements OnApplicationShutdown {
 			.filter(([, hit]) => hit)
 			.map(([antenna]) => antenna);
 
-		const redisPipeline = this.redisClient.pipeline();
-
 		for (const antenna of matchedAntennas) {
 			this.globalEventService.publishAntennaStream(antenna.id, "note", note);
 
@@ -130,11 +128,9 @@ export class AntennaService implements OnApplicationShutdown {
 			}
 		}
 
-		redisPipeline.exec();
-
 		await this.notesRepository.update(note.id, {
 			antennaChannelIds: note.antennaChannelIds,
-			antennaIds: antennas.map((ch) => ch.id),
+			matchedAntennaIds: matchedAntennas.map((an) => an.id),
 		});
 	}
 

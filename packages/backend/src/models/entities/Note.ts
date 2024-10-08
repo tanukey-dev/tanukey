@@ -269,7 +269,7 @@ export class Note {
 		array: true,
 		default: "{}",
 	})
-	public antennaIds: Antenna["id"][];
+	public matchedAntennaIds: Antenna["id"][];
 
 	@Index()
 	@Column({

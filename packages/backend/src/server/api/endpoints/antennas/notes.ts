@@ -82,8 +82,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			const query = this.notesRepository
 				.createQueryBuilder("note")
-				.andWhere("note.antennaIds != '{}'")
-				.andWhere(`'{"${antenna.id}"}' <@ note.antennaIds`)
+				.andWhere("note.matchedAntennaIds != '{}'")
+				.andWhere(`'{"${antenna.id}"}' <@ note.matchedAntennaIds`)
 				.innerJoinAndSelect("note.user", "user")
 				.leftJoinAndSelect("note.reply", "reply")
 				.leftJoinAndSelect("note.renote", "renote")
