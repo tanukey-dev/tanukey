@@ -68,9 +68,16 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		@Inject(DI.channelsRepository)
 		private channelsRepository: ChannelsRepository,
 
+		@Inject(DI.idService)
 		private idService: IdService,
+
+		@Inject(DI.noteEntityService)
 		private noteEntityService: NoteEntityService,
+
+		@Inject(DI.queryService)
 		private queryService: QueryService,
+
+		@Inject(DI.activeUsersChart)
 		private activeUsersChart: ActiveUsersChart,
 	) {
 		super(meta, paramDef, async (ps, me) => {

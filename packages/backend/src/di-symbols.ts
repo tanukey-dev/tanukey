@@ -103,4 +103,5 @@ export const DI = {
 	serverStatsChannelService: "ServerStatsChannelService",
 	queueStatsChannelService: "QueueStatsChannelService",
 	adminChannelService: "AdminChannelService",
+	idService: "IdService",
 };
