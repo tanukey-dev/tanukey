@@ -409,23 +409,31 @@ export class SearchService {
 			if (keywordsList.length > 0) {
 				const filter = {
 					bool: {
-						should: [] as any[],
-						minimum_should_match: 1,
+						must: {
+							bool: {
+								should: [] as any[],
+								minimum_should_match: 1,
+							},
+						},
 					},
 				};
 
 				for (const keywords of keywordsList) {
 					const word = keywords.join(" ");
-					filter.bool.should.push({ wildcard: { text: { value: word } } });
-					filter.bool.should.push({
+					filter.bool.must.bool.should.push({
+						wildcard: { text: { value: word } },
+					});
+					filter.bool.must.bool.should.push({
 						simple_query_string: {
 							fields: ["text"],
 							query: word,
 							default_operator: "and",
 						},
 					});
-					filter.bool.should.push({ wildcard: { cw: { value: word } } });
-					filter.bool.should.push({
+					filter.bool.must.bool.should.push({
+						wildcard: { cw: { value: word } },
+					});
+					filter.bool.must.bool.should.push({
 						simple_query_string: {
 							fields: ["cw"],
 							query: word,
@@ -499,11 +507,15 @@ export class SearchService {
 		if (opts.tags && opts.tags.length > 0) {
 			esFilter.bool.must.push({
 				bool: {
-					should: [
-						...opts.tags.map((tag) => {
-							return { wildcard: { tags: { value: tag } } };
-						}),
-					],
+					must: {
+						bool: {
+							should: [
+								...opts.tags.map((tag) => {
+									return { wildcard: { tags: { value: tag } } };
+								}),
+							],
+						},
+					},
 				},
 			});
 		}
