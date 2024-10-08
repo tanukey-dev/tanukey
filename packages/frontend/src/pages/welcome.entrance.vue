@@ -16,7 +16,8 @@
 		<div v-if="host === 'novelskey.tarbin.net' || host === 'dev.tarbin.net'" :class="$style.mainDescription">
 			<div :class="[$style.mainDescriptionItem, $style.panel]">
 				<div :class="$style.headerText">ノベルスキーとは</div>
-				<img :class="$style.descriptionImage" src="https://ostanukey.tarbin.net/assets/Novelskey_logo_B_4c.png">
+				<img :class="[$style.descriptionImage, $style.panelImg]"
+					src="https://ostanukey.tarbin.net/assets/Novelskey_logo_B_4c.png">
 				<div :class="$style.mainText">
 					<p>ノベルスキーは、作家・字書きや、小説など文字が好きな人のためのコミュニティです。</p>
 				</div>
@@ -25,7 +26,8 @@
 		<div v-if="host === 'otoskey.tarbin.net' || host === 'dev.tarbin.net'" :class="$style.mainDescription">
 			<div :class="[$style.mainDescriptionItem, $style.panel]">
 				<div :class="$style.headerText">おとすきーとは</div>
-				<img :class="$style.descriptionImage" src="https://ostanukey.tarbin.net/assets/Otoskey.png">
+				<img :class="[$style.descriptionImage, $style.panelImg]"
+					src="https://ostanukey.tarbin.net/assets/Otoskey.png">
 				<div :class="$style.mainText">
 					<p>おとすきーは、音楽が好きな人や音楽関係の創作者のためのコミュニティです。</p>
 				</div>
@@ -34,7 +36,8 @@
 		<div :class="$style.mainDescription">
 			<div :class="[$style.mainDescriptionItem, $style.panel]">
 				<div :class="$style.headerText">ActivityPubに対応した分散型SNS</div>
-				<img :class="$style.descriptionImage" src="https://ostanukey.tarbin.net/assets/landing-fediverse.png">
+				<img :class="[$style.descriptionImage, $style.panelImg]"
+					src="https://ostanukey.tarbin.net/assets/landing-fediverse.png">
 				<div :class="$style.mainText">
 					<p>Misskey fork の Tanukey を利用した分散型SNSサービスで ActivityPub に対応しており、Mastodon,
 						MisskeyなどのActivityPubに対応した他のSNSと相互にメッセージのやりとりが可能です。</p>
@@ -44,7 +47,7 @@
 		<div :class="$style.mainDescription">
 			<div :class="[$style.mainDescriptionItem, $style.panel]">
 				<div :class="$style.headerText">OpenSearchを利用した高速な検索</div>
-				<img :class="$style.descriptionImage"
+				<img :class="[$style.descriptionImage, $style.panelImg]"
 					src="https://ostanukey.tarbin.net/assets/opensearch_logo_default.png">
 				<div :class="$style.mainText">
 					<p>OpenSearchを利用しており、Fediverse内に投稿されたノートの高速な検索が可能です。</p>
@@ -110,12 +113,18 @@ function signup() {
 @import 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap';
 
 .root {
-	background-color: rgb(241, 241, 241);
+	background-color: var(--bg);
 	padding-bottom: 40px;
 }
 
 .panel {
 	background: var(--panel);
+	border-radius: var(--radius);
+	padding: 20px;
+}
+
+.panelImg {
+	background: rgb(255, 255, 255);
 	border-radius: var(--radius);
 	padding: 20px;
 }
@@ -189,7 +198,7 @@ function signup() {
 }
 
 .footer {
-	background-color: rgb(241, 241, 241);
+	background-color: var(--bg);
 	display: flex;
 	justify-content: center;
 	padding-top: 20px;
