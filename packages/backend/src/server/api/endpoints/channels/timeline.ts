@@ -136,8 +136,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 						{
 							userIds: userIds,
 							origin: "remote",
-							keywords: antenna.keywords,
-							excludeKeywords: antenna.excludeKeywords,
+							keywords: antenna.keywords ?? [],
+							excludeKeywords: antenna.excludeKeywords ?? [],
 							checkChannelSearchable: true,
 							reverseOrder: false,
 							hasFile: antenna.withFile,
@@ -174,7 +174,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const notes = await this.searchService.searchNoteWithFilter(
 				me,
 				filters,
-				true,
+				false,
 				false,
 				ps.limit,
 			);
