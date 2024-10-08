@@ -34,6 +34,8 @@ class ChannelChannel extends Channel {
 				id: this.channelId,
 			},
 		});
+
+		this.subscriber.on("notesStream", this.onNote);
 	}
 
 	@bindThis
