@@ -91,109 +91,62 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			let timeline: Note[] = [];
 
-			const limit = ps.limit + (ps.untilId ? 1 : 0); // untilIdに指定したものも含まれるため+1
-			let noteIdsRes: [string, string[]][] = [];
+			const query = this.queryService
+				.makePaginationQuery(
+					this.notesRepository.createQueryBuilder("note"),
+					ps.sinceId,
+					ps.untilId,
+					ps.sinceDate,
+					ps.untilDate,
+				)
+				.innerJoinAndSelect("note.user", "user")
+				.leftJoinAndSelect("note.reply", "reply")
+				.leftJoinAndSelect("note.renote", "renote")
+				.leftJoinAndSelect("reply.user", "replyUser")
+				.leftJoinAndSelect("renote.user", "renoteUser")
+				.leftJoinAndSelect("note.channel", "channel");
 
-			if (!ps.sinceId && !ps.sinceDate) {
-				noteIdsRes = await this.redisClient.xrevrange(
-					`channelTimeline:${channel.id}`,
-					ps.untilId
-						? this.idService.parse(ps.untilId).date.getTime()
-						: (ps.untilDate ?? "+"),
-					"-",
-					"COUNT",
-					limit,
-				);
+			query.andWhere(
+				new Brackets((qb) => {
+					qb.where("note.channelId = :channelId", { channelId: channel.id });
+					if (channel.tags && channel.tags.length > 0) {
+						qb.orWhere(
+							new Brackets((qb2) => {
+								qb2.where("note.userHost IS NULL");
+								qb2.andWhere("note.visibility = 'public'");
+								qb2.andWhere("note.tags != '{}'");
+								qb2.andWhere(
+									new Brackets((qb3) => {
+										for (const tag of channel.tags) {
+											if (!safeForSql(normalizeForSearch(tag))) continue;
+											qb3.orWhere(
+												`'{"${normalizeForSearch(tag)}"}' <@ note.tags`,
+											);
+										}
+									}),
+								);
+							}),
+						);
+					}
+					if (channel.antennaId && channel.antennaId !== "") {
+						qb.orWhere(
+							new Brackets((qb2) => {
+								qb2.where("note.userHost IS NOT NULL");
+								qb2.andWhere("note.antennaChannelIds != '{}'");
+								qb2.andWhere(`'{"${channel.id}"}' <@ note.antennaChannelIds`);
+							}),
+						);
+					}
+				}),
+			);
+
+			if (me) {
+				this.queryService.generateMutedUserQuery(query, me);
+				this.queryService.generateMutedNoteQuery(query, me);
+				this.queryService.generateBlockedUserQuery(query, me);
 			}
 
-			// redis から取得していないとき・取得数が足りないとき
-			// チャンネル作成直後が遅いのでその場合はRedisキャッシュのみ見る
-			if (noteIdsRes.length < limit && channel.notesCount > limit) {
-				//#region Construct query
-				const query = this.queryService
-					.makePaginationQuery(
-						this.notesRepository.createQueryBuilder("note"),
-						ps.sinceId,
-						ps.untilId,
-						ps.sinceDate,
-						ps.untilDate,
-					)
-					.innerJoinAndSelect("note.user", "user")
-					.leftJoinAndSelect("note.reply", "reply")
-					.leftJoinAndSelect("note.renote", "renote")
-					.leftJoinAndSelect("reply.user", "replyUser")
-					.leftJoinAndSelect("renote.user", "renoteUser")
-					.leftJoinAndSelect("note.channel", "channel");
-
-				query.andWhere(
-					new Brackets((qb) => {
-						qb.where("note.channelId = :channelId", { channelId: channel.id });
-						for (const tag of channel.tags) {
-							if (!safeForSql(normalizeForSearch(tag))) continue;
-							qb.orWhere(
-								new Brackets((qb2) => {
-									qb2.where("note.userHost IS NULL");
-									qb2.andWhere("note.visibility = 'public'");
-									qb2.andWhere("note.tags != {}");
-									qb2.andWhere(`'{"${normalizeForSearch(tag)}"}' <@ note.tags`);
-								}),
-							);
-						}
-						if (channel.antennaId && channel.antennaId !== "") {
-							qb.orWhere(
-								new Brackets((qb2) => {
-									qb2.where("note.userHost IS NOT NULL");
-									qb2.andWhere("note.antennaChannelIds != {}");
-									qb2.andWhere(`'{"${channel.id}"}' <@ note.antennaChannelIds`);
-								}),
-							);
-						}
-					}),
-				);
-
-				if (me) {
-					this.queryService.generateMutedUserQuery(query, me);
-					this.queryService.generateMutedNoteQuery(query, me);
-					this.queryService.generateBlockedUserQuery(query, me);
-				}
-				//#endregion
-
-				try {
-					// ノート数が多い場合にタイムアウトする可能性がある
-					timeline = await query.limit(ps.limit).getMany();
-				} catch {
-					timeline = [];
-				}
-			} else {
-				const noteIds = noteIdsRes
-					.map((x) => x[1][1])
-					.filter((x) => x !== ps.untilId);
-
-				if (noteIds.length === 0) {
-					return [];
-				}
-
-				//#region Construct query
-				const query = this.notesRepository
-					.createQueryBuilder("note")
-					.where("note.id IN (:...noteIds)", { noteIds: noteIds })
-					.innerJoinAndSelect("note.user", "user")
-					.leftJoinAndSelect("note.reply", "reply")
-					.leftJoinAndSelect("note.renote", "renote")
-					.leftJoinAndSelect("reply.user", "replyUser")
-					.leftJoinAndSelect("renote.user", "renoteUser")
-					.leftJoinAndSelect("note.channel", "channel");
-
-				if (me) {
-					this.queryService.generateMutedUserQuery(query, me);
-					this.queryService.generateMutedNoteQuery(query, me);
-					this.queryService.generateBlockedUserQuery(query, me);
-				}
-				//#endregion
-
-				timeline = await query.getMany();
-				timeline.sort((a, b) => (a.id > b.id ? -1 : 1));
-			}
+			timeline = await query.limit(ps.limit).getMany();
 
 			if (me) this.activeUsersChart.read(me);
 

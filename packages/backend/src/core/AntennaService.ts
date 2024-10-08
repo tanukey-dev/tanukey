@@ -137,17 +137,6 @@ export class AntennaService implements OnApplicationShutdown {
 				note.antennaChannelIds = note.antennaChannelIds.concat(
 					channels.map((ch) => ch.id),
 				);
-				for (const channel of channels) {
-					redisPipeline.xadd(
-						`channelTimeline:${channel.id}`,
-						"MAXLEN",
-						"~",
-						"1000",
-						"*",
-						"note",
-						note.id,
-					);
-				}
 			}
 		}
 
