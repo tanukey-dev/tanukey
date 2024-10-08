@@ -6,7 +6,6 @@ import type NotesChart from "@/core/chart/charts/notes.js";
 import { bindThis } from "@/decorators.js";
 import { DI } from "@/di-symbols.js";
 import type Logger from "@/logger.js";
-import { sqlLikeEscape } from "@/misc/sql-like-escape.js";
 import { Note } from "@/models/entities/Note.js";
 import { User } from "@/models/index.js";
 import type { NotesRepository } from "@/models/index.js";
@@ -151,7 +150,11 @@ export class SearchService {
 	}
 
 	@bindThis
-	public async indexNote(note: Note): Promise<void> {
+	public async indexNote(
+		note: Note,
+		refresh: boolean,
+		callback: () => void,
+	): Promise<void> {
 		if (this.opensearch) {
 			const body = {
 				createdAt: this.idService.parse(note.id).date.getTime(),
@@ -168,15 +171,17 @@ export class SearchService {
 				hasFile: note.fileIds.length !== 0,
 			};
 
-			await this.opensearch
-				.index({
+			this.opensearch.index(
+				{
 					index: this.opensearchNoteIndex as string,
 					id: note.id,
+					refresh: refresh ? "wait_for" : false,
 					body: body,
-				})
-				.catch((e) => {
-					this.logger.error(`index error: ${note.id}`);
-				});
+				},
+				() => {
+					callback();
+				},
+			);
 		}
 	}
 
@@ -220,7 +225,7 @@ export class SearchService {
 		let tmplastId = null;
 		for (const note of notes) {
 			try {
-				this.indexNote(note);
+				this.indexNote(note, false, () => {});
 			} catch (e) {
 				this.logger.error(`index note error: ${note.id}`);
 				throw e;
@@ -283,6 +288,7 @@ export class SearchService {
 			includeReplies?: boolean;
 		},
 		pagination: {
+			equal?: Note["id"];
 			untilId?: Note["id"];
 			sinceId?: Note["id"];
 			limit?: number;
@@ -293,7 +299,13 @@ export class SearchService {
 		}
 
 		const esFilter: any = { bool: { must: [] } };
-		if (opts.reverseOrder) {
+		if (pagination.equal) {
+			esFilter.bool.must.push({
+				term: {
+					createdAt: this.idService.parse(pagination.equal).date.getTime(),
+				},
+			});
+		} else if (opts.reverseOrder) {
 			if (pagination.untilId)
 				esFilter.bool.must.push({
 					range: {
@@ -328,7 +340,7 @@ export class SearchService {
 					},
 				});
 		}
-		if (opts.userIds) {
+		if (opts.userIds && opts.userIds.length > 0) {
 			esFilter.bool.must.push({
 				bool: {
 					should: [
@@ -488,7 +500,7 @@ export class SearchService {
 			});
 		}
 
-		// console.log(JSON.stringify(esFilter, null, 2));
+		console.log(JSON.stringify(esFilter, null, 2));
 
 		const res = await this.opensearch.search({
 			index: this.opensearchNoteIndex as string,

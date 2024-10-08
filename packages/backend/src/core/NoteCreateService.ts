@@ -635,8 +635,6 @@ export class NoteCreateService implements OnApplicationShutdown {
 				}
 			});
 
-		this.antennaService.addNoteToAntennas(note, user);
-
 		if (data.reply) {
 			this.saveReply(data.reply, note);
 		}
@@ -866,7 +864,10 @@ export class NoteCreateService implements OnApplicationShutdown {
 		}
 
 		// Register to search database
-		this.index(note);
+		this.index(note, () => {
+			// OpenSearch依存なので必ずインデックス後に実施する
+			this.antennaService.addNoteToAntennas(note, user);
+		});
 	}
 
 	@bindThis
@@ -990,8 +991,8 @@ export class NoteCreateService implements OnApplicationShutdown {
 	}
 
 	@bindThis
-	private index(note: Note) {
-		this.searchService.indexNote(note);
+	private index(note: Note, callback: () => void) {
+		this.searchService.indexNote(note, true, callback);
 	}
 
 	@bindThis

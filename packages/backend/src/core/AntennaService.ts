@@ -4,6 +4,8 @@ import { PushNotificationService } from "@/core/PushNotificationService.js";
 import { UtilityService } from "@/core/UtilityService.js";
 import { AntennaEntityService } from "@/core/entities/AntennaEntityService.js";
 import { NoteEntityService } from "@/core/entities/NoteEntityService.js";
+import type { UsersRepository } from "@/models/index.js";
+import type { SearchService } from "@/core/SearchService.js";
 import { bindThis } from "@/decorators.js";
 import { DI } from "@/di-symbols.js";
 import * as Acct from "@/misc/acct.js";
@@ -23,6 +25,7 @@ import { StreamMessages } from "@/server/api/stream/types.js";
 import { Inject, Injectable } from "@nestjs/common";
 import type { OnApplicationShutdown } from "@nestjs/common";
 import * as Redis from "ioredis";
+import { IsNull } from "typeorm";
 
 @Injectable()
 export class AntennaService implements OnApplicationShutdown {
@@ -50,6 +53,12 @@ export class AntennaService implements OnApplicationShutdown {
 
 		@Inject(DI.userListJoiningsRepository)
 		private userListJoiningsRepository: UserListJoiningsRepository,
+
+		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
+
+		@Inject(DI.searchService)
+		private searchService: SearchService,
 
 		private utilityService: UtilityService,
 		private idService: IdService,
@@ -128,86 +137,39 @@ export class AntennaService implements OnApplicationShutdown {
 		if (note.visibility === "specified") return false;
 		if (note.visibility === "followers") return false;
 
-		if (antenna.localOnly && noteUser.host != null) return false;
-
-		if (!antenna.withReplies && note.replyId != null) return false;
-
-		if (antenna.src === "home") {
-			// TODO
-		} else if (antenna.src === "list") {
-			const listUsers = (
-				await this.userListJoiningsRepository.findBy({
-					userListId: antenna.userListId!,
-				})
-			).map((x) => x.userId);
-
-			if (!listUsers.includes(note.userId)) return false;
-		} else if (antenna.src === "users") {
-			const accts = antenna.users.map((x) => {
-				const { username, host } = Acct.parse(x);
-				return this.utilityService
-					.getFullApAccount(username, host)
-					.toLowerCase();
+		let userIds: string[] = [];
+		if (antenna.users) {
+			const users = await this.usersRepository.find({
+				where: [
+					...antenna.users.map((username) => {
+						const acct = Acct.parse(username);
+						return { username: acct.username, host: acct.host ?? IsNull() };
+					}),
+				],
 			});
-			if (
-				!accts.includes(
-					this.utilityService
-						.getFullApAccount(noteUser.username, noteUser.host)
-						.toLowerCase(),
-				)
-			)
-				return false;
+			userIds = users.map((u) => u.id);
 		}
 
-		const keywords = antenna.keywords
-			// Clean up
-			.map((xs) => xs.filter((x) => x !== ""))
-			.filter((xs) => xs.length > 0);
+		const notes = await this.searchService.searchNote(
+			"",
+			null,
+			{
+				userIds: userIds,
+				origin: antenna.localOnly ? "local" : undefined,
+				keywords: antenna.keywords,
+				excludeKeywords: antenna.excludeKeywords,
+				checkChannelSearchable: true,
+				reverseOrder: false,
+				hasFile: antenna.withFile,
+				includeReplies: antenna.withReplies,
+			},
+			{
+				equal: note.id,
+				limit: 1,
+			},
+		);
 
-		if (keywords.length > 0) {
-			if (note.text == null && note.cw == null) return false;
-
-			const _text = (note.text ?? "") + "\n" + (note.cw ?? "");
-
-			const matched = keywords.some((and) =>
-				and.every((keyword) =>
-					antenna.caseSensitive
-						? _text.includes(keyword)
-						: _text.toLowerCase().includes(keyword.toLowerCase()),
-				),
-			);
-
-			if (!matched) return false;
-		}
-
-		const excludeKeywords = antenna.excludeKeywords
-			// Clean up
-			.map((xs) => xs.filter((x) => x !== ""))
-			.filter((xs) => xs.length > 0);
-
-		if (excludeKeywords.length > 0) {
-			if (note.text == null && note.cw == null) return false;
-
-			const _text = (note.text ?? "") + "\n" + (note.cw ?? "");
-
-			const matched = excludeKeywords.some((and) =>
-				and.every((keyword) =>
-					antenna.caseSensitive
-						? _text.includes(keyword)
-						: _text.toLowerCase().includes(keyword.toLowerCase()),
-				),
-			);
-
-			if (matched) return false;
-		}
-
-		if (antenna.withFile) {
-			if (note.fileIds && note.fileIds.length === 0) return false;
-		}
-
-		// TODO: eval expression
-
-		return true;
+		return notes.length > 0;
 	}
 
 	@bindThis
