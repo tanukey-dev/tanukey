@@ -155,9 +155,6 @@ export class AntennaService implements OnApplicationShutdown {
 
 		await this.notesRepository.update(note.id, {
 			antennaChannelIds: note.antennaChannelIds,
-		});
-
-		await this.notesRepository.update(note.id, {
 			antennaIds: antennas.map((ch) => ch.id),
 		});
 	}
