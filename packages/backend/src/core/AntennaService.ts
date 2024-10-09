@@ -65,7 +65,7 @@ export class AntennaService {
 		if (note.visibility === "followers") return false;
 
 		let userIds: string[] = [];
-		if (antenna.users) {
+		if (antenna.users && antenna.users.length > 0) {
 			const users = await this.usersRepository.find({
 				where: [
 					...antenna.users.map((username) => {
