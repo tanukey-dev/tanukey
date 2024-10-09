@@ -120,16 +120,23 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					},
 				});
 
-				if (antenna?.users) {
-					const users = await usersRepository.find({
-						where: [
-							...antenna.users.map((username) => {
-								const acct = Acct.parse(username);
-								return { username: acct.username, host: acct.host ?? IsNull() };
-							}),
-						],
-					});
-					const userIds = users.map((u) => u.id);
+				if (antenna) {
+					let userIds: string[] = [];
+
+					if (antenna.users && antenna.users.length > 0) {
+						const users = await usersRepository.find({
+							where: [
+								...antenna.users.map((username) => {
+									const acct = Acct.parse(username);
+									return {
+										username: acct.username,
+										host: acct.host ?? IsNull(),
+									};
+								}),
+							],
+						});
+						userIds = users.map((u) => u.id);
+					}
 
 					const antennaFilter = await this.searchService.getFilter(
 						"",
