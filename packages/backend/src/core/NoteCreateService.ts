@@ -59,7 +59,6 @@ import type {
 	UsersRepository,
 } from "@/models/index.js";
 import { Inject, Injectable, OnApplicationShutdown } from "@nestjs/common";
-import * as Redis from "ioredis";
 import RE2 from "re2";
 import * as mfm from "tfm-js";
 import { DataSource, In } from "typeorm";
@@ -170,9 +169,6 @@ export class NoteCreateService implements OnApplicationShutdown {
 
 		@Inject(DI.db)
 		private db: DataSource,
-
-		@Inject(DI.redis)
-		private redisClient: Redis.Redis,
 
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,

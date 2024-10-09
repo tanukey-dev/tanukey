@@ -1,58 +1,25 @@
-import { GlobalEventService } from "@/core/GlobalEventService.js";
-import { IdService } from "@/core/IdService.js";
-import { PushNotificationService } from "@/core/PushNotificationService.js";
-import { UtilityService } from "@/core/UtilityService.js";
-import { AntennaEntityService } from "@/core/entities/AntennaEntityService.js";
-import { NoteEntityService } from "@/core/entities/NoteEntityService.js";
+import type { GlobalEventService } from "@/core/GlobalEventService.js";
 import type { UsersRepository } from "@/models/index.js";
 import type { SearchService } from "@/core/SearchService.js";
 import { bindThis } from "@/decorators.js";
 import { DI } from "@/di-symbols.js";
 import * as Acct from "@/misc/acct.js";
-import { isUserRelated } from "@/misc/is-user-related.js";
 import type { Packed } from "@/misc/json-schema.js";
 import type { Antenna } from "@/models/entities/Antenna.js";
 import type { Note } from "@/models/entities/Note.js";
 import type { User } from "@/models/entities/User.js";
-import type {
-	AntennasRepository,
-	ChannelsRepository,
-	MutingsRepository,
-	NotesRepository,
-	UserListJoiningsRepository,
-} from "@/models/index.js";
-import { StreamMessages } from "@/server/api/stream/types.js";
+import type { AntennasRepository } from "@/models/index.js";
 import { Inject, Injectable } from "@nestjs/common";
-import type { OnApplicationShutdown } from "@nestjs/common";
-import * as Redis from "ioredis";
 import { IsNull } from "typeorm";
 
 @Injectable()
-export class AntennaService implements OnApplicationShutdown {
+export class AntennaService {
 	private antennasFetched: boolean;
 	private antennas: Antenna[];
 
 	constructor(
-		@Inject(DI.redis)
-		private redisClient: Redis.Redis,
-
-		@Inject(DI.redisForSub)
-		private redisForSub: Redis.Redis,
-
-		@Inject(DI.mutingsRepository)
-		private mutingsRepository: MutingsRepository,
-
-		@Inject(DI.notesRepository)
-		private notesRepository: NotesRepository,
-
 		@Inject(DI.antennasRepository)
 		private antennasRepository: AntennasRepository,
-
-		@Inject(DI.channelsRepository)
-		private channelsRepository: ChannelsRepository,
-
-		@Inject(DI.userListJoiningsRepository)
-		private userListJoiningsRepository: UserListJoiningsRepository,
 
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
@@ -60,48 +27,10 @@ export class AntennaService implements OnApplicationShutdown {
 		@Inject(DI.searchService)
 		private searchService: SearchService,
 
-		private utilityService: UtilityService,
-		private idService: IdService,
 		private globalEventService: GlobalEventService,
-		private pushNotificationService: PushNotificationService,
-		private noteEntityService: NoteEntityService,
-		private antennaEntityService: AntennaEntityService,
 	) {
 		this.antennasFetched = false;
 		this.antennas = [];
-
-		this.redisForSub.on("message", this.onRedisMessage);
-	}
-
-	@bindThis
-	private async onRedisMessage(_: string, data: string): Promise<void> {
-		const obj = JSON.parse(data);
-
-		if (obj.channel === "internal") {
-			const { type, body } =
-				obj.message as StreamMessages["internal"]["payload"];
-			switch (type) {
-				case "antennaCreated":
-					this.antennas.push({
-						...body,
-						createdAt: new Date(body.createdAt),
-						lastUsedAt: new Date(body.lastUsedAt),
-					});
-					break;
-				case "antennaUpdated":
-					this.antennas[this.antennas.findIndex((a) => a.id === body.id)] = {
-						...body,
-						createdAt: new Date(body.createdAt),
-						lastUsedAt: new Date(body.lastUsedAt),
-					};
-					break;
-				case "antennaDeleted":
-					this.antennas = this.antennas.filter((a) => a.id !== body.id);
-					break;
-				default:
-					break;
-			}
-		}
 	}
 
 	@bindThis
@@ -112,7 +41,7 @@ export class AntennaService implements OnApplicationShutdown {
 		const antennas = await this.getAntennas();
 		const antennasWithMatchResult = await Promise.all(
 			antennas.map((antenna) =>
-				this.checkHitAntenna(antenna, note, noteUser).then(
+				this.checkHitAntenna(antenna, note).then(
 					(hit) => [antenna, hit] as const,
 				),
 			),
@@ -126,13 +55,10 @@ export class AntennaService implements OnApplicationShutdown {
 		}
 	}
 
-	// NOTE: フォローしているユーザーのノート、リストのユーザーのノート、グループのユーザーのノート指定はパフォーマンス上の理由で無効になっている
-
 	@bindThis
 	public async checkHitAntenna(
 		antenna: Antenna,
 		note: Note | Packed<"Note">,
-		noteUser: { id: User["id"]; username: string; host: string | null },
 	): Promise<boolean> {
 		if (note.visibility === "specified") return false;
 		if (note.visibility === "followers") return false;
@@ -182,15 +108,5 @@ export class AntennaService implements OnApplicationShutdown {
 		}
 
 		return this.antennas;
-	}
-
-	@bindThis
-	public dispose(): void {
-		this.redisForSub.off("message", this.onRedisMessage);
-	}
-
-	@bindThis
-	public onApplicationShutdown(signal?: string | undefined): void {
-		this.dispose();
 	}
 }
