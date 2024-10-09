@@ -27,6 +27,7 @@ export class AntennaService {
 		@Inject(DI.searchService)
 		private searchService: SearchService,
 
+		@Inject(DI.globalEventService)
 		private globalEventService: GlobalEventService,
 	) {
 		this.antennasFetched = false;

@@ -107,4 +107,5 @@ export const DI = {
 	noteReadService: "NoteReadService",
 	userPointService: "UserPointService",
 	channelEntityService: "ChannelEntityService",
+	globalEventService: "GlobalEventService",
 };

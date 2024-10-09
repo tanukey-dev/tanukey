@@ -605,7 +605,7 @@ export class SearchService {
 			}
 		}
 
-		console.log(JSON.stringify(filter, null, 2));
+		// console.log(JSON.stringify(filter, null, 2));
 
 		const res = await this.opensearch.search({
 			index: this.opensearchNoteIndex as string,
