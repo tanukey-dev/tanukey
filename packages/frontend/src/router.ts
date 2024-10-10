@@ -1,4 +1,5 @@
 import { $i, iAmAdmin, iAmModerator } from "@/account";
+import { ui } from "@/config";
 import { Router } from "@/nirax";
 import MkError from "@/pages/_error_.vue";
 import MkLoading from "@/pages/_loading_.vue";
@@ -728,7 +729,7 @@ export const routes = [
 	{
 		name: "index",
 		path: "/",
-		redirect: $i ? "/secure/timeline" : undefined,
+		redirect: $i ? (ui === "deck" ? "/secure" : "/secure/timeline") : undefined,
 		component: page(() => import("./pages/welcome.vue")),
 		globalCacheKey: "index",
 	},

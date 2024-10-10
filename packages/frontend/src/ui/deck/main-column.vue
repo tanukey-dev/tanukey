@@ -1,16 +1,16 @@
 <template>
-<XColumn v-if="deckStore.state.alwaysShowMainColumn || mainRouter.currentRoute.value.name !== 'index'" :column="column" :isStacked="isStacked">
-	<template #header>
-		<template v-if="pageMetadata?.value">
-			<i :class="pageMetadata?.value.icon"></i>
-			{{ pageMetadata?.value.title }}
+	<XColumn v-if="deckStore.state.alwaysShowMainColumn || currentPath !== '/'" :column="column" :isStacked="isStacked">
+		<template #header>
+			<template v-if="pageMetadata?.value">
+				<i :class="pageMetadata?.value.icon"></i>
+				{{ pageMetadata?.value.title }}
+			</template>
 		</template>
-	</template>
 
-	<div ref="contents">
-		<RouterView @contextmenu.stop="onContextmenu"/>
-	</div>
-</XColumn>
+		<div ref="contents">
+			<RouterView @contextmenu.stop="onContextmenu" />
+		</div>
+	</XColumn>
 </template>
 
 <script lang="ts" setup>
@@ -23,6 +23,7 @@ import { mainRouter } from "@/router";
 import { PageMetadata, provideMetadataReceiver } from "@/scripts/page-metadata";
 import { useScrollPositionManager } from "@/nirax";
 import { getScrollContainer } from "@/scripts/scroll";
+import RouterView from "@/components/global/RouterView.vue";
 
 defineProps<{
 	column: Column;
@@ -31,6 +32,7 @@ defineProps<{
 
 const contents = shallowRef<HTMLElement>();
 let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
+const currentPath = mainRouter.getCurrentPathRef();
 
 provide("router", mainRouter);
 provideMetadataReceiver((info) => {

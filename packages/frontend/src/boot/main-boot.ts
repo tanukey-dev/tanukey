@@ -26,7 +26,7 @@ export async function mainBoot() {
 	const { isClientUpdated } = await common(() => {
 		const app = createApp(
 			new URLSearchParams(window.location.search).has("zen") ||
-				(ui === "deck" && location.pathname !== "/")
+				(ui === "deck" && location.pathname !== "/secure")
 				? defineAsyncComponent(() => import("@/ui/zen.vue"))
 				: !$i
 					? defineAsyncComponent(() => import("@/ui/visitor.vue"))
