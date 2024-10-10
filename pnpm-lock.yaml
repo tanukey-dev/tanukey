@@ -335,8 +335,8 @@ importers:
         specifier: 14.18.0
         version: 14.18.0
       summaly:
-        specifier: github:mei23/summaly
-        version: https://codeload.github.com/mei23/summaly/tar.gz/c678c89de57544fa01899c05578b1f3f3bc973a2
+        specifier: github:tanukey-dev/summaly
+        version: https://codeload.github.com/tanukey-dev/summaly/tar.gz/c678c89de57544fa01899c05578b1f3f3bc973a2
       systeminformation:
         specifier: 5.17.16
         version: 5.17.16
@@ -7535,8 +7535,8 @@ packages:
     resolution: {integrity: sha512-pQ+V+nYQdC5H3Q7qBZAz/MO6lwGhoC2gOAjuouGf/VO0m7vQRh8QNMl2Uf6SwAtzZ9bOw3UIeBukEGNJl5dtXQ==}
     engines: {node: '>=14.16'}
 
-  summaly@https://codeload.github.com/mei23/summaly/tar.gz/c678c89de57544fa01899c05578b1f3f3bc973a2:
-    resolution: {tarball: https://codeload.github.com/mei23/summaly/tar.gz/c678c89de57544fa01899c05578b1f3f3bc973a2}
+  summaly@https://codeload.github.com/tanukey-dev/summaly/tar.gz/c678c89de57544fa01899c05578b1f3f3bc973a2:
+    resolution: {tarball: https://codeload.github.com/tanukey-dev/summaly/tar.gz/c678c89de57544fa01899c05578b1f3f3bc973a2}
     version: 3.14.0
 
   supports-color@2.0.0:
@@ -16534,7 +16534,7 @@ snapshots:
       '@tokenizer/token': 0.3.0
       peek-readable: 5.0.0
 
-  summaly@https://codeload.github.com/mei23/summaly/tar.gz/c678c89de57544fa01899c05578b1f3f3bc973a2:
+  summaly@https://codeload.github.com/tanukey-dev/summaly/tar.gz/c678c89de57544fa01899c05578b1f3f3bc973a2:
     dependencies:
       cheerio: 1.0.0-rc.12
       escape-regexp: 0.0.1

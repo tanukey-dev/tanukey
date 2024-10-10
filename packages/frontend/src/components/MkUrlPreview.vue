@@ -47,7 +47,7 @@
 					<MkEllipsis />
 				</p>
 				<p v-else-if="description" :class="$style.text" :title="description">{{ description.length > 85 ?
-		description.slice(0, 85) + '…' : description }}</p>
+					description.slice(0, 85) + '…' : description }}</p>
 				<footer :class="$style.footer">
 					<img v-if="icon" :class="$style.siteIcon" :src="icon" />
 					<p v-if="unknownUrl" :class="$style.siteName">{{ requestUrl.host }}</p>
@@ -55,7 +55,7 @@
 						<MkEllipsis />
 					</p>
 					<p v-else :class="$style.siteName" :title="sitename ?? requestUrl.host">{{ sitename ??
-		requestUrl.host
+						requestUrl.host
 						}}</p>
 				</footer>
 			</article>
@@ -80,7 +80,6 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, onDeactivated, onUnmounted, ref } from "vue";
-import type { summaly } from "@misskey-dev/summaly";
 import { url as local } from "@/config.js";
 import { i18n } from "@/i18n.js";
 import * as os from "@/os.js";
@@ -89,8 +88,6 @@ import MkButton from "@/components/MkButton.vue";
 import { versatileLang } from "@/scripts/intl-const.js";
 import { transformPlayerUrl } from "@/scripts/player-url-transform.js";
 import { defaultStore } from "@/store.js";
-
-type SummalyResult = Awaited<ReturnType<typeof summaly>>;
 
 const props = withDefaults(
 	defineProps<{
@@ -125,7 +122,7 @@ const player = ref({
 	url: null,
 	width: null,
 	height: null,
-} as SummalyResult["player"]);
+});
 const playerEnabled = ref(false);
 const tweetId = ref<string | null>(null);
 const tweetExpanded = ref(props.detail);
@@ -174,7 +171,7 @@ window
 
 		return res.json();
 	})
-	.then((info: SummalyResult | null) => {
+	.then((info: any | null) => {
 		if (!info || info.url == null) {
 			fetching.value = false;
 			unknownUrl.value = true;
