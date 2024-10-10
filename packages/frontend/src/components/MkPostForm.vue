@@ -811,7 +811,7 @@ async function onPaste(ev: ClipboardEvent) {
 
 	const paste = ev.clipboardData.getData("text");
 
-	if (!props.renote && !quoteId && paste.startsWith(url + "/notes/")) {
+	if (!props.renote && !quoteId && (paste.startsWith(url + "/notes/") || paste.startsWith(url + "/secure/notes/"))) {
 		ev.preventDefault();
 
 		os.confirm({
@@ -823,7 +823,7 @@ async function onPaste(ev: ClipboardEvent) {
 				return;
 			}
 
-			quoteId = paste.substr(url.length).match(/^\/notes\/(.+?)\/?$/)[1];
+			quoteId = paste.substr(url.length).match(/^(\/secure)?\/notes\/(.+?)\/?$/)[2];
 		});
 	}
 }

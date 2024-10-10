@@ -1,16 +1,18 @@
 <template>
-<MkA v-user-preview="canonical" :class="[$style.root, { [$style.isMe]: isMe }]" :to="url" :style="{ background: bgCss }" :external="external">
-	<img :class="$style.icon" :src="`/avatar/@${username}@${host}`" alt="">
-	<span>
-		<span>@{{ username }}</span>
-		<span v-if="(host != localHost) || defaultStore.state.showFullAcct" :class="$style.host">@{{ toUnicode(host) }}</span>
-	</span>
-</MkA>
+	<MkA v-user-preview="canonical" :class="[$style.root, { [$style.isMe]: isMe }]" :to="url"
+		:style="{ background: bgCss }" :external="external">
+		<img :class="$style.icon" :src="`/avatar/@${username}@${host}`" alt="">
+		<span>
+			<span>@{{ username }}</span>
+			<span v-if="(host != localHost) || defaultStore.state.showFullAcct" :class="$style.host">@{{ toUnicode(host)
+				}}</span>
+		</span>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
 import { toUnicode } from "punycode";
-import {} from "vue";
+import { } from "vue";
 import tinycolor from "tinycolor2";
 import { host as localHost } from "@/config";
 import { $i } from "@/account";
@@ -27,12 +29,12 @@ const canonical =
 		? `@${props.username}`
 		: `@${props.username}@${toUnicode(props.host)}`;
 
-const url = `/${canonical}`;
+const url = `/secure/${canonical}`;
 
 const isMe =
 	$i &&
 	`@${props.username}@${toUnicode(props.host)}` ===
-		`@${$i.username}@${toUnicode(localHost)}`.toLowerCase();
+	`@${$i.username}@${toUnicode(localHost)}`.toLowerCase();
 
 const bg = tinycolor(
 	getComputedStyle(document.documentElement).getPropertyValue(
