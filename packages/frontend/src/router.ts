@@ -48,70 +48,77 @@ export const routes = [
 	},
 	{
 		path: "/@:initUser/pages/:initPageName/view-source",
-		redirect: () =>
-			$i ? "/secure/@:initUser/pages/:initPageName/view-source" : undefined,
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/page-editor/page-editor.vue")),
 	},
 	{
 		path: "/@:username/pages/:pageName",
-		redirect: () => ($i ? "/secure/@:username/pages/:pageName" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/page.vue")),
 	},
 	{
 		path: "/@:acct/following",
-		redirect: () => ($i ? "/secure/@:acct/following" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/user/following.vue")),
 	},
 	{
 		path: "/@:acct/followers",
-		redirect: () => ($i ? "/secure/@:acct/followers" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/user/followers.vue")),
 	},
 	{
-		name: "user",
 		path: "/@:acct/:page?",
-		redirect: () => ($i ? "/secure/@:acct/:page?" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/user/index.vue")),
 	},
 	{
-		name: "note",
 		path: "/notes/:noteId",
-		redirect: () => ($i ? "/secure/notes/:noteId" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/note.vue")),
 	},
 	{
+		path: "/list/:listId",
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
+		component: page(() => import("./pages/list.vue")),
+	},
+	{
+		path: "/clips/:clipId",
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
+		component: page(() => import("./pages/clip.vue")),
+	},
+	{
 		path: "/channels",
-		redirect: () => ($i ? "/secure/channels" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/channels.vue")),
 	},
 	{
 		path: "/channels/:channelId",
-		redirect: () => ($i ? "/secure/channels/:channelId" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/channel.vue")),
 	},
 	{
 		path: "/events",
-		redirect: () => ($i ? "/secure/events" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/events.vue")),
 	},
 	{
 		path: "/events/:eventId",
-		redirect: () => ($i ? "/secure/events/:eventId" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/event.vue")),
 	},
 	{
 		path: "/events/:eventId/:eventCircleId",
-		redirect: () => ($i ? "/secure/events/:eventId/:eventCircleId" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/event-circle.vue")),
 	},
 	{
 		path: "/circles",
-		redirect: () => ($i ? "/circles" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/circles.vue")),
 	},
 	{
 		path: "/circles/:circleId",
-		redirect: () => ($i ? "/circles/:circleId" : undefined),
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/circle.vue")),
 	},
 	// need login
@@ -127,42 +134,50 @@ export const routes = [
 			},
 			{
 				path: "/@:initUser/pages/:initPageName/view-source",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/page-editor/page-editor.vue")),
 			},
 			{
 				path: "/@:username/pages/:pageName",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/page.vue")),
 			},
 			{
 				path: "/@:acct/following",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/user/following.vue")),
 			},
 			{
 				path: "/@:acct/followers",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/user/followers.vue")),
 			},
 			{
-				name: "user",
 				path: "/@:acct/:page?",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/user/index.vue")),
 			},
 			{
-				name: "note",
 				path: "/notes/:noteId",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/note.vue")),
 			},
 			{
-				name: "note",
-				path: "/notes/:noteId",
-				component: page(() => import("./pages/note.vue")),
-			},
-			{
-				name: "list",
 				path: "/list/:listId",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/list.vue")),
 			},
 			{
 				path: "/clips/:clipId",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/clip.vue")),
 			},
 			{
@@ -286,14 +301,20 @@ export const routes = [
 			},
 			{
 				path: "/channels",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/channels.vue")),
 			},
 			{
 				path: "/channels/:channelId",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/channel.vue")),
 			},
 			{
 				path: "/events",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/events.vue")),
 			},
 			{
@@ -314,18 +335,26 @@ export const routes = [
 			},
 			{
 				path: "/events/:eventId",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/event.vue")),
 			},
 			{
 				path: "/events/:eventId/:eventCircleId",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/event-circle.vue")),
 			},
 			{
 				path: "/circles",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/circles.vue")),
 			},
 			{
 				path: "/circles/:circleId",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/circle.vue")),
 			},
 			{

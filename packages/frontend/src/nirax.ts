@@ -10,7 +10,7 @@ type RouteDef = {
 	component: Component;
 	query?: Record<string, string>;
 	loginRequired?: boolean;
-	redirect?: () => string | undefined;
+	redirect?: (path: string) => string | undefined;
 	name?: string;
 	hash?: string;
 	globalCacheKey?: string;
@@ -241,17 +241,25 @@ export class Router extends EventEmitter<{
 			throw new Error("no route found for: " + path);
 		}
 
-		if (res.route.loginRequired) {
-			if (!$i) {
-				location.href = "/";
+		if (res.child?.route.redirect) {
+			const redirectUrl = res.child.route.redirect(this.currentPath.value);
+			if (redirectUrl) {
+				location.href = redirectUrl;
 				return;
 			}
 		}
 
 		if (res.route.redirect) {
-			const redirectUrl = res.route.redirect();
+			const redirectUrl = res.route.redirect(this.currentPath.value);
 			if (redirectUrl) {
 				location.href = redirectUrl;
+				return;
+			}
+		}
+
+		if (res.route.loginRequired) {
+			if (!$i) {
+				location.href = "/";
 				return;
 			}
 		}

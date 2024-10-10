@@ -1,6 +1,5 @@
 <template>
-	<XNotFound v-if="localOnly" />
-	<MkStickyContainer v-else>
+	<MkStickyContainer>
 		<template #header>
 			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
 		</template>
@@ -71,7 +70,6 @@ let hasNext = $ref(false);
 let showPrev = $ref(false);
 let showNext = $ref(false);
 let error = $ref();
-let localOnly = computed(() => note?.localOnly && !$i);
 
 const prevPagination: Paging = {
 	endpoint: "users/notes" as const,
