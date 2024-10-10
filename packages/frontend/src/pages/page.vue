@@ -141,7 +141,7 @@ function share() {
 	navigator.share({
 		title: page.title ?? page.name,
 		text: page.summary,
-		url: `${url}/secure/@${page.user.username}/pages/${page.name}`,
+		url: `${url}/@${page.user.username}/pages/${page.name}`,
 	});
 }
 
