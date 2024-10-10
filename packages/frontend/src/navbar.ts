@@ -139,14 +139,18 @@ export const navbarItemDef = reactive({
 							router.push("/");
 						},
 					},
-					{
-						text: i18n.ts.classic,
-						active: ui === "classic",
-						action: () => {
-							miLocalStorage.setItem("ui", "classic");
-							router.push("/");
-						},
-					},
+					...(window.innerWidth < 1024
+						? []
+						: [
+								{
+									text: i18n.ts.classic,
+									active: ui === "classic",
+									action: () => {
+										miLocalStorage.setItem("ui", "classic");
+										router.push("/");
+									},
+								},
+							]),
 				],
 				ev.currentTarget ?? ev.target,
 			);
