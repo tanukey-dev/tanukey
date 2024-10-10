@@ -1,15 +1,12 @@
 <template>
-<component
-	:is="self ? 'MkA' : 'a'" ref="el" style="word-break: break-all;" class="_link" :[attr]="self ? url.substr(local.length) : url" :rel="rel" :target="target"
-	:title="url"
->
-	<slot></slot>
-	<i v-if="target === '_blank'" class="ti ti-external-link" :class="$style.icon"></i>
-</component>
+	<a ref="el" style="word-break: break-all;" class="_link" :href="url" :rel="rel" :target="target" :title="url">
+		<slot></slot>
+		<i v-if="target === '_blank'" class="ti ti-external-link" :class="$style.icon"></i>
+	</a>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from "vue";
+import { defineAsyncComponent, ref } from "vue";
 import { url as local } from "@/config";
 import { useTooltip } from "@/scripts/use-tooltip";
 import * as os from "@/os";
@@ -17,18 +14,17 @@ import * as os from "@/os";
 const props = withDefaults(
 	defineProps<{
 		url: string;
-		rel?: null | string;
+		rel?: string;
 	}>(),
 	{},
 );
 
 const self = props.url.startsWith(local);
-const attr = self ? "to" : "href";
-const target = self ? null : "_blank";
+const target = self ? undefined : "_blank";
 
-const el = $ref();
+const el = ref<HTMLElement>();
 
-useTooltip($$(el), (showing) => {
+const popup = (showing, el: HTMLElement) => {
 	os.popup(
 		defineAsyncComponent(() => import("@/components/MkUrlPreviewPopup.vue")),
 		{
@@ -39,7 +35,10 @@ useTooltip($$(el), (showing) => {
 		{},
 		"closed",
 	);
-});
+}
+
+useTooltip(el, (showing) => { if (el.value) popup(showing, el.value) });
+
 </script>
 
 <style lang="scss" module>

@@ -1,21 +1,19 @@
 <template>
-<component
-	:is="self ? 'MkA' : 'a'" ref="el" :class="$style.root" class="_link" :[attr]="self ? props.url.substring(local.length) : props.url" :rel="rel" :target="target"
-	@contextmenu.stop="() => {}"
->
-	<template v-if="!self">
-		<span :class="$style.schema">{{ schema }}//</span>
-		<span :class="$style.hostname">{{ hostname }}</span>
-		<span v-if="port != ''">:{{ port }}</span>
-	</template>
-	<template v-if="pathname === '/' && self">
-		<span :class="$style.self">{{ hostname }}</span>
-	</template>
-	<span v-if="pathname != ''" :class="$style.pathname">{{ self ? pathname.substring(1) : pathname }}</span>
-	<span :class="$style.query">{{ query }}</span>
-	<span :class="$style.hash">{{ hash }}</span>
-	<i v-if="target === '_blank'" :class="$style.icon" class="ti ti-external-link"></i>
-</component>
+	<a ref="el" :class="$style.root" class="_link" :href="self ? props.url.substring(local.length) : props.url"
+		:rel="rel" :target="target" @contextmenu.stop="() => { }">
+		<template v-if="!self">
+			<span :class="$style.schema">{{ schema }}//</span>
+			<span :class="$style.hostname">{{ hostname }}</span>
+			<span v-if="port != ''">:{{ port }}</span>
+		</template>
+		<template v-if="pathname === '/' && self">
+			<span :class="$style.self">{{ hostname }}</span>
+		</template>
+		<span v-if="pathname != ''" :class="$style.pathname">{{ self ? pathname.substring(1) : pathname }}</span>
+		<span :class="$style.query">{{ query }}</span>
+		<span :class="$style.hash">{{ hash }}</span>
+		<i v-if="target === '_blank'" :class="$style.icon" class="ti ti-external-link"></i>
+	</a>
 </template>
 
 <script lang="ts" setup>
@@ -34,20 +32,23 @@ const props = defineProps<{
 const self = props.url.startsWith(local);
 const url = new URL(props.url);
 if (!["http:", "https:"].includes(url.protocol)) throw new Error("invalid url");
-const el = ref();
 
-useTooltip(el, (showing) => {
+const el = ref<HTMLElement>();
+
+const popup = (showing, el: HTMLElement) => {
 	os.popup(
 		defineAsyncComponent(() => import("@/components/MkUrlPreviewPopup.vue")),
 		{
 			showing,
 			url: props.url,
-			source: el.value,
+			source: el,
 		},
 		{},
 		"closed",
 	);
-});
+}
+
+useTooltip(el, (showing) => { if (el.value) popup(showing, el.value) });
 
 const schema = url.protocol;
 const hostname = decodePunycode(url.hostname);
@@ -55,8 +56,7 @@ const port = url.port;
 const pathname = safeURIDecode(url.pathname);
 const query = safeURIDecode(url.search);
 const hash = safeURIDecode(url.hash);
-const attr = self ? "to" : "href";
-const target = self ? null : "_blank";
+const target = self ? undefined : "_blank";
 </script>
 
 <style lang="scss" module>

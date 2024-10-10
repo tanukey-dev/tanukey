@@ -1,9 +1,9 @@
 <template>
-<div :class="$style.root" :style="{ zIndex, top: top + 'px', left: left + 'px' }">
-	<Transition :name="defaultStore.state.animation ? '_transition_zoom' : ''" @afterLeave="emit('closed')">
-		<MkUrlPreview v-if="showing" class="_popup _shadow" :url="url"/>
-	</Transition>
-</div>
+	<div :class="$style.root" :style="{ zIndex, top: top + 'px', left: left + 'px' }">
+		<Transition :name="defaultStore.state.animation ? '_transition_zoom' : ''" @afterLeave="emit('closed')">
+			<MkUrlPreview v-if="showing" class="_popup _shadow" :url="url" />
+		</Transition>
+	</div>
 </template>
 
 <script lang="ts" setup>
