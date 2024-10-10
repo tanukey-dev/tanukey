@@ -185,11 +185,6 @@
 					</button>
 				</a>
 				<br>
-				<a href="/bios">
-					<button class="button-small">
-						<span class="button-label-small">Start the repair tool</span>
-					</button>
-				</a>
 			</details>
 			<br>
 			<div id="errors"></div>
