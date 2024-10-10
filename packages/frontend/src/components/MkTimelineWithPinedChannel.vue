@@ -33,7 +33,7 @@ const srcCh = computed(() =>
 		: "channel",
 );
 const postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
-const tab = ref<string | null>(null);
+const tab = ref<string>("public");
 const selectedTab = computed(
 	defaultStore.makeGetterSetter("selectedChannelTab"),
 );
