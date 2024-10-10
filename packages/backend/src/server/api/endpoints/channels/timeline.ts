@@ -166,7 +166,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					"",
 					{
 						origin: "local",
-						tags: channel.tags,
+						tags: channel.tags.map((tag) => tag.trim().replaceAll("#", "")),
 					},
 					{
 						untilId: ps.untilId,
