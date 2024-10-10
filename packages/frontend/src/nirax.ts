@@ -249,8 +249,11 @@ export class Router extends EventEmitter<{
 		}
 
 		if (res.route.redirect) {
-			location.href = res.route.redirect();
-			return;
+			const redirectUrl = res.route.redirect();
+			if (redirectUrl) {
+				location.href = redirectUrl;
+				return;
+			}
 		}
 
 		const isSamePath = beforePath === path;
