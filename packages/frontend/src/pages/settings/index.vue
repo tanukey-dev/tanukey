@@ -6,7 +6,8 @@
 		<MkSpacer :contentMax="900" :marginMin="20" :marginMax="32">
 			<div ref="el" class="vvcocwet" :class="{ wide: !narrow }">
 				<div class="body">
-					<div v-if="!narrow" class="nav">
+					<div v-if="!narrow || (currentPath.startsWith('/secure/settings') && currentPath !== '/secure/settings/deck')"
+						class="nav">
 						<div class="baaadecd">
 							<MkInfo v-if="emailNotConfigured" warn class="info">{{ i18n.ts.emailNotConfiguredWarning }}
 								<MkA to="/secure/settings/email" class="_link">{{ i18n.ts.configure }}</MkA>
@@ -14,7 +15,7 @@
 							<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
 						</div>
 					</div>
-					<div v-if="!(narrow)" class="main">
+					<div v-if="!(narrow) || currentPath === '/secure/settings/deck'" class="main">
 						<div class="bkzroven" style="container-type: inline-size;" ref="contents">
 							<RouterView />
 						</div>

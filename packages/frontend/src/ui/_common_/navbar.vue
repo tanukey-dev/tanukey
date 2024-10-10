@@ -11,7 +11,7 @@
 			</div>
 			<div :class="$style.middle">
 				<MkA v-tooltip.noDelay.right="i18n.ts.timeline" :class="$style.item" :activeClass="$style.active"
-					to="/secure/timeline" exact>
+					:to="ui === 'deck' ? '/secure' : '/secure/timeline'" exact>
 					<i :class="$style.itemIcon" class="ti ti-home ti-fw"></i><span :class="$style.itemText">{{
 						i18n.ts.timeline }}</span>
 				</MkA>
@@ -76,6 +76,7 @@ import { $i, openAccountMenu as openAccountMenu_ } from "@/account";
 import { defaultStore } from "@/store";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
+import { ui } from "@/config";
 
 const iconOnly = ref(false);
 

@@ -162,7 +162,7 @@ const menuIndicated = computed(() => {
 });
 
 function showSettings() {
-	os.pageWindow("/settings/deck");
+	os.pageWindow("/secure/settings/deck");
 }
 
 let columnsEl = $shallowRef<HTMLElement>();
