@@ -526,21 +526,34 @@ export class SearchService {
 
 		if (opts.tags && opts.tags.length > 0) {
 			// Clean up
-			const tags = opts.tags.filter((xs) => xs !== "");
+			const tags = opts.tags
+				.filter((xs) => xs !== "")
+				.map((s) => `"${s}"`)
+				.join(" ");
 			if (tags.length > 0) {
-				esFilter.bool.must.push({
+				const filter = {
 					bool: {
 						must: {
 							bool: {
-								should: [
-									...tags.map((tag) => {
-										return { wildcard: { tags: { value: tag } } };
-									}),
-								],
+								should: [] as any[],
+								minimum_should_match: 1,
 							},
 						},
 					},
+				};
+
+				filter.bool.must.bool.should.push({
+					wildcard: { tags: { value: tags } },
 				});
+				filter.bool.must.bool.should.push({
+					simple_query_string: {
+						fields: ["tags"],
+						query: tags,
+						default_operator: "and",
+					},
+				});
+
+				esFilter.bool.must.push(filter);
 			}
 		}
 
