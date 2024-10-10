@@ -239,11 +239,11 @@ async function search() {
 			keywords: keywords.value
 				.trim()
 				.split("\n")
-				.map((x) => x.trim().split(" ")),
+				.map((x) => x.trim().replace(/\s+/g, " ").split(" ")),
 			excludeKeywords: excludeKeywords.value
 				.trim()
 				.split("\n")
-				.map((x) => x.trim().split(" ")),
+				.map((x) => x.trim().replace(/\s+/g, " ").split(" ")),
 		},
 	};
 

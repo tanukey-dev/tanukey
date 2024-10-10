@@ -100,11 +100,11 @@ async function saveAntenna() {
 		keywords: keywords
 			.trim()
 			.split("\n")
-			.map((x) => x.trim().split(" ")),
+			.map((x) => x.trim().replace(/\s+/g, " ").split(" ")),
 		excludeKeywords: excludeKeywords
 			.trim()
 			.split("\n")
-			.map((x) => x.trim().split(" ")),
+			.map((x) => x.trim().replace(/\s+/g, " ").split(" ")),
 	};
 
 	if (props.antenna.id == null) {

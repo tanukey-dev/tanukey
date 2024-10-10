@@ -375,22 +375,28 @@ export class SearchService {
 		}
 
 		if (q !== "") {
+			const fixedQuery = q
+				.replaceAll('"', "")
+				.replace(/\s+/g, " ")
+				.split(" ")
+				.map((s) => `"${s}"`)
+				.join(" ");
 			esFilter.bool.must.push({
 				bool: {
 					should: [
-						{ wildcard: { text: { value: q } } },
+						{ wildcard: { text: { value: fixedQuery } } },
 						{
 							simple_query_string: {
 								fields: ["text"],
-								query: q,
+								query: fixedQuery,
 								default_operator: "and",
 							},
 						},
-						{ wildcard: { cw: { value: q } } },
+						{ wildcard: { cw: { value: fixedQuery } } },
 						{
 							simple_query_string: {
 								fields: ["cw"],
-								query: q,
+								query: fixedQuery,
 								default_operator: "and",
 							},
 						},
@@ -419,24 +425,30 @@ export class SearchService {
 				};
 
 				for (const keywords of keywordsList) {
-					const word = keywords.join(" ");
+					const fixedQuery = keywords
+						.join(" ")
+						.replaceAll('"', "")
+						.replace(/\s+/g, " ")
+						.split(" ")
+						.map((s) => `"${s}"`)
+						.join(" ");
 					filter.bool.must.bool.should.push({
-						wildcard: { text: { value: word } },
+						wildcard: { text: { value: fixedQuery } },
 					});
 					filter.bool.must.bool.should.push({
 						simple_query_string: {
 							fields: ["text"],
-							query: word,
+							query: fixedQuery,
 							default_operator: "and",
 						},
 					});
 					filter.bool.must.bool.should.push({
-						wildcard: { cw: { value: word } },
+						wildcard: { cw: { value: fixedQuery } },
 					});
 					filter.bool.must.bool.should.push({
 						simple_query_string: {
 							fields: ["cw"],
-							query: word,
+							query: fixedQuery,
 							default_operator: "and",
 						},
 					});
@@ -465,24 +477,30 @@ export class SearchService {
 				};
 
 				for (const keywords of excludeKeywordsList) {
-					const word = keywords.join(" ");
+					const fixedQuery = keywords
+						.join(" ")
+						.replaceAll('"', "")
+						.replace(/\s+/g, " ")
+						.split(" ")
+						.map((s) => `"${s}"`)
+						.join(" ");
 					filter.bool.must_not.bool.should.push({
-						wildcard: { text: { value: word } },
+						wildcard: { text: { value: fixedQuery } },
 					});
 					filter.bool.must_not.bool.should.push({
 						simple_query_string: {
 							fields: ["text"],
-							query: word,
+							query: fixedQuery,
 							default_operator: "and",
 						},
 					});
 					filter.bool.must_not.bool.should.push({
-						wildcard: { cw: { value: word } },
+						wildcard: { cw: { value: fixedQuery } },
 					});
 					filter.bool.must_not.bool.should.push({
 						simple_query_string: {
 							fields: ["cw"],
-							query: word,
+							query: fixedQuery,
 							default_operator: "and",
 						},
 					});
@@ -605,8 +623,6 @@ export class SearchService {
 			}
 		}
 
-		// console.log(JSON.stringify(filter, null, 2));
-
 		const res = await this.opensearch.search({
 			index: this.opensearchNoteIndex as string,
 			body: {
@@ -625,7 +641,9 @@ export class SearchService {
 		});
 
 		const noteIds = res.body.hits.hits.map((hit: any) => hit._id);
-		if (noteIds.length === 0) return [];
+		if (noteIds.length === 0) {
+			return [];
+		}
 
 		const query = this.notesRepository.createQueryBuilder("note");
 		query.andWhereInIds(noteIds);
