@@ -1,82 +1,78 @@
 <template>
-<div :class="[$style.root, { [$style.rootIsMobile]: isMobile }]">
-	<XSidebar v-if="!isMobile"/>
+	<div :class="[$style.root, { [$style.rootIsMobile]: isMobile }]">
+		<XSidebar v-if="!isMobile" />
 
-	<div :class="$style.main">
-		<XAnnouncements v-if="$i" :class="$style.announcements"/>
-		<XStatusBars/>
-		<div ref="columnsEl" :class="[$style.sections, { [$style.center]: deckStore.reactiveState.columnAlign.value === 'center', [$style.snapScroll]: snapScroll }]" @contextmenu.self.prevent="onContextmenu">
-			<!-- sectionを利用しているのは、deck.vue側でcolumnに対してfirst-of-typeを効かせるため -->
-			<section
-				v-for="ids in layout"
-				:class="$style.section"
-				:style="columns.filter(c => ids.includes(c.id)).some(c => c.flexible) ? { flex: 1, minWidth: '350px' } : { width: Math.max(...columns.filter(c => ids.includes(c.id)).map(c => c.width)) + 'px' }"
-			>
-				<component
-					:is="columnComponents[columns.find(c => c.id === id)!.type] ?? XTlColumn"
-					v-for="id in ids"
-					:ref="id"
-					:key="id"
-					:class="$style.column"
-					:column="columns.find(c => c.id === id)"
-					:isStacked="ids.length > 1"
-				/>
-			</section>
-			<div v-if="layout.length === 0" class="_panel" :class="$style.onboarding">
-				<div>{{ i18n.ts._deck.introduction }}</div>
-				<MkButton primary style="margin: 1em auto;" @click="addColumn">{{ i18n.ts._deck.addColumn }}</MkButton>
-				<div>{{ i18n.ts._deck.introduction2 }}</div>
-			</div>
-			<div :class="$style.sideMenu">
-				<div :class="$style.sideMenuTop">
-					<button v-tooltip.noDelay.left="`${i18n.ts._deck.profile}: ${deckStore.state.profile}`" :class="$style.sideMenuButton" class="_button" @click="changeProfile"><i class="ti ti-caret-down"></i></button>
-					<button v-tooltip.noDelay.left="i18n.ts._deck.deleteProfile" :class="$style.sideMenuButton" class="_button" @click="deleteProfile"><i class="ti ti-trash"></i></button>
+		<div :class="$style.main">
+			<XAnnouncements v-if="$i" :class="$style.announcements" />
+			<XStatusBars />
+			<div ref="columnsEl"
+				:class="[$style.sections, { [$style.center]: deckStore.reactiveState.columnAlign.value === 'center', [$style.snapScroll]: snapScroll }]"
+				@contextmenu.self.prevent="onContextmenu">
+				<!-- sectionを利用しているのは、deck.vue側でcolumnに対してfirst-of-typeを効かせるため -->
+				<section v-for="ids in layout" :class="$style.section"
+					:style="columns.filter(c => ids.includes(c.id)).some(c => c.flexible) ? { flex: 1, minWidth: '350px' } : { width: Math.max(...columns.filter(c => ids.includes(c.id)).map(c => c.width)) + 'px' }">
+					<component :is="columnComponents[columns.find(c => c.id === id)!.type] ?? XTlColumn"
+						v-for="id in ids" :ref="id" :key="id" :class="$style.column"
+						:column="columns.find(c => c.id === id)" :isStacked="ids.length > 1" />
+				</section>
+				<div v-if="layout.length === 0" class="_panel" :class="$style.onboarding">
+					<div>{{ i18n.ts._deck.introduction }}</div>
+					<MkButton primary style="margin: 1em auto;" @click="addColumn">{{ i18n.ts._deck.addColumn }}
+					</MkButton>
+					<div>{{ i18n.ts._deck.introduction2 }}</div>
 				</div>
-				<div :class="$style.sideMenuMiddle">
-					<button v-tooltip.noDelay.left="i18n.ts._deck.addColumn" :class="$style.sideMenuButton" class="_button" @click="addColumn"><i class="ti ti-plus"></i></button>
-				</div>
-				<div :class="$style.sideMenuBottom">
-					<button v-tooltip.noDelay.left="i18n.ts.settings" :class="$style.sideMenuButton" class="_button" @click="showSettings"><i class="ti ti-settings"></i></button>
+				<div :class="$style.sideMenu">
+					<div :class="$style.sideMenuTop">
+						<button v-tooltip.noDelay.left="`${i18n.ts._deck.profile}: ${deckStore.state.profile}`"
+							:class="$style.sideMenuButton" class="_button" @click="changeProfile"><i
+								class="ti ti-caret-down"></i></button>
+						<button v-tooltip.noDelay.left="i18n.ts._deck.deleteProfile" :class="$style.sideMenuButton"
+							class="_button" @click="deleteProfile"><i class="ti ti-trash"></i></button>
+					</div>
+					<div :class="$style.sideMenuMiddle">
+						<button v-tooltip.noDelay.left="i18n.ts._deck.addColumn" :class="$style.sideMenuButton"
+							class="_button" @click="addColumn"><i class="ti ti-plus"></i></button>
+					</div>
+					<div :class="$style.sideMenuBottom">
+						<button v-tooltip.noDelay.left="i18n.ts.settings" :class="$style.sideMenuButton" class="_button"
+							@click="showSettings"><i class="ti ti-settings"></i></button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div v-if="isMobile" :class="$style.nav">
-		<button :class="$style.navButton" class="_button" @click="drawerMenuShowing = true"><i :class="$style.navButtonIcon" class="ti ti-menu-2"></i><span v-if="menuIndicated" :class="$style.navButtonIndicator"><i class="_indicatorCircle"></i></span></button>
-		<button :class="$style.navButton" class="_button" @click="mainRouter.push('/')"><i :class="$style.navButtonIcon" class="ti ti-home"></i></button>
-		<button :class="$style.navButton" class="_button" @click="mainRouter.push('/my/notifications')"><i :class="$style.navButtonIcon" class="ti ti-bell"></i><span v-if="$i?.hasUnreadNotification" :class="$style.navButtonIndicator"><i class="_indicatorCircle"></i></span></button>
-		<button :class="$style.postButton" class="_button" @click="os.post()"><i :class="$style.navButtonIcon" class="ti ti-pencil"></i></button>
-	</div>
-
-	<Transition
-		:enterActiveClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_enterActive : ''"
-		:leaveActiveClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_leaveActive : ''"
-		:enterFromClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_enterFrom : ''"
-		:leaveToClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_leaveTo : ''"
-	>
-		<div
-			v-if="drawerMenuShowing"
-			:class="$style.menuBg"
-			class="_modalBg"
-			@click="drawerMenuShowing = false"
-			@touchstart.passive="drawerMenuShowing = false"
-		></div>
-	</Transition>
-
-	<Transition
-		:enterActiveClass="defaultStore.state.animation ? $style.transition_menuDrawer_enterActive : ''"
-		:leaveActiveClass="defaultStore.state.animation ? $style.transition_menuDrawer_leaveActive : ''"
-		:enterFromClass="defaultStore.state.animation ? $style.transition_menuDrawer_enterFrom : ''"
-		:leaveToClass="defaultStore.state.animation ? $style.transition_menuDrawer_leaveTo : ''"
-	>
-		<div v-if="drawerMenuShowing" :class="$style.menu">
-			<XDrawerMenu/>
+		<div v-if="isMobile" :class="$style.nav">
+			<button :class="$style.navButton" class="_button" @click="drawerMenuShowing = true"><i
+					:class="$style.navButtonIcon" class="ti ti-menu-2"></i><span v-if="menuIndicated"
+					:class="$style.navButtonIndicator"><i class="_indicatorCircle"></i></span></button>
+			<button :class="$style.navButton" class="_button" @click="mainRouter.push('/secure')"><i
+					:class="$style.navButtonIcon" class="ti ti-home"></i></button>
+			<button :class="$style.navButton" class="_button" @click="mainRouter.push('/secure/my/notifications')"><i
+					:class="$style.navButtonIcon" class="ti ti-bell"></i><span v-if="$i?.hasUnreadNotification"
+					:class="$style.navButtonIndicator"><i class="_indicatorCircle"></i></span></button>
+			<button :class="$style.postButton" class="_button" @click="os.post()"><i :class="$style.navButtonIcon"
+					class="ti ti-pencil"></i></button>
 		</div>
-	</Transition>
 
-	<XCommon/>
-</div>
+		<Transition :enterActiveClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_enterActive : ''"
+			:leaveActiveClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_leaveActive : ''"
+			:enterFromClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_enterFrom : ''"
+			:leaveToClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_leaveTo : ''">
+			<div v-if="drawerMenuShowing" :class="$style.menuBg" class="_modalBg" @click="drawerMenuShowing = false"
+				@touchstart.passive="drawerMenuShowing = false"></div>
+		</Transition>
+
+		<Transition :enterActiveClass="defaultStore.state.animation ? $style.transition_menuDrawer_enterActive : ''"
+			:leaveActiveClass="defaultStore.state.animation ? $style.transition_menuDrawer_leaveActive : ''"
+			:enterFromClass="defaultStore.state.animation ? $style.transition_menuDrawer_enterFrom : ''"
+			:leaveToClass="defaultStore.state.animation ? $style.transition_menuDrawer_leaveTo : ''">
+			<div v-if="drawerMenuShowing" :class="$style.menu">
+				<XDrawerMenu />
+			</div>
+		</Transition>
+
+		<XCommon />
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -312,6 +308,7 @@ body {
 	opacity: 1;
 	transition: opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 .transition_menuDrawerBg_enterFrom,
 .transition_menuDrawerBg_leaveTo {
 	opacity: 0;
@@ -323,6 +320,7 @@ body {
 	transform: translateX(0);
 	transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1), opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 .transition_menuDrawer_enterFrom,
 .transition_menuDrawer_leaveTo {
 	opacity: 0;
@@ -362,11 +360,11 @@ body {
 	background: var(--deckBg);
 
 	&.center {
-		> .section:first-of-type {
+		>.section:first-of-type {
 			margin-left: auto !important;
 		}
 
-		> .section:last-of-type {
+		>.section:last-of-type {
 			margin-right: auto !important;
 		}
 	}
@@ -385,7 +383,7 @@ body {
 	padding-bottom: var(--columnGap);
 	padding-left: var(--columnGap);
 
-	> .column:not(:last-of-type) {
+	>.column:not(:last-of-type) {
 		margin-bottom: var(--columnGap);
 	}
 }

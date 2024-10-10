@@ -1,10 +1,10 @@
 <template>
-<div>
-</div>
+	<div>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue";
+import { } from "vue";
 import * as Acct from "misskey-js/built/acct";
 import * as os from "@/os";
 import { mainRouter } from "@/router";
@@ -41,7 +41,7 @@ if (acct.startsWith("https://")) {
 		if (res.type === "User") {
 			follow(res.object);
 		} else if (res.type === "Note") {
-			mainRouter.push(`/notes/${res.object.id}`);
+			mainRouter.push(`/secure/notes/${res.object.id}`);
 		} else {
 			os.alert({
 				type: "error",

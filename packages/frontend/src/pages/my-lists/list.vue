@@ -1,39 +1,43 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700" :class="$style.main">
-		<div v-if="list" class="_gaps">
-			<MkFolder>
-				<template #label>{{ i18n.ts.settings }}</template>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700" :class="$style.main">
+			<div v-if="list" class="_gaps">
+				<MkFolder>
+					<template #label>{{ i18n.ts.settings }}</template>
 
-				<div class="_gaps">
-					<MkInput v-model="name">
-						<template #label>{{ i18n.ts.name }}</template>
-					</MkInput>
-					<MkSwitch v-model="isPublic">{{ i18n.ts.public }}</MkSwitch>
-					<div class="_buttons">
-						<MkButton rounded primary @click="updateSettings">{{ i18n.ts.save }}</MkButton>
-						<MkButton rounded danger @click="deleteList()">{{ i18n.ts.delete }}</MkButton>
+					<div class="_gaps">
+						<MkInput v-model="name">
+							<template #label>{{ i18n.ts.name }}</template>
+						</MkInput>
+						<MkSwitch v-model="isPublic">{{ i18n.ts.public }}</MkSwitch>
+						<div class="_buttons">
+							<MkButton rounded primary @click="updateSettings">{{ i18n.ts.save }}</MkButton>
+							<MkButton rounded danger @click="deleteList()">{{ i18n.ts.delete }}</MkButton>
+						</div>
 					</div>
-				</div>
-			</MkFolder>
+				</MkFolder>
 
-			<MkFolder defaultOpen>
-				<template #label>{{ i18n.ts.members }}</template>
+				<MkFolder defaultOpen>
+					<template #label>{{ i18n.ts.members }}</template>
 
-				<div class="_gaps_s">
-					<MkButton rounded primary style="margin: 0 auto;" @click="addUser()">{{ i18n.ts.addUser }}</MkButton>
-					<div v-for="user in users" :key="user.id" :class="$style.userItem">
-						<MkA :class="$style.userItemBody" :to="`${userPage(user)}`">
-							<MkUserCardMini :user="user"/>
-						</MkA>
-						<button class="_button" :class="$style.remove" @click="removeUser(user, $event)"><i class="ti ti-x"></i></button>
+					<div class="_gaps_s">
+						<MkButton rounded primary style="margin: 0 auto;" @click="addUser()">{{ i18n.ts.addUser }}
+						</MkButton>
+						<div v-for="user in users" :key="user.id" :class="$style.userItem">
+							<MkA :class="$style.userItemBody" :to="`${userPage(user)}`">
+								<MkUserCardMini :user="user" />
+							</MkA>
+							<button class="_button" :class="$style.remove" @click="removeUser(user, $event)"><i
+									class="ti ti-x"></i></button>
+						</div>
 					</div>
-				</div>
-			</MkFolder>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+				</MkFolder>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -118,7 +122,7 @@ async function deleteList() {
 		listId: list.id,
 	});
 	userListsCache.delete();
-	mainRouter.push("/my/lists");
+	mainRouter.push("/secure/my/lists");
 }
 
 async function updateSettings() {
@@ -144,9 +148,9 @@ definePageMetadata(
 	computed(() =>
 		list
 			? {
-					title: list.name,
-					icon: "ti ti-list",
-				}
+				title: list.name,
+				icon: "ti ti-list",
+			}
 			: null,
 	),
 );

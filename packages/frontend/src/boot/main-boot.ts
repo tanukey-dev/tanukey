@@ -89,7 +89,7 @@ export async function mainBoot() {
 			defaultStore.set("darkMode", !defaultStore.state.darkMode);
 		},
 		s: (): void => {
-			mainRouter.push("/search");
+			mainRouter.push("/secure/search");
 		},
 	};
 

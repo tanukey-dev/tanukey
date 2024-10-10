@@ -26,9 +26,9 @@
 					:class="$style.navButtonIcon" class="ti ti-menu-2"></i><span v-if="menuIndicated"
 					:class="$style.navButtonIndicator"><i class="_indicatorCircle"></i></span></button>
 			<button :class="$style.navButton" class="_button"
-				@click="mainRouter.currentRoute.value.name === 'index' ? top() : mainRouter.push('/')"><i
+				@click="mainRouter.currentRoute.value.name === 'index' ? top() : mainRouter.push('/secure/timeline')"><i
 					:class="$style.navButtonIcon" class="ti ti-home"></i></button>
-			<button :class="$style.navButton" class="_button" @click="mainRouter.push('/my/notifications')"><i
+			<button :class="$style.navButton" class="_button" @click="mainRouter.push('/secure/my/notifications')"><i
 					:class="$style.navButtonIcon" class="ti ti-bell"></i><span v-if="$i?.hasUnreadNotification"
 					:class="$style.navButtonIndicator"><i class="_indicatorCircle"></i></span></button>
 			<button :class="$style.navButton" class="_button" @click="widgetsShowing = true"><i

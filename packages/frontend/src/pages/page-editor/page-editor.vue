@@ -179,7 +179,7 @@ function save() {
 					type: "success",
 					text: i18n.ts._pages.created,
 				});
-				mainRouter.push(`/pages/edit/${pageId}`);
+				mainRouter.push(`/secure/pages/edit/${pageId}`);
 			})
 			.catch(onError);
 	}
@@ -198,7 +198,7 @@ function del() {
 				type: "success",
 				text: i18n.ts._pages.deleted,
 			});
-			mainRouter.push("/pages");
+			mainRouter.push("/secure/pages");
 		});
 	});
 }
@@ -213,7 +213,7 @@ function duplicate() {
 			type: "success",
 			text: i18n.ts._pages.created,
 		});
-		mainRouter.push(`/pages/edit/${pageId}`);
+		mainRouter.push(`/secure/pages/edit/${pageId}`);
 	});
 }
 
