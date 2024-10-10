@@ -10,7 +10,7 @@ type RouteDef = {
 	component: Component;
 	query?: Record<string, string>;
 	loginRequired?: boolean;
-	redirect?: string;
+	redirect?: () => string | undefined;
 	name?: string;
 	hash?: string;
 	globalCacheKey?: string;
@@ -249,7 +249,7 @@ export class Router extends EventEmitter<{
 		}
 
 		if (res.route.redirect) {
-			location.href = res.route.redirect;
+			location.href = res.route.redirect();
 			return;
 		}
 

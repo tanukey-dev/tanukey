@@ -9,6 +9,9 @@ import { ui } from "@/config";
 import { unisonReload } from "@/scripts/unison-reload";
 import { defaultStore } from "@/store";
 import { clearCache } from "@/scripts/cache-clear";
+import { useRouter } from "@/router";
+
+const router = useRouter();
 
 export const navbarItemDef = reactive({
 	notifications: {
@@ -125,7 +128,7 @@ export const navbarItemDef = reactive({
 						active: ui === "default" || ui === null,
 						action: () => {
 							miLocalStorage.setItem("ui", "default");
-							unisonReload();
+							router.push("/");
 						},
 					},
 					{
@@ -133,7 +136,7 @@ export const navbarItemDef = reactive({
 						active: ui === "deck",
 						action: () => {
 							miLocalStorage.setItem("ui", "deck");
-							unisonReload();
+							router.push("/");
 						},
 					},
 					{
@@ -141,7 +144,7 @@ export const navbarItemDef = reactive({
 						active: ui === "classic",
 						action: () => {
 							miLocalStorage.setItem("ui", "classic");
-							unisonReload();
+							router.push("/");
 						},
 					},
 				],

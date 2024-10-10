@@ -5,6 +5,11 @@ import MkError from "@/pages/_error_.vue";
 import MkLoading from "@/pages/_loading_.vue";
 import type { AsyncComponentLoader } from "vue";
 import { defineAsyncComponent, inject } from "vue";
+import { miLocalStorage } from "./local-storage";
+
+function getCurrentUi() {
+	return miLocalStorage.getItem("ui");
+}
 
 const page = (loader: AsyncComponentLoader<any>) =>
 	defineAsyncComponent({
@@ -43,71 +48,70 @@ export const routes = [
 	},
 	{
 		path: "/@:initUser/pages/:initPageName/view-source",
-		redirect: $i
-			? "/secure/@:initUser/pages/:initPageName/view-source"
-			: undefined,
+		redirect: () =>
+			$i ? "/secure/@:initUser/pages/:initPageName/view-source" : undefined,
 		component: page(() => import("./pages/page-editor/page-editor.vue")),
 	},
 	{
 		path: "/@:username/pages/:pageName",
-		redirect: $i ? "/secure/@:username/pages/:pageName" : undefined,
+		redirect: () => ($i ? "/secure/@:username/pages/:pageName" : undefined),
 		component: page(() => import("./pages/page.vue")),
 	},
 	{
 		path: "/@:acct/following",
-		redirect: $i ? "/secure/@:acct/following" : undefined,
+		redirect: () => ($i ? "/secure/@:acct/following" : undefined),
 		component: page(() => import("./pages/user/following.vue")),
 	},
 	{
 		path: "/@:acct/followers",
-		redirect: $i ? "/secure/@:acct/followers" : undefined,
+		redirect: () => ($i ? "/secure/@:acct/followers" : undefined),
 		component: page(() => import("./pages/user/followers.vue")),
 	},
 	{
 		name: "user",
 		path: "/@:acct/:page?",
-		redirect: $i ? "/secure/@:acct/:page?" : undefined,
+		redirect: () => ($i ? "/secure/@:acct/:page?" : undefined),
 		component: page(() => import("./pages/user/index.vue")),
 	},
 	{
 		name: "note",
 		path: "/notes/:noteId",
-		redirect: $i ? "/secure/notes/:noteId" : undefined,
+		redirect: () => ($i ? "/secure/notes/:noteId" : undefined),
 		component: page(() => import("./pages/note.vue")),
 	},
 	{
 		path: "/channels",
-		redirect: $i ? "/secure/channels" : undefined,
+		redirect: () => ($i ? "/secure/channels" : undefined),
 		component: page(() => import("./pages/channels.vue")),
 	},
 	{
 		path: "/channels/:channelId",
-		redirect: $i ? "/secure/channels/:channelId" : undefined,
+		redirect: () => ($i ? "/secure/channels/:channelId" : undefined),
 		component: page(() => import("./pages/channel.vue")),
 	},
 	{
 		path: "/events",
-		redirect: $i ? "/secure/events" : undefined,
+		redirect: () => ($i ? "/secure/events" : undefined),
 		component: page(() => import("./pages/events.vue")),
 	},
 	{
 		path: "/events/:eventId",
-		redirect: $i ? "/secure/events/:eventId" : undefined,
+		redirect: () => ($i ? "/secure/events/:eventId" : undefined),
 		component: page(() => import("./pages/event.vue")),
 	},
 	{
 		path: "/events/:eventId/:eventCircleId",
-		redirect: $i ? "/secure/events/:eventId/:eventCircleId" : undefined,
+		redirect: () => ($i ? "/secure/events/:eventId/:eventCircleId" : undefined),
 		component: page(() => import("./pages/event-circle.vue")),
 	},
 	{
 		path: "/circles",
-		redirect: $i ? "/circles" : undefined,
+		redirect: () => ($i ? "/circles" : undefined),
 		component: page(() => import("./pages/circles.vue")),
 	},
 	{
 		path: "/circles/:circleId",
-		redirect: $i ? "/circles/:circleId" : undefined,
+		redirect: () => ($i ? "/circles/:circleId" : undefined),
 		component: page(() => import("./pages/circle.vue")),
 	},
 	// need login
@@ -729,7 +733,13 @@ export const routes = [
 	{
 		name: "index",
 		path: "/",
-		redirect: $i ? (ui === "deck" ? "/secure" : "/secure/timeline") : undefined,
+		redirect: (): string | undefined => {
+			return $i
+				? getCurrentUi() === "deck"
+					? "/secure"
+					: "/secure/timeline"
+				: undefined;
+		},
 		component: page(() => import("./pages/welcome.vue")),
 		globalCacheKey: "index",
 	},
