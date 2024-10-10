@@ -1,21 +1,23 @@
 <template>
-<MkContainer :showHeader="widgetProps.showHeader" data-cy-mkw-trends class="mkw-trends">
-	<template #icon><i class="ti ti-hash"></i></template>
-	<template #header>{{ i18n.ts._widgets.trends }}</template>
+	<MkContainer :showHeader="widgetProps.showHeader" data-cy-mkw-trends class="mkw-trends">
+		<template #icon><i class="ti ti-hash"></i></template>
+		<template #header>{{ i18n.ts._widgets.trends }}</template>
 
-	<div class="wbrkwala">
-		<MkLoading v-if="fetching"/>
-		<TransitionGroup v-else tag="div" :name="defaultStore.state.animation ? 'chart' : ''" class="tags">
-			<div v-for="stat in stats" :key="stat.tag">
-				<div class="tag">
-					<MkA class="a" :to="`/tags/${ encodeURIComponent(stat.tag) }`" :title="stat.tag">#{{ stat.tag }}</MkA>
-					<p>{{ i18n.t('nUsersMentioned', { n: stat.usersCount }) }}</p>
+		<div class="wbrkwala">
+			<MkLoading v-if="fetching" />
+			<TransitionGroup v-else tag="div" :name="defaultStore.state.animation ? 'chart' : ''" class="tags">
+				<div v-for="stat in stats" :key="stat.tag">
+					<div class="tag">
+						<MkA class="a" :to="`/secure/tags/${encodeURIComponent(stat.tag)}`" :title="stat.tag">#{{
+							stat.tag }}
+						</MkA>
+						<p>{{ i18n.t('nUsersMentioned', { n: stat.usersCount }) }}</p>
+					</div>
+					<MkMiniChart class="chart" :src="stat.chart" />
 				</div>
-				<MkMiniChart class="chart" :src="stat.chart"/>
-			</div>
-		</TransitionGroup>
-	</div>
-</MkContainer>
+			</TransitionGroup>
+		</div>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
@@ -83,24 +85,24 @@ defineExpose<WidgetComponentExpose>({
 	height: (62px + 1px) + (62px + 1px) + (62px + 1px) + (62px + 1px) + 62px;
 	overflow: hidden;
 
-	> .tags {
+	>.tags {
 		.chart-move {
 			transition: transform 1s ease;
 		}
 
-		> div {
+		>div {
 			display: flex;
 			align-items: center;
 			padding: 14px 16px;
 			border-bottom: solid 0.5px var(--divider);
 
-			> .tag {
+			>.tag {
 				flex: 1;
 				overflow: hidden;
 				font-size: 0.9em;
 				color: var(--fg);
 
-				> .a {
+				>.a {
 					display: block;
 					width: 100%;
 					white-space: nowrap;
@@ -109,7 +111,7 @@ defineExpose<WidgetComponentExpose>({
 					line-height: 18px;
 				}
 
-				> p {
+				>p {
 					margin: 0;
 					font-size: 75%;
 					opacity: 0.7;
@@ -117,7 +119,7 @@ defineExpose<WidgetComponentExpose>({
 				}
 			}
 
-			> .chart {
+			>.chart {
 				height: 30px;
 			}
 		}

@@ -6,16 +6,16 @@
 		<MkSpacer :contentMax="900" :marginMin="20" :marginMax="32">
 			<div ref="el" class="vvcocwet" :class="{ wide: !narrow }">
 				<div class="body">
-					<div v-if="!narrow || currentPage?.route.name == null" class="nav">
+					<div v-if="!narrow" class="nav">
 						<div class="baaadecd">
 							<MkInfo v-if="emailNotConfigured" warn class="info">{{ i18n.ts.emailNotConfiguredWarning }}
-								<MkA to="/settings/email" class="_link">{{ i18n.ts.configure }}</MkA>
+								<MkA to="/secure/settings/email" class="_link">{{ i18n.ts.configure }}</MkA>
 							</MkInfo>
 							<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
 						</div>
 					</div>
-					<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
-						<div class="bkzroven" style="container-type: inline-size;">
+					<div v-if="!(narrow)" class="main">
+						<div class="bkzroven" style="container-type: inline-size;" ref="contents">
 							<RouterView />
 						</div>
 					</div>
@@ -47,6 +47,8 @@ import {
 	shallowRef,
 	watch,
 } from "vue";
+import { useScrollPositionManager } from "@/nirax";
+import { getScrollContainer } from "@/scripts/scroll";
 
 const indexInfo = {
 	title: i18n.ts.settings,
@@ -58,16 +60,31 @@ const el = shallowRef<HTMLElement | null>(null);
 const childInfo = ref(null);
 
 const router = useRouter();
+const contents = shallowRef<HTMLElement>();
+
+useScrollPositionManager(() => getScrollContainer(contents.value), router, "/secure/settings");
 
 let narrow = $ref(false);
 const NARROW_THRESHOLD = 600;
-
-let currentPage = $computed(() => router.currentRef.value.child);
 
 const ro = new ResizeObserver((entries, observer) => {
 	if (entries.length === 0) return;
 	narrow = entries[0].borderBoxSize[0].inlineSize < NARROW_THRESHOLD;
 });
+
+const currentPath = router.getCurrentPathRef();
+
+function isActive(path: string): boolean {
+	const resolved = router.resolve(path);
+	if (resolved == null) {
+		return false;
+	}
+	const fullPath = router.geFullPathFromResolved(resolved);
+	if (currentPath.value.startsWith(fullPath)) {
+		return true;
+	}
+	return false;
+}
 
 const menuDef = computed(() => [
 	{
@@ -76,44 +93,44 @@ const menuDef = computed(() => [
 			{
 				icon: "ti ti-user",
 				text: i18n.ts.profile,
-				to: "/settings/profile",
-				active: currentPage?.route.name === "profile",
+				to: "/secure/settings/profile",
+				active: isActive("/secure/settings/profile")
 			},
 			{
 				icon: "ti ti-lock-open",
 				text: i18n.ts.privacy,
-				to: "/settings/privacy",
-				active: currentPage?.route.name === "privacy",
+				to: "/secure/settings/privacy",
+				active: isActive("/secure/settings/privacy")
 			},
 			{
 				icon: "ti ti-mood-happy",
 				text: i18n.ts.reaction,
-				to: "/settings/reaction",
-				active: currentPage?.route.name === "reaction",
+				to: "/secure/settings/reaction",
+				active: isActive("/secure/settings/reaction")
 			},
 			{
 				icon: "ti ti-cloud",
 				text: i18n.ts.drive,
-				to: "/settings/drive",
-				active: currentPage?.route.name === "drive",
+				to: "/secure/settings/drive",
+				active: isActive("/secure/settings/drive")
 			},
 			{
 				icon: "ti ti-bell",
 				text: i18n.ts.notifications,
-				to: "/settings/notifications",
-				active: currentPage?.route.name === "notifications",
+				to: "/secure/settings/notifications",
+				active: isActive("/secure/settings/notifications")
 			},
 			{
 				icon: "ti ti-mail",
 				text: i18n.ts.email,
-				to: "/settings/email",
-				active: currentPage?.route.name === "email",
+				to: "/secure/settings/email",
+				active: isActive("/secure/settings/email")
 			},
 			{
 				icon: "ti ti-lock",
 				text: i18n.ts.security,
-				to: "/settings/security",
-				active: currentPage?.route.name === "security",
+				to: "/secure/settings/security",
+				active: isActive("/secure/settings/security")
 			},
 		],
 	},
@@ -123,44 +140,44 @@ const menuDef = computed(() => [
 			{
 				icon: "ti ti-adjustments",
 				text: i18n.ts.general,
-				to: "/settings/general",
-				active: currentPage?.route.name === "general",
+				to: "/secure/settings/general",
+				active: isActive("/secure/settings/general")
 			},
 			{
 				icon: "ti ti-timeline",
 				text: i18n.ts.feedSettings,
-				to: "/settings/feedSettings",
-				active: currentPage?.route.name === "feedSettings",
+				to: "/secure/settings/feedSettings",
+				active: isActive("/secure/settings/feedSettings")
 			},
 			{
 				icon: "ti ti-palette",
 				text: i18n.ts.theme,
-				to: "/settings/theme",
-				active: currentPage?.route.name === "theme",
+				to: "/secure/settings/theme",
+				active: isActive("/secure/settings/theme")
 			},
 			{
 				icon: "ti ti-menu-2",
 				text: i18n.ts.navbar,
-				to: "/settings/navbar",
-				active: currentPage?.route.name === "navbar",
+				to: "/secure/settings/navbar",
+				active: isActive("/secure/settings/navbar")
 			},
 			{
 				icon: "ti ti-equal-double",
 				text: i18n.ts.statusbar,
-				to: "/settings/statusbar",
-				active: currentPage?.route.name === "statusbar",
+				to: "/secure/settings/statusbar",
+				active: isActive("/secure/settings/statusbar")
 			},
 			{
 				icon: "ti ti-music",
 				text: i18n.ts.sounds,
-				to: "/settings/sounds",
-				active: currentPage?.route.name === "sounds",
+				to: "/secure/settings/sounds",
+				active: isActive("/secure/settings/sounds")
 			},
 			{
 				icon: "ti ti-plug",
 				text: i18n.ts.plugins,
-				to: "/settings/plugin",
-				active: currentPage?.route.name === "plugin",
+				to: "/secure/settings/plugin",
+				active: isActive("/secure/settings/plugin")
 			},
 		],
 	},
@@ -171,69 +188,69 @@ const menuDef = computed(() => [
 				? {
 					icon: "ti ti-credit-card",
 					text: i18n.ts.subscription,
-					to: "/settings/subscription",
-					active: currentPage?.route.name === "subscription",
+					to: "/secure/settings/subscription",
+					active: isActive("/secure/settings/subscription")
 				}
 				: undefined,
 			{
 				icon: "ti ti-parking",
 				text: i18n.ts.points,
-				to: "/settings/points",
-				active: currentPage?.route.name === "points",
+				to: "/secure/settings/points",
+				active: isActive("/secure/settings/points")
 			},
 			{
 				icon: "ti ti-badges",
 				text: i18n.ts.roles,
-				to: "/settings/roles",
-				active: currentPage?.route.name === "roles",
+				to: "/secure/settings/roles",
+				active: isActive("/secure/settings/roles")
 			},
 			{
 				icon: "ti ti-planet-off",
 				text: i18n.ts.instanceMute,
-				to: "/settings/instance-mute",
-				active: currentPage?.route.name === "instance-mute",
+				to: "/secure/settings/instance-mute",
+				active: isActive("/secure/settings/instance-mute")
 			},
 			{
 				icon: "ti ti-ban",
 				text: i18n.ts.muteAndBlock,
-				to: "/settings/mute-block",
-				active: currentPage?.route.name === "mute-block",
+				to: "/secure/settings/mute-block",
+				active: isActive("/secure/settings/mute-block")
 			},
 			{
 				icon: "ti ti-message-off",
 				text: i18n.ts.wordMute,
-				to: "/settings/word-mute",
-				active: currentPage?.route.name === "word-mute",
+				to: "/secure/settings/word-mute",
+				active: isActive("/secure/settings/word-mute")
 			},
 			{
 				icon: "ti ti-api",
 				text: "API",
-				to: "/settings/api",
-				active: currentPage?.route.name === "api",
+				to: "/secure/settings/api",
+				active: isActive("/secure/settings/api")
 			},
 			{
 				icon: "ti ti-webhook",
 				text: "Webhook",
-				to: "/settings/webhook",
-				active: currentPage?.route.name === "webhook",
+				to: "/secure/settings/webhook",
+				active: isActive("/secure/settings/webhook")
 			},
 			{
 				icon: "ti ti-package",
 				text: i18n.ts.importAndExport,
-				to: "/settings/import-export",
-				active: currentPage?.route.name === "import-export",
+				to: "/secure/settings/import-export",
+				active: isActive("/secure/settings/import-export")
 			},
 			{
 				icon: "ti ti-plane",
 				text: `${i18n.ts.accountMigration} (${i18n.ts.experimental})`,
-				to: "/settings/migration",
-				active: currentPage?.route.name === "migration",
+				to: "/secure/settings/migration",
+				active: isActive("/secure/settings/migration")
 			},
 			{
 				icon: "ti ti-dots",
 				text: i18n.ts.other,
-				to: "/settings/other",
-				active: currentPage?.route.name === "other",
+				to: "/secure/settings/other",
+				active: isActive("/secure/settings/other")
 			},
 		],
 	},
@@ -242,8 +259,8 @@ const menuDef = computed(() => [
 			{
 				icon: "ti ti-device-floppy",
 				text: i18n.ts.preferencesBackups,
-				to: "/settings/preferences-backups",
-				active: currentPage?.route.name === "preferences-backups",
+				to: "/secure/settings/preferences-backups",
+				active: isActive("/secure/settings/preferences-backups")
 			},
 			{
 				type: "button",
@@ -269,23 +286,25 @@ const menuDef = computed(() => [
 	},
 ]);
 
-watch($$(narrow), () => { });
+watch($$(narrow), () => {
+	if (currentPath.value === "/secure/settings" && !narrow) {
+		router.push("/secure/settings/profile");
+	}
+});
 
 onMounted(() => {
 	ro.observe(el.value);
 
 	narrow = el.value.offsetWidth < NARROW_THRESHOLD;
-
-	if (!narrow && currentPage?.route.name == null) {
-		router.replace("/settings/profile");
+	if (currentPath.value === "/secure/settings" && !narrow) {
+		router.push("/secure/settings/profile");
 	}
 });
 
 onActivated(() => {
 	narrow = el.value.offsetWidth < NARROW_THRESHOLD;
-
-	if (!narrow && currentPage?.route.name == null) {
-		router.replace("/settings/profile");
+	if (currentPath.value === "/secure/settings" && !narrow) {
+		router.push("/secure/settings/profile");
 	}
 });
 
@@ -293,9 +312,9 @@ onUnmounted(() => {
 	ro.disconnect();
 });
 
-watch(router.currentRef, (to) => {
-	if (to.route.name === "settings" && to.child?.route.name == null && !narrow) {
-		router.replace("/settings/profile");
+watch(currentPath, (to) => {
+	if (to === "/secure/settings" && !narrow) {
+		router.push("/secure/settings/profile");
 	}
 });
 

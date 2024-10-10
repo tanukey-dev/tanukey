@@ -1,43 +1,50 @@
 <template>
-<div class="npcljfve" :class="{ iconOnly }">
-	<button v-click-anime class="item _button account" @click="openAccountMenu">
-		<MkAvatar :user="$i" class="avatar"/><MkAcct class="text" :user="$i"/>
-	</button>
-	<div class="post" data-cy-open-post-form @click="os.post">
-		<MkButton class="button" gradate full rounded>
-			<i class="ti ti-pencil ti-fw"></i><span v-if="!iconOnly" class="text">{{ i18n.ts.note }}</span>
-		</MkButton>
-	</div>
-	<div class="divider"></div>
-	<MkA v-click-anime class="item index" activeClass="active" to="/" exact>
-		<i class="ti ti-home ti-fw"></i><span class="text">{{ i18n.ts.timeline }}</span>
-	</MkA>
-	<template v-for="item in menu">
-		<div v-if="item === '-'" class="divider"></div>
-		<component :is="navbarItemDef[item].to ? 'MkA' : 'button'" v-else-if="navbarItemDef[item] && (navbarItemDef[item].show !== false)" v-click-anime class="item _button" :class="item" activeClass="active" :to="navbarItemDef[item].to" v-on="navbarItemDef[item].action ? { click: navbarItemDef[item].action } : {}">
-			<i class="ti-fw" :class="navbarItemDef[item].icon"></i><span class="text">{{ navbarItemDef[item].title }}</span>
-			<span v-if="navbarItemDef[item].indicated" class="indicator"><i class="_indicatorCircle"></i></span>
-		</component>
-	</template>
-	<div class="divider"></div>
-	<MkA v-if="$i.isAdmin || $i.isModerator" v-click-anime class="item" activeClass="active" to="/admin" :behavior="settingsWindowed ? 'window' : null">
-		<i class="ti ti-dashboard ti-fw"></i><span class="text">{{ i18n.ts.controlPanel }}</span>
-	</MkA>
-	<button v-click-anime class="item _button" @click="more">
-		<i class="ti ti-dots ti-fw"></i><span class="text">{{ i18n.ts.more }}</span>
-		<span v-if="otherNavItemIndicated" class="indicator"><i class="_indicatorCircle"></i></span>
-	</button>
-	<MkA v-click-anime class="item" activeClass="active" to="/settings" :behavior="settingsWindowed ? 'window' : null">
-		<i class="ti ti-settings ti-fw"></i><span class="text">{{ i18n.ts.settings }}</span>
-	</MkA>
-	<div class="divider"></div>
-	<div class="about">
-		<button v-click-anime class="item _button" @click="openInstanceMenu">
-			<img :src="instance.iconUrl ?? instance.faviconUrl ?? '/favicon.ico'" class="_ghost"/>
+	<div class="npcljfve" :class="{ iconOnly }">
+		<button v-click-anime class="item _button account" @click="openAccountMenu">
+			<MkAvatar :user="$i" class="avatar" />
+			<MkAcct class="text" :user="$i" />
 		</button>
+		<div class="post" data-cy-open-post-form @click="os.post">
+			<MkButton class="button" gradate full rounded>
+				<i class="ti ti-pencil ti-fw"></i><span v-if="!iconOnly" class="text">{{ i18n.ts.note }}</span>
+			</MkButton>
+		</div>
+		<div class="divider"></div>
+		<MkA v-click-anime class="item index" activeClass="active" to="/secure/timeline" exact>
+			<i class="ti ti-home ti-fw"></i><span class="text">{{ i18n.ts.timeline }}</span>
+		</MkA>
+		<template v-for="item in menu">
+			<div v-if="item === '-'" class="divider"></div>
+			<component :is="navbarItemDef[item].to ? 'MkA' : 'button'"
+				v-else-if="navbarItemDef[item] && (navbarItemDef[item].show !== false)" v-click-anime
+				class="item _button" :class="item" activeClass="active" :to="navbarItemDef[item].to"
+				v-on="navbarItemDef[item].action ? { click: navbarItemDef[item].action } : {}">
+				<i class="ti-fw" :class="navbarItemDef[item].icon"></i><span class="text">{{ navbarItemDef[item].title
+					}}</span>
+				<span v-if="navbarItemDef[item].indicated" class="indicator"><i class="_indicatorCircle"></i></span>
+			</component>
+		</template>
+		<div class="divider"></div>
+		<MkA v-if="$i.isAdmin || $i.isModerator" v-click-anime class="item" activeClass="active" to="/secure/admin"
+			:behavior="settingsWindowed ? 'window' : null">
+			<i class="ti ti-dashboard ti-fw"></i><span class="text">{{ i18n.ts.controlPanel }}</span>
+		</MkA>
+		<button v-click-anime class="item _button" @click="more">
+			<i class="ti ti-dots ti-fw"></i><span class="text">{{ i18n.ts.more }}</span>
+			<span v-if="otherNavItemIndicated" class="indicator"><i class="_indicatorCircle"></i></span>
+		</button>
+		<MkA v-click-anime class="item" activeClass="active" to="/secure/settings"
+			:behavior="settingsWindowed ? 'window' : null">
+			<i class="ti ti-settings ti-fw"></i><span class="text">{{ i18n.ts.settings }}</span>
+		</MkA>
+		<div class="divider"></div>
+		<div class="about">
+			<button v-click-anime class="item _button" @click="openInstanceMenu">
+				<img :src="instance.iconUrl ?? instance.faviconUrl ?? '/favicon.ico'" class="_ghost" />
+			</button>
+		</div>
+		<!--<MisskeyLogo class="misskey"/>-->
 	</div>
-	<!--<MisskeyLogo class="misskey"/>-->
-</div>
 </template>
 
 <script lang="ts" setup>
@@ -124,64 +131,64 @@ watch(defaultStore.reactiveState.menuDisplay, () => {
 		flex: 0 0 $nav-icon-only-width;
 		width: $nav-icon-only-width !important;
 
-		> .divider {
+		>.divider {
 			margin: 8px auto;
 			width: calc(100% - 32px);
 		}
 
-		> .post {
-			> .button {
+		>.post {
+			>.button {
 				width: 46px;
 				height: 46px;
 				padding: 0;
 			}
 		}
 
-		> .item {
+		>.item {
 			padding-left: 0;
 			width: 100%;
 			text-align: center;
 			font-size: $ui-font-size * 1.1;
 			line-height: 3.7rem;
 
-			> i,
-			> .avatar {
+			>i,
+			>.avatar {
 				margin-right: 0;
 			}
 
-			> i {
+			>i {
 				left: 10px;
 			}
 
-			> .text {
+			>.text {
 				display: none;
 			}
 		}
 	}
 
-	> .divider {
+	>.divider {
 		margin: 10px 0;
 		border-top: solid 0.5px var(--divider);
 	}
 
-	> .post {
+	>.post {
 		position: sticky;
 		top: 0;
 		z-index: 1;
 		padding: 16px 0;
 		background: var(--bg);
 
-		> .button {
+		>.button {
 			min-width: 0;
 		}
 	}
 
-	> .about {
+	>.about {
 		fill: currentColor;
 		padding: 8px 0 16px 0;
 		text-align: center;
 
-		> .item {
+		>.item {
 			display: block;
 			width: 32px;
 			margin: 0 auto;
@@ -193,7 +200,7 @@ watch(defaultStore.reactiveState.menuDisplay, () => {
 		}
 	}
 
-	> .item {
+	>.item {
 		position: relative;
 		display: block;
 		font-size: $ui-font-size;
@@ -205,22 +212,22 @@ watch(defaultStore.reactiveState.menuDisplay, () => {
 		text-align: left;
 		box-sizing: border-box;
 
-		> i {
+		>i {
 			width: 32px;
 		}
 
-		> i,
-		> .avatar {
+		>i,
+		>.avatar {
 			margin-right: $avatar-margin;
 		}
 
-		> .avatar {
+		>.avatar {
 			width: $avatar-size;
 			height: $avatar-size;
 			vertical-align: middle;
 		}
 
-		> .indicator {
+		>.indicator {
 			position: absolute;
 			top: 0;
 			left: 0;

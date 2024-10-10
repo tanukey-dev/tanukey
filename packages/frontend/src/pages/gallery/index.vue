@@ -1,44 +1,47 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="1400">
-		<div class="_root">
-			<div v-if="tab === 'explore'">
-				<MkFoldableSection class="_margin">
-					<template #header><i class="ti ti-clock"></i>{{ i18n.ts.recentPosts }}</template>
-					<MkPagination v-slot="{items}" :pagination="recentPostsPagination" :disableAutoLoad="true">
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="1400">
+			<div class="_root">
+				<div v-if="tab === 'explore'">
+					<MkFoldableSection class="_margin">
+						<template #header><i class="ti ti-clock"></i>{{ i18n.ts.recentPosts }}</template>
+						<MkPagination v-slot="{ items }" :pagination="recentPostsPagination" :disableAutoLoad="true">
+							<div :class="$style.items">
+								<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post" />
+							</div>
+						</MkPagination>
+					</MkFoldableSection>
+					<MkFoldableSection class="_margin">
+						<template #header><i class="ti ti-comet"></i>{{ i18n.ts.popularPosts }}</template>
+						<MkPagination v-slot="{ items }" :pagination="popularPostsPagination" :disableAutoLoad="true">
+							<div :class="$style.items">
+								<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post" />
+							</div>
+						</MkPagination>
+					</MkFoldableSection>
+				</div>
+				<div v-else-if="tab === 'liked'">
+					<MkPagination v-slot="{ items }" :pagination="likedPostsPagination">
 						<div :class="$style.items">
-							<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post"/>
+							<MkGalleryPostPreview v-for="like in items" :key="like.id" :post="like.post" class="post" />
 						</div>
 					</MkPagination>
-				</MkFoldableSection>
-				<MkFoldableSection class="_margin">
-					<template #header><i class="ti ti-comet"></i>{{ i18n.ts.popularPosts }}</template>
-					<MkPagination v-slot="{items}" :pagination="popularPostsPagination" :disableAutoLoad="true">
+				</div>
+				<div v-else-if="tab === 'my'">
+					<MkA to="/secure/gallery/new" class="_link" style="margin: 16px;"><i class="ti ti-plus"></i> {{
+						i18n.ts.postToGallery }}</MkA>
+					<MkPagination v-slot="{ items }" :pagination="myPostsPagination">
 						<div :class="$style.items">
-							<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post"/>
+							<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post" />
 						</div>
 					</MkPagination>
-				</MkFoldableSection>
+				</div>
 			</div>
-			<div v-else-if="tab === 'liked'">
-				<MkPagination v-slot="{items}" :pagination="likedPostsPagination">
-					<div :class="$style.items">
-						<MkGalleryPostPreview v-for="like in items" :key="like.id" :post="like.post" class="post"/>
-					</div>
-				</MkPagination>
-			</div>
-			<div v-else-if="tab === 'my'">
-				<MkA to="/gallery/new" class="_link" style="margin: 16px;"><i class="ti ti-plus"></i> {{ i18n.ts.postToGallery }}</MkA>
-				<MkPagination v-slot="{items}" :pagination="myPostsPagination">
-					<div :class="$style.items">
-						<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post"/>
-					</div>
-				</MkPagination>
-			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -99,7 +102,7 @@ const headerActions = $computed(() => [
 		icon: "ti ti-plus",
 		text: i18n.ts.create,
 		handler: () => {
-			router.push("/gallery/new");
+			router.push("/secure/gallery/new");
 		},
 	},
 ]);

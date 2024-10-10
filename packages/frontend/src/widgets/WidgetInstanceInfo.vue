@@ -1,17 +1,18 @@
 <template>
-<div class="_panel">
-	<div :class="$style.container" :style="{ backgroundImage: instance.bannerUrl ? `url(${ instance.bannerUrl })` : null }">
-		<div :class="$style.iconContainer">
-			<img :src="instance.iconUrl ?? instance.faviconUrl ?? '/favicon.ico'" alt="" :class="$style.icon"/>
-		</div>
-		<div :class="$style.bodyContainer">
-			<div :class="$style.body">
-				<MkA :class="$style.name" to="/about" behavior="window">{{ instance.name }}</MkA>
-				<div :class="$style.host">{{ host }}</div>
+	<div class="_panel">
+		<div :class="$style.container"
+			:style="{ backgroundImage: instance.bannerUrl ? `url(${instance.bannerUrl})` : null }">
+			<div :class="$style.iconContainer">
+				<img :src="instance.iconUrl ?? instance.faviconUrl ?? '/favicon.ico'" alt="" :class="$style.icon" />
+			</div>
+			<div :class="$style.bodyContainer">
+				<div :class="$style.body">
+					<MkA :class="$style.name" to="/secure/about" behavior="window">{{ instance.name }}</MkA>
+					<div :class="$style.host">{{ host }}</div>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>

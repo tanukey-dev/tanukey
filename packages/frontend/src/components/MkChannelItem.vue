@@ -1,9 +1,11 @@
 <template>
-<MkA :to="`/channels/${channel.id}`" class="eftoefju" tabindex="-1">
-	<div class="name">{{ channel.name }}</div>
-	<div class="count">{{ channel.notesCount }}</div>
-	<div class="time"><MkTime :time="channel.lastNotedAt"/></div>
-</MkA>
+	<MkA :to="`/secure/channels/${channel.id}`" class="eftoefju" tabindex="-1">
+		<div class="name">{{ channel.name }}</div>
+		<div class="count">{{ channel.notesCount }}</div>
+		<div class="time">
+			<MkTime :time="channel.lastNotedAt" />
+		</div>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
@@ -21,15 +23,15 @@ const props = defineProps<{
 	flex-wrap: nowrap;
 	width: 100%;
 
-	> .name {
+	>.name {
 		width: 50%;
 	}
 
-	> .count {
+	>.count {
 		width: 25%;
 	}
 
-	> .time {
+	>.time {
 		width: 25%;
 	}
 }

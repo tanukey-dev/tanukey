@@ -12,12 +12,12 @@ export async function lookup(router?: Router) {
 	if (canceled) return;
 
 	if (query.startsWith("@") && !query.includes(" ")) {
-		_router.push(`/${query}`);
+		_router.push(`/secure/${query}`);
 		return;
 	}
 
 	if (query.startsWith("#")) {
-		_router.push(`/tags/${encodeURIComponent(query.substr(1))}`);
+		_router.push(`/secure/tags/${encodeURIComponent(query.substr(1))}`);
 		return;
 	}
 
@@ -31,9 +31,9 @@ export async function lookup(router?: Router) {
 		const res = await promise;
 
 		if (res.type === "User") {
-			_router.push(`/@${res.object.username}@${res.object.host}`);
+			_router.push(`/secure/@${res.object.username}@${res.object.host}`);
 		} else if (res.type === "Note") {
-			_router.push(`/notes/${res.object.id}`);
+			_router.push(`/secure/notes/${res.object.id}`);
 		}
 
 		return;

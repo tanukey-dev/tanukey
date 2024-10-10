@@ -1,21 +1,19 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800">
-		<div ref="rootEl" v-hotkey.global="keymap">
-			<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" :class="$style.newButton" @click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
-			<div :class="$style.tl">
-				<MkTimeline
-					ref="tlEl" :key="antennaId"
-					src="antenna"
-					:antenna="antennaId"
-					:sound="true"
-					@queue="queueUpdated"
-				/>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="800">
+			<div ref="rootEl" v-hotkey.global="keymap">
+				<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" :class="$style.newButton"
+						@click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
+				<div :class="$style.tl">
+					<MkTimeline ref="tlEl" :key="antennaId" src="antenna" :antenna="antennaId" :sound="true"
+						@queue="queueUpdated" />
+				</div>
 			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -59,7 +57,7 @@ async function timetravel() {
 }
 
 function settings() {
-	router.push(`/my/antennas/${props.antennaId}`);
+	router.push(`/secure/my/antennas/${props.antennaId}`);
 }
 
 function focus() {
@@ -79,17 +77,17 @@ watch(
 const headerActions = $computed(() =>
 	antenna
 		? [
-				{
-					icon: "ti ti-calendar-time",
-					text: i18n.ts.jumpToSpecifiedDate,
-					handler: timetravel,
-				},
-				{
-					icon: "ti ti-settings",
-					text: i18n.ts.settings,
-					handler: settings,
-				},
-			]
+			{
+				icon: "ti ti-calendar-time",
+				text: i18n.ts.jumpToSpecifiedDate,
+				handler: timetravel,
+			},
+			{
+				icon: "ti ti-settings",
+				text: i18n.ts.settings,
+				handler: settings,
+			},
+		]
 		: [],
 );
 
@@ -99,9 +97,9 @@ definePageMetadata(
 	computed(() =>
 		antenna
 			? {
-					title: antenna.name,
-					icon: "ti ti-antenna",
-				}
+				title: antenna.name,
+				icon: "ti ti-antenna",
+			}
 			: null,
 	),
 );

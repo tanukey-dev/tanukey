@@ -274,7 +274,7 @@ function save() {
 	} else {
 		os.api("channels/create", params).then((created) => {
 			os.success();
-			router.push(`/channels/${created.id}`);
+			router.push(`/secure/channels/${created.id}`);
 		});
 	}
 }

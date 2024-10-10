@@ -1,15 +1,17 @@
 <template>
-<MkA :to="`/events/${eventCircle.eventId}/${eventCircle.id}`" class="eftoefju _panel" tabindex="-1">
-	<div class="name"><i class="ti ti-calendar-event"></i> {{ circle?.name }}</div>
-	<div class="banner">
-		<img :src="circle?.profileImageUrl ?? 'https://ostanukey.tarbin.net/assets/noImage.png'" class="bannerImage">
-	</div>
-	<article v-if="eventCircle.description">
-		<p :title="eventCircle.description">{{ eventCircle.description.length > 85 ? eventCircle.description.slice(0, 85) + '…' : eventCircle.description }}</p>
-	</article>
-	<!-- <footer>
+	<MkA :to="`/secure/events/${eventCircle.eventId}/${eventCircle.id}`" class="eftoefju _panel" tabindex="-1">
+		<div class="name"><i class="ti ti-calendar-event"></i> {{ circle?.name }}</div>
+		<div class="banner">
+			<img :src="circle?.profileImageUrl ?? 'https://ostanukey.tarbin.net/assets/noImage.png'"
+				class="bannerImage">
+		</div>
+		<article v-if="eventCircle.description">
+			<p :title="eventCircle.description">{{ eventCircle.description.length > 85 ?
+				eventCircle.description.slice(0, 85) + '…' : eventCircle.description }}</p>
+		</article>
+		<!-- <footer>
 	</footer> -->
-</MkA>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
@@ -44,36 +46,36 @@ fetch();
 		text-decoration: none;
 	}
 
-	> .name {
+	>.name {
 		padding: 12px 16px;
 		font-size: 1.2em;
 	}
 
-	> .banner {
+	>.banner {
 		display: flex;
 		justify-content: center;
 		height: 300px;
 
-		> .bannerImage {
+		>.bannerImage {
 			width: 100%;
 			object-fit: contain;
 		}
 	}
 
-	> article {
+	>article {
 		padding: 16px;
 
-		> p {
+		>p {
 			margin: 0;
 			font-size: 1em;
 		}
 	}
 
-	> footer {
+	>footer {
 		padding: 12px 16px;
 		border-top: solid 0.5px var(--divider);
 
-		> span {
+		>span {
 			opacity: 0.7;
 			font-size: 0.9em;
 		}
@@ -82,19 +84,19 @@ fetch();
 	@media (max-width: 550px) {
 		font-size: 0.9em;
 
-		> .banner {
+		>.banner {
 			height: 80px;
 
-			> .status {
+			>.status {
 				display: none;
 			}
 		}
 
-		> article {
+		>article {
 			padding: 12px;
 		}
 
-		> footer {
+		>footer {
 			display: none;
 		}
 	}
@@ -102,14 +104,13 @@ fetch();
 	@media (max-width: 500px) {
 		font-size: 0.8em;
 
-		> .banner {
+		>.banner {
 			height: 70px;
 		}
 
-		> article {
+		>article {
 			padding: 8px;
 		}
 	}
 }
-
 </style>

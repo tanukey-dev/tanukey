@@ -1,45 +1,52 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div v-if="eventId == null || event != null" class="_gaps_m">
-			<div>
-				<MkButton v-if="bannerId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{ i18n.ts._channel.setBanner }}</MkButton>
-				<div v-else-if="bannerUrl">
-					<img :src="bannerUrl" style="width: 100%;"/>
-					<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{ i18n.ts._channel.removeBanner }}</MkButton>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div v-if="eventId == null || event != null" class="_gaps_m">
+				<div>
+					<MkButton v-if="bannerId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{
+						i18n.ts._channel.setBanner }}</MkButton>
+					<div v-else-if="bannerUrl">
+						<img :src="bannerUrl" style="width: 100%;" />
+						<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{
+							i18n.ts._channel.removeBanner }}
+						</MkButton>
+					</div>
+				</div>
+
+				<MkInput v-model="name">
+					<template #label>{{ i18n.ts.name }}</template>
+				</MkInput>
+
+				<MkTextarea v-model="description">
+					<template #label>{{ i18n.ts.description }}</template>
+				</MkTextarea>
+
+				<FormSplit>
+					<MkInput v-model="startsAt" type="datetime-local">
+						<template #label>{{ i18n.ts.startingperiod }}</template>
+					</MkInput>
+					<MkInput v-model="expiresAt" type="datetime-local">
+						<template #label>{{ i18n.ts.expiration }}</template>
+					</MkInput>
+				</FormSplit>
+
+				<MkSelect v-model="pageId">
+					<template #label>{{ i18n.ts._event.embededPage }}</template>
+					<option v-for="page in pages" :key="page.id" :value="page.id">{{ page.title }}</option>
+				</MkSelect>
+
+				<div class="_buttons">
+					<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ eventId ? i18n.ts.save :
+						i18n.ts.create }}</MkButton>
+					<MkButton v-if="eventId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}
+					</MkButton>
 				</div>
 			</div>
-
-			<MkInput v-model="name">
-				<template #label>{{ i18n.ts.name }}</template>
-			</MkInput>
-
-			<MkTextarea v-model="description">
-				<template #label>{{ i18n.ts.description }}</template>
-			</MkTextarea>
-
-			<FormSplit>
-				<MkInput v-model="startsAt" type="datetime-local">
-					<template #label>{{ i18n.ts.startingperiod }}</template>
-				</MkInput>
-				<MkInput v-model="expiresAt" type="datetime-local">
-					<template #label>{{ i18n.ts.expiration }}</template>
-				</MkInput>
-			</FormSplit>
-
-			<MkSelect v-model="pageId">
-				<template #label>{{ i18n.ts._event.embededPage }}</template>
-				<option v-for="page in pages" :key="page.id" :value="page.id">{{ page.title }}</option>
-			</MkSelect>
-
-			<div class="_buttons">
-				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ eventId ? i18n.ts.save : i18n.ts.create }}</MkButton>
-				<MkButton v-if="eventId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
-			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -128,7 +135,7 @@ function save() {
 	} else {
 		os.api("events/create", params).then((created) => {
 			os.success();
-			router.push(`/events/${created.id}`);
+			router.push(`/secure/events/${created.id}`);
 		});
 	}
 }
@@ -170,16 +177,15 @@ definePageMetadata(
 	computed(() =>
 		props.eventId
 			? {
-					title: i18n.ts._event.edit,
-					icon: "ti ti-calendar-event",
-				}
+				title: i18n.ts._event.edit,
+				icon: "ti ti-calendar-event",
+			}
 			: {
-					title: i18n.ts._event.create,
-					icon: "ti ti-calendar-event",
-				},
+				title: i18n.ts._event.create,
+				icon: "ti ti-calendar-event",
+			},
 	),
 );
 </script>
 
-<style lang="scss" module>
-</style>
+<style lang="scss" module></style>

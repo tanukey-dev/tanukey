@@ -1,7 +1,7 @@
 <template>
-<a :href="to" :class="active ? activeClass : null" @click.prevent="nav" @contextmenu.prevent.stop="onContextmenu">
-	<slot></slot>
-</a>
+	<a :href="to" :class="active ? activeClass : null" @click.prevent="nav" @contextmenu.prevent.stop="onContextmenu">
+		<slot></slot>
+	</a>
 </template>
 
 <script lang="ts" setup>
@@ -11,6 +11,7 @@ import { url } from "@/config";
 import { popout as popout_ } from "@/scripts/popout";
 import { i18n } from "@/i18n";
 import { useRouter } from "@/router";
+import { watch, ref } from "vue";
 
 const props = withDefaults(
 	defineProps<{
@@ -26,15 +27,26 @@ const props = withDefaults(
 );
 
 const router = useRouter();
+const active = ref(false);
 
-const active = $computed(() => {
-	if (props.activeClass == null) return false;
+watch(router.getCurrentPathRef(), (newValue): void => {
+	if (props.activeClass == null) {
+		active.value = false;
+		return;
+	}
 	const resolved = router.resolve(props.to);
-	if (resolved == null) return false;
-	if (resolved.route.path === router.currentRoute.value.path) return true;
-	if (resolved.route.name == null) return false;
-	if (router.currentRoute.value.name == null) return false;
-	return resolved.route.name === router.currentRoute.value.name;
+	if (resolved == null) {
+		active.value = false;
+		return;
+	}
+	const fullPath = router.geFullPathFromResolved(resolved);
+	if (newValue.startsWith(fullPath)) {
+		active.value = true;
+		return;
+	}
+	active.value = false;
+}, {
+	immediate: true
 });
 
 function onContextmenu(ev) {

@@ -1,47 +1,49 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div v-if="tab === 'search'">
-			<div class="_gaps">
-				<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search">
-					<template #prefix><i class="ti ti-search"></i></template>
-				</MkInput>
-				<MkButton large primary gradate rounded @click="search">{{ i18n.ts.search }}</MkButton>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div v-if="tab === 'search'">
+				<div class="_gaps">
+					<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search">
+						<template #prefix><i class="ti ti-search"></i></template>
+					</MkInput>
+					<MkButton large primary gradate rounded @click="search">{{ i18n.ts.search }}</MkButton>
+				</div>
+
+				<MkFoldableSection v-if="searchPagePagination">
+					<template #header>{{ i18n.ts.searchResult }}</template>
+					<MkPageList :pagination="searchPagePagination" />
+				</MkFoldableSection>
 			</div>
 
-			<MkFoldableSection v-if="searchPagePagination">
-				<template #header>{{ i18n.ts.searchResult }}</template>
-				<MkPageList :pagination="searchPagePagination"/>
-			</MkFoldableSection>
-		</div>
-		
-		<div v-if="tab === 'featured'">
-			<MkPagination v-slot="{items}" :pagination="featuredPagesPagination">
-				<div class="_gaps">
-					<MkPagePreview v-for="page in items" :key="page.id" :page="page"/>
-				</div>
-			</MkPagination>
-		</div>
+			<div v-if="tab === 'featured'">
+				<MkPagination v-slot="{ items }" :pagination="featuredPagesPagination">
+					<div class="_gaps">
+						<MkPagePreview v-for="page in items" :key="page.id" :page="page" />
+					</div>
+				</MkPagination>
+			</div>
 
-		<div v-else-if="tab === 'my'" class="_gaps">
-			<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
-			<MkPagination v-slot="{items}" :pagination="myPagesPagination">
-				<div class="_gaps">
-					<MkPagePreview v-for="page in items" :key="page.id" :page="page"/>
-				</div>
-			</MkPagination>
-		</div>
+			<div v-else-if="tab === 'my'" class="_gaps">
+				<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
+				<MkPagination v-slot="{ items }" :pagination="myPagesPagination">
+					<div class="_gaps">
+						<MkPagePreview v-for="page in items" :key="page.id" :page="page" />
+					</div>
+				</MkPagination>
+			</div>
 
-		<div v-else-if="tab === 'liked'">
-			<MkPagination v-slot="{items}" :pagination="likedPagesPagination">
-				<div class="_gaps">
-					<MkPagePreview v-for="like in items" :key="like.page.id" :page="like.page"/>
-				</div>
-			</MkPagination>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+			<div v-else-if="tab === 'liked'">
+				<MkPagination v-slot="{ items }" :pagination="likedPagesPagination">
+					<div class="_gaps">
+						<MkPagePreview v-for="like in items" :key="like.page.id" :page="like.page" />
+					</div>
+				</MkPagination>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -77,7 +79,7 @@ const likedPagesPagination = {
 };
 
 function create() {
-	router.push("/pages/new");
+	router.push("/secure/pages/new");
 }
 
 async function search() {

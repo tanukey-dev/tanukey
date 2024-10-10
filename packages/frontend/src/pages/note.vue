@@ -22,7 +22,7 @@
 							<div v-if="clips && clips.length > 0" class="_margin">
 								<div style="font-weight: bold; padding: 12px;">{{ i18n.ts.clip }}</div>
 								<div class="_gaps">
-									<MkA v-for="item in clips" :key="item.id" :to="`/clips/${item.id}`">
+									<MkA v-for="item in clips" :key="item.id" :to="`/secure/clips/${item.id}`">
 										<MkClipPreview :clip="item" />
 									</MkA>
 								</div>

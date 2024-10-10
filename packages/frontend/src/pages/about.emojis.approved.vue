@@ -1,7 +1,7 @@
 <template>
 	<MkSpacer :contentMax="1000" :marginMin="20">
 		<MkButton v-if="$i && ($i.isModerator || $i.policies.canManageCustomEmojis)" primary link
-			to="/custom-emojis-manager">{{ i18n.ts.manageCustomEmojis }}</MkButton>
+			to="/secure/custom-emojis-manager">{{ i18n.ts.manageCustomEmojis }}</MkButton>
 		<MkButton
 			v-if="$i && (!$i.isModerator && !$i.policies.canManageCustomEmojis && $i.policies.canRequestCustomEmojis)"
 			primary @click="edit">{{ i18n.ts.requestCustomEmojis }}</MkButton>

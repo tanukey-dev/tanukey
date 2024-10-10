@@ -1,64 +1,76 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<MkStickyContainer>
-			<template #header>
-				<MkSpacer class="contentHeader">
-					<div class="jqqmcavi">
-						<MkButton v-if="pageId" class="button" inline link :to="`/@${ author.username }/pages/${ currentName }`"><i class="ti ti-external-link"></i> {{ i18n.ts._pages.viewPage }}</MkButton>
-						<MkButton v-if="!readonly" inline primary class="button" @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
-						<MkButton v-if="pageId" inline class="button" @click="duplicate"><i class="ti ti-copy"></i> {{ i18n.ts.duplicate }}</MkButton>
-						<MkButton v-if="pageId && !readonly" inline class="button" danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
-					</div>
-				</MkSpacer>
-			</template>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<MkStickyContainer>
+				<template #header>
+					<MkSpacer class="contentHeader">
+						<div class="jqqmcavi">
+							<MkButton v-if="pageId" class="button" inline link
+								:to="`/secure/@${author.username}/pages/${currentName}`"><i
+									class="ti ti-external-link"></i> {{ i18n.ts._pages.viewPage }}</MkButton>
+							<MkButton v-if="!readonly" inline primary class="button" @click="save"><i
+									class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
+							<MkButton v-if="pageId" inline class="button" @click="duplicate"><i class="ti ti-copy"></i>
+								{{ i18n.ts.duplicate }}</MkButton>
+							<MkButton v-if="pageId && !readonly" inline class="button" danger @click="del"><i
+									class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+						</div>
+					</MkSpacer>
+				</template>
 
-			<div v-if="tab === 'settings'">
-				<div class="_gaps_m">
-					<MkInput v-model="title">
-						<template #label>{{ i18n.ts._pages.title }}</template>
-					</MkInput>
+				<div v-if="tab === 'settings'">
+					<div class="_gaps_m">
+						<MkInput v-model="title">
+							<template #label>{{ i18n.ts._pages.title }}</template>
+						</MkInput>
 
-					<MkInput v-model="summary">
-						<template #label>{{ i18n.ts._pages.summary }}</template>
-					</MkInput>
+						<MkInput v-model="summary">
+							<template #label>{{ i18n.ts._pages.summary }}</template>
+						</MkInput>
 
-					<MkInput v-model="name">
-						<template #prefix>{{ url }}/@{{ author.username }}/pages/</template>
-						<template #label>{{ i18n.ts._pages.url }}</template>
-					</MkInput>
+						<MkInput v-model="name">
+							<template #prefix>{{ url }}/@{{ author.username }}/pages/</template>
+							<template #label>{{ i18n.ts._pages.url }}</template>
+						</MkInput>
 
-					<MkSwitch v-model="alignCenter">{{ i18n.ts._pages.alignCenter }}</MkSwitch>
+						<MkSwitch v-model="alignCenter">{{ i18n.ts._pages.alignCenter }}</MkSwitch>
 
-					<MkSelect v-model="font">
-						<template #label>{{ i18n.ts._pages.font }}</template>
-						<option value="serif">{{ i18n.ts._pages.fontSerif }}</option>
-						<option value="sans-serif">{{ i18n.ts._pages.fontSansSerif }}</option>
-					</MkSelect>
+						<MkSelect v-model="font">
+							<template #label>{{ i18n.ts._pages.font }}</template>
+							<option value="serif">{{ i18n.ts._pages.fontSerif }}</option>
+							<option value="sans-serif">{{ i18n.ts._pages.fontSansSerif }}</option>
+						</MkSelect>
 
-					<MkSwitch v-model="hideTitleWhenPinned">{{ i18n.ts._pages.hideTitleWhenPinned }}</MkSwitch>
+						<MkSwitch v-model="hideTitleWhenPinned">{{ i18n.ts._pages.hideTitleWhenPinned }}</MkSwitch>
 
-					<div class="eyeCatch">
-						<MkButton v-if="eyeCatchingImageId == null && !readonly" @click="setEyeCatchingImage"><i class="ti ti-plus"></i> {{ i18n.ts._pages.eyeCatchingImageSet }}</MkButton>
-						<div v-else-if="eyeCatchingImage">
-							<img :src="eyeCatchingImage.url" :alt="eyeCatchingImage.name" style="max-width: 100%;"/>
-							<MkButton v-if="!readonly" @click="removeEyeCatchingImage()"><i class="ti ti-trash"></i> {{ i18n.ts._pages.eyeCatchingImageRemove }}</MkButton>
+						<div class="eyeCatch">
+							<MkButton v-if="eyeCatchingImageId == null && !readonly" @click="setEyeCatchingImage"><i
+									class="ti ti-plus"></i> {{ i18n.ts._pages.eyeCatchingImageSet }}</MkButton>
+							<div v-else-if="eyeCatchingImage">
+								<img :src="eyeCatchingImage.url" :alt="eyeCatchingImage.name"
+									style="max-width: 100%;" />
+								<MkButton v-if="!readonly" @click="removeEyeCatchingImage()"><i class="ti ti-trash"></i>
+									{{
+										i18n.ts._pages.eyeCatchingImageRemove }}</MkButton>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<div v-else-if="tab === 'contents'">
-				<div :class="$style.contents">
-					<XBlocks v-model="content" class="content"/>
+				<div v-else-if="tab === 'contents'">
+					<div :class="$style.contents">
+						<XBlocks v-model="content" class="content" />
 
-					<MkButton v-if="!readonly" rounded class="add" @click="add()"><i class="ti ti-plus"></i></MkButton>
+						<MkButton v-if="!readonly" rounded class="add" @click="add()"><i class="ti ti-plus"></i>
+						</MkButton>
+					</div>
 				</div>
-			</div>
-		</MkStickyContainer>
-	</MkSpacer>
-</MkStickyContainer>
+			</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -309,7 +321,7 @@ definePageMetadata(
 <style lang="scss" module>
 .contents {
 	&:global {
-		> .add {
+		>.add {
 			margin: 16px auto 0 auto;
 		}
 	}
@@ -324,8 +336,8 @@ definePageMetadata(
 
 .jqqmcavi {
 
-	> .button {
-		& + .button {
+	>.button {
+		&+.button {
 			margin-left: 8px;
 		}
 	}
@@ -334,8 +346,8 @@ definePageMetadata(
 .gwbmwxkm {
 	position: relative;
 
-	> header {
-		> .title {
+	>header {
+		>.title {
 			z-index: 1;
 			margin: 0;
 			padding: 0 16px;
@@ -344,7 +356,7 @@ definePageMetadata(
 			font-weight: bold;
 			box-shadow: 0 1px rgba(#000, 0.07);
 
-			> i {
+			>i {
 				margin-right: 6px;
 			}
 
@@ -353,13 +365,13 @@ definePageMetadata(
 			}
 		}
 
-		> .buttons {
+		>.buttons {
 			position: absolute;
 			z-index: 2;
 			top: 0;
 			right: 0;
 
-			> button {
+			>button {
 				padding: 0;
 				width: 42px;
 				font-size: 0.9em;
@@ -368,28 +380,28 @@ definePageMetadata(
 		}
 	}
 
-	> section {
+	>section {
 		padding: 0 32px 32px 32px;
 
 		@media (max-width: 500px) {
 			padding: 0 16px 16px 16px;
 		}
 
-		> .view {
+		>.view {
 			display: inline-block;
 			margin: 16px 0 0 0;
 			font-size: 14px;
 		}
 
-		> .content {
+		>.content {
 			margin-bottom: 16px;
 		}
 
-		> .eyeCatch {
+		>.eyeCatch {
 			margin-bottom: 16px;
 
-			> div {
-				> img {
+			>div {
+				>img {
 					max-width: 100%;
 				}
 			}
@@ -400,11 +412,11 @@ definePageMetadata(
 .qmuvgica {
 	padding: 16px;
 
-	> .variables {
+	>.variables {
 		margin-bottom: 16px;
 	}
 
-	> .add {
+	>.add {
 		margin-bottom: 16px;
 	}
 }

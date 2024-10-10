@@ -1,26 +1,31 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div class="_gaps">
-			<MkInput v-model="title">
-				<template #label>{{ i18n.ts._play.title }}</template>
-			</MkInput>
-			<MkTextarea v-model="summary">
-				<template #label>{{ i18n.ts._play.summary }}</template>
-			</MkTextarea>
-			<MkButton primary @click="selectPreset">{{ i18n.ts.selectFromPresets }}<i class="ti ti-chevron-down"></i></MkButton>
-			<MkTextarea v-model="script" class="_monospace" tall spellcheck="false">
-				<template #label>{{ i18n.ts._play.script }}</template>
-			</MkTextarea>
-			<div class="_buttons">
-				<MkButton primary @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
-				<MkButton @click="show"><i class="ti ti-eye"></i> {{ i18n.ts.show }}</MkButton>
-				<MkButton v-if="flash" danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div class="_gaps">
+				<MkInput v-model="title">
+					<template #label>{{ i18n.ts._play.title }}</template>
+				</MkInput>
+				<MkTextarea v-model="summary">
+					<template #label>{{ i18n.ts._play.summary }}</template>
+				</MkTextarea>
+				<MkButton primary @click="selectPreset">{{ i18n.ts.selectFromPresets }}<i
+						class="ti ti-chevron-down"></i>
+				</MkButton>
+				<MkTextarea v-model="script" class="_monospace" tall spellcheck="false">
+					<template #label>{{ i18n.ts._play.script }}</template>
+				</MkTextarea>
+				<div class="_buttons">
+					<MkButton primary @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
+					<MkButton @click="show"><i class="ti ti-eye"></i> {{ i18n.ts.show }}</MkButton>
+					<MkButton v-if="flash" danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}
+					</MkButton>
+				</div>
 			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -413,7 +418,7 @@ async function save() {
 			permissions,
 			script,
 		});
-		router.push("/play/" + created.id + "/edit");
+		router.push("/secure/play/" + created.id + "/edit");
 	}
 }
 
@@ -423,7 +428,7 @@ function show() {
 			text: "Please save",
 		});
 	} else {
-		os.pageWindow(`/play/${flash.id}`);
+		os.pageWindow(`/secure/play/${flash.id}`);
 	}
 }
 
@@ -437,7 +442,7 @@ async function del() {
 	await os.apiWithDialog("flash/delete", {
 		flashId: props.id,
 	});
-	router.push("/play");
+	router.push("/secure/play");
 }
 
 const headerActions = $computed(() => []);
@@ -448,11 +453,11 @@ definePageMetadata(
 	computed(() =>
 		flash
 			? {
-					title: i18n.ts._play.edit + ": " + flash.title,
-				}
+				title: i18n.ts._play.edit + ": " + flash.title,
+			}
 			: {
-					title: i18n.ts._play.new,
-				},
+				title: i18n.ts._play.new,
+			},
 	),
 );
 </script>

@@ -11,5 +11,5 @@ export const userName = (user: misskey.entities.User) => {
 };
 
 export const userPage = (user: misskey.Acct, path?, absolute = false) => {
-	return `${absolute ? url : ""}/@${acct(user)}${path ? `/${path}` : ""}`;
+	return `${absolute ? url : ""}/secure/@${acct(user)}${path ? `/${path}` : ""}`;
 };

@@ -1,15 +1,17 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div v-if="tab === 'owned'">
-			<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
-			<MkPagination v-slot="{items}" :pagination="ownedPagination">
-				<MkCirclePreview v-for="circle in items" :key="circle.id" class="_margin" :circle="circle"/>
-			</MkPagination>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div v-if="tab === 'owned'">
+				<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
+				<MkPagination v-slot="{ items }" :pagination="ownedPagination">
+					<MkCirclePreview v-for="circle in items" :key="circle.id" class="_margin" :circle="circle" />
+				</MkPagination>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -37,7 +39,7 @@ const ownedPagination = {
 };
 
 function create() {
-	router.push("/circles/new");
+	router.push("/secure/circles/new");
 }
 
 const headerActions = $computed(() => [

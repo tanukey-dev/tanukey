@@ -1,50 +1,54 @@
 <template>
-<div>
-	<MkStickyContainer>
-		<template #header><XHeader :tabs="headerTabs"/></template>
-		<MkSpacer :contentMax="700" :marginMin="16" :marginMax="32">
-			<FormSuspense :p="init">
-				<div class="_gaps_m">
-					<MkSwitch v-model="enableRegistration">
-						<template #label>{{ i18n.ts.enableRegistration }}</template>
-					</MkSwitch>
+	<div>
+		<MkStickyContainer>
+			<template #header>
+				<XHeader :tabs="headerTabs" />
+			</template>
+			<MkSpacer :contentMax="700" :marginMin="16" :marginMax="32">
+				<FormSuspense :p="init">
+					<div class="_gaps_m">
+						<MkSwitch v-model="enableRegistration">
+							<template #label>{{ i18n.ts.enableRegistration }}</template>
+						</MkSwitch>
 
-					<MkSwitch v-model="emailRequiredForSignup">
-						<template #label>{{ i18n.ts.emailRequiredForSignup }}</template>
-					</MkSwitch>
+						<MkSwitch v-model="emailRequiredForSignup">
+							<template #label>{{ i18n.ts.emailRequiredForSignup }}</template>
+						</MkSwitch>
 
-					<FormLink to="/admin/server-rules">{{ i18n.ts.serverRules }}</FormLink>
+						<FormLink to="/secure/admin/server-rules">{{ i18n.ts.serverRules }}</FormLink>
 
-					<MkInput v-model="tosUrl">
-						<template #prefix><i class="ti ti-link"></i></template>
-						<template #label>{{ i18n.ts.tosUrl }}</template>
-					</MkInput>
+						<MkInput v-model="tosUrl">
+							<template #prefix><i class="ti ti-link"></i></template>
+							<template #label>{{ i18n.ts.tosUrl }}</template>
+						</MkInput>
 
-					<MkTextarea v-model="preservedUsernames">
-						<template #label>{{ i18n.ts.preservedUsernames }}</template>
-						<template #caption>{{ i18n.ts.preservedUsernamesDescription }}</template>
-					</MkTextarea>
-					
-					<MkTextarea v-model="sensitiveWords">
-						<template #label>{{ i18n.ts.sensitiveWords }}</template>
-						<template #caption>{{ i18n.ts.sensitiveWordsDescription }}<br>{{ i18n.ts.sensitiveWordsDescription2 }}</template>
-					</MkTextarea>
+						<MkTextarea v-model="preservedUsernames">
+							<template #label>{{ i18n.ts.preservedUsernames }}</template>
+							<template #caption>{{ i18n.ts.preservedUsernamesDescription }}</template>
+						</MkTextarea>
+
+						<MkTextarea v-model="sensitiveWords">
+							<template #label>{{ i18n.ts.sensitiveWords }}</template>
+							<template #caption>{{ i18n.ts.sensitiveWordsDescription }}<br>{{
+								i18n.ts.sensitiveWordsDescription2 }}</template>
+						</MkTextarea>
+					</div>
+				</FormSuspense>
+			</MkSpacer>
+			<template #footer>
+				<div :class="$style.footer">
+					<MkSpacer :contentMax="700" :marginMin="16" :marginMax="16">
+						<MkButton primary rounded @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}
+						</MkButton>
+					</MkSpacer>
 				</div>
-			</FormSuspense>
-		</MkSpacer>
-		<template #footer>
-			<div :class="$style.footer">
-				<MkSpacer :contentMax="700" :marginMin="16" :marginMax="16">
-					<MkButton primary rounded @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
-				</MkSpacer>
-			</div>
-		</template>
-	</MkStickyContainer>
-</div>
+			</template>
+		</MkStickyContainer>
+	</div>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue";
+import { } from "vue";
 import XHeader from "./_header_.vue";
 import MkSwitch from "@/components/MkSwitch.vue";
 import MkInput from "@/components/MkInput.vue";

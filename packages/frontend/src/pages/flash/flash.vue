@@ -1,53 +1,71 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
-			<div v-if="flash" :key="flash.id">
-				<Transition :name="defaultStore.state.animation ? 'zoom' : ''" mode="out-in">
-					<div v-if="started" :class="$style.started">
-						<div class="main _panel">
-							<MkAsUi v-if="root" :component="root" :components="components"/>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
+				<div v-if="flash" :key="flash.id">
+					<Transition :name="defaultStore.state.animation ? 'zoom' : ''" mode="out-in">
+						<div v-if="started" :class="$style.started">
+							<div class="main _panel">
+								<MkAsUi v-if="root" :component="root" :components="components" />
+							</div>
+							<div class="actions _panel">
+								<MkButton v-if="flash.isLiked" v-tooltip="i18n.ts.unlike" asLike class="button" rounded
+									primary @click="unlike()"><i class="ti ti-heart"></i><span
+										v-if="flash.likedCount > 0" style="margin-left: 6px;">{{ flash.likedCount
+										}}</span></MkButton>
+								<MkButton v-else v-tooltip="i18n.ts.like" asLike class="button" rounded @click="like()">
+									<i class="ti ti-heart"></i><span v-if="flash.likedCount > 0"
+										style="margin-left: 6px;">{{
+											flash.likedCount }}</span></MkButton>
+								<MkButton v-tooltip="i18n.ts.shareWithNote" class="button" rounded
+									@click="shareWithNote"><i class="ti ti-repeat ti-fw"></i></MkButton>
+								<MkButton v-tooltip="i18n.ts.share" class="button" rounded @click="share"><i
+										class="ti ti-share ti-fw"></i></MkButton>
+							</div>
 						</div>
-						<div class="actions _panel">
-							<MkButton v-if="flash.isLiked" v-tooltip="i18n.ts.unlike" asLike class="button" rounded primary @click="unlike()"><i class="ti ti-heart"></i><span v-if="flash.likedCount > 0" style="margin-left: 6px;">{{ flash.likedCount }}</span></MkButton>
-							<MkButton v-else v-tooltip="i18n.ts.like" asLike class="button" rounded @click="like()"><i class="ti ti-heart"></i><span v-if="flash.likedCount > 0" style="margin-left: 6px;">{{ flash.likedCount }}</span></MkButton>
-							<MkButton v-tooltip="i18n.ts.shareWithNote" class="button" rounded @click="shareWithNote"><i class="ti ti-repeat ti-fw"></i></MkButton>
-							<MkButton v-tooltip="i18n.ts.share" class="button" rounded @click="share"><i class="ti ti-share ti-fw"></i></MkButton>
+						<div v-else :class="$style.ready">
+							<div class="_panel main">
+								<div class="title">{{ flash.title }}</div>
+								<div class="summary">{{ flash.summary }}</div>
+								<MkButton class="start" gradate rounded large @click="start">Play</MkButton>
+								<div class="info">
+									<span v-tooltip="i18n.ts.numberOfLikes"><i class="ti ti-heart"></i> {{
+										flash.likedCount
+										}}</span>
+								</div>
+							</div>
 						</div>
-					</div>
-					<div v-else :class="$style.ready">
-						<div class="_panel main">
-							<div class="title">{{ flash.title }}</div>
-							<div class="summary">{{ flash.summary }}</div>
-							<MkButton class="start" gradate rounded large @click="start">Play</MkButton>
-							<div class="info">
-								<span v-tooltip="i18n.ts.numberOfLikes"><i class="ti ti-heart"></i> {{ flash.likedCount }}</span>
+					</Transition>
+					<MkFolder :defaultOpen="false" :max-height="280" class="_margin">
+						<template #icon><i class="ti ti-code"></i></template>
+						<template #label>{{ i18n.ts._play.viewSource }}</template>
+
+						<MkCode :code="flash.script" :inline="false" class="_monospace" />
+					</MkFolder>
+					<div :class="$style.footer">
+						<Mfm :text="`By @${flash.user.username}`" />
+						<div class="date">
+							<div v-if="flash.createdAt != flash.updatedAt"><i class="ti ti-clock"></i> {{
+								i18n.ts.updatedAt }}:
+								<MkTime :time="flash.updatedAt" mode="detail" />
+							</div>
+							<div><i class="ti ti-clock"></i> {{ i18n.ts.createdAt }}:
+								<MkTime :time="flash.createdAt" mode="detail" />
 							</div>
 						</div>
 					</div>
-				</Transition>
-				<MkFolder :defaultOpen="false" :max-height="280" class="_margin">
-					<template #icon><i class="ti ti-code"></i></template>
-					<template #label>{{ i18n.ts._play.viewSource }}</template>
-
-					<MkCode :code="flash.script" :inline="false" class="_monospace"/>
-				</MkFolder>
-				<div :class="$style.footer">
-					<Mfm :text="`By @${flash.user.username}`"/>
-					<div class="date">
-						<div v-if="flash.createdAt != flash.updatedAt"><i class="ti ti-clock"></i> {{ i18n.ts.updatedAt }}: <MkTime :time="flash.updatedAt" mode="detail"/></div>
-						<div><i class="ti ti-clock"></i> {{ i18n.ts.createdAt }}: <MkTime :time="flash.createdAt" mode="detail"/></div>
-					</div>
+					<MkA v-if="$i && $i.id === flash.userId" :to="`/secure/play/${flash.id}/edit`"
+						style="color: var(--accent);">{{ i18n.ts._play.editThisPage }}</MkA>
+					<MkAd :prefer="['horizontal', 'horizontal-big']" />
 				</div>
-				<MkA v-if="$i && $i.id === flash.userId" :to="`/play/${flash.id}/edit`" style="color: var(--accent);">{{ i18n.ts._play.editThisPage }}</MkA>
-				<MkAd :prefer="['horizontal', 'horizontal-big']"/>
-			</div>
-			<MkError v-else-if="error" @retry="fetchPage()"/>
-			<MkLoading v-else/>
-		</Transition>
-	</MkSpacer>
-</MkStickyContainer>
+				<MkError v-else-if="error" @retry="fetchPage()" />
+				<MkLoading v-else />
+			</Transition>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -215,14 +233,14 @@ definePageMetadata(
 	computed(() =>
 		flash
 			? {
+				title: flash.title,
+				avatar: flash.user,
+				path: `/play/${flash.id}`,
+				share: {
 					title: flash.title,
-					avatar: flash.user,
-					path: `/play/${flash.id}`,
-					share: {
-						title: flash.title,
-						text: flash.summary,
-					},
-				}
+					text: flash.summary,
+				},
+			}
 			: null,
 	),
 );
@@ -231,26 +249,26 @@ definePageMetadata(
 <style lang="scss" module>
 .ready {
 	&:global {
-		> .main {
+		>.main {
 			padding: 32px;
 
-			> .title {
+			>.title {
 				font-size: 1.4em;
 				font-weight: bold;
 				margin-bottom: 1rem;
 				text-align: center;
 			}
 
-			> .summary {
+			>.summary {
 				font-size: 1.1em;
 				text-align: center;
 			}
 
-			> .start {
+			>.start {
 				margin: 1em auto 1em auto;
 			}
 
-			> .info {
+			>.info {
 				text-align: center;
 			}
 		}
@@ -261,7 +279,7 @@ definePageMetadata(
 	margin-top: 16px;
 
 	&:global {
-		> .date {
+		>.date {
 			margin: 8px 0;
 			opacity: 0.6;
 		}
@@ -270,11 +288,11 @@ definePageMetadata(
 
 .started {
 	&:global {
-		> .main {
+		>.main {
 			padding: 32px;
 		}
 
-		> .actions {
+		>.actions {
 			display: flex;
 			justify-content: center;
 			gap: 12px;
@@ -290,6 +308,7 @@ definePageMetadata(
 .fade-leave-active {
 	transition: opacity 0.125s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
 	opacity: 0;
@@ -297,12 +316,14 @@ definePageMetadata(
 
 .zoom-enter-active,
 .zoom-leave-active {
-	transition: opacity 0.3s cubic-bezier(0,0,.35,1), transform 0.3s cubic-bezier(0,0,.35,1);
+	transition: opacity 0.3s cubic-bezier(0, 0, .35, 1), transform 0.3s cubic-bezier(0, 0, .35, 1);
 }
+
 .zoom-enter-from {
 	opacity: 0;
 	transform: scale(0.7);
 }
+
 .zoom-leave-to {
 	opacity: 0;
 	transform: scale(1.3);

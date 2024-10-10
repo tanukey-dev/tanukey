@@ -1,44 +1,53 @@
 <template>
-<div class="azykntjl">
-	<div class="body">
-		<div class="left">
-			<button v-click-anime class="item _button instance" @click="openInstanceMenu">
-				<img :src="instance.iconUrl ?? instance.faviconUrl ?? '/favicon.ico'" class="_ghost"/>
-			</button>
-			<MkA v-click-anime v-tooltip="i18n.ts.timeline" class="item index" activeClass="active" to="/" exact>
-				<i class="ti ti-home ti-fw"></i>
-			</MkA>
-			<template v-for="item in menu">
-				<div v-if="item === '-'" class="divider"></div>
-				<component :is="navbarItemDef[item].to ? 'MkA' : 'button'" v-else-if="navbarItemDef[item] && (navbarItemDef[item].show !== false)" v-click-anime v-tooltip="navbarItemDef[item].title" class="item _button" :class="item" activeClass="active" :to="navbarItemDef[item].to" v-on="navbarItemDef[item].action ? { click: navbarItemDef[item].action } : {}">
-					<i class="ti-fw" :class="navbarItemDef[item].icon"></i>
-					<span v-if="navbarItemDef[item].indicated" class="indicator"><i class="_indicatorCircle"></i></span>
-				</component>
-			</template>
-			<div class="divider"></div>
-			<MkA v-if="$i.isAdmin || $i.isModerator" v-click-anime v-tooltip="i18n.ts.controlPanel" class="item" activeClass="active" to="/admin" :behavior="settingsWindowed ? 'window' : null">
-				<i class="ti ti-dashboard ti-fw"></i>
-			</MkA>
-			<button v-click-anime class="item _button" @click="more">
-				<i class="ti ti-dots ti-fw"></i>
-				<span v-if="otherNavItemIndicated" class="indicator"><i class="_indicatorCircle"></i></span>
-			</button>
-		</div>
-		<div class="right">
-			<MkA v-click-anime v-tooltip="i18n.ts.settings" class="item" activeClass="active" to="/settings" :behavior="settingsWindowed ? 'window' : null">
-				<i class="ti ti-settings ti-fw"></i>
-			</MkA>
-			<button v-click-anime class="item _button account" @click="openAccountMenu">
-				<MkAvatar :user="$i" class="avatar"/><MkAcct class="acct" :user="$i"/>
-			</button>
-			<div class="post" @click="os.post()">
-				<MkButton class="button" gradate full rounded>
-					<i class="ti ti-pencil ti-fw"></i>
-				</MkButton>
+	<div class="azykntjl">
+		<div class="body">
+			<div class="left">
+				<button v-click-anime class="item _button instance" @click="openInstanceMenu">
+					<img :src="instance.iconUrl ?? instance.faviconUrl ?? '/favicon.ico'" class="_ghost" />
+				</button>
+				<MkA v-click-anime v-tooltip="i18n.ts.timeline" class="item index" activeClass="active"
+					to="/secure/timeline" exact>
+					<i class="ti ti-home ti-fw"></i>
+				</MkA>
+				<template v-for="item in menu">
+					<div v-if="item === '-'" class="divider"></div>
+					<component :is="navbarItemDef[item].to ? 'MkA' : 'button'"
+						v-else-if="navbarItemDef[item] && (navbarItemDef[item].show !== false)" v-click-anime
+						v-tooltip="navbarItemDef[item].title" class="item _button" :class="item" activeClass="active"
+						:to="navbarItemDef[item].to"
+						v-on="navbarItemDef[item].action ? { click: navbarItemDef[item].action } : {}">
+						<i class="ti-fw" :class="navbarItemDef[item].icon"></i>
+						<span v-if="navbarItemDef[item].indicated" class="indicator"><i
+								class="_indicatorCircle"></i></span>
+					</component>
+				</template>
+				<div class="divider"></div>
+				<MkA v-if="$i.isAdmin || $i.isModerator" v-click-anime v-tooltip="i18n.ts.controlPanel" class="item"
+					activeClass="active" to="/secure/admin" :behavior="settingsWindowed ? 'window' : null">
+					<i class="ti ti-dashboard ti-fw"></i>
+				</MkA>
+				<button v-click-anime class="item _button" @click="more">
+					<i class="ti ti-dots ti-fw"></i>
+					<span v-if="otherNavItemIndicated" class="indicator"><i class="_indicatorCircle"></i></span>
+				</button>
+			</div>
+			<div class="right">
+				<MkA v-click-anime v-tooltip="i18n.ts.settings" class="item" activeClass="active" to="/secure/settings"
+					:behavior="settingsWindowed ? 'window' : null">
+					<i class="ti ti-settings ti-fw"></i>
+				</MkA>
+				<button v-click-anime class="item _button account" @click="openAccountMenu">
+					<MkAvatar :user="$i" class="avatar" />
+					<MkAcct class="acct" :user="$i" />
+				</button>
+				<div class="post" @click="os.post()">
+					<MkButton class="button" gradate full rounded>
+						<i class="ti ti-pencil ti-fw"></i>
+					</MkButton>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
@@ -110,37 +119,37 @@ onMounted(() => {
 	height: $height;
 	background-color: var(--bg);
 
-	> .body {
+	>.body {
 		max-width: 1380px;
 		margin: 0 auto;
 		display: flex;
 
-		> .right,
-		> .left {
+		>.right,
+		>.left {
 
-			> .item {
+			>.item {
 				position: relative;
 				font-size: 0.9em;
 				display: inline-block;
 				padding: 0 12px;
 				line-height: $height;
 
-				> i,
-				> .avatar {
+				>i,
+				>.avatar {
 					margin-right: 0;
 				}
 
-				> i {
+				>i {
 					left: 10px;
 				}
 
-				> .avatar {
+				>.avatar {
 					width: $avatar-size;
 					height: $avatar-size;
 					vertical-align: middle;
 				}
 
-				> .indicator {
+				>.indicator {
 					position: absolute;
 					top: 0;
 					left: 0;
@@ -159,21 +168,21 @@ onMounted(() => {
 				}
 			}
 
-			> .divider {
+			>.divider {
 				display: inline-block;
 				height: 16px;
 				margin: 0 10px;
 				border-right: solid 0.5px var(--divider);
 			}
 
-			> .instance {
+			>.instance {
 				display: inline-block;
 				position: relative;
 				width: 56px;
 				height: 100%;
 				vertical-align: bottom;
 
-				> img {
+				>img {
 					display: inline-block;
 					width: 24px;
 					position: absolute;
@@ -185,10 +194,10 @@ onMounted(() => {
 				}
 			}
 
-			> .post {
+			>.post {
 				display: inline-block;
-			
-				> .button {
+
+				>.button {
 					width: 40px;
 					height: 40px;
 					padding: 0;
@@ -196,19 +205,19 @@ onMounted(() => {
 				}
 			}
 
-			> .account {
+			>.account {
 				display: inline-flex;
 				align-items: center;
 				vertical-align: top;
 				margin-right: 8px;
 
-				> .acct {
+				>.acct {
 					margin-left: 8px;
 				}
 			}
 		}
 
-		> .right {
+		>.right {
 			margin-left: auto;
 		}
 	}

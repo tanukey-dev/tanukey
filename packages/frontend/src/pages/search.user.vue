@@ -1,22 +1,22 @@
 <template>
-<div class="_gaps">
 	<div class="_gaps">
-		<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search">
-			<template #prefix><i class="ti ti-search"></i></template>
-		</MkInput>
-		<MkRadios v-model="searchOrigin">
-			<option value="local">{{ i18n.ts.local }}</option>
-			<option value="remote">{{ i18n.ts.remote }}</option>
-			<option value="combined">{{ i18n.ts.all }}</option>
-		</MkRadios>
-		<MkButton large primary gradate rounded @click="search">{{ i18n.ts.search }}</MkButton>
-	</div>
+		<div class="_gaps">
+			<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search">
+				<template #prefix><i class="ti ti-search"></i></template>
+			</MkInput>
+			<MkRadios v-model="searchOrigin">
+				<option value="local">{{ i18n.ts.local }}</option>
+				<option value="remote">{{ i18n.ts.remote }}</option>
+				<option value="combined">{{ i18n.ts.all }}</option>
+			</MkRadios>
+			<MkButton large primary gradate rounded @click="search">{{ i18n.ts.search }}</MkButton>
+		</div>
 
-	<MkFoldableSection v-if="userPagination">
-		<template #header>{{ i18n.ts.searchResult }}</template>
-		<MkUserList :key="key" :pagination="userPagination"/>
-	</MkFoldableSection>
-</div>
+		<MkFoldableSection v-if="userPagination">
+			<template #header>{{ i18n.ts.searchResult }}</template>
+			<MkUserList :key="key" :pagination="userPagination" />
+		</MkFoldableSection>
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -62,9 +62,9 @@ async function search() {
 		const res = await promise;
 
 		if (res.type === "User") {
-			router.push(`/@${res.object.username}@${res.object.host}`);
+			router.push(`/secure/@${res.object.username}@${res.object.host}`);
 		} else if (res.type === "Note") {
-			router.push(`/notes/${res.object.id}`);
+			router.push(`/secure/notes/${res.object.id}`);
 		}
 
 		return;

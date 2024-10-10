@@ -67,7 +67,7 @@ async function chooseList(ev: MouseEvent): Promise<void> {
 	const items = lists.map((list) => ({
 		type: "link" as const,
 		text: list.name,
-		to: `/timeline/list/${list.id}`,
+		to: `/secure/timeline/list/${list.id}`,
 	}));
 	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
@@ -78,7 +78,7 @@ async function chooseAntenna(ev: MouseEvent): Promise<void> {
 		type: "link" as const,
 		text: antenna.name,
 		indicate: antenna.hasUnreadNote,
-		to: `/timeline/antenna/${antenna.id}`,
+		to: `/secure/timeline/antenna/${antenna.id}`,
 	}));
 	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
@@ -91,7 +91,7 @@ async function chooseChannel(ev: MouseEvent): Promise<void> {
 		type: "link" as const,
 		text: channel.name,
 		indicate: channel.hasUnreadNote,
-		to: `/channels/${channel.id}`,
+		to: `/secure/channels/${channel.id}`,
 	}));
 	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
@@ -109,7 +109,7 @@ const headerActions = $computed(() => [
 		icon: "ti ti-settings",
 		text: i18n.ts.edit,
 		handler: (): void => {
-			router.push('/settings/feedSettings');
+			router.push('/secure/settings/feedSettings');
 		},
 	}] : []),
 	{

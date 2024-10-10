@@ -1,20 +1,22 @@
 <template>
-<KeepAlive>
-	<MkStickyContainer>
-		<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-		<MkSpacer :contentMax="700" :class="$style.main">
-			<div v-if="circle && tab === 'overview'" class="_gaps">
-				<template v-if="page">
-					<XPage :page="page"/>
-				</template>
-			</div>
-		</MkSpacer>
-		<template #footer>
-			<div :class="$style.footer">
-			</div>
-		</template>
-	</MkStickyContainer>
-</KeepAlive>
+	<KeepAlive>
+		<MkStickyContainer>
+			<template #header>
+				<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+			</template>
+			<MkSpacer :contentMax="700" :class="$style.main">
+				<div v-if="circle && tab === 'overview'" class="_gaps">
+					<template v-if="page">
+						<XPage :page="page" />
+					</template>
+				</div>
+			</MkSpacer>
+			<template #footer>
+				<div :class="$style.footer">
+				</div>
+			</template>
+		</MkStickyContainer>
+	</KeepAlive>
 </template>
 
 <script lang="ts" setup>
@@ -53,7 +55,7 @@ watch(
 );
 
 function edit() {
-	router.push(`/circles/${circle.id}/edit`);
+	router.push(`/secure/circles/${circle.id}/edit`);
 }
 
 const headerActions = $computed(() => {
@@ -73,13 +75,13 @@ const headerActions = $computed(() => {
 		const canEdit = ($i && $i.id === circle.userId) || iAmModerator;
 		return canEdit
 			? [
-					share,
-					{
-						icon: "ti ti-settings",
-						text: i18n.ts.edit,
-						handler: edit,
-					},
-				]
+				share,
+				{
+					icon: "ti ti-settings",
+					text: i18n.ts.edit,
+					handler: edit,
+				},
+			]
 			: [share];
 	} else {
 		return null;
@@ -98,9 +100,9 @@ definePageMetadata(
 	computed(() =>
 		circle
 			? {
-					title: circle.name,
-					icon: "ti ti-circles-relation",
-				}
+				title: circle.name,
+				icon: "ti ti-circles-relation",
+			}
 			: null,
 	),
 );

@@ -1,21 +1,19 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800">
-		<div ref="rootEl">
-			<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" :class="$style.newButton" @click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
-			<div :class="$style.tl">
-				<MkTimeline
-					ref="tlEl" :key="listId"
-					src="list"
-					:list="listId"
-					:sound="true"
-					@queue="queueUpdated"
-				/>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="800">
+			<div ref="rootEl">
+				<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" :class="$style.newButton"
+						@click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
+				<div :class="$style.tl">
+					<MkTimeline ref="tlEl" :key="listId" src="list" :list="listId" :sound="true"
+						@queue="queueUpdated" />
+				</div>
 			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -57,7 +55,7 @@ function top() {
 }
 
 function settings() {
-	router.push(`/my/lists/${props.listId}`);
+	router.push(`/secure/my/lists/${props.listId}`);
 }
 
 async function timetravel() {
@@ -72,17 +70,17 @@ async function timetravel() {
 const headerActions = $computed(() =>
 	list
 		? [
-				{
-					icon: "ti ti-calendar-time",
-					text: i18n.ts.jumpToSpecifiedDate,
-					handler: timetravel,
-				},
-				{
-					icon: "ti ti-settings",
-					text: i18n.ts.settings,
-					handler: settings,
-				},
-			]
+			{
+				icon: "ti ti-calendar-time",
+				text: i18n.ts.jumpToSpecifiedDate,
+				handler: timetravel,
+			},
+			{
+				icon: "ti ti-settings",
+				text: i18n.ts.settings,
+				handler: settings,
+			},
+		]
 		: [],
 );
 
@@ -92,9 +90,9 @@ definePageMetadata(
 	computed(() =>
 		list
 			? {
-					title: list.name,
-					icon: "ti ti-list",
-				}
+				title: list.name,
+				icon: "ti ti-list",
+			}
 			: null,
 	),
 );

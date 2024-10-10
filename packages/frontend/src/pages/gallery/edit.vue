@@ -1,35 +1,42 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800" :marginMin="16" :marginMax="32">
-		<FormSuspense :p="init" class="_gaps">
-			<MkInput v-model="title">
-				<template #label>{{ i18n.ts.title }}</template>
-			</MkInput>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="800" :marginMin="16" :marginMax="32">
+			<FormSuspense :p="init" class="_gaps">
+				<MkInput v-model="title">
+					<template #label>{{ i18n.ts.title }}</template>
+				</MkInput>
 
-			<MkTextarea v-model="description" :max="500">
-				<template #label>{{ i18n.ts.description }}</template>
-			</MkTextarea>
+				<MkTextarea v-model="description" :max="500">
+					<template #label>{{ i18n.ts.description }}</template>
+				</MkTextarea>
 
-			<div class="_gaps_s">
-				<div v-for="file in files" :key="file.id" class="wqugxsfx" :style="{ backgroundImage: file ? `url(${ file.thumbnailUrl })` : null }">
-					<div class="name">{{ file.name }}</div>
-					<button v-tooltip="i18n.ts.remove" class="remove _button" @click="remove(file)"><i class="ti ti-x"></i></button>
+				<div class="_gaps_s">
+					<div v-for="file in files" :key="file.id" class="wqugxsfx"
+						:style="{ backgroundImage: file ? `url(${file.thumbnailUrl})` : null }">
+						<div class="name">{{ file.name }}</div>
+						<button v-tooltip="i18n.ts.remove" class="remove _button" @click="remove(file)"><i
+								class="ti ti-x"></i></button>
+					</div>
+					<MkButton primary @click="selectFile"><i class="ti ti-plus"></i> {{ i18n.ts.attachFile }}</MkButton>
 				</div>
-				<MkButton primary @click="selectFile"><i class="ti ti-plus"></i> {{ i18n.ts.attachFile }}</MkButton>
-			</div>
 
-			<MkSwitch v-model="isSensitive">{{ i18n.ts.markAsSensitive }}</MkSwitch>
+				<MkSwitch v-model="isSensitive">{{ i18n.ts.markAsSensitive }}</MkSwitch>
 
-			<div class="_buttons">
-				<MkButton v-if="postId" primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
-				<MkButton v-else primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.publish }}</MkButton>
+				<div class="_buttons">
+					<MkButton v-if="postId" primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}
+					</MkButton>
+					<MkButton v-else primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.publish }}
+					</MkButton>
 
-				<MkButton v-if="postId" danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
-			</div>
-		</FormSuspense>
-	</MkSpacer>
-</MkStickyContainer>
+					<MkButton v-if="postId" danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}
+					</MkButton>
+				</div>
+			</FormSuspense>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -76,7 +83,7 @@ async function save() {
 			fileIds: files.map((file) => file.id),
 			isSensitive: isSensitive,
 		});
-		router.push(`/gallery/${props.postId}`);
+		router.push(`/secure/gallery/${props.postId}`);
 	} else {
 		const created = await os.apiWithDialog("gallery/posts/create", {
 			title: title,
@@ -84,7 +91,7 @@ async function save() {
 			fileIds: files.map((file) => file.id),
 			isSensitive: isSensitive,
 		});
-		router.push(`/gallery/${created.id}`);
+		router.push(`/secure/gallery/${created.id}`);
 	}
 }
 
@@ -97,7 +104,7 @@ async function del() {
 	await os.apiWithDialog("gallery/posts/delete", {
 		postId: props.postId,
 	});
-	router.push("/gallery");
+	router.push("/secure/gallery");
 }
 
 watch(
@@ -106,15 +113,15 @@ watch(
 		init = () =>
 			props.postId
 				? os
-						.api("gallery/posts/show", {
-							postId: props.postId,
-						})
-						.then((post) => {
-							files = post.files;
-							title = post.title;
-							description = post.description;
-							isSensitive = post.isSensitive;
-						})
+					.api("gallery/posts/show", {
+						postId: props.postId,
+					})
+					.then((post) => {
+						files = post.files;
+						title = post.title;
+						description = post.description;
+						isSensitive = post.isSensitive;
+					})
 				: Promise.resolve(null);
 	},
 	{ immediate: true },
@@ -128,13 +135,13 @@ definePageMetadata(
 	computed(() =>
 		props.postId
 			? {
-					title: i18n.ts.edit,
-					icon: "ti ti-pencil",
-				}
+				title: i18n.ts.edit,
+				icon: "ti ti-pencil",
+			}
 			: {
-					title: i18n.ts.postToGallery,
-					icon: "ti ti-pencil",
-				},
+				title: i18n.ts.postToGallery,
+				icon: "ti ti-pencil",
+			},
 	),
 );
 </script>
@@ -147,7 +154,7 @@ definePageMetadata(
 	background-repeat: no-repeat;
 	position: relative;
 
-	> .name {
+	>.name {
 		position: absolute;
 		top: 8px;
 		left: 9px;
@@ -155,7 +162,7 @@ definePageMetadata(
 		background: var(--panel);
 	}
 
-	> .remove {
+	>.remove {
 		position: absolute;
 		top: 8px;
 		right: 9px;

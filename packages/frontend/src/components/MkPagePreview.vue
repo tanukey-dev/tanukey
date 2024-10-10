@@ -1,21 +1,23 @@
 <template>
-<MkA :to="`/@${page.user.username}/pages/${page.name}`" class="vhpxefrj" tabindex="-1">
-	<div v-if="page.eyeCatchingImage" class="thumbnail" :style="`background-image: url('${page.eyeCatchingImage.thumbnailUrl}')`"></div>
-	<article>
-		<header>
-			<h1 :title="page.title">{{ page.title }}</h1>
-		</header>
-		<p v-if="page.summary" :title="page.summary">{{ page.summary.length > 85 ? page.summary.slice(0, 85) + '…' : page.summary }}</p>
-		<footer>
-			<img class="icon" :src="page.user.avatarUrl"/>
-			<p>{{ userName(page.user) }}</p>
-		</footer>
-	</article>
-</MkA>
+	<MkA :to="`/secure/@${page.user.username}/pages/${page.name}`" class="vhpxefrj" tabindex="-1">
+		<div v-if="page.eyeCatchingImage" class="thumbnail"
+			:style="`background-image: url('${page.eyeCatchingImage.thumbnailUrl}')`"></div>
+		<article>
+			<header>
+				<h1 :title="page.title">{{ page.title }}</h1>
+			</header>
+			<p v-if="page.summary" :title="page.summary">{{ page.summary.length > 85 ? page.summary.slice(0, 85) + '…' :
+				page.summary }}</p>
+			<footer>
+				<img class="icon" :src="page.user.avatarUrl" />
+				<p>{{ userName(page.user) }}</p>
+			</footer>
+		</article>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue";
+import { } from "vue";
 import * as misskey from "misskey-js";
 import { userName } from "@/filters/user";
 
@@ -33,7 +35,7 @@ const props = defineProps<{
 		color: var(--accent);
 	}
 
-	> .thumbnail {
+	>.thumbnail {
 		width: 100%;
 		height: 200px;
 		background-position: center;
@@ -42,7 +44,7 @@ const props = defineProps<{
 		justify-content: center;
 		align-items: center;
 
-		> button {
+		>button {
 			font-size: 3.5em;
 			opacity: 0.7;
 
@@ -52,36 +54,36 @@ const props = defineProps<{
 			}
 		}
 
-		& + article {
+		&+article {
 			left: 100px;
 			width: calc(100% - 100px);
 		}
 	}
 
-	> article {
+	>article {
 		padding: 16px;
 
-		> header {
+		>header {
 			margin-bottom: 8px;
 
-			> h1 {
+			>h1 {
 				margin: 0;
 				font-size: 1em;
 				color: var(--urlPreviewTitle);
 			}
 		}
 
-		> p {
+		>p {
 			margin: 0;
 			color: var(--urlPreviewText);
 			font-size: 0.8em;
 		}
 
-		> footer {
+		>footer {
 			margin-top: 8px;
 			height: 16px;
 
-			> img {
+			>img {
 				display: inline-block;
 				width: 16px;
 				height: 16px;
@@ -89,7 +91,7 @@ const props = defineProps<{
 				vertical-align: top;
 			}
 
-			> p {
+			>p {
 				display: inline-block;
 				margin: 0;
 				color: var(--urlPreviewInfo);
@@ -101,12 +103,12 @@ const props = defineProps<{
 	}
 
 	@media (max-width: 700px) {
-		> .thumbnail {
+		>.thumbnail {
 			position: relative;
 			width: 100%;
 			height: 100px;
 
-			& + article {
+			&+article {
 				left: 0;
 				width: 100%;
 			}
@@ -116,11 +118,11 @@ const props = defineProps<{
 	@media (max-width: 550px) {
 		font-size: 12px;
 
-		> .thumbnail {
+		>.thumbnail {
 			height: 80px;
 		}
 
-		> article {
+		>article {
 			padding: 12px;
 		}
 	}
@@ -128,21 +130,21 @@ const props = defineProps<{
 	@media (max-width: 500px) {
 		font-size: 10px;
 
-		> .thumbnail {
+		>.thumbnail {
 			height: 70px;
 		}
 
-		> article {
+		>article {
 			padding: 8px;
 
-			> header {
+			>header {
 				margin-bottom: 4px;
 			}
 
-			> footer {
+			>footer {
 				margin-top: 4px;
 
-				> img {
+				>img {
 					width: 12px;
 					height: 12px;
 				}
@@ -150,5 +152,4 @@ const props = defineProps<{
 		}
 	}
 }
-
 </style>

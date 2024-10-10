@@ -1,35 +1,38 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div v-if="tab === 'featured'">
-			<MkPagination v-slot="{items}" :pagination="featuredFlashsPagination">
-				<div class="_gaps_s">
-					<MkFlashPreview v-for="flash in items" :key="flash.id" :flash="flash"/>
-				</div>
-			</MkPagination>
-		</div>
-
-		<div v-else-if="tab === 'my'">
-			<div class="_gaps">
-				<MkButton gradate rounded style="margin: 0 auto;" @click="create()"><i class="ti ti-plus"></i></MkButton>
-				<MkPagination v-slot="{items}" :pagination="myFlashsPagination">
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div v-if="tab === 'featured'">
+				<MkPagination v-slot="{ items }" :pagination="featuredFlashsPagination">
 					<div class="_gaps_s">
-						<MkFlashPreview v-for="flash in items" :key="flash.id" :flash="flash"/>
+						<MkFlashPreview v-for="flash in items" :key="flash.id" :flash="flash" />
 					</div>
 				</MkPagination>
 			</div>
-		</div>
 
-		<div v-else-if="tab === 'liked'">
-			<MkPagination v-slot="{items}" :pagination="likedFlashsPagination">
-				<div class="_gaps_s">
-					<MkFlashPreview v-for="like in items" :key="like.flash.id" :flash="like.flash"/>
+			<div v-else-if="tab === 'my'">
+				<div class="_gaps">
+					<MkButton gradate rounded style="margin: 0 auto;" @click="create()"><i class="ti ti-plus"></i>
+					</MkButton>
+					<MkPagination v-slot="{ items }" :pagination="myFlashsPagination">
+						<div class="_gaps_s">
+							<MkFlashPreview v-for="flash in items" :key="flash.id" :flash="flash" />
+						</div>
+					</MkPagination>
 				</div>
-			</MkPagination>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+			</div>
+
+			<div v-else-if="tab === 'liked'">
+				<MkPagination v-slot="{ items }" :pagination="likedFlashsPagination">
+					<div class="_gaps_s">
+						<MkFlashPreview v-for="like in items" :key="like.flash.id" :flash="like.flash" />
+					</div>
+				</MkPagination>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -59,7 +62,7 @@ const likedFlashsPagination = {
 };
 
 function create() {
-	router.push("/play/new");
+	router.push("/secure/play/new");
 }
 
 const headerActions = $computed(() => [

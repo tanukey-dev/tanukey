@@ -1,34 +1,32 @@
 <template>
-<div>
-	<MkPagination v-slot="{items}" :pagination="pagination" class="urempief" :class="{ grid: viewMode === 'grid' }">
-		<MkA
-			v-for="file in items"
-			:key="file.id"
-			v-tooltip.mfm="`${file.type}\n${bytes(file.size)}\n${dateString(file.createdAt)}\nby ${file.user ? '@' + Acct.toString(file.user) : 'system'}`"
-			:to="`/admin/file/${file.id}`"
-			class="file _button"
-		>
-			<div v-if="file.isSensitive" class="sensitive-label">{{ i18n.ts.sensitive }}</div>
-			<MkDriveFileThumbnail class="thumbnail" :file="file" fit="contain"/>
-			<div v-if="viewMode === 'list'" class="body">
-				<div>
-					<small style="opacity: 0.7;">{{ file.name }}</small>
+	<div>
+		<MkPagination v-slot="{ items }" :pagination="pagination" class="urempief" :class="{ grid: viewMode === 'grid' }">
+			<MkA v-for="file in items" :key="file.id"
+				v-tooltip.mfm="`${file.type}\n${bytes(file.size)}\n${dateString(file.createdAt)}\nby ${file.user ? '@' + Acct.toString(file.user) : 'system'}`"
+				:to="`/secure/admin/file/${file.id}`" class="file _button">
+				<div v-if="file.isSensitive" class="sensitive-label">{{ i18n.ts.sensitive }}</div>
+				<MkDriveFileThumbnail class="thumbnail" :file="file" fit="contain" />
+				<div v-if="viewMode === 'list'" class="body">
+					<div>
+						<small style="opacity: 0.7;">{{ file.name }}</small>
+					</div>
+					<div>
+						<MkAcct v-if="file.user" :user="file.user" />
+						<div v-else>{{ i18n.ts.system }}</div>
+					</div>
+					<div>
+						<span style="margin-right: 1em;">{{ file.type }}</span>
+						<span>{{ bytes(file.size) }}</span>
+					</div>
+					<div>
+						<span>{{ i18n.ts.registeredDate }}:
+							<MkTime :time="file.createdAt" mode="detail" />
+						</span>
+					</div>
 				</div>
-				<div>
-					<MkAcct v-if="file.user" :user="file.user"/>
-					<div v-else>{{ i18n.ts.system }}</div>
-				</div>
-				<div>
-					<span style="margin-right: 1em;">{{ file.type }}</span>
-					<span>{{ bytes(file.size) }}</span>
-				</div>
-				<div>
-					<span>{{ i18n.ts.registeredDate }}: <MkTime :time="file.createdAt" mode="detail"/></span>
-				</div>
-			</div>
-		</MkA>
-	</MkPagination>
-</div>
+			</MkA>
+		</MkPagination>
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -47,13 +45,18 @@ const props = defineProps<{
 
 <style lang="scss" scoped>
 @keyframes sensitive-blink {
-	0% { opacity: 1; }
-	50% { opacity: 0; }
+	0% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0;
+	}
 }
 
 .urempief {
 	&.list {
-		> .file {
+		>.file {
 			display: flex;
 			width: 100%;
 			box-sizing: border-box;
@@ -64,12 +67,12 @@ const props = defineProps<{
 				color: var(--accent);
 			}
 
-			> .thumbnail {
+			>.thumbnail {
 				width: 128px;
 				height: 128px;
 			}
 
-			> .body {
+			>.body {
 				margin-left: 0.3em;
 				padding: 8px;
 				flex: 1;
@@ -86,16 +89,16 @@ const props = defineProps<{
 		grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
 		grid-gap: 12px;
 
-		> .file {
+		>.file {
 			position: relative;
 			aspect-ratio: 1;
-		
-			> .thumbnail {
+
+			>.thumbnail {
 				width: 100%;
 				height: 100%;
 			}
 
-			> .sensitive-label {
+			>.sensitive-label {
 				position: absolute;
 				z-index: 10;
 				top: 8px;

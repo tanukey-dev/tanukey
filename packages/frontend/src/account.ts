@@ -330,7 +330,7 @@ export async function openAccountMenu(
 					{
 						type: "link" as const,
 						text: i18n.ts.profile,
-						to: `/@${$i.username}`,
+						to: `/secure/@${$i.username}`,
 						avatar: $i,
 					},
 					null,
@@ -359,7 +359,7 @@ export async function openAccountMenu(
 						type: "link" as const,
 						icon: "ti ti-users",
 						text: i18n.ts.manageAccounts,
-						to: "/settings/accounts",
+						to: "/secure/settings/accounts",
 					},
 				],
 			],

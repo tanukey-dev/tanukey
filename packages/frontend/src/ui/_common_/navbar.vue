@@ -1,54 +1,70 @@
 <template>
-<div :class="[$style.root, { [$style.iconOnly]: iconOnly }]">
-	<div :class="$style.body">
-		<div :class="$style.top">
-			<div :class="$style.banner" :style="{ backgroundImage: `url(${ instance.bannerUrl })` }"></div>
-			<button v-tooltip.noDelay.right="instance.name ?? i18n.ts.instance" class="_button" :class="$style.instance" @click="openInstanceMenu">
-				<img :src="instance.iconUrl || instance.faviconUrl || '/favicon.ico'" alt="" :class="$style.instanceIcon"/>
-			</button>
-		</div>
-		<div :class="$style.middle">
-			<MkA v-tooltip.noDelay.right="i18n.ts.timeline" :class="$style.item" :activeClass="$style.active" to="/" exact>
-				<i :class="$style.itemIcon" class="ti ti-home ti-fw"></i><span :class="$style.itemText">{{ i18n.ts.timeline }}</span>
-			</MkA>
-			<template v-for="item in menu">
-				<div v-if="item === '-'" :class="$style.divider"></div>
-				<component
-					:is="navbarItemDef[item].to ? 'MkA' : 'button'"
-					v-else-if="navbarItemDef[item] && (navbarItemDef[item].show !== false)"
-					v-tooltip.noDelay.right="navbarItemDef[item].title"
-					class="_button"
-					:class="[$style.item, { [$style.active]: navbarItemDef[item].active }]"
-					:activeClass="$style.active"
-					:to="navbarItemDef[item].to"
-					v-on="navbarItemDef[item].action ? { click: navbarItemDef[item].action } : {}"
-				>
-					<i class="ti-fw" :class="[$style.itemIcon, navbarItemDef[item].icon]"></i><span :class="$style.itemText">{{ navbarItemDef[item].title }}</span>
-					<span v-if="navbarItemDef[item].indicated" :class="$style.itemIndicator"><i class="_indicatorCircle"></i></span>
-				</component>
-			</template>
-			<div :class="$style.divider"></div>
-			<MkA v-if="$i.isAdmin || $i.isModerator" v-tooltip.noDelay.right="i18n.ts.controlPanel" :class="$style.item" :activeClass="$style.active" to="/admin">
-				<i :class="$style.itemIcon" class="ti ti-dashboard ti-fw"></i><span :class="$style.itemText">{{ i18n.ts.controlPanel }}</span>
-			</MkA>
-			<button class="_button" :class="$style.item" @click="more">
-				<i :class="$style.itemIcon" class="ti ti-grid-dots ti-fw"></i><span :class="$style.itemText">{{ i18n.ts.more }}</span>
-				<span v-if="otherMenuItemIndicated" :class="$style.itemIndicator"><i class="_indicatorCircle"></i></span>
-			</button>
-			<MkA v-tooltip.noDelay.right="i18n.ts.settings" :class="$style.item" :activeClass="$style.active" to="/settings">
-				<i :class="$style.itemIcon" class="ti ti-settings ti-fw"></i><span :class="$style.itemText">{{ i18n.ts.settings }}</span>
-			</MkA>
-		</div>
-		<div :class="$style.bottom">
-			<button v-tooltip.noDelay.right="i18n.ts.note" class="_button" :class="[$style.post]" data-cy-open-post-form @click="os.post">
-				<i class="ti ti-pencil ti-fw" :class="$style.postIcon"></i><span :class="$style.postText">{{ i18n.ts.note }}</span>
-			</button>
-			<button v-tooltip.noDelay.right="`${i18n.ts.account}: @${$i.username}`" class="_button" :class="[$style.account]" @click="openAccountMenu">
-				<MkAvatar :user="$i" :class="$style.avatar"/><MkAcct class="_nowrap" :class="$style.acct" :user="$i"/>
-			</button>
+	<div :class="[$style.root, { [$style.iconOnly]: iconOnly }]">
+		<div :class="$style.body">
+			<div :class="$style.top">
+				<div :class="$style.banner" :style="{ backgroundImage: `url(${instance.bannerUrl})` }"></div>
+				<button v-tooltip.noDelay.right="instance.name ?? i18n.ts.instance" class="_button"
+					:class="$style.instance" @click="openInstanceMenu">
+					<img :src="instance.iconUrl || instance.faviconUrl || '/favicon.ico'" alt=""
+						:class="$style.instanceIcon" />
+				</button>
+			</div>
+			<div :class="$style.middle">
+				<MkA v-tooltip.noDelay.right="i18n.ts.timeline" :class="$style.item" :activeClass="$style.active"
+					to="/secure/timeline" exact>
+					<i :class="$style.itemIcon" class="ti ti-home ti-fw"></i><span :class="$style.itemText">{{
+						i18n.ts.timeline }}</span>
+				</MkA>
+				<template v-for="item in menu">
+					<div v-if="item === '-'" :class="$style.divider"></div>
+					<component :is="navbarItemDef[item].to ? 'MkA' : 'button'"
+						v-else-if="navbarItemDef[item] && (navbarItemDef[item].show !== false)"
+						v-tooltip.noDelay.right="navbarItemDef[item].title" class="_button"
+						:class="[$style.item, { [$style.active]: navbarItemDef[item].active }]"
+						:activeClass="$style.active" :to="navbarItemDef[item].to"
+						v-on="navbarItemDef[item].action ? { click: navbarItemDef[item].action } : {}">
+						<i class="ti-fw" :class="[$style.itemIcon, navbarItemDef[item].icon]"></i><span
+							:class="$style.itemText">{{ navbarItemDef[item].title }}</span>
+						<span v-if="navbarItemDef[item].indicated" :class="$style.itemIndicator"><i
+								class="_indicatorCircle"></i></span>
+					</component>
+				</template>
+				<div :class="$style.divider"></div>
+				<MkA v-if="$i.isAdmin || $i.isModerator" v-tooltip.noDelay.right="i18n.ts.controlPanel"
+					:class="$style.item" :activeClass="$style.active" to="/secure/admin">
+					<i :class="$style.itemIcon" class="ti ti-dashboard ti-fw"></i><span :class="$style.itemText">{{
+						i18n.ts.controlPanel
+					}}</span>
+				</MkA>
+				<button class="_button" :class="$style.item" @click="more">
+					<i :class="$style.itemIcon" class="ti ti-grid-dots ti-fw"></i><span :class="$style.itemText">{{
+						i18n.ts.more
+					}}</span>
+					<span v-if="otherMenuItemIndicated" :class="$style.itemIndicator"><i
+							class="_indicatorCircle"></i></span>
+				</button>
+				<MkA v-tooltip.noDelay.right="i18n.ts.settings" :class="$style.item" :activeClass="$style.active"
+					to="/secure/settings">
+					<i :class="$style.itemIcon" class="ti ti-settings ti-fw"></i><span :class="$style.itemText">{{
+						i18n.ts.settings
+					}}</span>
+				</MkA>
+			</div>
+			<div :class="$style.bottom">
+				<button v-tooltip.noDelay.right="i18n.ts.note" class="_button" :class="[$style.post]"
+					data-cy-open-post-form @click="os.post">
+					<i class="ti ti-pencil ti-fw" :class="$style.postIcon"></i><span :class="$style.postText">{{
+						i18n.ts.note
+					}}</span>
+				</button>
+				<button v-tooltip.noDelay.right="`${i18n.ts.account}: @${$i.username}`" class="_button"
+					:class="[$style.account]" @click="openAccountMenu">
+					<MkAvatar :user="$i" :class="$style.avatar" />
+					<MkAcct class="_nowrap" :class="$style.acct" :user="$i" />
+				</button>
+			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
@@ -156,8 +172,8 @@ function more(ev: MouseEvent) {
 		height: 100%;
 		background-size: cover;
 		background-position: center center;
-		-webkit-mask-image: linear-gradient(0deg,rgba(0,0,0,0) 0%,rgb(0,0,0) 15%);
-		mask-image: linear-gradient(0deg,rgba(0,0,0,0) 0%,rgb(0,0,0) 15%);
+		-webkit-mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 15%);
+		mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 15%);
 	}
 
 	.instance {
@@ -206,7 +222,8 @@ function more(ev: MouseEvent) {
 			background: linear-gradient(90deg, var(--buttonGradateA), var(--buttonGradateB));
 		}
 
-		&:hover, &.active {
+		&:hover,
+		&.active {
 			&:before {
 				background: var(--accentLighten);
 			}
@@ -281,7 +298,8 @@ function more(ev: MouseEvent) {
 			color: var(--navActive);
 		}
 
-		&:hover, &.active {
+		&:hover,
+		&.active {
 			color: var(--accent);
 
 			&:before {
@@ -384,7 +402,8 @@ function more(ev: MouseEvent) {
 			background: linear-gradient(90deg, var(--buttonGradateA), var(--buttonGradateB));
 		}
 
-		&:hover, &.active {
+		&:hover,
+		&.active {
 			&:before {
 				background: var(--accentLighten);
 			}
@@ -433,7 +452,8 @@ function more(ev: MouseEvent) {
 		width: 100%;
 		text-align: center;
 
-		&:hover, &.active {
+		&:hover,
+		&.active {
 			text-decoration: none;
 			color: var(--accent);
 
@@ -452,8 +472,8 @@ function more(ev: MouseEvent) {
 				background: var(--accentedBg);
 			}
 
-			> .icon,
-			> .text {
+			>.icon,
+			>.text {
 				opacity: 1;
 			}
 		}

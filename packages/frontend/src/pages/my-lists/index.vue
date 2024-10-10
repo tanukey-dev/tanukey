@@ -1,26 +1,30 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div class="_gaps">
-			<div v-if="items.length === 0" class="empty">
-				<div class="_fullinfo">
-					<img :src="infoImageUrl" class="_ghost"/>
-					<div>{{ i18n.ts.nothing }}</div>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div class="_gaps">
+				<div v-if="items.length === 0" class="empty">
+					<div class="_fullinfo">
+						<img :src="infoImageUrl" class="_ghost" />
+						<div>{{ i18n.ts.nothing }}</div>
+					</div>
+				</div>
+
+				<MkButton primary rounded style="margin: 0 auto;" @click="create"><i class="ti ti-plus"></i> {{
+					i18n.ts.createList }}</MkButton>
+
+				<div v-if="items.length > 0" class="_gaps">
+					<MkA v-for="list in items" :key="list.id" class="_panel" :class="$style.list"
+						:to="`/secure/my/lists/${list.id}`">
+						<div style="margin-bottom: 4px;">{{ list.name }}</div>
+						<MkAvatars :userIds="list.userIds" :limit="10" />
+					</MkA>
 				</div>
 			</div>
-
-			<MkButton primary rounded style="margin: 0 auto;" @click="create"><i class="ti ti-plus"></i> {{ i18n.ts.createList }}</MkButton>
-
-			<div v-if="items.length > 0" class="_gaps">
-				<MkA v-for="list in items" :key="list.id" class="_panel" :class="$style.list" :to="`/my/lists/${ list.id }`">
-					<div style="margin-bottom: 4px;">{{ list.name }}</div>
-					<MkAvatars :userIds="list.userIds" :limit="10"/>
-				</MkA>
-			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>

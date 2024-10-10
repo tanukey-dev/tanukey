@@ -1,62 +1,64 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div v-if="tab === 'search'">
-			<div class="_gaps">
-				<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search">
-					<template #prefix><i class="ti ti-search"></i></template>
-				</MkInput>
-				<MkRadios v-model="searchType" @update:modelValue="search()">
-					<option value="nameAndDescription">{{ i18n.ts._channel.nameAndDescription }}</option>
-					<option value="nameOnly">{{ i18n.ts._channel.nameOnly }}</option>
-				</MkRadios>
-				<MkButton large primary gradate rounded @click="search">{{ i18n.ts.search }}</MkButton>
-			</div>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div v-if="tab === 'search'">
+				<div class="_gaps">
+					<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search">
+						<template #prefix><i class="ti ti-search"></i></template>
+					</MkInput>
+					<MkRadios v-model="searchType" @update:modelValue="search()">
+						<option value="nameAndDescription">{{ i18n.ts._channel.nameAndDescription }}</option>
+						<option value="nameOnly">{{ i18n.ts._channel.nameOnly }}</option>
+					</MkRadios>
+					<MkButton large primary gradate rounded @click="search">{{ i18n.ts.search }}</MkButton>
+				</div>
 
-			<MkFoldableSection v-if="channelPagination">
-				<template #header>{{ i18n.ts.searchResult }}</template>
-				<MkChannelList :key="key" :pagination="channelPagination"/>
-			</MkFoldableSection>
-		</div>
-		<div v-if="tab === 'featured'">
-			<div style="display: flex;">
-				<div style="width: 50%;">{{ i18n.ts._channel.title }}</div>
-				<div style="width: 25%;">{{ i18n.ts._channel.noteCount }}</div>
-				<div style="width: 25%;">{{ i18n.ts._channel.lastUpdate }}</div>
+				<MkFoldableSection v-if="channelPagination">
+					<template #header>{{ i18n.ts.searchResult }}</template>
+					<MkChannelList :key="key" :pagination="channelPagination" />
+				</MkFoldableSection>
 			</div>
-			<MkPagination v-slot="{items}" :pagination="featuredPagination">
-				<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
-			</MkPagination>
-		</div>
-		<div v-else-if="tab === 'favorites'">
-			<div style="display: flex;">
-				<div style="width: 50%;">{{ i18n.ts._channel.title }}</div>
-				<div style="width: 25%;">{{ i18n.ts._channel.noteCount }}</div>
-				<div style="width: 25%;">{{ i18n.ts._channel.lastUpdate }}</div>
+			<div v-if="tab === 'featured'">
+				<div style="display: flex;">
+					<div style="width: 50%;">{{ i18n.ts._channel.title }}</div>
+					<div style="width: 25%;">{{ i18n.ts._channel.noteCount }}</div>
+					<div style="width: 25%;">{{ i18n.ts._channel.lastUpdate }}</div>
+				</div>
+				<MkPagination v-slot="{ items }" :pagination="featuredPagination">
+					<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel" />
+				</MkPagination>
 			</div>
-			<MkPagination v-slot="{items}" :pagination="favoritesPagination">
-				<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
-			</MkPagination>
-		</div>
-		<div v-else-if="tab === 'following'">
-			<div style="display: flex;">
-				<div style="width: 50%;">{{ i18n.ts._channel.title }}</div>
-				<div style="width: 25%;">{{ i18n.ts._channel.noteCount }}</div>
-				<div style="width: 25%;">{{ i18n.ts._channel.lastUpdate }}</div>
+			<div v-else-if="tab === 'favorites'">
+				<div style="display: flex;">
+					<div style="width: 50%;">{{ i18n.ts._channel.title }}</div>
+					<div style="width: 25%;">{{ i18n.ts._channel.noteCount }}</div>
+					<div style="width: 25%;">{{ i18n.ts._channel.lastUpdate }}</div>
+				</div>
+				<MkPagination v-slot="{ items }" :pagination="favoritesPagination">
+					<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel" />
+				</MkPagination>
 			</div>
-			<MkPagination v-slot="{items}" :pagination="followingPagination">
-				<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
-			</MkPagination>
-		</div>
-		<div v-else-if="tab === 'owned'">
-			<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
-			<MkPagination v-slot="{items}" :pagination="ownedPagination">
-				<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel"/>
-			</MkPagination>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+			<div v-else-if="tab === 'following'">
+				<div style="display: flex;">
+					<div style="width: 50%;">{{ i18n.ts._channel.title }}</div>
+					<div style="width: 25%;">{{ i18n.ts._channel.noteCount }}</div>
+					<div style="width: 25%;">{{ i18n.ts._channel.lastUpdate }}</div>
+				</div>
+				<MkPagination v-slot="{ items }" :pagination="followingPagination">
+					<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel" />
+				</MkPagination>
+			</div>
+			<div v-else-if="tab === 'owned'">
+				<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
+				<MkPagination v-slot="{ items }" :pagination="ownedPagination">
+					<MkChannelItem v-for="channel in items" :key="channel.id" class="_margin" :channel="channel" />
+				</MkPagination>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -131,7 +133,7 @@ async function search() {
 }
 
 function create() {
-	router.push("/channels/new");
+	router.push("/secure/channels/new");
 }
 
 const headerActions = $computed(() => [

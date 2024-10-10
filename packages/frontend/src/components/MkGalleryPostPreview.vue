@@ -1,29 +1,24 @@
 <template>
-<MkA :to="`/gallery/${post.id}`" class="ttasepnz _panel" tabindex="-1" @pointerenter="enterHover" @pointerleave="leaveHover">
-	<div class="thumbnail">
-		<Transition>
-			<ImgWithBlurhash
-				class="img layered"
-				:transition="safe ? null : {
+	<MkA :to="`/secure/gallery/${post.id}`" class="ttasepnz _panel" tabindex="-1" @pointerenter="enterHover"
+		@pointerleave="leaveHover">
+		<div class="thumbnail">
+			<Transition>
+				<ImgWithBlurhash class="img layered" :transition="safe ? null : {
 					duration: 500,
 					leaveActiveClass: $style.transition_toggle_leaveActive,
 					leaveToClass: $style.transition_toggle_leaveTo,
-				}"
-				:src="post.files[0].thumbnailUrl"
-				:hash="post.files[0].blurhash"
-				:forceBlurhash="!show"
-			/>
-		</Transition>
-	</div>
-	<article>
-		<header>
-			<MkAvatar :user="post.user" class="avatar" link preview/>
-		</header>
-		<footer>
-			<span class="title">{{ post.title }}</span>
-		</footer>
-	</article>
-</MkA>
+				}" :src="post.files[0].thumbnailUrl" :hash="post.files[0].blurhash" :forceBlurhash="!show" />
+			</Transition>
+		</div>
+		<article>
+			<header>
+				<MkAvatar :user="post.user" class="avatar" link preview />
+			</header>
+			<footer>
+				<span class="title">{{ post.title }}</span>
+			</footer>
+		</article>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
@@ -76,12 +71,12 @@ function leaveHover(): void {
 		text-decoration: none;
 		color: var(--accent);
 
-		> .thumbnail {
+		>.thumbnail {
 			transform: scale(1.1);
 		}
 
-		> article {
-			> footer {
+		>article {
+			>footer {
 				&:before {
 					opacity: 1;
 				}
@@ -89,13 +84,13 @@ function leaveHover(): void {
 		}
 	}
 
-	> .thumbnail {
+	>.thumbnail {
 		width: 100%;
 		height: 100%;
 		position: absolute;
 		transition: transform 0.5s ease;
 
-		> .img {
+		>.img {
 			width: 100%;
 			height: 100%;
 			object-fit: cover;
@@ -107,13 +102,13 @@ function leaveHover(): void {
 		}
 	}
 
-	> article {
+	>article {
 		position: absolute;
 		z-index: 1;
 		width: 100%;
 		height: 100%;
 
-		> header {
+		>header {
 			position: absolute;
 			top: 0;
 			width: 100%;
@@ -121,14 +116,14 @@ function leaveHover(): void {
 			box-sizing: border-box;
 			display: flex;
 
-			> .avatar {
+			>.avatar {
 				margin-left: auto;
 				width: 32px;
 				height: 32px;
 			}
 		}
 
-		> footer {
+		>footer {
 			position: absolute;
 			bottom: 0;
 			width: 100%;
@@ -152,7 +147,7 @@ function leaveHover(): void {
 				transition: opacity 0.5s ease;
 			}
 
-			> .title {
+			>.title {
 				font-weight: bold;
 			}
 		}

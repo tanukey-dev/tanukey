@@ -8,24 +8,24 @@
 					</div>
 
 					<MkInfo v-if="thereIsUnresolvedAbuseReport" warn class="info">{{
-						i18n.ts.thereIsUnresolvedAbuseReportWarning }} <MkA to="/admin/abuses" class="_link">{{
+						i18n.ts.thereIsUnresolvedAbuseReportWarning }} <MkA to="/secure/admin/abuses" class="_link">{{
 							i18n.ts.check }}</MkA>
 					</MkInfo>
 					<MkInfo v-if="noMaintainerInformation" warn class="info">{{ i18n.ts.noMaintainerInformationWarning
-						}} <MkA to="/admin/settings" class="_link">{{ i18n.ts.configure }}</MkA>
+						}} <MkA to="/secure/admin/settings" class="_link">{{ i18n.ts.configure }}</MkA>
 					</MkInfo>
 					<MkInfo v-if="noBotProtection" warn class="info">{{ i18n.ts.noBotProtectionWarning }} <MkA
-							to="/admin/security" class="_link">{{ i18n.ts.configure }}</MkA>
+							to="/secure/admin/security" class="_link">{{ i18n.ts.configure }}</MkA>
 					</MkInfo>
 					<MkInfo v-if="noEmailServer" warn class="info">{{ i18n.ts.noEmailServerWarning }} <MkA
-							to="/admin/email-settings" class="_link">{{ i18n.ts.configure }}</MkA>
+							to="/secure/admin/email-settings" class="_link">{{ i18n.ts.configure }}</MkA>
 					</MkInfo>
 
 					<MkSuperMenu :def="menuDef" :grid="narrow"></MkSuperMenu>
 				</div>
 			</MkSpacer>
 		</div>
-		<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
+		<div v-if="!(narrow)" class="main" ref="contents">
 			<RouterView />
 		</div>
 	</div>
@@ -43,11 +43,17 @@ import {
 	definePageMetadata,
 	provideMetadataReceiver,
 } from "@/scripts/page-metadata";
-import { onActivated, onMounted, onUnmounted, provide, watch } from "vue";
+import RouterView from "@/components/global/RouterView.vue";
+import { onActivated, onMounted, onUnmounted, provide, watch, shallowRef } from "vue";
+import { useScrollPositionManager } from "@/nirax";
+import { getScrollContainer } from "@/scripts/scroll";
 
 const isEmpty = (x: string | null) => x == null || x === "";
 
 const router = useRouter();
+const contents = shallowRef<HTMLElement>();
+
+useScrollPositionManager(() => getScrollContainer(contents.value), router, "/secure/admin/settings");
 
 const indexInfo = {
 	title: i18n.ts.controlPanel,
@@ -72,7 +78,6 @@ let noBotProtection =
 	!instance.enableTurnstile;
 let noEmailServer = !instance.enableEmail;
 let thereIsUnresolvedAbuseReport = $ref(false);
-let currentPage = $computed(() => router.currentRef.value.child);
 
 os.api("admin/abuse-user-reports", {
 	state: "unresolved",
@@ -86,6 +91,20 @@ const ro = new ResizeObserver((entries, observer) => {
 	if (entries.length === 0) return;
 	narrow = entries[0].borderBoxSize[0].inlineSize < NARROW_THRESHOLD;
 });
+
+const currentPath = router.getCurrentPathRef();
+
+function isActive(path: string): boolean {
+	const resolved = router.resolve(path);
+	if (resolved == null) {
+		return false;
+	}
+	const fullPath = router.geFullPathFromResolved(resolved);
+	if (currentPath.value.startsWith(fullPath)) {
+		return true;
+	}
+	return false;
+}
 
 const menuDef = $computed(() => [
 	{
@@ -115,76 +134,76 @@ const menuDef = $computed(() => [
 			{
 				icon: "ti ti-dashboard",
 				text: i18n.ts.dashboard,
-				to: "/admin/overview",
-				active: currentPage?.route.name === "overview",
+				to: "/secure/admin/overview",
+				active: isActive("/secure/admin/overview")
 			},
 			{
 				icon: "ti ti-users",
 				text: i18n.ts.users,
-				to: "/admin/users",
-				active: currentPage?.route.name === "users",
+				to: "/secure/admin/users",
+				active: isActive("/secure/admin/users")
 			},
 			{
 				icon: "ti ti-user-plus",
 				text: i18n.ts.invite,
-				to: "/admin/invites",
-				active: currentPage?.route.name === "invites",
+				to: "/secure/admin/invites",
+				active: isActive("/secure/admin/invites")
 			},
 			{
 				icon: "ti ti-badges",
 				text: i18n.ts.roles,
-				to: "/admin/roles",
-				active: currentPage?.route.name === "roles",
+				to: "/secure/admin/roles",
+				active: isActive("/secure/admin/roles")
 			},
 			instance.enableSubscriptions
 				? {
 					icon: "ti ti-credit-card",
 					text: i18n.ts.subscription,
-					to: "/admin/subscription-plans",
-					active: currentPage?.route.name === "subscription-plans",
+					to: "/secure/admin/subscription-plans",
+					active: isActive("/secure/admin/subscription-plans")
 				}
 				: undefined,
 			{
 				icon: "ti ti-icons",
 				text: i18n.ts.customEmojis,
-				to: "/admin/emojis",
-				active: currentPage?.route.name === "emojis",
+				to: "/secure/admin/emojis",
+				active: isActive("/secure/admin/emojis")
 			},
 			{
 				icon: "ti ti-whirl",
 				text: i18n.ts.federation,
-				to: "/admin/federation",
-				active: currentPage?.route.name === "federation",
+				to: "/secure/admin/federation",
+				active: isActive("/secure/admin/federation")
 			},
 			{
 				icon: "ti ti-clock-play",
 				text: i18n.ts.jobQueue,
-				to: "/admin/queue",
-				active: currentPage?.route.name === "queue",
+				to: "/secure/admin/queue",
+				active: isActive("/secure/admin/queue")
 			},
 			{
 				icon: "ti ti-cloud",
 				text: i18n.ts.files,
-				to: "/admin/files",
-				active: currentPage?.route.name === "files",
+				to: "/secure/admin/files",
+				active: isActive("/secure/admin/files")
 			},
 			{
 				icon: "ti ti-speakerphone",
 				text: i18n.ts.announcements,
-				to: "/admin/announcements",
-				active: currentPage?.route.name === "announcements",
+				to: "/secure/admin/announcements",
+				active: isActive("/secure/admin/announcements")
 			},
 			{
 				icon: "ti ti-ad",
 				text: i18n.ts.ads,
-				to: "/admin/ads",
-				active: currentPage?.route.name === "ads",
+				to: "/secure/admin/ads",
+				active: isActive("/secure/admin/ads")
 			},
 			{
 				icon: "ti ti-exclamation-circle",
 				text: i18n.ts.abuseReports,
-				to: "/admin/abuses",
-				active: currentPage?.route.name === "abuses",
+				to: "/secure/admin/abuses",
+				active: isActive("/secure/admin/abuses")
 			},
 		],
 	},
@@ -194,68 +213,68 @@ const menuDef = $computed(() => [
 			{
 				icon: "ti ti-settings",
 				text: i18n.ts.general,
-				to: "/admin/settings",
-				active: currentPage?.route.name === "settings",
+				to: "/secure/admin/settings",
+				active: isActive("/secure/admin/settings")
 			},
 			{
 				icon: "ti ti-device-tv",
 				text: i18n.ts.pinnedChannel,
-				to: "/admin/pinnedChannel",
-				active: currentPage?.route.name === "pinnedChannel",
+				to: "/secure/admin/pinnedChannel",
+				active: isActive("/secure/admin/pinnedChannel")
 			},
 			{
 				icon: "ti ti-paint",
 				text: i18n.ts.branding,
-				to: "/admin/branding",
-				active: currentPage?.route.name === "branding",
+				to: "/secure/admin/branding",
+				active: isActive("/secure/admin/branding")
 			},
 			{
 				icon: "ti ti-shield",
 				text: i18n.ts.moderation,
-				to: "/admin/moderation",
-				active: currentPage?.route.name === "moderation",
+				to: "/secure/admin/moderation",
+				active: isActive("/secure/admin/moderation")
 			},
 			{
 				icon: "ti ti-mail",
 				text: i18n.ts.emailServer,
-				to: "/admin/email-settings",
-				active: currentPage?.route.name === "email-settings",
+				to: "/secure/admin/email-settings",
+				active: isActive("/secure/admin/email-settings")
 			},
 			{
 				icon: "ti ti-cloud",
 				text: i18n.ts.objectStorage,
-				to: "/admin/object-storage",
-				active: currentPage?.route.name === "object-storage",
+				to: "/secure/admin/object-storage",
+				active: isActive("/secure/admin/object-storage")
 			},
 			{
 				icon: "ti ti-lock",
 				text: i18n.ts.security,
-				to: "/admin/security",
-				active: currentPage?.route.name === "security",
+				to: "/secure/admin/security",
+				active: isActive("/secure/admin/security")
 			},
 			{
 				icon: "ti ti-planet",
 				text: i18n.ts.relays,
-				to: "/admin/relays",
-				active: currentPage?.route.name === "relays",
+				to: "/secure/admin/relays",
+				active: isActive("/secure/admin/relays")
 			},
 			{
 				icon: "ti ti-ban",
 				text: i18n.ts.instanceBlocking,
-				to: "/admin/instance-block",
-				active: currentPage?.route.name === "instance-block",
+				to: "/secure/admin/instance-block",
+				active: isActive("/secure/admin/instance-block")
 			},
 			{
 				icon: "ti ti-ghost",
 				text: i18n.ts.proxyAccount,
-				to: "/admin/proxy-account",
-				active: currentPage?.route.name === "proxy-account",
+				to: "/secure/admin/proxy-account",
+				active: isActive("/secure/admin/proxy-account")
 			},
 			{
 				icon: "ti ti-adjustments",
 				text: i18n.ts.other,
-				to: "/admin/other-settings",
-				active: currentPage?.route.name === "other-settings",
+				to: "/secure/admin/other-settings",
+				active: isActive("/secure/admin/other-settings")
 			},
 		],
 	},
@@ -265,16 +284,16 @@ const menuDef = $computed(() => [
 			{
 				icon: "ti ti-database",
 				text: i18n.ts.database,
-				to: "/admin/database",
-				active: currentPage?.route.name === "database",
+				to: "/secure/admin/database",
+				active: isActive("/secure/admin/database")
 			},
 		],
 	},
 ]);
 
 watch(narrow, () => {
-	if (currentPage?.route.name == null && !narrow) {
-		router.push("/admin/overview");
+	if (currentPath.value === "/secure/admin" && !narrow) {
+		router.push("/secure/admin/overview");
 	}
 });
 
@@ -282,15 +301,15 @@ onMounted(() => {
 	ro.observe(el);
 
 	narrow = el.offsetWidth < NARROW_THRESHOLD;
-	if (currentPage?.route.name == null && !narrow) {
-		router.push("/admin/overview");
+	if (currentPath.value === "/secure/admin" && !narrow) {
+		router.push("/secure/admin/overview");
 	}
 });
 
 onActivated(() => {
 	narrow = el.offsetWidth < NARROW_THRESHOLD;
-	if (currentPage?.route.name == null && !narrow) {
-		router.push("/admin/overview");
+	if (currentPath.value === "/secure/admin" && !narrow) {
+		router.push("/secure/admin/overview");
 	}
 });
 
@@ -298,9 +317,9 @@ onUnmounted(() => {
 	ro.disconnect();
 });
 
-watch(router.currentRef, (to) => {
-	if (to.route.path === "/admin" && to.child?.route.name == null && !narrow) {
-		router.replace("/admin/overview");
+watch(currentPath, (to) => {
+	if (to === "/secure/admin" && !narrow) {
+		router.push("/secure/admin/overview");
 	}
 });
 

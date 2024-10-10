@@ -1,30 +1,35 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div :class="$style.eventName">{{ i18n.ts.event }}: {{ eventName }}</div>
-		<div v-if="eventCircleId == null || eventCircle != null" class="_gaps_m">
-			<MkSelect v-model="circleId">
-				<template #label>{{ i18n.ts.circle }}</template>
-				<option v-for="circle in circles" :key="circle.id" :value="circle.id">{{ circle.name }}</option>
-			</MkSelect>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div :class="$style.eventName">{{ i18n.ts.event }}: {{ eventName }}</div>
+			<div v-if="eventCircleId == null || eventCircle != null" class="_gaps_m">
+				<MkSelect v-model="circleId">
+					<template #label>{{ i18n.ts.circle }}</template>
+					<option v-for="circle in circles" :key="circle.id" :value="circle.id">{{ circle.name }}</option>
+				</MkSelect>
 
-			<MkTextarea v-model="description">
-				<template #label>{{ i18n.ts.description }}</template>
-			</MkTextarea>
+				<MkTextarea v-model="description">
+					<template #label>{{ i18n.ts.description }}</template>
+				</MkTextarea>
 
-			<MkSelect v-model="pageId">
-				<template #label>{{ i18n.ts._eventCircle.embededPage }}</template>
-				<option v-for="page in pages" :key="page.id" :value="page.id">{{ page.title }}</option>
-			</MkSelect>
+				<MkSelect v-model="pageId">
+					<template #label>{{ i18n.ts._eventCircle.embededPage }}</template>
+					<option v-for="page in pages" :key="page.id" :value="page.id">{{ page.title }}</option>
+				</MkSelect>
 
-			<div class="_buttons">
-				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ eventId ? i18n.ts.save : i18n.ts.create }}</MkButton>
-				<MkButton v-if="eventCircleId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
+				<div class="_buttons">
+					<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ eventId ? i18n.ts.save :
+						i18n.ts.create }}</MkButton>
+					<MkButton v-if="eventCircleId" danger @click="archive()"><i class="ti ti-trash"></i> {{
+						i18n.ts.archive }}
+					</MkButton>
+				</div>
 			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -111,7 +116,7 @@ function save() {
 	} else {
 		os.api("eventCircles/create", params).then((created) => {
 			os.success();
-			router.push(`/events/${props.eventId}/${created.id}`);
+			router.push(`/secure/events/${props.eventId}/${created.id}`);
 		});
 	}
 }
@@ -130,7 +135,7 @@ async function archive() {
 		isArchived: true,
 	}).then(() => {
 		os.success();
-		router.push(`/events/${props.eventId}`);
+		router.push(`/secure/events/${props.eventId}`);
 		location.reload();
 	});
 }
@@ -143,13 +148,13 @@ definePageMetadata(
 	computed(() =>
 		props.eventId
 			? {
-					title: i18n.ts._eventCircle.edit,
-					icon: "ti ti-calendar-event",
-				}
+				title: i18n.ts._eventCircle.edit,
+				icon: "ti ti-calendar-event",
+			}
 			: {
-					title: i18n.ts._eventCircle.create,
-					icon: "ti ti-calendar-event",
-				},
+				title: i18n.ts._eventCircle.create,
+				icon: "ti ti-calendar-event",
+			},
 	),
 );
 </script>
@@ -158,5 +163,4 @@ definePageMetadata(
 .eventName {
 	margin-bottom: 20px;
 }
-
 </style>

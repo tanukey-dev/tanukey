@@ -1,36 +1,39 @@
 <template>
-<MkA :to="`/channels/${channel.id}`" class="eftoefju _panel" tabindex="-1">
-	<div class="banner" :style="bannerStyle">
-		<div class="fade"></div>
-		<div class="name"><i class="ti ti-device-tv"></i> {{ channel.name }}</div>
-		<div class="status">
-			<div>
-				<i class="ti ti-users ti-fw"></i>
-				<I18n :src="i18n.ts._channel.usersCount" tag="span" style="margin-left: 4px;">
-					<template #n>
-						<b>{{ channel.usersCount }}</b>
-					</template>
-				</I18n>
-			</div>
-			<div>
-				<i class="ti ti-pencil ti-fw"></i>
-				<I18n :src="i18n.ts._channel.notesCount" tag="span" style="margin-left: 4px;">
-					<template #n>
-						<b>{{ channel.notesCount }}</b>
-					</template>
-				</I18n>
+	<MkA :to="`/secure/channels/${channel.id}`" class="eftoefju _panel" tabindex="-1">
+		<div class="banner" :style="bannerStyle">
+			<div class="fade"></div>
+			<div class="name"><i class="ti ti-device-tv"></i> {{ channel.name }}</div>
+			<div class="status">
+				<div>
+					<i class="ti ti-users ti-fw"></i>
+					<I18n :src="i18n.ts._channel.usersCount" tag="span" style="margin-left: 4px;">
+						<template #n>
+							<b>{{ channel.usersCount }}</b>
+						</template>
+					</I18n>
+				</div>
+				<div>
+					<i class="ti ti-pencil ti-fw"></i>
+					<I18n :src="i18n.ts._channel.notesCount" tag="span" style="margin-left: 4px;">
+						<template #n>
+							<b>{{ channel.notesCount }}</b>
+						</template>
+					</I18n>
+				</div>
 			</div>
 		</div>
-	</div>
-	<article v-if="channel.description">
-		<p :title="channel.description">{{ channel.description.length > 85 ? channel.description.slice(0, 85) + '…' : channel.description }}</p>
-	</article>
-	<footer>
-		<span v-if="channel.lastNotedAt">
-			{{ i18n.ts.updatedAt }}: <MkTime :time="channel.lastNotedAt"/>
-		</span>
-	</footer>
-</MkA>
+		<article v-if="channel.description">
+			<p :title="channel.description">{{ channel.description.length > 85 ? channel.description.slice(0, 85) + '…'
+				:
+				channel.description }}</p>
+		</article>
+		<footer>
+			<span v-if="channel.lastNotedAt">
+				{{ i18n.ts.updatedAt }}:
+				<MkTime :time="channel.lastNotedAt" />
+			</span>
+		</footer>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
@@ -60,14 +63,14 @@ const bannerStyle = computed(() => {
 		text-decoration: none;
 	}
 
-	> .banner {
+	>.banner {
 		position: relative;
 		width: 100%;
 		height: 200px;
 		background-position: center;
 		background-size: cover;
 
-		> .fade {
+		>.fade {
 			position: absolute;
 			bottom: 0;
 			left: 0;
@@ -76,7 +79,7 @@ const bannerStyle = computed(() => {
 			background: linear-gradient(0deg, var(--panel), var(--X15));
 		}
 
-		> .name {
+		>.name {
 			position: absolute;
 			top: 16px;
 			left: 16px;
@@ -86,7 +89,7 @@ const bannerStyle = computed(() => {
 			font-size: 1.2em;
 		}
 
-		> .status {
+		>.status {
 			position: absolute;
 			z-index: 1;
 			bottom: 16px;
@@ -99,20 +102,20 @@ const bannerStyle = computed(() => {
 		}
 	}
 
-	> article {
+	>article {
 		padding: 16px;
 
-		> p {
+		>p {
 			margin: 0;
 			font-size: 1em;
 		}
 	}
 
-	> footer {
+	>footer {
 		padding: 12px 16px;
 		border-top: solid 0.5px var(--divider);
 
-		> span {
+		>span {
 			opacity: 0.7;
 			font-size: 0.9em;
 		}
@@ -121,19 +124,19 @@ const bannerStyle = computed(() => {
 	@media (max-width: 550px) {
 		font-size: 0.9em;
 
-		> .banner {
+		>.banner {
 			height: 80px;
 
-			> .status {
+			>.status {
 				display: none;
 			}
 		}
 
-		> article {
+		>article {
 			padding: 12px;
 		}
 
-		> footer {
+		>footer {
 			display: none;
 		}
 	}
@@ -141,14 +144,13 @@ const bannerStyle = computed(() => {
 	@media (max-width: 500px) {
 		font-size: 0.8em;
 
-		> .banner {
+		>.banner {
 			height: 70px;
 		}
 
-		> article {
+		>article {
 			padding: 8px;
 		}
 	}
 }
-
 </style>

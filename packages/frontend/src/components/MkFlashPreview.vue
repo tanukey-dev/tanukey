@@ -1,20 +1,21 @@
 <template>
-<MkA :to="`/play/${flash.id}`" class="vhpxefrk _panel" tabindex="-1">
-	<article>
-		<header>
-			<h1 :title="flash.title">{{ flash.title }}</h1>
-		</header>
-		<p v-if="flash.summary" :title="flash.summary">{{ flash.summary.length > 85 ? flash.summary.slice(0, 85) + '…' : flash.summary }}</p>
-		<footer>
-			<img class="icon" :src="flash.user.avatarUrl"/>
-			<p>{{ userName(flash.user) }}</p>
-		</footer>
-	</article>
-</MkA>
+	<MkA :to="`/secure/play/${flash.id}`" class="vhpxefrk _panel" tabindex="-1">
+		<article>
+			<header>
+				<h1 :title="flash.title">{{ flash.title }}</h1>
+			</header>
+			<p v-if="flash.summary" :title="flash.summary">{{ flash.summary.length > 85 ? flash.summary.slice(0, 85) +
+				'…' : flash.summary }}</p>
+			<footer>
+				<img class="icon" :src="flash.user.avatarUrl" />
+				<p>{{ userName(flash.user) }}</p>
+			</footer>
+		</article>
+	</MkA>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue";
+import { } from "vue";
 import { userName } from "@/filters/user";
 
 const props = defineProps<{
@@ -32,30 +33,30 @@ const props = defineProps<{
 		color: var(--accent);
 	}
 
-	> article {
+	>article {
 		padding: 16px;
 
-		> header {
+		>header {
 			margin-bottom: 8px;
 
-			> h1 {
+			>h1 {
 				margin: 0;
 				font-size: 1em;
 				color: var(--urlPreviewTitle);
 			}
 		}
 
-		> p {
+		>p {
 			margin: 0;
 			color: var(--urlPreviewText);
 			font-size: 0.8em;
 		}
 
-		> footer {
+		>footer {
 			margin-top: 8px;
 			height: 16px;
 
-			> img {
+			>img {
 				display: inline-block;
 				width: 16px;
 				height: 16px;
@@ -63,7 +64,7 @@ const props = defineProps<{
 				vertical-align: top;
 			}
 
-			> p {
+			>p {
 				display: inline-block;
 				margin: 0;
 				color: var(--urlPreviewInfo);
@@ -74,31 +75,30 @@ const props = defineProps<{
 		}
 	}
 
-	@media (max-width: 700px) {
-	}
+	@media (max-width: 700px) {}
 
 	@media (max-width: 550px) {
 		font-size: 12px;
 
-		> article {
+		>article {
 			padding: 12px;
 		}
 	}
 
 	@media (max-width: 500px) {
 		font-size: 10px;
-		
-		> article {
+
+		>article {
 			padding: 8px;
 
-			> header {
+			>header {
 				margin-bottom: 4px;
 			}
 
-			> footer {
+			>footer {
 				margin-top: 4px;
 
-				> img {
+				>img {
 					width: 12px;
 					height: 12px;
 				}
@@ -106,5 +106,4 @@ const props = defineProps<{
 		}
 	}
 }
-
 </style>

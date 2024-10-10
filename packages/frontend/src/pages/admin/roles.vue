@@ -1,230 +1,248 @@
 <template>
-<div>
-	<MkStickyContainer>
-		<template #header><XHeader :actions="headerActions" :tabs="headerTabs"/></template>
-		<MkSpacer :contentMax="700">
-			<div class="_gaps">
-				<MkFolder>
-					<template #label>{{ i18n.ts._role.baseRole }}</template>
+	<div>
+		<MkStickyContainer>
+			<template #header>
+				<XHeader :actions="headerActions" :tabs="headerTabs" />
+			</template>
+			<MkSpacer :contentMax="700">
+				<div class="_gaps">
+					<MkFolder>
+						<template #label>{{ i18n.ts._role.baseRole }}</template>
+						<div class="_gaps_s">
+							<MkInput v-model="baseRoleQ" type="search">
+								<template #prefix><i class="ti ti-search"></i></template>
+							</MkInput>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.rateLimitFactor, 'rateLimitFactor'])">
+								<template #label>{{ i18n.ts._role._options.rateLimitFactor }}</template>
+								<template #suffix>{{ Math.floor(policies.rateLimitFactor * 100) }}%</template>
+								<MkRange :modelValue="policies.rateLimitFactor * 100" :min="30" :max="300" :step="10"
+									:textConverter="(v) => `${v}%`"
+									@update:modelValue="v => policies.rateLimitFactor = (v / 100)">
+									<template #caption>{{ i18n.ts._role._options.descriptionOfRateLimitFactor
+										}}</template>
+								</MkRange>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.gtlAvailable, 'gtlAvailable'])">
+								<template #label>{{ i18n.ts._role._options.gtlAvailable }}</template>
+								<template #suffix>{{ policies.gtlAvailable ? i18n.ts.yes : i18n.ts.no }}</template>
+								<MkSwitch v-model="policies.gtlAvailable">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.ltlAvailable, 'ltlAvailable'])">
+								<template #label>{{ i18n.ts._role._options.ltlAvailable }}</template>
+								<template #suffix>{{ policies.ltlAvailable ? i18n.ts.yes : i18n.ts.no }}</template>
+								<MkSwitch v-model="policies.ltlAvailable">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.canPublicNote, 'canPublicNote'])">
+								<template #label>{{ i18n.ts._role._options.canPublicNote }}</template>
+								<template #suffix>{{ policies.canPublicNote ? i18n.ts.yes : i18n.ts.no }}</template>
+								<MkSwitch v-model="policies.canPublicNote">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.canInvite, 'canInvite'])">
+								<template #label>{{ i18n.ts._role._options.canInvite }}</template>
+								<template #suffix>{{ policies.canInvite ? i18n.ts.yes : i18n.ts.no }}</template>
+								<MkSwitch v-model="policies.canInvite">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.inviteLimit, 'inviteLimit'])">
+								<template #label>{{ i18n.ts._role._options.inviteLimit }}</template>
+								<template #suffix>{{ policies.inviteLimit }}</template>
+								<MkInput v-model="policies.inviteLimit" type="number">
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.inviteLimitCycle, 'inviteLimitCycle'])">
+								<template #label>{{ i18n.ts._role._options.inviteLimitCycle }}</template>
+								<template #suffix>{{ policies.inviteLimitCycle + i18n.ts._time.minute }}</template>
+								<MkInput v-model="policies.inviteLimitCycle" type="number">
+									<template #suffix>{{ i18n.ts._time.minute }}</template>
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder
+								v-if="matchQuery([i18n.ts._role._options.inviteExpirationTime, 'inviteExpirationTime'])">
+								<template #label>{{ i18n.ts._role._options.inviteExpirationTime }}</template>
+								<template #suffix>{{ policies.inviteExpirationTime + i18n.ts._time.minute }}</template>
+								<MkInput v-model="policies.inviteExpirationTime" type="number">
+									<template #suffix>{{ i18n.ts._time.minute }}</template>
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder
+								v-if="matchQuery([i18n.ts._role._options.canManageCustomEmojis, 'canManageCustomEmojis'])">
+								<template #label>{{ i18n.ts._role._options.canManageCustomEmojis }}</template>
+								<template #suffix>{{ policies.canManageCustomEmojis ? i18n.ts.yes : i18n.ts.no
+									}}</template>
+								<MkSwitch v-model="policies.canManageCustomEmojis">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkFolder
+								v-if="matchQuery([i18n.ts._role._options.canRequestCustomEmojis, 'canRequestCustomEmojis'])">
+								<template #label>{{ i18n.ts._role._options.canRequestCustomEmojis }}</template>
+								<template #suffix>{{ policies.canRequestCustomEmojis ? i18n.ts.yes : i18n.ts.no
+									}}</template>
+								<MkSwitch v-model="policies.canRequestCustomEmojis">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.canCreateToken, 'canCreateToken'])">
+								<template #label>{{ i18n.ts._role._options.canCreateToken }}</template>
+								<template #suffix>{{ policies.canCreateToken ? i18n.ts.yes : i18n.ts.no }}</template>
+								<MkSwitch v-model="policies.canCreateToken">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.canSearchNotes, 'canSearchNotes'])">
+								<template #label>{{ i18n.ts._role._options.canSearchNotes }}</template>
+								<template #suffix>{{ policies.canSearchNotes ? i18n.ts.yes : i18n.ts.no }}</template>
+								<MkSwitch v-model="policies.canSearchNotes">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.driveCapacity, 'driveCapacityMb'])">
+								<template #label>{{ i18n.ts._role._options.driveCapacity }}</template>
+								<template #suffix>{{ policies.driveCapacityMb }}MB</template>
+								<MkInput v-model="policies.driveCapacityMb" type="number">
+									<template #suffix>MB</template>
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder
+								v-if="matchQuery([i18n.ts._role._options.additionalDriveCapacity, 'additionalDriveCapacityMb'])">
+								<template #label>{{ i18n.ts._role._options.additionalDriveCapacity }}</template>
+								<template #suffix>{{ policies.additionalDriveCapacityMb }}MB</template>
+								<MkInput v-model="policies.additionalDriveCapacityMb" type="number">
+									<template #suffix>MB</template>
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.alwaysMarkNsfw, 'alwaysMarkNsfw'])">
+								<template #label>{{ i18n.ts._role._options.alwaysMarkNsfw }}</template>
+								<template #suffix>{{ policies.alwaysMarkNsfw ? i18n.ts.yes : i18n.ts.no }}</template>
+								<MkSwitch v-model="policies.alwaysMarkNsfw">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.pinMax, 'pinLimit'])">
+								<template #label>{{ i18n.ts._role._options.pinMax }}</template>
+								<template #suffix>{{ policies.pinLimit }}</template>
+								<MkInput v-model="policies.pinLimit" type="number">
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.antennaMax, 'antennaLimit'])">
+								<template #label>{{ i18n.ts._role._options.antennaMax }}</template>
+								<template #suffix>{{ policies.antennaLimit }}</template>
+								<MkInput v-model="policies.antennaLimit" type="number">
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.wordMuteMax, 'wordMuteLimit'])">
+								<template #label>{{ i18n.ts._role._options.wordMuteMax }}</template>
+								<template #suffix>{{ policies.wordMuteLimit }}</template>
+								<MkInput v-model="policies.wordMuteLimit" type="number">
+									<template #suffix>chars</template>
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.webhookMax, 'webhookLimit'])">
+								<template #label>{{ i18n.ts._role._options.webhookMax }}</template>
+								<template #suffix>{{ policies.webhookLimit }}</template>
+								<MkInput v-model="policies.webhookLimit" type="number">
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.clipMax, 'clipLimit'])">
+								<template #label>{{ i18n.ts._role._options.clipMax }}</template>
+								<template #suffix>{{ policies.clipLimit }}</template>
+								<MkInput v-model="policies.clipLimit" type="number">
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder
+								v-if="matchQuery([i18n.ts._role._options.noteEachClipsMax, 'noteEachClipsLimit'])">
+								<template #label>{{ i18n.ts._role._options.noteEachClipsMax }}</template>
+								<template #suffix>{{ policies.noteEachClipsLimit }}</template>
+								<MkInput v-model="policies.noteEachClipsLimit" type="number">
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.userListMax, 'userListLimit'])">
+								<template #label>{{ i18n.ts._role._options.userListMax }}</template>
+								<template #suffix>{{ policies.userListLimit }}</template>
+								<MkInput v-model="policies.userListLimit" type="number">
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder
+								v-if="matchQuery([i18n.ts._role._options.userEachUserListsMax, 'userEachUserListsLimit'])">
+								<template #label>{{ i18n.ts._role._options.userEachUserListsMax }}</template>
+								<template #suffix>{{ policies.userEachUserListsLimit }}</template>
+								<MkInput v-model="policies.userEachUserListsLimit" type="number">
+								</MkInput>
+							</MkFolder>
+
+							<MkFolder
+								v-if="matchQuery([i18n.ts._role._options.canCreatePrivateChannel, 'canCreatePrivateChannel'])">
+								<template #label>{{ i18n.ts._role._options.canCreatePrivateChannel }}</template>
+								<template #suffix>{{ policies.canCreatePrivateChannel ? i18n.ts.yes : i18n.ts.no
+									}}</template>
+								<MkSwitch v-model="policies.canCreatePrivateChannel">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkFolder v-if="matchQuery([i18n.ts._role._options.canHideAds, 'canHideAds'])">
+								<template #label>{{ i18n.ts._role._options.canHideAds }}</template>
+								<template #suffix>{{ policies.canHideAds ? i18n.ts.yes : i18n.ts.no }}</template>
+								<MkSwitch v-model="policies.canHideAds">
+									<template #label>{{ i18n.ts.enable }}</template>
+								</MkSwitch>
+							</MkFolder>
+
+							<MkButton primary rounded @click="updateBaseRole">{{ i18n.ts.save }}</MkButton>
+						</div>
+					</MkFolder>
+					<MkButton primary rounded @click="create"><i class="ti ti-plus"></i> {{ i18n.ts._role.new }}
+					</MkButton>
 					<div class="_gaps_s">
-						<MkInput v-model="baseRoleQ" type="search">
-							<template #prefix><i class="ti ti-search"></i></template>
-						</MkInput>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.rateLimitFactor, 'rateLimitFactor'])">
-							<template #label>{{ i18n.ts._role._options.rateLimitFactor }}</template>
-							<template #suffix>{{ Math.floor(policies.rateLimitFactor * 100) }}%</template>
-							<MkRange :modelValue="policies.rateLimitFactor * 100" :min="30" :max="300" :step="10" :textConverter="(v) => `${v}%`" @update:modelValue="v => policies.rateLimitFactor = (v / 100)">
-								<template #caption>{{ i18n.ts._role._options.descriptionOfRateLimitFactor }}</template>
-							</MkRange>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.gtlAvailable, 'gtlAvailable'])">
-							<template #label>{{ i18n.ts._role._options.gtlAvailable }}</template>
-							<template #suffix>{{ policies.gtlAvailable ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.gtlAvailable">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.ltlAvailable, 'ltlAvailable'])">
-							<template #label>{{ i18n.ts._role._options.ltlAvailable }}</template>
-							<template #suffix>{{ policies.ltlAvailable ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.ltlAvailable">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.canPublicNote, 'canPublicNote'])">
-							<template #label>{{ i18n.ts._role._options.canPublicNote }}</template>
-							<template #suffix>{{ policies.canPublicNote ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.canPublicNote">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.canInvite, 'canInvite'])">
-							<template #label>{{ i18n.ts._role._options.canInvite }}</template>
-							<template #suffix>{{ policies.canInvite ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.canInvite">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.inviteLimit, 'inviteLimit'])">
-							<template #label>{{ i18n.ts._role._options.inviteLimit }}</template>
-							<template #suffix>{{ policies.inviteLimit }}</template>
-							<MkInput v-model="policies.inviteLimit" type="number">
-							</MkInput>
-						</MkFolder>
-						
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.inviteLimitCycle, 'inviteLimitCycle'])">
-							<template #label>{{ i18n.ts._role._options.inviteLimitCycle }}</template>
-							<template #suffix>{{ policies.inviteLimitCycle + i18n.ts._time.minute }}</template>
-							<MkInput v-model="policies.inviteLimitCycle" type="number">
-								<template #suffix>{{ i18n.ts._time.minute }}</template>
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.inviteExpirationTime, 'inviteExpirationTime'])">
-							<template #label>{{ i18n.ts._role._options.inviteExpirationTime }}</template>
-							<template #suffix>{{ policies.inviteExpirationTime + i18n.ts._time.minute }}</template>
-							<MkInput v-model="policies.inviteExpirationTime" type="number">
-								<template #suffix>{{ i18n.ts._time.minute }}</template>
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.canManageCustomEmojis, 'canManageCustomEmojis'])">
-							<template #label>{{ i18n.ts._role._options.canManageCustomEmojis }}</template>
-							<template #suffix>{{ policies.canManageCustomEmojis ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.canManageCustomEmojis">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.canRequestCustomEmojis, 'canRequestCustomEmojis'])">
-							<template #label>{{ i18n.ts._role._options.canRequestCustomEmojis }}</template>
-							<template #suffix>{{ policies.canRequestCustomEmojis ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.canRequestCustomEmojis">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.canCreateToken, 'canCreateToken'])">
-							<template #label>{{ i18n.ts._role._options.canCreateToken }}</template>
-							<template #suffix>{{ policies.canCreateToken ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.canCreateToken">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.canSearchNotes, 'canSearchNotes'])">
-							<template #label>{{ i18n.ts._role._options.canSearchNotes }}</template>
-							<template #suffix>{{ policies.canSearchNotes ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.canSearchNotes">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.driveCapacity, 'driveCapacityMb'])">
-							<template #label>{{ i18n.ts._role._options.driveCapacity }}</template>
-							<template #suffix>{{ policies.driveCapacityMb }}MB</template>
-							<MkInput v-model="policies.driveCapacityMb" type="number">
-								<template #suffix>MB</template>
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.additionalDriveCapacity, 'additionalDriveCapacityMb'])">
-							<template #label>{{ i18n.ts._role._options.additionalDriveCapacity }}</template>
-							<template #suffix>{{ policies.additionalDriveCapacityMb }}MB</template>
-							<MkInput v-model="policies.additionalDriveCapacityMb" type="number">
-								<template #suffix>MB</template>
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.alwaysMarkNsfw, 'alwaysMarkNsfw'])">
-							<template #label>{{ i18n.ts._role._options.alwaysMarkNsfw }}</template>
-							<template #suffix>{{ policies.alwaysMarkNsfw ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.alwaysMarkNsfw">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.pinMax, 'pinLimit'])">
-							<template #label>{{ i18n.ts._role._options.pinMax }}</template>
-							<template #suffix>{{ policies.pinLimit }}</template>
-							<MkInput v-model="policies.pinLimit" type="number">
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.antennaMax, 'antennaLimit'])">
-							<template #label>{{ i18n.ts._role._options.antennaMax }}</template>
-							<template #suffix>{{ policies.antennaLimit }}</template>
-							<MkInput v-model="policies.antennaLimit" type="number">
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.wordMuteMax, 'wordMuteLimit'])">
-							<template #label>{{ i18n.ts._role._options.wordMuteMax }}</template>
-							<template #suffix>{{ policies.wordMuteLimit }}</template>
-							<MkInput v-model="policies.wordMuteLimit" type="number">
-								<template #suffix>chars</template>
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.webhookMax, 'webhookLimit'])">
-							<template #label>{{ i18n.ts._role._options.webhookMax }}</template>
-							<template #suffix>{{ policies.webhookLimit }}</template>
-							<MkInput v-model="policies.webhookLimit" type="number">
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.clipMax, 'clipLimit'])">
-							<template #label>{{ i18n.ts._role._options.clipMax }}</template>
-							<template #suffix>{{ policies.clipLimit }}</template>
-							<MkInput v-model="policies.clipLimit" type="number">
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.noteEachClipsMax, 'noteEachClipsLimit'])">
-							<template #label>{{ i18n.ts._role._options.noteEachClipsMax }}</template>
-							<template #suffix>{{ policies.noteEachClipsLimit }}</template>
-							<MkInput v-model="policies.noteEachClipsLimit" type="number">
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.userListMax, 'userListLimit'])">
-							<template #label>{{ i18n.ts._role._options.userListMax }}</template>
-							<template #suffix>{{ policies.userListLimit }}</template>
-							<MkInput v-model="policies.userListLimit" type="number">
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.userEachUserListsMax, 'userEachUserListsLimit'])">
-							<template #label>{{ i18n.ts._role._options.userEachUserListsMax }}</template>
-							<template #suffix>{{ policies.userEachUserListsLimit }}</template>
-							<MkInput v-model="policies.userEachUserListsLimit" type="number">
-							</MkInput>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.canCreatePrivateChannel, 'canCreatePrivateChannel'])">
-							<template #label>{{ i18n.ts._role._options.canCreatePrivateChannel }}</template>
-							<template #suffix>{{ policies.canCreatePrivateChannel ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.canCreatePrivateChannel">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkFolder v-if="matchQuery([i18n.ts._role._options.canHideAds, 'canHideAds'])">
-							<template #label>{{ i18n.ts._role._options.canHideAds }}</template>
-							<template #suffix>{{ policies.canHideAds ? i18n.ts.yes : i18n.ts.no }}</template>
-							<MkSwitch v-model="policies.canHideAds">
-								<template #label>{{ i18n.ts.enable }}</template>
-							</MkSwitch>
-						</MkFolder>
-
-						<MkButton primary rounded @click="updateBaseRole">{{ i18n.ts.save }}</MkButton>
+						<MkFoldableSection>
+							<template #header>Manual roles</template>
+							<div class="_gaps_s">
+								<MkRolePreview v-for="role in roles.filter(x => x.target === 'manual')" :key="role.id"
+									:role="role" :forModeration="true" />
+							</div>
+						</MkFoldableSection>
+						<MkFoldableSection>
+							<template #header>Conditional roles</template>
+							<div class="_gaps_s">
+								<MkRolePreview v-for="role in roles.filter(x => x.target === 'conditional')"
+									:key="role.id" :role="role" :forModeration="true" />
+							</div>
+						</MkFoldableSection>
 					</div>
-				</MkFolder>
-				<MkButton primary rounded @click="create"><i class="ti ti-plus"></i> {{ i18n.ts._role.new }}</MkButton>
-				<div class="_gaps_s">
-					<MkFoldableSection>
-						<template #header>Manual roles</template>
-						<div class="_gaps_s">
-							<MkRolePreview v-for="role in roles.filter(x => x.target === 'manual')" :key="role.id" :role="role" :forModeration="true"/>
-						</div>
-					</MkFoldableSection>
-					<MkFoldableSection>
-						<template #header>Conditional roles</template>
-						<div class="_gaps_s">
-							<MkRolePreview v-for="role in roles.filter(x => x.target === 'conditional')" :key="role.id" :role="role" :forModeration="true"/>
-						</div>
-					</MkFoldableSection>
 				</div>
-			</div>
-		</MkSpacer>
-	</MkStickyContainer>
-</div>
+			</MkSpacer>
+		</MkStickyContainer>
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -268,7 +286,7 @@ async function updateBaseRole() {
 }
 
 function create() {
-	router.push("/admin/roles/new");
+	router.push("/secure/admin/roles/new");
 }
 
 const headerActions = $computed(() => []);
@@ -283,6 +301,4 @@ definePageMetadata(
 );
 </script>
 
-<style lang="scss" module>
-
-</style>
+<style lang="scss" module></style>

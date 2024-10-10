@@ -1,17 +1,20 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="600" :marginMin="16">
-		<MkButton primary @click="createKey">{{ i18n.ts._registry.createKey }}</MkButton>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="600" :marginMin="16">
+			<MkButton primary @click="createKey">{{ i18n.ts._registry.createKey }}</MkButton>
 
-		<FormSection v-if="scopes">
-			<template #label>{{ i18n.ts.system }}</template>
-			<div class="_formLinks">
-				<FormLink v-for="scope in scopes" :to="`/registry/keys/system/${scope.join('/')}`" class="_monospace">{{ scope.join('/') }}</FormLink>
-			</div>
-		</FormSection>
-	</MkSpacer>
-</MkStickyContainer>
+			<FormSection v-if="scopes">
+				<template #label>{{ i18n.ts.system }}</template>
+				<div class="_formLinks">
+					<FormLink v-for="scope in scopes" :to="`/secure/registry/keys/system/${scope.join('/')}`"
+						class="_monospace">{{ scope.join('/') }}</FormLink>
+				</div>
+			</FormSection>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>

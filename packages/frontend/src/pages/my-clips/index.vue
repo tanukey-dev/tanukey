@@ -1,23 +1,26 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div v-if="tab === 'my'" class="_gaps">
-			<MkButton primary rounded class="add" @click="create"><i class="ti ti-plus"></i> {{ i18n.ts.add }}</MkButton>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div v-if="tab === 'my'" class="_gaps">
+				<MkButton primary rounded class="add" @click="create"><i class="ti ti-plus"></i> {{ i18n.ts.add }}
+				</MkButton>
 
-			<MkPagination v-slot="{items}" ref="pagingComponent" :pagination="pagination" class="_gaps">
-				<MkA v-for="item in items" :key="item.id" :to="`/clips/${item.id}`">
-					<MkClipPreview :clip="item"/>
+				<MkPagination v-slot="{ items }" ref="pagingComponent" :pagination="pagination" class="_gaps">
+					<MkA v-for="item in items" :key="item.id" :to="`/secure/clips/${item.id}`">
+						<MkClipPreview :clip="item" />
+					</MkA>
+				</MkPagination>
+			</div>
+			<div v-else-if="tab === 'favorites'" class="_gaps">
+				<MkA v-for="item in favorites" :key="item.id" :to="`/secure/clips/${item.id}`">
+					<MkClipPreview :clip="item" />
 				</MkA>
-			</MkPagination>
-		</div>
-		<div v-else-if="tab === 'favorites'" class="_gaps">
-			<MkA v-for="item in favorites" :key="item.id" :to="`/clips/${item.id}`">
-				<MkClipPreview :clip="item"/>
-			</MkA>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -105,6 +108,4 @@ definePageMetadata({
 });
 </script>
 
-<style lang="scss" module>
-
-</style>
+<style lang="scss" module></style>

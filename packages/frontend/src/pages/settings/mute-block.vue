@@ -1,95 +1,111 @@
 <template>
-<div class="_gaps_m">
-	<MkTab v-model="tab" :tabs="tabs"/>
+	<div class="_gaps_m">
+		<MkTab v-model="tab" :tabs="tabs" />
 
-	<div v-if="tab === 'renoteMute'">
-		<MkPagination :pagination="renoteMutingPagination">
-			<template #empty>
-				<div class="_fullinfo">
-					<img :src="infoImageUrl" class="_ghost"/>
-					<div>{{ i18n.ts.noUsers }}</div>
-				</div>
-			</template>
+		<div v-if="tab === 'renoteMute'">
+			<MkPagination :pagination="renoteMutingPagination">
+				<template #empty>
+					<div class="_fullinfo">
+						<img :src="infoImageUrl" class="_ghost" />
+						<div>{{ i18n.ts.noUsers }}</div>
+					</div>
+				</template>
 
-			<template #default="{ items }">
-				<div class="_gaps_s">
-					<div v-for="item in items" :key="item.mutee.id" :class="[$style.userItem, { [$style.userItemOpend]: expandedRenoteMuteItems.includes(item.id) }]">
-						<div :class="$style.userItemMain">
-							<MkA :class="$style.userItemMainBody" :to="`/user-info/${item.mutee.id}`">
-								<MkUserCardMini :user="item.mutee"/>
-							</MkA>
-							<button class="_button" :class="$style.userToggle" @click="toggleRenoteMuteItem(item)"><i :class="$style.chevron" class="ti ti-chevron-down"></i></button>
-							<button class="_button" :class="$style.remove" @click="unrenoteMute(item.mutee, $event)"><i class="ti ti-x"></i></button>
-						</div>
-						<div v-if="expandedRenoteMuteItems.includes(item.id)" :class="$style.userItemSub">
-							<div>Muted at: <MkTime :time="item.createdAt" mode="detail"/></div>
+				<template #default="{ items }">
+					<div class="_gaps_s">
+						<div v-for="item in items" :key="item.mutee.id"
+							:class="[$style.userItem, { [$style.userItemOpend]: expandedRenoteMuteItems.includes(item.id) }]">
+							<div :class="$style.userItemMain">
+								<MkA :class="$style.userItemMainBody" :to="`/secure/user-info/${item.mutee.id}`">
+									<MkUserCardMini :user="item.mutee" />
+								</MkA>
+								<button class="_button" :class="$style.userToggle"
+									@click="toggleRenoteMuteItem(item)"><i :class="$style.chevron"
+										class="ti ti-chevron-down"></i></button>
+								<button class="_button" :class="$style.remove"
+									@click="unrenoteMute(item.mutee, $event)"><i class="ti ti-x"></i></button>
+							</div>
+							<div v-if="expandedRenoteMuteItems.includes(item.id)" :class="$style.userItemSub">
+								<div>Muted at:
+									<MkTime :time="item.createdAt" mode="detail" />
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</template>
-		</MkPagination>
-	</div>
+				</template>
+			</MkPagination>
+		</div>
 
-	<div v-else-if="tab === 'mute'">
-		<MkPagination :pagination="mutingPagination">
-			<template #empty>
-				<div class="_fullinfo">
-					<img :src="infoImageUrl" class="_ghost"/>
-					<div>{{ i18n.ts.noUsers }}</div>
-				</div>
-			</template>
+		<div v-else-if="tab === 'mute'">
+			<MkPagination :pagination="mutingPagination">
+				<template #empty>
+					<div class="_fullinfo">
+						<img :src="infoImageUrl" class="_ghost" />
+						<div>{{ i18n.ts.noUsers }}</div>
+					</div>
+				</template>
 
-			<template #default="{ items }">
-				<div class="_gaps_s">
-					<div v-for="item in items" :key="item.mutee.id" :class="[$style.userItem, { [$style.userItemOpend]: expandedMuteItems.includes(item.id) }]">
-						<div :class="$style.userItemMain">
-							<MkA :class="$style.userItemMainBody" :to="`/user-info/${item.mutee.id}`">
-								<MkUserCardMini :user="item.mutee"/>
-							</MkA>
-							<button class="_button" :class="$style.userToggle" @click="toggleMuteItem(item)"><i :class="$style.chevron" class="ti ti-chevron-down"></i></button>
-							<button class="_button" :class="$style.remove" @click="unmute(item.mutee, $event)"><i class="ti ti-x"></i></button>
-						</div>
-						<div v-if="expandedMuteItems.includes(item.id)" :class="$style.userItemSub">
-							<div>Muted at: <MkTime :time="item.createdAt" mode="detail"/></div>
-							<div v-if="item.expiresAt">Period: {{ item.expiresAt.toLocaleString() }}</div>
-							<div v-else>Period: {{ i18n.ts.indefinitely }}</div>
+				<template #default="{ items }">
+					<div class="_gaps_s">
+						<div v-for="item in items" :key="item.mutee.id"
+							:class="[$style.userItem, { [$style.userItemOpend]: expandedMuteItems.includes(item.id) }]">
+							<div :class="$style.userItemMain">
+								<MkA :class="$style.userItemMainBody" :to="`/secure/user-info/${item.mutee.id}`">
+									<MkUserCardMini :user="item.mutee" />
+								</MkA>
+								<button class="_button" :class="$style.userToggle" @click="toggleMuteItem(item)"><i
+										:class="$style.chevron" class="ti ti-chevron-down"></i></button>
+								<button class="_button" :class="$style.remove" @click="unmute(item.mutee, $event)"><i
+										class="ti ti-x"></i></button>
+							</div>
+							<div v-if="expandedMuteItems.includes(item.id)" :class="$style.userItemSub">
+								<div>Muted at:
+									<MkTime :time="item.createdAt" mode="detail" />
+								</div>
+								<div v-if="item.expiresAt">Period: {{ item.expiresAt.toLocaleString() }}</div>
+								<div v-else>Period: {{ i18n.ts.indefinitely }}</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</template>
-		</MkPagination>
-	</div>
+				</template>
+			</MkPagination>
+		</div>
 
-	<div v-else-if="tab === 'block'">
-		<MkPagination :pagination="blockingPagination">
-			<template #empty>
-				<div class="_fullinfo">
-					<img :src="infoImageUrl" class="_ghost"/>
-					<div>{{ i18n.ts.noUsers }}</div>
-				</div>
-			</template>
+		<div v-else-if="tab === 'block'">
+			<MkPagination :pagination="blockingPagination">
+				<template #empty>
+					<div class="_fullinfo">
+						<img :src="infoImageUrl" class="_ghost" />
+						<div>{{ i18n.ts.noUsers }}</div>
+					</div>
+				</template>
 
-			<template #default="{ items }">
-				<div class="_gaps_s">
-					<div v-for="item in items" :key="item.blockee.id" :class="[$style.userItem, { [$style.userItemOpend]: expandedBlockItems.includes(item.id) }]">
-						<div :class="$style.userItemMain">
-							<MkA :class="$style.userItemMainBody" :to="`/user-info/${item.blockee.id}`">
-								<MkUserCardMini :user="item.blockee"/>
-							</MkA>
-							<button class="_button" :class="$style.userToggle" @click="toggleBlockItem(item)"><i :class="$style.chevron" class="ti ti-chevron-down"></i></button>
-							<button class="_button" :class="$style.remove" @click="unblock(item.blockee, $event)"><i class="ti ti-x"></i></button>
-						</div>
-						<div v-if="expandedBlockItems.includes(item.id)" :class="$style.userItemSub">
-							<div>Blocked at: <MkTime :time="item.createdAt" mode="detail"/></div>
-							<div v-if="item.expiresAt">Period: {{ item.expiresAt.toLocaleString() }}</div>
-							<div v-else>Period: {{ i18n.ts.indefinitely }}</div>
+				<template #default="{ items }">
+					<div class="_gaps_s">
+						<div v-for="item in items" :key="item.blockee.id"
+							:class="[$style.userItem, { [$style.userItemOpend]: expandedBlockItems.includes(item.id) }]">
+							<div :class="$style.userItemMain">
+								<MkA :class="$style.userItemMainBody" :to="`/secure/user-info/${item.blockee.id}`">
+									<MkUserCardMini :user="item.blockee" />
+								</MkA>
+								<button class="_button" :class="$style.userToggle" @click="toggleBlockItem(item)"><i
+										:class="$style.chevron" class="ti ti-chevron-down"></i></button>
+								<button class="_button" :class="$style.remove" @click="unblock(item.blockee, $event)"><i
+										class="ti ti-x"></i></button>
+							</div>
+							<div v-if="expandedBlockItems.includes(item.id)" :class="$style.userItemSub">
+								<div>Blocked at:
+									<MkTime :time="item.createdAt" mode="detail" />
+								</div>
+								<div v-if="item.expiresAt">Period: {{ item.expiresAt.toLocaleString() }}</div>
+								<div v-else>Period: {{ i18n.ts.indefinitely }}</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</template>
-		</MkPagination>
+				</template>
+			</MkPagination>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>

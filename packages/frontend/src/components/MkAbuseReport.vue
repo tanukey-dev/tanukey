@@ -1,38 +1,44 @@
 <template>
-<div class="bcekxzvu _margin _panel">
-	<div class="target">
-		<MkA v-user-preview="report.targetUserId" class="info" :to="`/user-info/${report.targetUserId}`">
-			<MkAvatar class="avatar" :user="report.targetUser" indicator/>
-			<div class="names">
-				<MkUserName class="name" :user="report.targetUser"/>
-				<MkAcct class="acct" :user="report.targetUser" style="display: block;"/>
+	<div class="bcekxzvu _margin _panel">
+		<div class="target">
+			<MkA v-user-preview="report.targetUserId" class="info" :to="`/secure/user-info/${report.targetUserId}`">
+				<MkAvatar class="avatar" :user="report.targetUser" indicator />
+				<div class="names">
+					<MkUserName class="name" :user="report.targetUser" />
+					<MkAcct class="acct" :user="report.targetUser" style="display: block;" />
+				</div>
+			</MkA>
+			<MkKeyValue>
+				<template #key>{{ i18n.ts.registeredDate }}</template>
+				<template #value>{{ dateString(report.targetUser.createdAt) }} (
+					<MkTime :time="report.targetUser.createdAt" />)
+				</template>
+			</MkKeyValue>
+		</div>
+		<div class="detail">
+			<div>
+				<Mfm :text="report.comment" />
 			</div>
-		</MkA>
-		<MkKeyValue>
-			<template #key>{{ i18n.ts.registeredDate }}</template>
-			<template #value>{{ dateString(report.targetUser.createdAt) }} (<MkTime :time="report.targetUser.createdAt"/>)</template>
-		</MkKeyValue>
-	</div>
-	<div class="detail">
-		<div>
-			<Mfm :text="report.comment"/>
-		</div>
-		<hr/>
-		<div>{{ i18n.ts.reporter }}: <MkAcct :user="report.reporter"/></div>
-		<div v-if="report.assignee">
-			{{ i18n.ts.moderator }}:
-			<MkAcct :user="report.assignee"/>
-		</div>
-		<div><MkTime :time="report.createdAt"/></div>
-		<div class="action">
-			<MkSwitch v-model="forward" :disabled="report.targetUser.host == null || report.resolved">
-				{{ i18n.ts.forwardReport }}
-				<template #caption>{{ i18n.ts.forwardReportIsAnonymous }}</template>
-			</MkSwitch>
-			<MkButton v-if="!report.resolved" primary @click="resolve">{{ i18n.ts.abuseMarkAsResolved }}</MkButton>
+			<hr />
+			<div>{{ i18n.ts.reporter }}:
+				<MkAcct :user="report.reporter" />
+			</div>
+			<div v-if="report.assignee">
+				{{ i18n.ts.moderator }}:
+				<MkAcct :user="report.assignee" />
+			</div>
+			<div>
+				<MkTime :time="report.createdAt" />
+			</div>
+			<div class="action">
+				<MkSwitch v-model="forward" :disabled="report.targetUser.host == null || report.resolved">
+					{{ i18n.ts.forwardReport }}
+					<template #caption>{{ i18n.ts.forwardReportIsAnonymous }}</template>
+				</MkSwitch>
+				<MkButton v-if="!report.resolved" primary @click="resolve">{{ i18n.ts.abuseMarkAsResolved }}</MkButton>
+			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
@@ -67,14 +73,14 @@ function resolve() {
 .bcekxzvu {
 	display: flex;
 
-	> .target {
+	>.target {
 		width: 35%;
 		box-sizing: border-box;
 		text-align: left;
 		padding: 24px;
 		border-right: solid 1px var(--divider);
 
-		> .info {
+		>.info {
 			display: flex;
 			box-sizing: border-box;
 			align-items: center;
@@ -84,24 +90,24 @@ function resolve() {
 			background-image: linear-gradient(45deg, var(--c) 16.67%, transparent 16.67%, transparent 50%, var(--c) 50%, var(--c) 66.67%, transparent 66.67%, transparent 100%);
 			background-size: 16px 16px;
 
-			> .avatar {
+			>.avatar {
 				width: 42px;
 				height: 42px;
 			}
 
-			> .names {
+			>.names {
 				margin-left: 0.3em;
 				padding: 0 8px;
 				flex: 1;
 
-				> .name {
+				>.name {
 					font-weight: bold;
 				}
 			}
 		}
 	}
 
-	> .detail {
+	>.detail {
 		flex: 1;
 		padding: 24px;
 	}

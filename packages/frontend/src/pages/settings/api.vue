@@ -1,9 +1,10 @@
 <template>
-<div class="_gaps_m">
-	<MkButton v-if="$i && $i.policies.canCreateToken" primary @click="generateToken">{{ i18n.ts.generateAccessToken }}</MkButton>
-	<FormLink to="/settings/apps">{{ i18n.ts.manageAccessTokens }}</FormLink>
-	<FormLink to="/api-console" :behavior="isDesktop ? 'window' : null">API console</FormLink>
-</div>
+	<div class="_gaps_m">
+		<MkButton v-if="$i && $i.policies.canCreateToken" primary @click="generateToken">{{ i18n.ts.generateAccessToken
+			}}</MkButton>
+		<FormLink to="/secure/settings/apps">{{ i18n.ts.manageAccessTokens }}</FormLink>
+		<FormLink to="/secure/api-console" :behavior="isDesktop ? 'window' : null">API console</FormLink>
+	</div>
 </template>
 
 <script lang="ts" setup>

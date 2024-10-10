@@ -1,33 +1,35 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div v-if="tab === 'calender'">
-			<FullCalendar ref="fullCalendar" defaultView="dayGridMonth" :options="calendarOptions"/>
-		</div>
-		<div v-if="tab === 'search'">
-			<div class="_gaps">
-				<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search">
-					<template #prefix><i class="ti ti-search"></i></template>
-				</MkInput>
-				<MkRadios v-model="searchType" @update:modelValue="search()">
-					<option value="nameAndDescription">{{ i18n.ts._channel.nameAndDescription }}</option>
-					<option value="nameOnly">{{ i18n.ts._channel.nameOnly }}</option>
-				</MkRadios>
-				<MkButton large primary gradate rounded @click="search">{{ i18n.ts.search }}</MkButton>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div v-if="tab === 'calender'">
+				<FullCalendar ref="fullCalendar" defaultView="dayGridMonth" :options="calendarOptions" />
 			</div>
+			<div v-if="tab === 'search'">
+				<div class="_gaps">
+					<MkInput v-model="searchQuery" :large="true" :autofocus="true" type="search">
+						<template #prefix><i class="ti ti-search"></i></template>
+					</MkInput>
+					<MkRadios v-model="searchType" @update:modelValue="search()">
+						<option value="nameAndDescription">{{ i18n.ts._channel.nameAndDescription }}</option>
+						<option value="nameOnly">{{ i18n.ts._channel.nameOnly }}</option>
+					</MkRadios>
+					<MkButton large primary gradate rounded @click="search">{{ i18n.ts.search }}</MkButton>
+				</div>
 
-			<MkFoldableSection v-if="eventPagination">
-				<template #header>{{ i18n.ts.searchResult }}</template>
-				<MkEventList :key="key" :pagination="eventPagination"/>
-			</MkFoldableSection>
-		</div>
-		<div v-else-if="tab === 'owned'">
-			<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
-			<MkEventList :key="key" :pagination="ownedPagination"/>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+				<MkFoldableSection v-if="eventPagination">
+					<template #header>{{ i18n.ts.searchResult }}</template>
+					<MkEventList :key="key" :pagination="eventPagination" />
+				</MkFoldableSection>
+			</div>
+			<div v-else-if="tab === 'owned'">
+				<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
+				<MkEventList :key="key" :pagination="ownedPagination" />
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -88,7 +90,7 @@ const calendarOptions = $ref({
 		return e.dayNumberText.replace("日", "");
 	},
 	eventClick: (info) => {
-		router.push("/events/" + info.event.id);
+		router.push("/secure/events/" + info.event.id);
 	},
 	events: [],
 });
@@ -118,7 +120,7 @@ async function search() {
 }
 
 function create() {
-	router.push("/events/new");
+	router.push("/secure/events/new");
 }
 
 const headerActions = $computed(() => [

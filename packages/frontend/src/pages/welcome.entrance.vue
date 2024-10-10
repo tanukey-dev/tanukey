@@ -77,6 +77,9 @@ import { host } from "@/config";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
 import { DetailedInstanceMetadata } from "misskey-js/built/entities";
+import { useRouter } from "@/router";
+
+const router = useRouter();
 
 let meta = $ref<DetailedInstanceMetadata>();
 

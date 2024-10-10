@@ -1,43 +1,43 @@
 <template>
-<div class="_gaps_m">
-	<MkInput v-model="name">
-		<template #label>{{ i18n.ts._webhookSettings.name }}</template>
-	</MkInput>
+	<div class="_gaps_m">
+		<MkInput v-model="name">
+			<template #label>{{ i18n.ts._webhookSettings.name }}</template>
+		</MkInput>
 
-	<MkInput v-model="url" type="url">
-		<template #label>URL</template>
-	</MkInput>
+		<MkInput v-model="url" type="url">
+			<template #label>URL</template>
+		</MkInput>
 
-	<MkInput v-model="secret">
-		<template #prefix><i class="ti ti-lock"></i></template>
-		<template #label>{{ i18n.ts._webhookSettings.secret }}</template>
-	</MkInput>
+		<MkInput v-model="secret">
+			<template #prefix><i class="ti ti-lock"></i></template>
+			<template #label>{{ i18n.ts._webhookSettings.secret }}</template>
+		</MkInput>
 
-	<FormSection>
-		<template #label>{{ i18n.ts._webhookSettings.events }}</template>
+		<FormSection>
+			<template #label>{{ i18n.ts._webhookSettings.events }}</template>
 
-		<div class="_gaps_s">
-			<MkSwitch v-model="event_follow">{{ i18n.ts._webhookSettings._events.follow }}</MkSwitch>
-			<MkSwitch v-model="event_followed">{{ i18n.ts._webhookSettings._events.followed }}</MkSwitch>
-			<MkSwitch v-model="event_note">{{ i18n.ts._webhookSettings._events.note }}</MkSwitch>
-			<MkSwitch v-model="event_reply">{{ i18n.ts._webhookSettings._events.reply }}</MkSwitch>
-			<MkSwitch v-model="event_renote">{{ i18n.ts._webhookSettings._events.renote }}</MkSwitch>
-			<MkSwitch v-model="event_reaction">{{ i18n.ts._webhookSettings._events.reaction }}</MkSwitch>
-			<MkSwitch v-model="event_mention">{{ i18n.ts._webhookSettings._events.mention }}</MkSwitch>
+			<div class="_gaps_s">
+				<MkSwitch v-model="event_follow">{{ i18n.ts._webhookSettings._events.follow }}</MkSwitch>
+				<MkSwitch v-model="event_followed">{{ i18n.ts._webhookSettings._events.followed }}</MkSwitch>
+				<MkSwitch v-model="event_note">{{ i18n.ts._webhookSettings._events.note }}</MkSwitch>
+				<MkSwitch v-model="event_reply">{{ i18n.ts._webhookSettings._events.reply }}</MkSwitch>
+				<MkSwitch v-model="event_renote">{{ i18n.ts._webhookSettings._events.renote }}</MkSwitch>
+				<MkSwitch v-model="event_reaction">{{ i18n.ts._webhookSettings._events.reaction }}</MkSwitch>
+				<MkSwitch v-model="event_mention">{{ i18n.ts._webhookSettings._events.mention }}</MkSwitch>
+			</div>
+		</FormSection>
+
+		<MkSwitch v-model="active">{{ i18n.ts._webhookSettings.active }}</MkSwitch>
+
+		<div class="_buttons">
+			<MkButton primary inline @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
+			<MkButton danger inline @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
 		</div>
-	</FormSection>
-
-	<MkSwitch v-model="active">{{ i18n.ts._webhookSettings.active }}</MkSwitch>
-
-	<div class="_buttons">
-		<MkButton primary inline @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
-		<MkButton danger inline @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue";
+import { } from "vue";
 import MkInput from "@/components/MkInput.vue";
 import FormSection from "@/components/form/section.vue";
 import MkSwitch from "@/components/MkSwitch.vue";
@@ -101,7 +101,7 @@ async function del(): Promise<void> {
 		webhookId: props.webhookId,
 	});
 
-	router.push("/settings/webhook");
+	router.push("/secure/settings/webhook");
 }
 const headerActions = $computed(() => []);
 

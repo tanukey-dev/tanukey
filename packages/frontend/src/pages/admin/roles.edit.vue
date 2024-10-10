@@ -1,19 +1,22 @@
 <template>
-<div>
-	<MkStickyContainer>
-		<template #header><XHeader :tabs="headerTabs"/></template>
-		<MkSpacer :contentMax="600" :marginMin="16" :marginMax="32">
-			<XEditor v-if="data" v-model="data"/>
-		</MkSpacer>
-		<template #footer>
-			<div :class="$style.footer">
-				<MkSpacer :contentMax="600" :marginMin="16" :marginMax="16">
-					<MkButton primary rounded @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}</MkButton>
-				</MkSpacer>
-			</div>
-		</template>
-	</MkStickyContainer>
-</div>
+	<div>
+		<MkStickyContainer>
+			<template #header>
+				<XHeader :tabs="headerTabs" />
+			</template>
+			<MkSpacer :contentMax="600" :marginMin="16" :marginMax="32">
+				<XEditor v-if="data" v-model="data" />
+			</MkSpacer>
+			<template #footer>
+				<div :class="$style.footer">
+					<MkSpacer :contentMax="600" :marginMin="16" :marginMax="16">
+						<MkButton primary rounded @click="save"><i class="ti ti-check"></i> {{ i18n.ts.save }}
+						</MkButton>
+					</MkSpacer>
+				</div>
+			</template>
+		</MkStickyContainer>
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -69,12 +72,12 @@ async function save() {
 			roleId: role.id,
 			...data,
 		});
-		router.push("/admin/roles/" + role.id);
+		router.push("/secure/admin/roles/" + role.id);
 	} else {
 		const created = await os.apiWithDialog("admin/roles/create", {
 			...data,
 		});
-		router.push("/admin/roles/" + created.id);
+		router.push("/secure/admin/roles/" + created.id);
 	}
 }
 
@@ -84,13 +87,13 @@ definePageMetadata(
 	computed(() =>
 		role
 			? {
-					title: i18n.ts._role.edit + ": " + role.name,
-					icon: "ti ti-badge",
-				}
+				title: i18n.ts._role.edit + ": " + role.name,
+				icon: "ti ti-badge",
+			}
 			: {
-					title: i18n.ts._role.new,
-					icon: "ti ti-badge",
-				},
+				title: i18n.ts._role.new,
+				icon: "ti ti-badge",
+			},
 	),
 );
 </script>

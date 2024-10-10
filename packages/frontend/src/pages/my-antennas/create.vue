@@ -1,7 +1,7 @@
 <template>
-<div>
-	<XAntenna :antenna="draft" @created="onAntennaCreated"/>
-</div>
+	<div>
+		<XAntenna :antenna="draft" @created="onAntennaCreated" />
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -29,7 +29,7 @@ let draft = $ref({
 
 function onAntennaCreated() {
 	antennasCache.delete();
-	router.push("/my/antennas");
+	router.push("/secure/my/antennas");
 }
 
 definePageMetadata({

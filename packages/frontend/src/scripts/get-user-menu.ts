@@ -171,7 +171,7 @@ export function getUserMenu(
 			icon: "ti ti-info-circle",
 			text: i18n.ts.info,
 			action: () => {
-				router.push(`/user-info/${user.id}`);
+				router.push(`/secure/user-info/${user.id}`);
 			},
 		},
 		{
@@ -444,7 +444,7 @@ export function getUserMenu(
 				icon: "ti ti-pencil",
 				text: i18n.ts.editProfile,
 				action: () => {
-					router.push("/settings/profile");
+					router.push("/secure/settings/profile");
 				},
 			},
 		]);

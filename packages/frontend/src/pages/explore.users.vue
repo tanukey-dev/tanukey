@@ -1,57 +1,67 @@
 <template>
-<MkSpacer :contentMax="1200">
-	<MkTab v-model="origin" :tabs="tabs" style="margin-bottom: var(--margin);"/>
-	<div v-if="origin === 'local'">
-		<template v-if="tag == null">
-			<MkFoldableSection class="_margin" persistKey="explore-pinned-users">
-				<template #header><i class="ti ti-bookmark ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.pinnedUsers }}</template>
-				<MkUserList :pagination="pinnedUsers"/>
-			</MkFoldableSection>
-			<MkFoldableSection class="_margin" persistKey="explore-popular-users">
-				<template #header><i class="ti ti-chart-line ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.popularUsers }}</template>
-				<MkUserList :pagination="popularUsers"/>
-			</MkFoldableSection>
-			<MkFoldableSection class="_margin" persistKey="explore-recently-updated-users">
-				<template #header><i class="ti ti-message ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.recentlyUpdatedUsers }}</template>
-				<MkUserList :pagination="recentlyUpdatedUsers"/>
-			</MkFoldableSection>
-			<MkFoldableSection class="_margin" persistKey="explore-recently-registered-users">
-				<template #header><i class="ti ti-plus ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.recentlyRegisteredUsers }}</template>
-				<MkUserList :pagination="recentlyRegisteredUsers"/>
-			</MkFoldableSection>
-		</template>
-	</div>
-	<div v-else>
-		<MkFoldableSection ref="tagsEl" :foldable="true" :expanded="false" class="_margin">
-			<template #header><i class="ti ti-hash ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.popularTags }}</template>
+	<MkSpacer :contentMax="1200">
+		<MkTab v-model="origin" :tabs="tabs" style="margin-bottom: var(--margin);" />
+		<div v-if="origin === 'local'">
+			<template v-if="tag == null">
+				<MkFoldableSection class="_margin" persistKey="explore-pinned-users">
+					<template #header><i class="ti ti-bookmark ti-fw" style="margin-right: 0.5em;"></i>{{
+						i18n.ts.pinnedUsers }}</template>
+					<MkUserList :pagination="pinnedUsers" />
+				</MkFoldableSection>
+				<MkFoldableSection class="_margin" persistKey="explore-popular-users">
+					<template #header><i class="ti ti-chart-line ti-fw" style="margin-right: 0.5em;"></i>{{
+						i18n.ts.popularUsers }}</template>
+					<MkUserList :pagination="popularUsers" />
+				</MkFoldableSection>
+				<MkFoldableSection class="_margin" persistKey="explore-recently-updated-users">
+					<template #header><i class="ti ti-message ti-fw" style="margin-right: 0.5em;"></i>{{
+						i18n.ts.recentlyUpdatedUsers }}</template>
+					<MkUserList :pagination="recentlyUpdatedUsers" />
+				</MkFoldableSection>
+				<MkFoldableSection class="_margin" persistKey="explore-recently-registered-users">
+					<template #header><i class="ti ti-plus ti-fw" style="margin-right: 0.5em;"></i>{{
+						i18n.ts.recentlyRegisteredUsers }}</template>
+					<MkUserList :pagination="recentlyRegisteredUsers" />
+				</MkFoldableSection>
+			</template>
+		</div>
+		<div v-else>
+			<MkFoldableSection ref="tagsEl" :foldable="true" :expanded="false" class="_margin">
+				<template #header><i class="ti ti-hash ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.popularTags
+					}}</template>
 
-			<div>
-				<MkA v-for="tag in tagsLocal" :key="'local:' + tag.tag" :to="`/user-tags/${tag.tag}`" style="margin-right: 16px; font-weight: bold;">{{ tag.tag }}</MkA>
-				<MkA v-for="tag in tagsRemote" :key="'remote:' + tag.tag" :to="`/user-tags/${tag.tag}`" style="margin-right: 16px;">{{ tag.tag }}</MkA>
-			</div>
-		</MkFoldableSection>
+				<div>
+					<MkA v-for="tag in tagsLocal" :key="'local:' + tag.tag" :to="`/secure/user-tags/${tag.tag}`"
+						style="margin-right: 16px; font-weight: bold;">{{ tag.tag }}</MkA>
+					<MkA v-for="tag in tagsRemote" :key="'remote:' + tag.tag" :to="`/secure/user-tags/${tag.tag}`"
+						style="margin-right: 16px;">{{ tag.tag }}</MkA>
+				</div>
+			</MkFoldableSection>
 
-		<MkFoldableSection v-if="tag != null" :key="`${tag}`" class="_margin">
-			<template #header><i class="ti ti-hash ti-fw" style="margin-right: 0.5em;"></i>{{ tag }}</template>
-			<MkUserList :pagination="tagUsers"/>
-		</MkFoldableSection>
+			<MkFoldableSection v-if="tag != null" :key="`${tag}`" class="_margin">
+				<template #header><i class="ti ti-hash ti-fw" style="margin-right: 0.5em;"></i>{{ tag }}</template>
+				<MkUserList :pagination="tagUsers" />
+			</MkFoldableSection>
 
-		<template v-if="tag == null">
-			<MkFoldableSection class="_margin">
-				<template #header><i class="ti ti-chart-line ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.popularUsers }}</template>
-				<MkUserList :pagination="popularUsersF"/>
-			</MkFoldableSection>
-			<MkFoldableSection class="_margin">
-				<template #header><i class="ti ti-message ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.recentlyUpdatedUsers }}</template>
-				<MkUserList :pagination="recentlyUpdatedUsersF"/>
-			</MkFoldableSection>
-			<MkFoldableSection class="_margin">
-				<template #header><i class="ti ti-rocket ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.recentlyDiscoveredUsers }}</template>
-				<MkUserList :pagination="recentlyRegisteredUsersF"/>
-			</MkFoldableSection>
-		</template>
-	</div>
-</MkSpacer>
+			<template v-if="tag == null">
+				<MkFoldableSection class="_margin">
+					<template #header><i class="ti ti-chart-line ti-fw" style="margin-right: 0.5em;"></i>{{
+						i18n.ts.popularUsers }}</template>
+					<MkUserList :pagination="popularUsersF" />
+				</MkFoldableSection>
+				<MkFoldableSection class="_margin">
+					<template #header><i class="ti ti-message ti-fw" style="margin-right: 0.5em;"></i>{{
+						i18n.ts.recentlyUpdatedUsers }}</template>
+					<MkUserList :pagination="recentlyUpdatedUsersF" />
+				</MkFoldableSection>
+				<MkFoldableSection class="_margin">
+					<template #header><i class="ti ti-rocket ti-fw" style="margin-right: 0.5em;"></i>{{
+						i18n.ts.recentlyDiscoveredUsers }}</template>
+					<MkUserList :pagination="recentlyRegisteredUsersF" />
+				</MkFoldableSection>
+			</template>
+		</div>
+	</MkSpacer>
 </template>
 
 <script lang="ts" setup>

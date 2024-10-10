@@ -1,7 +1,7 @@
 // NIRAX --- A lightweight router
 
 import { EventEmitter } from "eventemitter3";
-import { Component, onMounted, shallowRef, ShallowRef } from "vue";
+import { Component, onMounted, shallowRef, ShallowRef, ref, Ref } from "vue";
 import { safeURIDecode } from "@/scripts/safe-uri-decode";
 import { $i } from "@/account";
 
@@ -10,6 +10,7 @@ type RouteDef = {
 	component: Component;
 	query?: Record<string, string>;
 	loginRequired?: boolean;
+	redirect?: string;
 	name?: string;
 	hash?: string;
 	globalCacheKey?: string;
@@ -81,33 +82,47 @@ export class Router extends EventEmitter<{
 	public current: Resolved;
 	public currentRef: ShallowRef<Resolved> = shallowRef();
 	public currentRoute: ShallowRef<RouteDef> = shallowRef();
-	private currentPath: string;
+	private currentPath: Ref<string> = ref("");
 	private currentKey = Date.now().toString();
 
 	public navHook: ((path: string, flag?: any) => boolean) | null = null;
 
-	constructor(routes: Router["routes"], currentPath: Router["currentPath"]) {
+	constructor(routes: Router["routes"], currentPath: string) {
 		super();
 
 		this.routes = routes;
-		this.currentPath = currentPath;
+		this.currentPath.value = currentPath;
 		this.navigate(currentPath, null, false);
 	}
 
-	public resolve(path: string): Resolved | null {
+	public geFullPathFromResolved(resolved: Resolved, path?: string): string {
+		let fullPath = (path ?? "") + resolved.route.path;
+		if (resolved.child) {
+			fullPath = fullPath + this.geFullPathFromResolved(resolved.child);
+		}
+		return fullPath;
+	}
+
+	public resolve(path: string | null | undefined): Resolved | null {
+		if (path === undefined) return null;
+
 		let queryString: string | null = null;
 		let hash: string | null = null;
-		if (path[0] === "/") path = path.substring(1);
-		if (path.includes("#")) {
-			hash = path.substring(path.indexOf("#") + 1);
-			path = path.substring(0, path.indexOf("#"));
-		}
-		if (path.includes("?")) {
-			queryString = path.substring(path.indexOf("?") + 1);
-			path = path.substring(0, path.indexOf("?"));
+		let resolvePath = path;
+		if (resolvePath !== null && resolvePath !== "") {
+			if (resolvePath.length > 0 && resolvePath[0] === "/")
+				resolvePath = resolvePath.substring(1);
+			if (resolvePath.includes("#")) {
+				hash = resolvePath.substring(resolvePath.indexOf("#") + 1);
+				resolvePath = resolvePath.substring(0, resolvePath.indexOf("#"));
+			}
+			if (resolvePath.includes("?")) {
+				queryString = resolvePath.substring(resolvePath.indexOf("?") + 1);
+				resolvePath = resolvePath.substring(0, resolvePath.indexOf("?"));
+			}
 		}
 
-		if (_DEV_) console.log("Routing: ", path, queryString);
+		if (_DEV_) console.log("Routing: ", resolvePath, queryString);
 
 		function check(routes: RouteDef[], _parts: string[]): Resolved | null {
 			forEachRouteLoop: for (const route of routes) {
@@ -207,7 +222,7 @@ export class Router extends EventEmitter<{
 			return null;
 		}
 
-		const _parts = path.split("/").filter((part) => part.length !== 0);
+		const _parts = resolvePath.split("/").filter((part) => part.length !== 0);
 
 		return check(this.routes, _parts);
 	}
@@ -217,10 +232,10 @@ export class Router extends EventEmitter<{
 		key: string | null | undefined,
 		emitChange = true,
 	) {
-		const beforePath = this.currentPath;
-		this.currentPath = path;
+		const beforePath = this.currentPath.value;
+		this.currentPath.value = path;
 
-		const res = this.resolve(this.currentPath);
+		const res = this.resolve(this.currentPath.value);
 
 		if (res == null) {
 			throw new Error("no route found for: " + path);
@@ -228,8 +243,14 @@ export class Router extends EventEmitter<{
 
 		if (res.route.loginRequired) {
 			if (!$i) {
-				window.location.href = "/";
+				location.href = "/";
+				return;
 			}
+		}
+
+		if (res.route.redirect) {
+			location.href = res.route.redirect;
+			return;
 		}
 
 		const isSamePath = beforePath === path;
@@ -252,6 +273,10 @@ export class Router extends EventEmitter<{
 	}
 
 	public getCurrentPath() {
+		return this.currentPath.value;
+	}
+
+	public getCurrentPathRef() {
 		return this.currentPath;
 	}
 
@@ -260,7 +285,7 @@ export class Router extends EventEmitter<{
 	}
 
 	public push(path: string, flag?: any) {
-		const beforePath = this.currentPath;
+		const beforePath = this.currentPath.value;
 		if (path === beforePath) {
 			this.emit("same");
 			return;
@@ -287,6 +312,7 @@ export class Router extends EventEmitter<{
 export function useScrollPositionManager(
 	getScrollContainer: () => HTMLElement,
 	router: Router,
+	key?: string,
 ) {
 	const scrollPosStore = new Map<string, number>();
 
@@ -296,13 +322,16 @@ export function useScrollPositionManager(
 		scrollContainer.addEventListener(
 			"scroll",
 			() => {
-				scrollPosStore.set(router.getCurrentKey(), scrollContainer.scrollTop);
+				scrollPosStore.set(
+					key ? key : router.getCurrentKey(),
+					scrollContainer.scrollTop,
+				);
 			},
 			{ passive: true },
 		);
 
 		router.addListener("change", (ctx) => {
-			const scrollPos = scrollPosStore.get(ctx.key) ?? 0;
+			const scrollPos = scrollPosStore.get(key ? key : ctx.key) ?? 0;
 			scrollContainer.scroll({ top: scrollPos, behavior: "instant" });
 			if (scrollPos !== 0) {
 				window.setTimeout(() => {

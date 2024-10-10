@@ -4,23 +4,20 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root">
-	<MkA
-		v-for="announcement in $i.unreadAnnouncements.filter(x => x.display === 'banner')"
-		:key="announcement.id"
-		:class="$style.item"
-		to="/announcements"
-	>
-		<span :class="$style.icon">
-			<i v-if="announcement.icon === 'info'" class="ti ti-info-circle"></i>
-			<i v-else-if="announcement.icon === 'warning'" class="ti ti-alert-triangle" style="color: var(--warn);"></i>
-			<i v-else-if="announcement.icon === 'error'" class="ti ti-circle-x" style="color: var(--error);"></i>
-			<i v-else-if="announcement.icon === 'success'" class="ti ti-check" style="color: var(--success);"></i>
-		</span>
-		<span :class="$style.title">{{ announcement.title }}</span>
-		<span :class="$style.body">{{ announcement.text }}</span>
-	</MkA>
-</div>
+	<div :class="$style.root">
+		<MkA v-for="announcement in $i.unreadAnnouncements.filter(x => x.display === 'banner')" :key="announcement.id"
+			:class="$style.item" to="/secure/announcements">
+			<span :class="$style.icon">
+				<i v-if="announcement.icon === 'info'" class="ti ti-info-circle"></i>
+				<i v-else-if="announcement.icon === 'warning'" class="ti ti-alert-triangle"
+					style="color: var(--warn);"></i>
+				<i v-else-if="announcement.icon === 'error'" class="ti ti-circle-x" style="color: var(--error);"></i>
+				<i v-else-if="announcement.icon === 'success'" class="ti ti-check" style="color: var(--success);"></i>
+			</span>
+			<span :class="$style.title">{{ announcement.title }}</span>
+			<span :class="$style.body">{{ announcement.text }}</span>
+		</MkA>
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -51,7 +48,7 @@ import { $i } from "@/account";
 		display: block;
 		text-align: center;
 
-		> .body {
+		>.body {
 			display: none;
 		}
 	}

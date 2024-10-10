@@ -1,36 +1,44 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="700">
-		<div v-if="circleId == null || circle != null" class="_gaps_m">
-			<div>
-				<MkButton v-if="profileImageId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{ i18n.ts._circle.setBanner }}</MkButton>
-				<div v-else-if="profileImageUrl">
-					<img :src="profileImageUrl" style="width: 100%;"/>
-					<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{ i18n.ts._circle.removeBanner }}</MkButton>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="700">
+			<div v-if="circleId == null || circle != null" class="_gaps_m">
+				<div>
+					<MkButton v-if="profileImageId == null" @click="setBannerImage"><i class="ti ti-plus"></i> {{
+						i18n.ts._circle.setBanner }}</MkButton>
+					<div v-else-if="profileImageUrl">
+						<img :src="profileImageUrl" style="width: 100%;" />
+						<MkButton @click="removeBannerImage()"><i class="ti ti-trash"></i> {{
+							i18n.ts._circle.removeBanner }}
+						</MkButton>
+					</div>
+				</div>
+
+				<MkInput v-model="name">
+					<template #label>{{ i18n.ts.name }}</template>
+				</MkInput>
+
+				<MkTextarea v-model="description">
+					<template #label>{{ i18n.ts.description }}</template>
+				</MkTextarea>
+
+				<MkSelect v-model="pageId">
+					<template #label>{{ i18n.ts._circle.embededPage }}</template>
+					<option v-for="page in pages" :key="page.id" :value="page.id">{{ page.title }}</option>
+				</MkSelect>
+
+				<div class="_buttons">
+					<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ circleId ? i18n.ts.save :
+						i18n.ts.create }}</MkButton>
+					<MkButton v-if="circleId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive
+						}}
+					</MkButton>
 				</div>
 			</div>
-
-			<MkInput v-model="name">
-				<template #label>{{ i18n.ts.name }}</template>
-			</MkInput>
-
-			<MkTextarea v-model="description">
-				<template #label>{{ i18n.ts.description }}</template>
-			</MkTextarea>
-
-			<MkSelect v-model="pageId">
-				<template #label>{{ i18n.ts._circle.embededPage }}</template>
-				<option v-for="page in pages" :key="page.id" :value="page.id">{{ page.title }}</option>
-			</MkSelect>
-
-			<div class="_buttons">
-				<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ circleId ? i18n.ts.save : i18n.ts.create }}</MkButton>
-				<MkButton v-if="circleId" danger @click="archive()"><i class="ti ti-trash"></i> {{ i18n.ts.archive }}</MkButton>
-			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -112,7 +120,7 @@ function save() {
 	} else {
 		os.api("circles/create", params).then((created) => {
 			os.success();
-			router.push(`/circles/${created.id}`);
+			router.push(`/secure/circles/${created.id}`);
 		});
 	}
 }
@@ -131,7 +139,7 @@ async function archive() {
 		isArchived: true,
 	}).then(() => {
 		os.success();
-		router.push("/circles");
+		router.push("/secure/circles");
 		location.reload();
 	});
 }
@@ -154,16 +162,15 @@ definePageMetadata(
 	computed(() =>
 		props.circleId
 			? {
-					title: i18n.ts._circle.edit,
-					icon: "ti ti-circles-relation",
-				}
+				title: i18n.ts._circle.edit,
+				icon: "ti ti-circles-relation",
+			}
 			: {
-					title: i18n.ts._circle.create,
-					icon: "ti ti-circles-relation",
-				},
+				title: i18n.ts._circle.create,
+				icon: "ti ti-circles-relation",
+			},
 	),
 );
 </script>
 
-<style lang="scss" module>
-</style>
+<style lang="scss" module></style>

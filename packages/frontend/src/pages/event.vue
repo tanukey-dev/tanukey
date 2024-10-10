@@ -1,20 +1,22 @@
 <template>
-<KeepAlive>
-	<MkStickyContainer>
-		<template #header><MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs"/></template>
-		<MkSpacer :contentMax="700" :class="$style.main">
-			<div v-if="event && tab === 'overview'" class="_gaps">
-				<template v-if="page">
-					<XPage :page="page"/>
-				</template>
-			</div>
-			<div v-if="tab === 'eventCircles'">
-				<MkButton class="new" @click="joinEvent()"><i class="ti ti-plus"></i></MkButton>
-				<MkEventCircleList :pagination="eventCirclePagination"/>
-			</div>
-		</MkSpacer>
-	</MkStickyContainer>
-</KeepAlive>
+	<KeepAlive>
+		<MkStickyContainer>
+			<template #header>
+				<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
+			</template>
+			<MkSpacer :contentMax="700" :class="$style.main">
+				<div v-if="event && tab === 'overview'" class="_gaps">
+					<template v-if="page">
+						<XPage :page="page" />
+					</template>
+				</div>
+				<div v-if="tab === 'eventCircles'">
+					<MkButton class="new" @click="joinEvent()"><i class="ti ti-plus"></i></MkButton>
+					<MkEventCircleList :pagination="eventCirclePagination" />
+				</div>
+			</MkSpacer>
+		</MkStickyContainer>
+	</KeepAlive>
 </template>
 
 <script lang="ts" setup>
@@ -60,7 +62,7 @@ watch(
 );
 
 function edit() {
-	router.push(`/events/${event.id}/edit`);
+	router.push(`/secure/events/${event.id}/edit`);
 }
 
 const eventCirclePagination = {
@@ -72,7 +74,7 @@ const eventCirclePagination = {
 };
 
 function joinEvent() {
-	router.push(`/events/${event.id}/join`);
+	router.push(`/secure/events/${event.id}/join`);
 }
 
 const headerActions = $computed(() => {
@@ -92,13 +94,13 @@ const headerActions = $computed(() => {
 		const canEdit = ($i && $i.id === event.userId) || iAmModerator;
 		return canEdit
 			? [
-					share,
-					{
-						icon: "ti ti-settings",
-						text: i18n.ts.edit,
-						handler: edit,
-					},
-				]
+				share,
+				{
+					icon: "ti ti-settings",
+					text: i18n.ts.edit,
+					handler: edit,
+				},
+			]
 			: [share];
 	} else {
 		return null;
@@ -122,9 +124,9 @@ definePageMetadata(
 	computed(() =>
 		event
 			? {
-					title: event.name,
-					icon: "ti ti-calendar-event",
-				}
+				title: event.name,
+				icon: "ti ti-calendar-event",
+			}
 			: null,
 	),
 );

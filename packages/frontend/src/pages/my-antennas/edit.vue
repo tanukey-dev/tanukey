@@ -1,7 +1,7 @@
 <template>
-<div class="">
-	<XAntenna v-if="antenna" :antenna="antenna" @updated="onAntennaUpdated"/>
-</div>
+	<div class="">
+		<XAntenna v-if="antenna" :antenna="antenna" @updated="onAntennaUpdated" />
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -22,7 +22,7 @@ const props = defineProps<{
 
 function onAntennaUpdated() {
 	antennasCache.delete();
-	router.push("/my/antennas");
+	router.push("/secure/my/antennas");
 }
 
 os.api("antennas/show", { antennaId: props.antennaId }).then(
