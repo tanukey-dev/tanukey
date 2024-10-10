@@ -337,10 +337,12 @@ export class SearchService {
 				});
 		}
 		if (opts.userIds && opts.userIds.length > 0) {
+			// Clean up
+			const userIds = opts.userIds.filter((xs) => xs !== "");
 			esFilter.bool.must.push({
 				bool: {
 					should: [
-						...opts.userIds.map((id) => {
+						...userIds.map((id) => {
 							return { term: { userId: id } };
 						}),
 					],
@@ -523,19 +525,23 @@ export class SearchService {
 		}
 
 		if (opts.tags && opts.tags.length > 0) {
-			esFilter.bool.must.push({
-				bool: {
-					must: {
-						bool: {
-							should: [
-								...opts.tags.map((tag) => {
-									return { wildcard: { tags: { value: tag } } };
-								}),
-							],
+			// Clean up
+			const tags = opts.tags.filter((xs) => xs !== "");
+			if (tags.length > 0) {
+				esFilter.bool.must.push({
+					bool: {
+						must: {
+							bool: {
+								should: [
+									...tags.map((tag) => {
+										return { wildcard: { tags: { value: tag } } };
+									}),
+								],
+							},
 						},
 					},
-				},
-			});
+				});
+			}
 		}
 
 		return esFilter;
