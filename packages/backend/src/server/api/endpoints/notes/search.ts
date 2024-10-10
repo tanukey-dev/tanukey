@@ -84,6 +84,12 @@ export const paramDef = {
 		createAtEnd: { type: "integer", nullable: true, default: null },
 		reverseOrder: { type: "boolean", nullable: true, default: false },
 		hasFile: { type: "boolean", nullable: true, default: false },
+		tags: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
 	},
 	required: ["query"],
 } as const;
@@ -145,6 +151,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					reverseOrder: ps.reverseOrder ?? false,
 					hasFile: ps.hasFile ?? false,
 					includeReplies: true,
+					tags: ps.tags ?? [],
 				},
 				{
 					untilId: ps.untilId,

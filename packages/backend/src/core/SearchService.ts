@@ -557,6 +557,7 @@ export class SearchService {
 			reverseOrder?: boolean;
 			hasFile?: boolean;
 			includeReplies?: boolean;
+			tags: string[];
 		},
 		pagination: {
 			equal?: Note["id"];
@@ -583,6 +584,7 @@ export class SearchService {
 				reverseOrder: opts.reverseOrder,
 				hasFile: opts.hasFile,
 				includeReplies: opts.includeReplies,
+				tags: opts.tags,
 			},
 			{
 				equal: pagination.equal,

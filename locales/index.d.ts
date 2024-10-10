@@ -193,6 +193,7 @@ export interface Locale {
     "channelModerators": string;
     "channelTags": string;
     "channelTagsSetting": string;
+    "searchTagsSetting": string;
     "isNoteCollapsed": string;
     "noteNotSearchable": string;
     "instances": string;

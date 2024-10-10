@@ -23,6 +23,10 @@
 					<template #caption>{{ i18n.ts.antennaKeywordsDescription }}</template>
 				</MkTextarea>
 
+				<MkInput v-model="tags">
+					<template #label>{{ i18n.ts.searchTagsSetting }}</template>
+				</MkInput>
+
 				<FormSplit :class="$style.formContent">
 					<MkInput v-model="createAtBegin" type="datetime-local">
 						<template #label>{{ i18n.ts.startDate }}</template>
@@ -88,32 +92,20 @@ const optionOpen = ref(false);
 const users = ref("");
 const keywords = ref("");
 const excludeKeywords = ref("");
+const tags = ref("");
 
-watch(searchQuery, () => {
-	updateUrlParameter();
-});
-watch(searchOrigin, () => {
-	updateUrlParameter();
-});
-watch(users, () => {
-	updateUrlParameter();
-});
-watch(keywords, () => {
-	updateUrlParameter();
-});
-watch(excludeKeywords, () => {
-	updateUrlParameter();
-});
-watch(createAtBegin, () => {
-	updateUrlParameter();
-});
-watch(createAtEnd, () => {
-	updateUrlParameter();
-});
-watch(reverseOrder, () => {
-	updateUrlParameter();
-});
-watch(hasFile, () => {
+watch([
+	searchQuery,
+	searchOrigin,
+	users,
+	keywords,
+	excludeKeywords,
+	createAtBegin,
+	createAtEnd,
+	reverseOrder,
+	hasFile,
+	tags,
+], () => {
 	updateUrlParameter();
 });
 
@@ -135,6 +127,7 @@ function updateUrlParameter(): void {
 	setSearchParams(searchParams, "createAtEnd", createAtEnd.value);
 	setSearchParams(searchParams, "reverseOrder", reverseOrder.value);
 	setSearchParams(searchParams, "hasFile", hasFile.value);
+	setSearchParams(searchParams, "tags", tags.value);
 	history.replaceState("", "", `?${searchParams.toString()}`);
 }
 
@@ -161,6 +154,11 @@ async function loadUrlParameter() {
 	const excludeKeywordsParam = searchParams.get("excludeKeywords");
 	if (excludeKeywordsParam) {
 		excludeKeywords.value = excludeKeywordsParam;
+		optionOpen.value = true;
+	}
+	const tagsParam = searchParams.get("tags");
+	if (tagsParam) {
+		tags.value = tagsParam;
 		optionOpen.value = true;
 	}
 	const begin = searchParams.get("createAtBegin");
@@ -244,6 +242,7 @@ async function search() {
 				.trim()
 				.split("\n")
 				.map((x) => x.trim().replace(/\s+/g, " ").split(" ")),
+			tags: tags.value.trim().replace(/\s+/g, " ").replaceAll("#", "").split(" ")
 		},
 	};
 
