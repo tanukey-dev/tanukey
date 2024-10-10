@@ -543,13 +543,10 @@ export class SearchService {
 				};
 
 				filter.bool.must.bool.should.push({
-					wildcard: { tags: { value: tags } },
-				});
-				filter.bool.must.bool.should.push({
 					simple_query_string: {
 						fields: ["tags"],
 						query: tags,
-						default_operator: "and",
+						default_operator: "or",
 					},
 				});
 
