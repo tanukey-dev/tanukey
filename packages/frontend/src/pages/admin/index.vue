@@ -1,6 +1,6 @@
 <template>
 	<div ref="el" class="hiyeyicy" :class="{ wide: !narrow }">
-		<div v-if="!narrow || currentPage?.route.name == null" class="nav">
+		<div v-if="!narrow || currentPath === '/secure/admin'" class="nav">
 			<MkSpacer :contentMax="700" :marginMin="16">
 				<div class="lxpfedzu">
 					<div class="banner">
@@ -25,7 +25,7 @@
 				</div>
 			</MkSpacer>
 		</div>
-		<div v-if="!(narrow)" class="main" ref="contents">
+		<div v-if="!(narrow && currentPath === '/secure/admin')" class="main" ref="contents">
 			<RouterView />
 		</div>
 	</div>
@@ -52,6 +52,7 @@ const isEmpty = (x: string | null) => x == null || x === "";
 
 const router = useRouter();
 const contents = shallowRef<HTMLElement>();
+const currentPath = router.getCurrentPathRef();
 
 useScrollPositionManager(() => getScrollContainer(contents.value), router, "/secure/admin/settings");
 
@@ -91,8 +92,6 @@ const ro = new ResizeObserver((entries, observer) => {
 	if (entries.length === 0) return;
 	narrow = entries[0].borderBoxSize[0].inlineSize < NARROW_THRESHOLD;
 });
-
-const currentPath = router.getCurrentPathRef();
 
 function isActive(path: string): boolean {
 	const resolved = router.resolve(path);
