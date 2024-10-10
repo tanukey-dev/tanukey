@@ -25,7 +25,8 @@
 										v-if="page.likedCount > 0" class="count">{{ page.likedCount }}</span></MkButton>
 								<MkButton v-else v-tooltip="i18n.ts._pages.like" class="button" asLike @click="like()">
 									<i class="ti ti-heart"></i><span v-if="page.likedCount > 0" class="count">{{
-										page.likedCount }}</span></MkButton>
+										page.likedCount }}</span>
+								</MkButton>
 							</div>
 							<div class="other">
 								<button v-tooltip="i18n.ts.shareWithNote" v-click-anime class="_button"
@@ -140,13 +141,13 @@ function share() {
 	navigator.share({
 		title: page.title ?? page.name,
 		text: page.summary,
-		url: `${url}/@${page.user.username}/pages/${page.name}`,
+		url: `${url}/secure/@${page.user.username}/pages/${page.name}`,
 	});
 }
 
 function shareWithNote() {
 	os.post({
-		initialText: `${page.title || page.name} ${url}/@${page.user.username}/pages/${page.name}`,
+		initialText: `${page.title || page.name} ${url}/secure/@${page.user.username}/pages/${page.name}`,
 	});
 }
 
