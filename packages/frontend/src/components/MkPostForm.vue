@@ -396,6 +396,7 @@ const canPost = $computed((): boolean => {
 			1 <= files.length ||
 			!!poll ||
 			!!props.renote ||
+			!!quoteId ||
 			1 <= asciiartText.value.trim().length) &&
 		textLength <= maxTextLength &&
 		(!poll || poll.choices.length >= 2)
