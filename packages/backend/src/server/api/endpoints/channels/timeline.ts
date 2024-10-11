@@ -103,6 +103,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				{
 					origin: "local",
 					channelId: ps.channelId,
+					includeReplies: true,
 				},
 				{
 					untilId: ps.untilId,
