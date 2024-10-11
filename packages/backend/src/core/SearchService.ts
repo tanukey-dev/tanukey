@@ -528,29 +528,13 @@ export class SearchService {
 			// Clean up
 			const tags = opts.tags
 				.filter((xs) => xs !== "")
-				.map((s) => `"${s}"`)
-				.join(" ");
+				.map((s) => s.replaceAll('"', "").replaceAll("#", ""));
 			if (tags.length > 0) {
-				const filter = {
-					bool: {
-						must: {
-							bool: {
-								should: [] as any[],
-								minimum_should_match: 1,
-							},
-						},
-					},
-				};
-
-				filter.bool.must.bool.should.push({
-					simple_query_string: {
-						fields: ["tags"],
-						query: tags,
-						default_operator: "or",
+				esFilter.bool.must.push({
+					terms: {
+						"tags.keyword": tags,
 					},
 				});
-
-				esFilter.bool.must.push(filter);
 			}
 		}
 
