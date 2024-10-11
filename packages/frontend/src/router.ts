@@ -92,6 +92,11 @@ export const routes = [
 		component: page(() => import("./pages/flash/flash.vue")),
 	},
 	{
+		path: "/gallery/:postId",
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
+		component: page(() => import("./pages/gallery/post.vue")),
+	},
+	{
 		path: "/channels",
 		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/channels.vue")),
@@ -292,6 +297,8 @@ export const routes = [
 			},
 			{
 				path: "/gallery/:postId",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/gallery/post.vue")),
 			},
 			{

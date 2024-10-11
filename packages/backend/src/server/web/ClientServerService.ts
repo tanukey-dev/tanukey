@@ -628,6 +628,99 @@ export class ClientServerService {
 			getChannel,
 		);
 
+		// Flash
+		const getPlay = async (request: any, reply: any) => {
+			const flash = await this.flashsRepository.findOneBy({
+				id: request.params.id,
+			});
+
+			if (flash) {
+				const _flash = await this.flashEntityService.pack(flash);
+				const profile = await this.userProfilesRepository.findOneByOrFail({
+					userId: flash.userId,
+				});
+				const meta = await this.metaService.fetch();
+				reply.header("Cache-Control", "public, max-age=15");
+				if (profile.preventAiLearning) {
+					reply.header("X-Robots-Tag", "noimageai");
+					reply.header("X-Robots-Tag", "noai");
+				}
+				return await reply.view("flash", {
+					flash: _flash,
+					profile,
+					avatarUrl: _flash.user.avatarUrl,
+					...this.generateCommonPugData(meta),
+				});
+			}
+			return await renderBase(reply);
+		};
+
+		fastify.get<{ Params: { id: string } }>("/play/:id", getPlay);
+		fastify.get<{ Params: { id: string } }>("/secure/play/:id", getPlay);
+
+		// Clip
+		const getClip = async (request: any, reply: any) => {
+			const clip = await this.clipsRepository.findOneBy({
+				id: request.params.clip,
+			});
+
+			if (clip?.isPublic) {
+				const _clip = await this.clipEntityService.pack(clip);
+				const profile = await this.userProfilesRepository.findOneByOrFail({
+					userId: clip.userId,
+				});
+				const meta = await this.metaService.fetch();
+				reply.header("Cache-Control", "public, max-age=15");
+				if (profile.preventAiLearning) {
+					reply.header("X-Robots-Tag", "noimageai");
+					reply.header("X-Robots-Tag", "noai");
+				}
+				return await reply.view("clip", {
+					clip: _clip,
+					profile,
+					avatarUrl: _clip.user.avatarUrl,
+					...this.generateCommonPugData(meta),
+				});
+			}
+			return await renderBase(reply);
+		};
+
+		fastify.get<{ Params: { clip: string } }>("/clips/:clip", getClip);
+		fastify.get<{ Params: { clip: string } }>("/secure/clips/:clip", getClip);
+
+		// Gallery post
+		const getGallery = async (request: any, reply: any) => {
+			const post = await this.galleryPostsRepository.findOneBy({
+				id: request.params.post,
+			});
+
+			if (post) {
+				const _post = await this.galleryPostEntityService.pack(post);
+				const profile = await this.userProfilesRepository.findOneByOrFail({
+					userId: post.userId,
+				});
+				const meta = await this.metaService.fetch();
+				reply.header("Cache-Control", "public, max-age=15");
+				if (profile.preventAiLearning) {
+					reply.header("X-Robots-Tag", "noimageai");
+					reply.header("X-Robots-Tag", "noai");
+				}
+				return await reply.view("gallery-post", {
+					post: _post,
+					profile,
+					avatarUrl: _post.user.avatarUrl,
+					...this.generateCommonPugData(meta),
+				});
+			}
+			return await renderBase(reply);
+		};
+
+		fastify.get<{ Params: { post: string } }>("/gallery/:post", getGallery);
+		fastify.get<{ Params: { post: string } }>(
+			"/secure/gallery/:post",
+			getGallery,
+		);
+
 		fastify.get("/flush", async (request, reply) => {
 			return await reply.view("flush");
 		});
