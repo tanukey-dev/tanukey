@@ -306,7 +306,7 @@ export class SearchService {
 				esFilter.bool.must.push({
 					range: {
 						createdAt: {
-							gt: this.idService.parse(pagination.untilId).date.getTime(),
+							gte: this.idService.parse(pagination.untilId).date.getTime(),
 						},
 					},
 				});
@@ -314,7 +314,7 @@ export class SearchService {
 				esFilter.bool.must.push({
 					range: {
 						createdAt: {
-							lt: this.idService.parse(pagination.sinceId).date.getTime(),
+							lte: this.idService.parse(pagination.sinceId).date.getTime(),
 						},
 					},
 				});
@@ -323,7 +323,7 @@ export class SearchService {
 				esFilter.bool.must.push({
 					range: {
 						createdAt: {
-							lt: this.idService.parse(pagination.untilId).date.getTime(),
+							lte: this.idService.parse(pagination.untilId).date.getTime(),
 						},
 					},
 				});
@@ -331,7 +331,7 @@ export class SearchService {
 				esFilter.bool.must.push({
 					range: {
 						createdAt: {
-							gt: this.idService.parse(pagination.sinceId).date.getTime(),
+							gte: this.idService.parse(pagination.sinceId).date.getTime(),
 						},
 					},
 				});
