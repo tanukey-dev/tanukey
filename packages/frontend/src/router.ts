@@ -1,5 +1,4 @@
-import { $i, iAmAdmin, iAmModerator } from "@/account";
-import { ui } from "@/config";
+import { $i, iAmModerator } from "@/account";
 import { Router } from "@/nirax";
 import MkError from "@/pages/_error_.vue";
 import MkLoading from "@/pages/_loading_.vue";
@@ -131,6 +130,11 @@ export const routes = [
 		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/circle.vue")),
 	},
+	{
+		path: "/tags/:tag",
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
+		component: page(() => import("./pages/tag.vue")),
+	},
 	// need login
 	{
 		path: "/secure",
@@ -255,6 +259,8 @@ export const routes = [
 			},
 			{
 				path: "/tags/:tag",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/tag.vue")),
 			},
 			{
