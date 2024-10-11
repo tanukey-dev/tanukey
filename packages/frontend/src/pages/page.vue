@@ -147,7 +147,7 @@ function share() {
 
 function shareWithNote() {
 	os.post({
-		initialText: `${page.title || page.name} ${url}/secure/@${page.user.username}/pages/${page.name}`,
+		initialText: `${page.title || page.name} ${url}/@${page.user.username}/pages/${page.name}`,
 	});
 }
 
