@@ -87,6 +87,11 @@ export const routes = [
 		component: page(() => import("./pages/clip.vue")),
 	},
 	{
+		path: "/play/:id",
+		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
+		component: page(() => import("./pages/flash/flash.vue")),
+	},
+	{
 		path: "/channels",
 		redirect: (path: string) => ($i ? `/secure${path}` : undefined),
 		component: page(() => import("./pages/channels.vue")),
@@ -269,6 +274,8 @@ export const routes = [
 			},
 			{
 				path: "/play/:id",
+				redirect: (path: string) =>
+					$i ? undefined : path.slice("/secure".length),
 				component: page(() => import("./pages/flash/flash.vue")),
 			},
 			{
