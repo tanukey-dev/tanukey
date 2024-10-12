@@ -70,8 +70,6 @@
 
 <script lang="ts" setup>
 import MkButton from "@/components/MkButton.vue";
-import XSigninDialog from "@/components/MkSigninDialog.vue";
-import XSignupDialog from "@/components/MkSignupDialog.vue";
 import MkTimeline from "@/components/MkTimeline.vue";
 import { host } from "@/config";
 import { i18n } from "@/i18n";
@@ -88,25 +86,11 @@ os.api("meta", { detail: true }).then((_meta) => {
 });
 
 function signin() {
-	os.popup(
-		XSigninDialog,
-		{
-			autoSet: true,
-		},
-		{},
-		"closed",
-	);
+	router.push("/signin");
 }
 
 function signup() {
-	os.popup(
-		XSignupDialog,
-		{
-			autoSet: true,
-		},
-		{},
-		"closed",
-	);
+	router.push("/signup");
 }
 
 </script>

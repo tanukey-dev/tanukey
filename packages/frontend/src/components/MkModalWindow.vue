@@ -1,19 +1,23 @@
 <template>
-<MkModal ref="modal" :preferType="'dialog'" @click="onBgClick" @closed="$emit('closed')">
-	<div ref="rootEl" :class="$style.root" :style="{ width: `${width}px`, height: `min(${height}px, 100%)` }" @keydown="onKeydown">
-		<div ref="headerEl" :class="$style.header">
-			<button v-if="withOkButton" :class="$style.headerButton" class="_button" @click="$emit('close')"><i class="ti ti-x"></i></button>
-			<span :class="$style.title">
-				<slot name="header"></slot>
-			</span>
-			<button v-if="!withOkButton" :class="$style.headerButton" class="_button" data-cy-modal-window-close @click="$emit('close')"><i class="ti ti-x"></i></button>
-			<button v-if="withOkButton" :class="$style.headerButton" class="_button" :disabled="okButtonDisabled" @click="$emit('ok')"><i class="ti ti-check"></i></button>
+	<MkModal ref="modal" :preferType="'dialog'" @click="onBgClick" @closed="$emit('closed')">
+		<div ref="rootEl" :class="$style.root" :style="{ width: `${width}px`, height: `min(${height}px, 100%)` }"
+			@keydown="onKeydown">
+			<div ref="headerEl" :class="$style.header">
+				<button v-if="withOkButton" :class="$style.headerButton" class="_button" @click="$emit('close')"><i
+						class="ti ti-x"></i></button>
+				<span :class="$style.title">
+					<slot name="header"></slot>
+				</span>
+				<button v-if="!withOkButton && !hideCancel" :class="$style.headerButton" class="_button"
+					data-cy-modal-window-close @click="$emit('close')"><i class="ti ti-x"></i></button>
+				<button v-if="withOkButton" :class="$style.headerButton" class="_button" :disabled="okButtonDisabled"
+					@click="$emit('ok')"><i class="ti ti-check"></i></button>
+			</div>
+			<div :class="$style.body">
+				<slot :width="bodyWidth" :height="bodyHeight"></slot>
+			</div>
 		</div>
-		<div :class="$style.body">
-			<slot :width="bodyWidth" :height="bodyHeight"></slot>
-		</div>
-	</div>
-</MkModal>
+	</MkModal>
 </template>
 
 <script lang="ts" setup>
@@ -22,14 +26,16 @@ import MkModal from "./MkModal.vue";
 
 const props = withDefaults(
 	defineProps<{
-		withOkButton: boolean;
-		okButtonDisabled: boolean;
+		withOkButton?: boolean;
+		okButtonDisabled?: boolean;
+		hideCancel?: boolean;
 		width: number;
 		height: number;
 	}>(),
 	{
 		withOkButton: false,
 		okButtonDisabled: false,
+		hideCancel: false,
 		width: 400,
 		height: 500,
 	},
@@ -138,7 +144,7 @@ defineExpose({
 	}
 }
 
-.headerButton + .title {
+.headerButton+.title {
 	padding-left: 0;
 }
 

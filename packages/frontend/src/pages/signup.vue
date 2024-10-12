@@ -1,9 +1,9 @@
 <template>
-	<MkModalWindow ref="dialog" :width="500" :height="600" @close="dialog.close()" @closed="$emit('closed')">
+	<MkModalWindow ref="dialog" :width="500" :height="600" :hideCancel="true">
 		<template #header>{{ i18n.ts.signup }}</template>
 
 		<div style="overflow-x: clip;">
-			<XSignup :autoSet="autoSet" @done="onSignup" @cancel="onCancel" />
+			<XSignup :autoSet="true" @done="onSignup" @cancel="onCancel" />
 		</div>
 	</MkModalWindow>
 </template>
@@ -13,30 +13,18 @@ import MkModalWindow from "@/components/MkModalWindow.vue";
 import XSignup from "@/components/MkSignup.vue";
 import { i18n } from "@/i18n";
 import { } from "vue";
+import { useRouter } from "@/router";
 
-const props = withDefaults(
-	defineProps<{
-		autoSet?: boolean;
-	}>(),
-	{
-		autoSet: false,
-	},
-);
-
-const emit = defineEmits<{
-	(ev: "done"): void;
-	(ev: "closed"): void;
-}>();
+const router = useRouter();
 
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
 
 function onCancel() {
-	if (dialog) dialog.close();
+	router.push("/");
 }
 
 function onSignup() {
-	emit("done");
-	if (dialog) dialog.close();
+	router.push("/secure/timeline");
 }
 </script>
 

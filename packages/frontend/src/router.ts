@@ -781,6 +781,16 @@ export const routes = [
 	},
 	{
 		name: "index",
+		path: "/signin",
+		component: page(() => import("./pages/signin.vue")),
+	},
+	{
+		name: "index",
+		path: "/signup",
+		component: page(() => import("./pages/signup.vue")),
+	},
+	{
+		name: "index",
 		path: "/",
 		redirect: (): string | undefined => {
 			return $i
