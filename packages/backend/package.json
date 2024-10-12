@@ -132,7 +132,7 @@
 		"stripe": "14.18.0",
 		"summaly": "github:tanukey-dev/summaly",
 		"systeminformation": "5.17.16",
-		"tfm-js": "0.24.3",
+		"tfm-js": "github:tanukey-dev/tfm.js",
 		"tinycolor2": "1.6.0",
 		"tmp": "0.2.1",
 		"tsc-alias": "1.8.6",
