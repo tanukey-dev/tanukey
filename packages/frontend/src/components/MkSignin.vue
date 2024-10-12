@@ -21,9 +21,13 @@
 					<template #caption><button class="_textButton" type="button" @click="resetPassword">{{
 						i18n.ts.forgotPassword }}</button></template>
 				</MkInput>
-				<MkButton type="submit" large primary rounded :disabled="signing" style="margin: 0 auto;">{{ signing ?
-					i18n.ts.loggingIn
-					: i18n.ts.login }}</MkButton>
+				<MkCaptcha v-if="instance.enableTurnstile" ref="turnstile" v-model="turnstileResponse"
+					:class="$style.captcha" provider="turnstile" :sitekey="instance.turnstileSiteKey" />
+				<MkButton type="submit" large primary rounded :disabled="shouldDisableSubmitting"
+					style="margin: 0 auto;">{{
+						signing ?
+							i18n.ts.loggingIn
+							: i18n.ts.login }}</MkButton>
 			</div>
 			<div v-if="totpLogin" class="2fa-signin" :class="{ securityKeys: user && user.securityKeys }">
 				<div v-if="user && user.securityKeys" class="twofa-group tap-group">
@@ -47,9 +51,13 @@
 						<template #label>{{ i18n.ts.token }}</template>
 						<template #prefix><i class="ti ti-123"></i></template>
 					</MkInput>
-					<MkButton type="submit" :disabled="signing" large primary rounded style="margin: 0 auto;">{{ signing
-						?
-						i18n.ts.loggingIn : i18n.ts.login }}</MkButton>
+					<MkCaptcha v-if="instance.enableTurnstile" ref="turnstile" v-model="turnstileResponse"
+						:class="$style.captcha" provider="turnstile" :sitekey="instance.turnstileSiteKey" />
+					<MkButton type="submit" :disabled="shouldDisableSubmitting" large primary rounded
+						style="margin: 0 auto;">{{
+							signing
+								?
+								i18n.ts.loggingIn : i18n.ts.login }}</MkButton>
 				</div>
 			</div>
 		</div>
@@ -63,6 +71,7 @@ import { showSuspendedDialog } from "../scripts/show-suspended-dialog";
 import MkButton from "@/components/MkButton.vue";
 import MkInput from "@/components/MkInput.vue";
 import MkInfo from "@/components/MkInfo.vue";
+import MkCaptcha, { type Captcha } from "@/components/MkCaptcha.vue";
 import { host as configHost } from "@/config";
 import { byteify, hexify } from "@/scripts/2fa";
 import * as os from "@/os";
@@ -82,6 +91,16 @@ let challengeData = $ref(null);
 let queryingKey = $ref(false);
 let hCaptchaResponse = $ref(null);
 let reCaptchaResponse = $ref(null);
+let turnstileResponse = $ref(null);
+
+const shouldDisableSubmitting = $computed((): boolean => {
+	return (
+		signing ||
+		(instance.enableHcaptcha && !hCaptchaResponse) ||
+		(instance.enableRecaptcha && !reCaptchaResponse) ||
+		(instance.enableTurnstile && !turnstileResponse)
+	);
+});
 
 const meta = $computed(() => instance);
 
@@ -157,6 +176,7 @@ function queryKey() {
 				challengeId: challengeData.challengeId,
 				"hcaptcha-response": hCaptchaResponse,
 				"g-recaptcha-response": reCaptchaResponse,
+				"turnstile-response": turnstileResponse,
 			});
 		})
 		.then((res) => {
@@ -199,9 +219,10 @@ function onSubmit() {
 		os.api("signin", {
 			username,
 			password,
+			token: user && user.twoFactorEnabled ? token : undefined,
 			"hcaptcha-response": hCaptchaResponse,
 			"g-recaptcha-response": reCaptchaResponse,
-			token: user && user.twoFactorEnabled ? token : undefined,
+			"turnstile-response": turnstileResponse,
 		})
 			.then((res) => {
 				onLogin(res)?.then(() => {

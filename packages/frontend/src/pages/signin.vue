@@ -1,5 +1,5 @@
 <template>
-	<MkModalWindow ref="dialog" :width="370" :height="400" :hideCancel="true">
+	<MkModalWindow ref="dialog" :width="500" :height="600" :hideCancel="true">
 		<template #header>{{ i18n.ts.login }}</template>
 
 		<MkSpacer :marginMin="20" :marginMax="28">
