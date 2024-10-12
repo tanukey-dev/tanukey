@@ -75,9 +75,6 @@ import { host } from "@/config";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
 import { DetailedInstanceMetadata } from "misskey-js/built/entities";
-import { useRouter } from "@/router";
-
-const router = useRouter();
 
 let meta = $ref<DetailedInstanceMetadata>();
 
@@ -86,11 +83,13 @@ os.api("meta", { detail: true }).then((_meta) => {
 });
 
 function signin() {
-	router.push("/signin");
+	// トラッキングのためルーターは使わない
+	window.location.href = "/signin";
 }
 
 function signup() {
-	router.push("/signup");
+	// トラッキングのためルーターは使わない
+	window.location.href = "/signup";
 }
 
 </script>
