@@ -1,5 +1,5 @@
 import { computed, reactive } from "vue";
-import * as Misskey from "misskey-js";
+import type * as Misskey from "misskey-js";
 import { api } from "./os";
 import { miLocalStorage } from "./local-storage";
 import {
@@ -14,7 +14,7 @@ const cached = miLocalStorage.getItem("instance");
 
 // TODO: instanceをリアクティブにするかは再考の余地あり
 
-export const instance: Misskey.entities.InstanceMetadata = reactive(
+export const instance: Misskey.entities.LiteInstanceMetadata = reactive(
 	cached
 		? JSON.parse(cached)
 		: {

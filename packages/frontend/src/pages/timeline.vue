@@ -25,6 +25,8 @@ import * as os from "@/os";
 import { useRouter } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { defaultStore } from "@/store";
+import MkStickyContainer from "@/components/global/MkStickyContainer.vue";
+import MkPageHeader from "@/components/global/MkPageHeader.vue";
 import { computed, defineAsyncComponent, provide, ref } from "vue";
 
 const router = useRouter();
@@ -51,10 +53,10 @@ function isNeedUserPinnedChannels(): boolean {
 
 const isLocalTimelineAvailable =
 	($i == null && instance.policies.ltlAvailable) ||
-	($i != null && $i.policies.ltlAvailable);
+	($i?.policies.ltlAvailable);
 const isGlobalTimelineAvailable =
 	($i == null && instance.policies.gtlAvailable) ||
-	($i != null && $i.policies.gtlAvailable);
+	($i?.policies.gtlAvailable);
 
 let srcWhenNotSignin = $ref(isLocalTimelineAvailable ? "local" : "global");
 const src = $computed({
@@ -128,19 +130,16 @@ const headerTabs = $computed(
 				key: "home",
 				title: i18n.ts._timelines.home,
 				icon: "ti ti-home",
-				iconOnly: true,
 			},
 			{
 				key: "recommend",
 				title: i18n.ts._timelines.recommend,
 				icon: "ti ti-sparkles",
-				iconOnly: true,
 			},
 			{
 				key: "feed",
 				title: i18n.ts._timelines.feed,
 				icon: "ti ti-timeline",
-				iconOnly: true,
 			},
 			{
 				icon: "ti ti-list",

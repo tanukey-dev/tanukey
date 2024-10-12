@@ -304,6 +304,34 @@ export type CustomEmoji = {
 	uploadedUserName: string;
 };
 
+export type RolePolicies = {
+	gtlAvailable: boolean;
+	ltlAvailable: boolean;
+	canPublicNote: boolean;
+	canInvite: boolean;
+	inviteLimit: number;
+	inviteLimitCycle: number;
+	inviteExpirationTime: number;
+	canManageCustomEmojis: boolean;
+	canRequestCustomEmojis: boolean;
+	canCreateToken: boolean;
+	canSearchNotes: boolean;
+	canCreatePrivateChannel: boolean;
+	canHideAds: boolean;
+	driveCapacityMb: number;
+	additionalDriveCapacityMb: number;
+	alwaysMarkNsfw: boolean;
+	pinLimit: number;
+	antennaLimit: number;
+	wordMuteLimit: number;
+	webhookLimit: number;
+	clipLimit: number;
+	noteEachClipsLimit: number;
+	userListLimit: number;
+	userEachUserListsLimit: number;
+	rateLimitFactor: number;
+};
+
 export type LiteInstanceMetadata = {
 	maintainerName: string | null;
 	maintainerEmail: string | null;
@@ -356,6 +384,7 @@ export type LiteInstanceMetadata = {
 	}[];
 	translatorAvailable: boolean;
 	serverRules: string[];
+	policies: RolePolicies;
 	pinnedLtlChannelIds: string[];
 	enableSubscriptions: boolean;
 };
