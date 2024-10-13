@@ -19,26 +19,32 @@ export const router = createRouter({
 		{
 			path: "/instance-info/:host",
 			component: page(() => import("./pages/instance-info.vue")),
+			props: true,
 		},
 		{
 			path: "/reset-password/:token?",
 			component: page(() => import("./pages/reset-password.vue")),
+			props: true,
 		},
 		{
 			path: "/signup-complete/:code",
 			component: page(() => import("./pages/signup-complete.vue")),
+			props: true,
 		},
 		{
 			path: "/auth/:token",
 			component: page(() => import("./pages/auth.vue")),
+			props: true,
 		},
 		{
 			path: "/miauth/:session",
 			component: page(() => import("./pages/miauth.vue")),
+			props: true,
 		},
 		{
 			path: "/@:initUser/pages/:initPageName/view-source",
 			component: page(() => import("./pages/page-editor/page-editor.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -46,6 +52,7 @@ export const router = createRouter({
 		{
 			path: "/@:username/pages/:pageName",
 			component: page(() => import("./pages/page.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -53,6 +60,7 @@ export const router = createRouter({
 		{
 			path: "/@:acct/following",
 			component: page(() => import("./pages/user/following.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -60,6 +68,7 @@ export const router = createRouter({
 		{
 			path: "/@:acct/followers",
 			component: page(() => import("./pages/user/followers.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -67,6 +76,7 @@ export const router = createRouter({
 		{
 			path: "/@:acct/:page?",
 			component: page(() => import("./pages/user/index.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -74,6 +84,7 @@ export const router = createRouter({
 		{
 			path: "/notes/:noteId",
 			component: page(() => import("./pages/note.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -81,6 +92,7 @@ export const router = createRouter({
 		{
 			path: "/list/:listId",
 			component: page(() => import("./pages/list.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -88,6 +100,7 @@ export const router = createRouter({
 		{
 			path: "/clips/:clipId",
 			component: page(() => import("./pages/clip.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -95,6 +108,7 @@ export const router = createRouter({
 		{
 			path: "/play/:id",
 			component: page(() => import("./pages/flash/flash.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -102,6 +116,7 @@ export const router = createRouter({
 		{
 			path: "/gallery/:postId",
 			component: page(() => import("./pages/gallery/post.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -116,6 +131,7 @@ export const router = createRouter({
 		{
 			path: "/channels/:channelId",
 			component: page(() => import("./pages/channel.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -130,6 +146,7 @@ export const router = createRouter({
 		{
 			path: "/events/:eventId",
 			component: page(() => import("./pages/event.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -137,6 +154,7 @@ export const router = createRouter({
 		{
 			path: "/events/:eventId/:eventCircleId",
 			component: page(() => import("./pages/event-circle.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -151,6 +169,7 @@ export const router = createRouter({
 		{
 			path: "/circles/:circleId",
 			component: page(() => import("./pages/circle.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -158,6 +177,7 @@ export const router = createRouter({
 		{
 			path: "/tags/:tag",
 			component: page(() => import("./pages/tag.vue")),
+			props: true,
 			meta: {
 				loginedUserRedirect: true,
 			},
@@ -177,10 +197,12 @@ export const router = createRouter({
 				{
 					path: "user-info/:userId",
 					component: page(() => import("./pages/user-info.vue")),
+					props: true,
 				},
 				{
 					path: "@:initUser/pages/:initPageName/view-source",
 					component: page(() => import("./pages/page-editor/page-editor.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -188,6 +210,7 @@ export const router = createRouter({
 				{
 					path: "@:username/pages/:pageName",
 					component: page(() => import("./pages/page.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -195,6 +218,7 @@ export const router = createRouter({
 				{
 					path: "@:acct/following",
 					component: page(() => import("./pages/user/following.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -202,6 +226,7 @@ export const router = createRouter({
 				{
 					path: "@:acct/followers",
 					component: page(() => import("./pages/user/followers.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -209,6 +234,7 @@ export const router = createRouter({
 				{
 					path: "@:acct/:page?",
 					component: page(() => import("./pages/user/index.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -216,6 +242,7 @@ export const router = createRouter({
 				{
 					path: "notes/:noteId",
 					component: page(() => import("./pages/note.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -223,6 +250,7 @@ export const router = createRouter({
 				{
 					path: "list/:listId",
 					component: page(() => import("./pages/list.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -230,6 +258,7 @@ export const router = createRouter({
 				{
 					path: "clips/:clipId",
 					component: page(() => import("./pages/clip.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -262,10 +291,12 @@ export const router = createRouter({
 				{
 					path: "roles/:role",
 					component: page(() => import("./pages/role.vue")),
+					props: true,
 				},
 				{
 					path: "user-tags/:tag",
 					component: page(() => import("./pages/user-tag.vue")),
+					props: true,
 				},
 				{
 					path: "explore",
@@ -294,6 +325,7 @@ export const router = createRouter({
 				{
 					path: "tags/:tag",
 					component: page(() => import("./pages/tag.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -305,6 +337,7 @@ export const router = createRouter({
 				{
 					path: "pages/edit/:initPageId",
 					component: page(() => import("./pages/page-editor/page-editor.vue")),
+					props: true,
 				},
 				{
 					path: "pages",
@@ -313,6 +346,7 @@ export const router = createRouter({
 				{
 					path: "play/:id/edit",
 					component: page(() => import("./pages/flash/flash-edit.vue")),
+					props: true,
 				},
 				{
 					path: "play/new",
@@ -321,6 +355,7 @@ export const router = createRouter({
 				{
 					path: "play/:id",
 					component: page(() => import("./pages/flash/flash.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -332,6 +367,7 @@ export const router = createRouter({
 				{
 					path: "gallery/:postId/edit",
 					component: page(() => import("./pages/gallery/edit.vue")),
+					props: true,
 				},
 				{
 					path: "gallery/new",
@@ -340,6 +376,7 @@ export const router = createRouter({
 				{
 					path: "gallery/:postId",
 					component: page(() => import("./pages/gallery/post.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -351,6 +388,7 @@ export const router = createRouter({
 				{
 					path: "channels/:channelId/edit",
 					component: page(() => import("./pages/channel-editor.vue")),
+					props: true,
 				},
 				{
 					path: "channels/new",
@@ -366,6 +404,7 @@ export const router = createRouter({
 				{
 					path: "channels/:channelId",
 					component: page(() => import("./pages/channel.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -384,18 +423,22 @@ export const router = createRouter({
 				{
 					path: "events/:eventId/join",
 					component: page(() => import("./pages/event-circle-editor.vue")),
+					props: true,
 				},
 				{
 					path: "events/:eventId/edit",
 					component: page(() => import("./pages/event-editor.vue")),
+					props: true,
 				},
 				{
 					path: "events/:eventId/:eventCircleId/edit",
 					component: page(() => import("./pages/event-circle-editor.vue")),
+					props: true,
 				},
 				{
 					path: "events/:eventId",
 					component: page(() => import("./pages/event.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -403,6 +446,7 @@ export const router = createRouter({
 				{
 					path: "events/:eventId/:eventCircleId",
 					component: page(() => import("./pages/event-circle.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -417,6 +461,7 @@ export const router = createRouter({
 				{
 					path: "circles/:circleId",
 					component: page(() => import("./pages/circle.vue")),
+					props: true,
 					meta: {
 						notLoginedUserRedirect: true,
 					},
@@ -424,6 +469,7 @@ export const router = createRouter({
 				{
 					path: "circles/:circleId/edit",
 					component: page(() => import("./pages/circle-editor.vue")),
+					props: true,
 				},
 				{
 					path: "circles/new",
@@ -436,10 +482,12 @@ export const router = createRouter({
 				{
 					path: "registry/keys/system/:path(.*)?",
 					component: page(() => import("./pages/registry.keys.vue")),
+					props: true,
 				},
 				{
 					path: "registry/value/system/:path(.*)?",
 					component: page(() => import("./pages/registry.value.vue")),
+					props: true,
 				},
 				{
 					path: "registry",
@@ -460,6 +508,7 @@ export const router = createRouter({
 				{
 					path: "my/drive/folder/:folder",
 					component: page(() => import("./pages/drive.vue")),
+					props: true,
 				},
 				{
 					path: "my/drive",
@@ -472,6 +521,7 @@ export const router = createRouter({
 				{
 					path: "my/lists/:listId",
 					component: page(() => import("./pages/my-lists/list.vue")),
+					props: true,
 				},
 				{
 					path: "my/lists",
@@ -488,6 +538,7 @@ export const router = createRouter({
 				{
 					path: "my/antennas/:antennaId",
 					component: page(() => import("./pages/my-antennas/edit.vue")),
+					props: true,
 				},
 				{
 					path: "my/antennas",
@@ -496,10 +547,12 @@ export const router = createRouter({
 				{
 					path: "timeline/list/:listId",
 					component: page(() => import("./pages/user-list-timeline.vue")),
+					props: true,
 				},
 				{
 					path: "timeline/antenna/:antennaId",
 					component: page(() => import("./pages/antenna-timeline.vue")),
+					props: true,
 				},
 				{
 					path: "settings",
@@ -626,6 +679,7 @@ export const router = createRouter({
 							component: page(
 								() => import("./pages/settings/webhook.edit.vue"),
 							),
+							props: true,
 						},
 						{
 							path: "webhook/new",
@@ -708,6 +762,7 @@ export const router = createRouter({
 						{
 							path: "file/:fileId",
 							component: page(() => import("./pages/admin-file.vue")),
+							props: true,
 						},
 						{
 							path: "federation",
@@ -724,6 +779,7 @@ export const router = createRouter({
 						{
 							path: "roles/:id/edit",
 							component: page(() => import("./pages/admin/roles.edit.vue")),
+							props: true,
 						},
 						{
 							path: "roles/new",
@@ -732,6 +788,7 @@ export const router = createRouter({
 						{
 							path: "roles/:id",
 							component: page(() => import("./pages/admin/roles.role.vue")),
+							props: true,
 						},
 						{
 							path: "roles",

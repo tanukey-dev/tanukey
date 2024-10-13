@@ -12,6 +12,10 @@
 				<i :class="$style.itemIcon" class="ti ti-home ti-fw"></i><span :class="$style.itemText">{{
 					i18n.ts.timeline }}</span>
 			</MkA>
+			<MkA :class="$style.item" :activeClass="$style.active" to="/secure/deck" exact>
+				<i :class="$style.itemIcon" class="ti ti-layout-list ti-fw"></i><span :class="$style.itemText">{{
+					i18n.ts.deck }}</span>
+			</MkA>
 			<template v-for="item in menu">
 				<div v-if="item === '-'" :class="$style.divider"></div>
 				<component :is="navbarItemDef[item].to ? 'MkA' : 'button'"

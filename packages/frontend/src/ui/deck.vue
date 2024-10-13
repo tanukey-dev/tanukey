@@ -1,5 +1,5 @@
 <template>
-	<div :class="$style.root">
+	<div :class="isMobile ? $style.rootMobile : $style.root">
 		<div ref="columnsEl"
 			:class="[$style.sections, { [$style.center]: deckStore.reactiveState.columnAlign.value === 'center', [$style.snapScroll]: snapScroll }]"
 			@contextmenu.self.prevent="onContextmenu">
@@ -245,20 +245,22 @@ async function deleteProfile() {
 	--columnGap: 6px;
 
 	display: flex;
-	height: 100dvh;
 	box-sizing: border-box;
 	flex: 1;
+	height: 100vh;
 }
 
-.rootIsMobile {
-	padding-bottom: 100px;
-}
+.rootMobile {
+	$nav-hide-threshold: 650px; // TODO: どこかに集約したい
 
-.main {
-	flex: 1;
-	min-width: 0;
+	--margin: var(--marginHalf);
+
+	--columnGap: 6px;
+
 	display: flex;
-	flex-direction: column;
+	box-sizing: border-box;
+	flex: 1;
+	height: calc(100vh - 170px);
 }
 
 .sections {
