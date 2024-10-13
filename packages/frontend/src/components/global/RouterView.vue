@@ -1,13 +1,13 @@
 <template>
-<KeepAlive :max="defaultStore.state.numberOfPageCache">
-	<Suspense :timeout="0">
-		<component :is="currentPageComponent" :key="key" v-bind="Object.fromEntries(currentPageProps)"/>
+	<KeepAlive :max="defaultStore.state.numberOfPageCache">
+		<Suspense :timeout="0">
+			<component :is="currentPageComponent" :key="key" v-bind="Object.fromEntries(currentPageProps)" />
 
-		<template #fallback>
-			<MkLoading/>
-		</template>
-	</Suspense>
-</KeepAlive>
+			<template #fallback>
+				<MkLoading />
+			</template>
+		</Suspense>
+	</KeepAlive>
 </template>
 
 <script lang="ts" setup>
@@ -31,13 +31,11 @@ provide("routerCurrentDepth", currentDepth + 1);
 function resolveNested(current: Resolved, d = 0): Resolved | null {
 	if (d === currentDepth) {
 		return current;
-	} else {
-		if (current.child) {
-			return resolveNested(current.child, d + 1);
-		} else {
-			return null;
-		}
 	}
+	if (current.child) {
+		return resolveNested(current.child, d + 1);
+	}
+	return null;
 }
 
 const current = resolveNested(router.current)!;
