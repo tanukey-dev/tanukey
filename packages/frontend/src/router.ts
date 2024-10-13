@@ -17,31 +17,6 @@ export const router = createRouter({
 	routes: [
 		// public
 		{
-			path: "/instance-info/:host",
-			component: page(() => import("./pages/instance-info.vue")),
-			props: true,
-		},
-		{
-			path: "/reset-password/:token?",
-			component: page(() => import("./pages/reset-password.vue")),
-			props: true,
-		},
-		{
-			path: "/signup-complete/:code",
-			component: page(() => import("./pages/signup-complete.vue")),
-			props: true,
-		},
-		{
-			path: "/auth/:token",
-			component: page(() => import("./pages/auth.vue")),
-			props: true,
-		},
-		{
-			path: "/miauth/:session",
-			component: page(() => import("./pages/miauth.vue")),
-			props: true,
-		},
-		{
 			path: "/@:initUser/pages/:initPageName/view-source",
 			component: page(() => import("./pages/page-editor/page-editor.vue")),
 			props: true,
@@ -872,16 +847,68 @@ export const router = createRouter({
 			name: "signin",
 			path: "/signin",
 			component: page(() => import("./pages/signin.vue")),
+			meta: {
+				zen: true,
+				redirectToHomeNotVisitor: true,
+			},
 		},
 		{
 			name: "signup",
 			path: "/signup",
 			component: page(() => import("./pages/signup.vue")),
+			meta: {
+				zen: true,
+				redirectToHomeNotVisitor: true,
+			},
+		},
+		{
+			path: "/instance-info/:host",
+			component: page(() => import("./pages/instance-info.vue")),
+			props: true,
+			meta: {
+				zen: true,
+			},
+		},
+		{
+			path: "/reset-password/:token?",
+			component: page(() => import("./pages/reset-password.vue")),
+			props: true,
+			meta: {
+				zen: true,
+			},
+		},
+		{
+			path: "/signup-complete/:code",
+			component: page(() => import("./pages/signup-complete.vue")),
+			props: true,
+			meta: {
+				zen: true,
+			},
+		},
+		{
+			path: "/auth/:token",
+			component: page(() => import("./pages/auth.vue")),
+			props: true,
+			meta: {
+				zen: true,
+			},
+		},
+		{
+			path: "/miauth/:session",
+			component: page(() => import("./pages/miauth.vue")),
+			props: true,
+			meta: {
+				zen: true,
+			},
 		},
 		{
 			name: "index",
 			path: "",
 			component: page(() => import("./pages/welcome.vue")),
+			meta: {
+				zen: true,
+				redirectToHomeNotVisitor: true,
+			},
 		},
 		{
 			path: "/(.+)",
@@ -891,7 +918,7 @@ export const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-	if ($i && ["", "/", "/signup", "/signin"].includes(to.path)) {
+	if ($i && to.meta.redirectToHomeNotVisitor) {
 		return next({ path: "/secure/timeline" });
 	}
 	if ($i && to.meta.loginedUserRedirect) {

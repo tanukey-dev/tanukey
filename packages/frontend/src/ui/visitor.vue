@@ -60,7 +60,7 @@ let isDesktop = $ref(window.innerWidth >= DESKTOP_THRESHOLD);
 let narrow = $ref(window.innerWidth < 1280);
 let meta = $ref();
 
-const root = $computed(() => ["/", "/signin", "/signup"].includes(router.currentRoute.value.path));
+const root = $computed(() => router.currentRoute.value.meta.zen);
 
 os.api("meta", { detail: true }).then((res) => {
 	meta = res;
