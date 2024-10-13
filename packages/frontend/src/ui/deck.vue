@@ -23,14 +23,14 @@
 							class="ti ti-caret-down"></i></button>
 					<button v-tooltip.noDelay.left="i18n.ts._deck.deleteProfile" :class="$style.sideMenuButton"
 						class="_button" @click="deleteProfile"><i class="ti ti-trash"></i></button>
+					<button v-tooltip.noDelay.left="i18n.ts.settings" :class="$style.sideMenuButton" class="_button"
+						@click="showSettings"><i class="ti ti-settings"></i></button>
 				</div>
 				<div :class="$style.sideMenuMiddle">
 					<button v-tooltip.noDelay.left="i18n.ts._deck.addColumn" :class="$style.sideMenuButton"
 						class="_button" @click="addColumn"><i class="ti ti-plus"></i></button>
 				</div>
 				<div :class="$style.sideMenuBottom">
-					<button v-tooltip.noDelay.left="i18n.ts.settings" :class="$style.sideMenuButton" class="_button"
-						@click="showSettings"><i class="ti ti-settings"></i></button>
 				</div>
 			</div>
 		</div>
@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, watch } from "vue";
+import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import { v4 as uuid } from "uuid";
 import {
 	deckStore,
@@ -85,6 +85,8 @@ window.addEventListener("resize", () => {
 
 const snapScroll = deviceKind === "smartphone" || deviceKind === "tablet";
 const drawerMenuShowing = ref(false);
+const navFooter = document.getElementById('navFooter')
+const navFooterHeight = `${navFooter?.clientHeight ?? 0}px`;
 
 watch(router.currentRoute, () => {
 	drawerMenuShowing.value = false;
@@ -210,6 +212,10 @@ async function deleteProfile() {
 	deckStore.set("profile", "default");
 	unisonReload();
 }
+
+onMounted(() => {
+	window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+})
 </script>
 
 <style lang="scss" module>
@@ -251,6 +257,8 @@ async function deleteProfile() {
 }
 
 .rootMobile {
+	position: fixed;
+	top: 0;
 	$nav-hide-threshold: 650px; // TODO: どこかに集約したい
 
 	--margin: var(--marginHalf);
@@ -259,8 +267,10 @@ async function deleteProfile() {
 
 	display: flex;
 	box-sizing: border-box;
+	overflow-x: scroll;
+	width: 100%;
 	flex: 1;
-	height: calc(100vh - 170px);
+	height: calc(100vh - v-bind(navFooterHeight));
 }
 
 .sections {
