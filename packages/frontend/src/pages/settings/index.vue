@@ -16,9 +16,7 @@
 					</div>
 					<div v-if="!(narrow && currentPath === '/secure/settings')" class="main">
 						<div class="bkzroven" style="container-type: inline-size;" ref="contents">
-							<Suspense suspensible>
-								<router-view />
-							</Suspense>
+							<RouterView />
 						</div>
 					</div>
 				</div>
@@ -49,6 +47,7 @@ import {
 	shallowRef,
 	watch,
 } from "vue";
+import RouterView from "@/components/global/RouterView.vue";
 
 const indexInfo = {
 	title: i18n.ts.settings,

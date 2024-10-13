@@ -12,14 +12,10 @@
 		<div class="main">
 			<div class="contents">
 				<main v-if="!root" style="container-type: inline-size;">
-					<Suspense>
-						<router-view />
-					</Suspense>
+					<RouterView />
 				</main>
 				<main v-else>
-					<Suspense>
-						<router-view />
-					</Suspense>
+					<RouterView />
 				</main>
 			</div>
 			<div v-if="!root" class="footer">
@@ -45,6 +41,7 @@ import { router } from "@/router";
 import { PageMetadata, provideMetadataReceiver } from "@/scripts/page-metadata";
 import { ComputedRef, onMounted, provide } from "vue";
 import XCommon from "./_common_/common.vue";
+import RouterView from "@/components/global/RouterView.vue";
 
 const DESKTOP_THRESHOLD = 1100;
 

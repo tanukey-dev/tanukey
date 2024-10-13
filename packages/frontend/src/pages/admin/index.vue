@@ -26,9 +26,7 @@
 			</MkSpacer>
 		</div>
 		<div v-if="!(narrow && currentPath === '/secure/admin')" class="main" ref="contents">
-			<Suspense suspensible>
-				<router-view />
-			</Suspense>
+			<RouterView />
 		</div>
 	</div>
 </template>
@@ -46,6 +44,7 @@ import {
 	provideMetadataReceiver,
 } from "@/scripts/page-metadata";
 import { onActivated, onMounted, onUnmounted, provide, watch, shallowRef, computed } from "vue";
+import RouterView from "@/components/global/RouterView.vue";
 
 const isEmpty = (x: string | null) => x == null || x === "";
 

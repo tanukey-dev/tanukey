@@ -1,8 +1,6 @@
 <template>
 	<div :class="showBottom ? $style.rootWithBottom : $style.root" style="container-type: inline-size;">
-		<Suspense>
-			<router-view />
-		</Suspense>
+		<RouterView />
 		<XCommon />
 	</div>
 
@@ -23,6 +21,7 @@ import { router } from "@/router";
 import { PageMetadata, provideMetadataReceiver } from "@/scripts/page-metadata";
 import { instanceName, ui } from "@/config";
 import { i18n } from "@/i18n";
+import RouterView from "@/components/global/RouterView.vue";
 
 let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
 

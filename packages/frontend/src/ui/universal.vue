@@ -9,9 +9,7 @@
 					<XStatusBars :class="$style.statusbars" />
 				</div>
 			</template>
-			<Suspense>
-				<router-view />
-			</Suspense>
+			<RouterView />
 			<div :class="$style.spacer"></div>
 		</MkStickyContainer>
 
@@ -106,6 +104,7 @@ import { PageMetadata, provideMetadataReceiver } from "@/scripts/page-metadata";
 import { deviceKind } from "@/scripts/device-kind";
 import { miLocalStorage } from "@/local-storage";
 import { CURRENT_STICKY_BOTTOM } from "@/const";
+import RouterView from "@/components/global/RouterView.vue";
 
 const XWidgets = defineAsyncComponent(() => import("./universal.widgets.vue"));
 const XSidebar = defineAsyncComponent(() => import("@/ui/_common_/navbar.vue"));
