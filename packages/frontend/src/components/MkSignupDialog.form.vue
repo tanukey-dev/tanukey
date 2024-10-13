@@ -113,11 +113,9 @@ import getPasswordStrength from "syuilo-password-strength";
 import { toUnicode } from "punycode/";
 import MkButton from "./MkButton.vue";
 import MkInput from "./MkInput.vue";
-import MkSwitch from "./MkSwitch.vue";
 import MkCaptcha, { type Captcha } from "@/components/MkCaptcha.vue";
 import * as config from "@/config";
 import * as os from "@/os";
-import { login } from "@/account";
 import { instance } from "@/instance";
 import { i18n } from "@/i18n";
 
@@ -131,7 +129,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-	(ev: "signup", user: Record<string, any>): void;
+	(ev: "signup"): void;
 	(ev: "signupEmailPending"): void;
 }>();
 
@@ -319,18 +317,7 @@ async function onSubmit(): Promise<void> {
 			});
 			emit("signupEmailPending");
 		} else {
-			const res = await os.api("signin", {
-				username,
-				password,
-			});
-
-			if (props.autoSet) {
-				return login(res.i).then(() => {
-					emit("signup", res);
-				});
-			}
-
-			emit("signup", res);
+			emit("signup");
 		}
 	} catch {
 		submitting = false;

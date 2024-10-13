@@ -22,7 +22,7 @@ function onCancel() {
 }
 
 function onSignup() {
-	router.push("/secure/timeline");
+	router.push("/signin");
 }
 </script>
 
