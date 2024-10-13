@@ -44,7 +44,7 @@
 import { computed, ref, watch } from "vue";
 import MkButton from "@/components/MkButton.vue";
 import * as os from "@/os";
-import { mainRouter } from "@/router";
+import { router } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { i18n } from "@/i18n";
 import { userPage } from "@/filters/user";
@@ -122,7 +122,7 @@ async function deleteList() {
 		listId: list.id,
 	});
 	userListsCache.delete();
-	mainRouter.push("/secure/my/lists");
+	router.push("/secure/my/lists");
 }
 
 async function updateSettings() {

@@ -79,13 +79,11 @@ import MkPagination from "@/components/MkPagination.vue";
 import MkGalleryPostPreview from "@/components/MkGalleryPostPreview.vue";
 import MkFollowButton from "@/components/MkFollowButton.vue";
 import { url } from "@/config";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { defaultStore } from "@/store";
 import { $i } from "@/account";
-
-const router = useRouter();
 
 const props = defineProps<{
 	postId: string;

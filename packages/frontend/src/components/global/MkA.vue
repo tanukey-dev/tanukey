@@ -8,9 +8,8 @@
 import * as os from "@/os";
 import copyToClipboard from "@/scripts/copy-to-clipboard";
 import { url } from "@/config";
-import { popout as popout_ } from "@/scripts/popout";
 import { i18n } from "@/i18n";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { watch, ref } from "vue";
 
 const props = withDefaults(
@@ -26,21 +25,14 @@ const props = withDefaults(
 	},
 );
 
-const router = useRouter();
 const active = ref(false);
 
-watch(router.getCurrentPathRef(), (newValue): void => {
+watch(router.currentRoute, (newRoute): void => {
 	if (props.activeClass == null) {
 		active.value = false;
 		return;
 	}
-	const resolved = router.resolve(props.to);
-	if (resolved == null) {
-		active.value = false;
-		return;
-	}
-	const fullPath = router.geFullPathFromResolved(resolved);
-	if (newValue.startsWith(fullPath)) {
+	if (newRoute.path === props.to) {
 		active.value = true;
 		return;
 	}
@@ -59,17 +51,10 @@ function onContextmenu(ev) {
 				text: props.to,
 			},
 			{
-				icon: "ti ti-app-window",
-				text: i18n.ts.openInWindow,
-				action: () => {
-					os.pageWindow(props.to);
-				},
-			},
-			{
 				icon: "ti ti-player-eject",
 				text: i18n.ts.showInPage,
 				action: () => {
-					router.push(props.to, "forcePage");
+					router.push(props.to);
 				},
 			},
 			null,
@@ -90,10 +75,6 @@ function onContextmenu(ev) {
 		],
 		ev,
 	);
-}
-
-function openWindow() {
-	os.pageWindow(props.to);
 }
 
 function nav(ev: MouseEvent) {
@@ -117,6 +98,7 @@ function nav(ev: MouseEvent) {
 		return openWindow();
 	}
 
-	router.push(props.to, ev.ctrlKey ? "forcePage" : null);
+	console.log(props.to)
+	router.push({ path: props.to });
 }
 </script>

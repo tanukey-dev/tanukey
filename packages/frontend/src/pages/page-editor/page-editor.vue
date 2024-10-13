@@ -84,7 +84,7 @@ import MkInput from "@/components/MkInput.vue";
 import { url } from "@/config";
 import * as os from "@/os";
 import { selectFile } from "@/scripts/select-file";
-import { mainRouter } from "@/router";
+import { router } from "@/router";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { $i } from "@/account";
@@ -179,7 +179,7 @@ function save() {
 					type: "success",
 					text: i18n.ts._pages.created,
 				});
-				mainRouter.push(`/secure/pages/edit/${pageId}`);
+				router.push(`/secure/pages/edit/${pageId}`);
 			})
 			.catch(onError);
 	}
@@ -198,7 +198,7 @@ function del() {
 				type: "success",
 				text: i18n.ts._pages.deleted,
 			});
-			mainRouter.push("/secure/pages");
+			router.push("/secure/pages");
 		});
 	});
 }
@@ -213,7 +213,7 @@ function duplicate() {
 			type: "success",
 			text: i18n.ts._pages.created,
 		});
-		mainRouter.push(`/secure/pages/edit/${pageId}`);
+		router.push(`/secure/pages/edit/${pageId}`);
 	});
 }
 

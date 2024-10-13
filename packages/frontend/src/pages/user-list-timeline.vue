@@ -21,11 +21,9 @@ import { computed, watch } from "vue";
 import MkTimeline from "@/components/MkTimeline.vue";
 import { scroll } from "@/scripts/scroll";
 import * as os from "@/os";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { i18n } from "@/i18n";
-
-const router = useRouter();
 
 const props = defineProps<{
 	listId: string;

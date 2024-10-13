@@ -1,32 +1,37 @@
 <template>
-<div class="rrevdjwu" :class="{ grid }">
-	<div v-for="group in def" class="group">
-		<div v-if="group.title" class="title">{{ group.title }}</div>
+	<div class="rrevdjwu" :class="{ grid }">
+		<div v-for="group in def" class="group">
+			<div v-if="group.title" class="title">{{ group.title }}</div>
 
-		<div class="items">
-			<template v-for="(item, i) in group.items">
-				<template v-if="item">
-					<a v-if="item.type === 'a'" :href="item.href" :target="item.target" :tabindex="i" class="_button item" :class="{ danger: item.danger, active: item.active }">
-						<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
-						<span class="text">{{ item.text }}</span>
-					</a>
-					<button v-else-if="item.type === 'button'" :tabindex="i" class="_button item" :class="{ danger: item.danger, active: item.active }" :disabled="item.active" @click="ev => item.action(ev)">
-						<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
-						<span class="text">{{ item.text }}</span>
-					</button>
-					<MkA v-else :to="item.to" :tabindex="i" class="_button item" :class="{ danger: item.danger, active: item.active }">
-						<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
-						<span class="text">{{ item.text }}</span>
-					</MkA>
+			<div class="items">
+				<template v-for="(item, i) in group.items">
+					<template v-if="item">
+						<a v-if="item.type === 'a'" :href="item.href" :target="item.target" :tabindex="i"
+							class="_button item" :class="{ danger: item.danger, active: item.active }">
+							<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
+							<span class="text">{{ item.text }}</span>
+						</a>
+						<button v-else-if="item.type === 'button'" :tabindex="i" class="_button item"
+							:class="{ danger: item.danger, active: item.active }" :disabled="item.active"
+							@click="ev => item.action(ev)">
+							<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
+							<span class="text">{{ item.text }}</span>
+						</button>
+						<MkA v-else :to="item.to" :tabindex="i" class="_button item"
+							:class="{ danger: item.danger, active: item.active }">
+							<span v-if="item.icon" class="icon"><i :class="item.icon" class="ti-fw"></i></span>
+							<span class="text">{{ item.text }}</span>
+						</MkA>
+					</template>
 				</template>
-			</template>
+			</div>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue";
+import { } from "vue";
+import MkA from "./global/MkA.vue";
 
 defineProps<{
 	def: any[];
@@ -36,21 +41,21 @@ defineProps<{
 
 <style lang="scss" scoped>
 .rrevdjwu {
-	> .group {
-		& + .group {
+	>.group {
+		&+.group {
 			margin-top: 16px;
 			padding-top: 16px;
 			border-top: solid 0.5px var(--divider);
 		}
 
-		> .title {
+		>.title {
 			opacity: 0.7;
 			margin: 0 0 8px 0;
 			font-size: 0.9em;
 		}
-	
-		> .items {
-			> .item {
+
+		>.items {
+			>.item {
 				display: flex;
 				align-items: center;
 				width: 100%;
@@ -73,7 +78,7 @@ defineProps<{
 					color: var(--error);
 				}
 
-				> .icon {
+				>.icon {
 					width: 32px;
 					margin-right: 2px;
 					flex-shrink: 0;
@@ -81,7 +86,7 @@ defineProps<{
 					opacity: 0.8;
 				}
 
-				> .text {
+				>.text {
 					white-space: normal;
 					padding-right: 12px;
 					flex-shrink: 1;
@@ -92,8 +97,8 @@ defineProps<{
 	}
 
 	&.grid {
-		> .group {
-			& + .group {
+		>.group {
+			&+.group {
 				padding-top: 0;
 				border-top: none;
 			}
@@ -101,19 +106,19 @@ defineProps<{
 			margin-left: 0;
 			margin-right: 0;
 
-			> .title {
+			>.title {
 				font-size: 1em;
 				opacity: 0.7;
 				margin: 0 0 8px 16px;
 			}
 
-			> .items {
+			>.items {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
 				grid-gap: 16px;
 				padding: 0 16px;
 
-				> .item {
+				>.item {
 					flex-direction: column;
 					text-align: center;
 					padding: 0;
@@ -123,12 +128,12 @@ defineProps<{
 						background: none;
 						color: var(--accent);
 
-						> .icon {
+						>.icon {
 							background: var(--accentedBg);
 						}
 					}
 
-					> .icon {
+					>.icon {
 						display: grid;
 						place-content: center;
 						margin-right: 0;
@@ -141,7 +146,7 @@ defineProps<{
 						border-radius: 100%;
 					}
 
-					> .text {
+					>.text {
 						padding-right: 0;
 						width: 100%;
 						font-size: 0.8em;

@@ -42,12 +42,10 @@ import MkRadios from "@/components/MkRadios.vue";
 import MkButton from "@/components/MkButton.vue";
 import MkFoldableSection from "@/components/MkFoldableSection.vue";
 import * as os from "@/os";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { i18n } from "@/i18n";
 import { miLocalStorage } from "@/local-storage";
-
-const router = useRouter();
 
 const props = defineProps<{
 	query: string;

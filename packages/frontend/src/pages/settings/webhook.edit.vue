@@ -45,9 +45,7 @@ import MkButton from "@/components/MkButton.vue";
 import * as os from "@/os";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
-import { useRouter } from "@/router";
-
-const router = useRouter();
+import { router } from "@/router";
 
 const props = defineProps<{
 	webhookId: string;

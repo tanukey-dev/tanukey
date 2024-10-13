@@ -22,14 +22,12 @@ import type { Tab } from "@/components/global/MkPageHeader.tabs.vue";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import * as os from "@/os";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { defaultStore } from "@/store";
 import MkStickyContainer from "@/components/global/MkStickyContainer.vue";
 import MkPageHeader from "@/components/global/MkPageHeader.vue";
 import { computed, defineAsyncComponent, provide, ref } from "vue";
-
-const router = useRouter();
 
 provide("shouldOmitHeaderTitle", true);
 

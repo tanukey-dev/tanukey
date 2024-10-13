@@ -1,81 +1,81 @@
 <template>
-<div :class="$style.root">
-	<MkFoldableSection class="item">
-		<template #header>Chart</template>
-		<div :class="$style.chart">
-			<div class="selects">
-				<MkSelect v-model="chartSrc" style="margin: 0; flex: 1;">
-					<optgroup :label="i18n.ts.federation">
-						<option value="federation">{{ i18n.ts._charts.federation }}</option>
-						<option value="ap-request">{{ i18n.ts._charts.apRequest }}</option>
-					</optgroup>
-					<optgroup :label="i18n.ts.users">
-						<option value="users">{{ i18n.ts._charts.usersIncDec }}</option>
-						<option value="users-total">{{ i18n.ts._charts.usersTotal }}</option>
-						<option value="active-users">{{ i18n.ts._charts.activeUsers }}</option>
-					</optgroup>
-					<optgroup :label="i18n.ts.notes">
-						<option value="notes">{{ i18n.ts._charts.notesIncDec }}</option>
-						<option value="local-notes">{{ i18n.ts._charts.localNotesIncDec }}</option>
-						<option value="remote-notes">{{ i18n.ts._charts.remoteNotesIncDec }}</option>
-						<option value="notes-total">{{ i18n.ts._charts.notesTotal }}</option>
-					</optgroup>
-					<optgroup :label="i18n.ts.drive">
-						<option value="drive-files">{{ i18n.ts._charts.filesIncDec }}</option>
-						<option value="drive">{{ i18n.ts._charts.storageUsageIncDec }}</option>
-					</optgroup>
-				</MkSelect>
-				<MkSelect v-model="chartSpan" style="margin: 0 0 0 10px;">
-					<option value="hour">{{ i18n.ts.perHour }}</option>
-					<option value="day">{{ i18n.ts.perDay }}</option>
-				</MkSelect>
-			</div>
-			<div class="chart _panel">
-				<MkChart :src="chartSrc" :span="chartSpan" :limit="chartLimit" :detailed="true"></MkChart>
-			</div>
-		</div>
-	</MkFoldableSection>
-
-	<MkFoldableSection class="item">
-		<template #header>Active users heatmap</template>
-		<MkSelect v-model="heatmapSrc" style="margin: 0 0 12px 0;">
-			<option value="active-users">Active users</option>
-			<option value="notes">Notes</option>
-			<option value="ap-requests-inbox-received">AP Requests: inboxReceived</option>
-			<option value="ap-requests-deliver-succeeded">AP Requests: deliverSucceeded</option>
-			<option value="ap-requests-deliver-failed">AP Requests: deliverFailed</option>
-		</MkSelect>
-		<div class="_panel" :class="$style.heatmap">
-			<MkHeatmap :src="heatmapSrc"/>
-		</div>
-	</MkFoldableSection>
-
-	<MkFoldableSection class="item">
-		<template #header>Retention rate</template>
-		<div class="_panel" :class="$style.retentionHeatmap">
-			<MkRetentionHeatmap/>
-		</div>
-		<div class="_panel" :class="$style.retentionLine">
-			<MkRetentionLineChart/>
-		</div>
-	</MkFoldableSection>
-
-	<MkFoldableSection class="item">
-		<template #header>Federation</template>
-		<div :class="$style.federation">
-			<div class="pies">
-				<div class="sub">
-					<div class="title">Sub</div>
-					<canvas ref="subDoughnutEl"></canvas>
+	<div :class="$style.root">
+		<MkFoldableSection class="item">
+			<template #header>Chart</template>
+			<div :class="$style.chart">
+				<div class="selects">
+					<MkSelect v-model="chartSrc" style="margin: 0; flex: 1;">
+						<optgroup :label="i18n.ts.federation">
+							<option value="federation">{{ i18n.ts._charts.federation }}</option>
+							<option value="ap-request">{{ i18n.ts._charts.apRequest }}</option>
+						</optgroup>
+						<optgroup :label="i18n.ts.users">
+							<option value="users">{{ i18n.ts._charts.usersIncDec }}</option>
+							<option value="users-total">{{ i18n.ts._charts.usersTotal }}</option>
+							<option value="active-users">{{ i18n.ts._charts.activeUsers }}</option>
+						</optgroup>
+						<optgroup :label="i18n.ts.notes">
+							<option value="notes">{{ i18n.ts._charts.notesIncDec }}</option>
+							<option value="local-notes">{{ i18n.ts._charts.localNotesIncDec }}</option>
+							<option value="remote-notes">{{ i18n.ts._charts.remoteNotesIncDec }}</option>
+							<option value="notes-total">{{ i18n.ts._charts.notesTotal }}</option>
+						</optgroup>
+						<optgroup :label="i18n.ts.drive">
+							<option value="drive-files">{{ i18n.ts._charts.filesIncDec }}</option>
+							<option value="drive">{{ i18n.ts._charts.storageUsageIncDec }}</option>
+						</optgroup>
+					</MkSelect>
+					<MkSelect v-model="chartSpan" style="margin: 0 0 0 10px;">
+						<option value="hour">{{ i18n.ts.perHour }}</option>
+						<option value="day">{{ i18n.ts.perDay }}</option>
+					</MkSelect>
 				</div>
-				<div class="pub">
-					<div class="title">Pub</div>
-					<canvas ref="pubDoughnutEl"></canvas>
+				<div class="chart _panel">
+					<MkChart :src="chartSrc" :span="chartSpan" :limit="chartLimit" :detailed="true"></MkChart>
 				</div>
 			</div>
-		</div>
-	</MkFoldableSection>
-</div>
+		</MkFoldableSection>
+
+		<MkFoldableSection class="item">
+			<template #header>Active users heatmap</template>
+			<MkSelect v-model="heatmapSrc" style="margin: 0 0 12px 0;">
+				<option value="active-users">Active users</option>
+				<option value="notes">Notes</option>
+				<option value="ap-requests-inbox-received">AP Requests: inboxReceived</option>
+				<option value="ap-requests-deliver-succeeded">AP Requests: deliverSucceeded</option>
+				<option value="ap-requests-deliver-failed">AP Requests: deliverFailed</option>
+			</MkSelect>
+			<div class="_panel" :class="$style.heatmap">
+				<MkHeatmap :src="heatmapSrc" />
+			</div>
+		</MkFoldableSection>
+
+		<MkFoldableSection class="item">
+			<template #header>Retention rate</template>
+			<div class="_panel" :class="$style.retentionHeatmap">
+				<MkRetentionHeatmap />
+			</div>
+			<div class="_panel" :class="$style.retentionLine">
+				<MkRetentionLineChart />
+			</div>
+		</MkFoldableSection>
+
+		<MkFoldableSection class="item">
+			<template #header>Federation</template>
+			<div :class="$style.federation">
+				<div class="pies">
+					<div class="sub">
+						<div class="title">Sub</div>
+						<canvas ref="subDoughnutEl"></canvas>
+					</div>
+					<div class="pub">
+						<div class="title">Pub</div>
+						<canvas ref="pubDoughnutEl"></canvas>
+					</div>
+				</div>
+			</div>
+		</MkFoldableSection>
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -91,6 +91,7 @@ import MkFoldableSection from "@/components/MkFoldableSection.vue";
 import MkRetentionHeatmap from "@/components/MkRetentionHeatmap.vue";
 import MkRetentionLineChart from "@/components/MkRetentionLineChart.vue";
 import { initChart } from "@/scripts/init-chart";
+import { router } from "@/router";
 
 initChart();
 
@@ -176,7 +177,7 @@ onMounted(() => {
 					color: x.themeColor,
 					value: x.followersCount,
 					onClick: () => {
-						os.pageWindow(`/instance-info/${x.host}`);
+						router.push(`/instance-info/${x.host}`);
 					},
 				}))
 				.concat([
@@ -197,7 +198,7 @@ onMounted(() => {
 					color: x.themeColor,
 					value: x.followingCount,
 					onClick: () => {
-						os.pageWindow(`/instance-info/${x.host}`);
+						router.push(`/instance-info/${x.host}`);
 					},
 				}))
 				.concat([
@@ -215,7 +216,7 @@ onMounted(() => {
 <style lang="scss" module>
 .root {
 	&:global {
-		> .item {
+		>.item {
 			margin-bottom: 16px;
 		}
 	}
@@ -223,12 +224,12 @@ onMounted(() => {
 
 .chart {
 	&:global {
-		> .selects {
+		>.selects {
 			display: flex;
 			margin-bottom: 12px;
 		}
 
-		> .chart {
+		>.chart {
 			padding: 16px;
 		}
 	}
@@ -251,11 +252,12 @@ onMounted(() => {
 
 .federation {
 	&:global {
-		> .pies {
+		>.pies {
 			display: flex;
 			gap: 16px;
 
-			> .sub, > .pub {
+			>.sub,
+			>.pub {
 				flex: 1;
 				min-width: 0;
 				position: relative;
@@ -264,7 +266,7 @@ onMounted(() => {
 				padding: 24px;
 				max-height: 300px;
 
-				> .title {
+				>.title {
 					position: absolute;
 					top: 24px;
 					left: 24px;

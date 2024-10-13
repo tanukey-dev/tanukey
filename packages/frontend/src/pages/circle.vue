@@ -24,13 +24,11 @@ import { computed, watch } from "vue";
 import * as misskey from "misskey-js";
 import * as os from "@/os";
 import XPage from "@/components/page/page.vue";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { $i, iAmModerator } from "@/account";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { url } from "@/config";
-
-const router = useRouter();
 
 const props = defineProps<{
 	circleId: string;

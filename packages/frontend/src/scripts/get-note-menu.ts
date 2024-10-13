@@ -12,6 +12,7 @@ import { miLocalStorage } from "@/local-storage";
 import { getUserMenu } from "@/scripts/get-user-menu";
 import { clipsCache } from "@/cache";
 import { MenuItem } from "@/types/menu";
+import { router } from "@/router";
 
 export async function getNoteClipMenu(props: {
 	note: misskey.entities.Note;
@@ -240,7 +241,7 @@ export function getNoteMenu(props: {
 	}
 
 	function openDetail(): void {
-		os.pageWindow(`/notes/${appearNote.id}`);
+		router.push(`/notes/${appearNote.id}`);
 	}
 
 	function showReactions(): void {

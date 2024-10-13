@@ -6,7 +6,6 @@ import MkContextMenu from "@/components/MkContextMenu.vue";
 import MkDialog from "@/components/MkDialog.vue";
 import MkEmojiPickerDialog from "@/components/MkEmojiPickerDialog.vue";
 import MkEmojiPickerWindow from "@/components/MkEmojiPickerWindow.vue";
-import MkPageWindow from "@/components/MkPageWindow.vue";
 import MkPopupMenu from "@/components/MkPopupMenu.vue";
 import MkPostFormDialog from "@/components/MkPostFormDialog.vue";
 import MkToast from "@/components/MkToast.vue";
@@ -186,17 +185,6 @@ export async function popup(
 	return {
 		dispose,
 	};
-}
-
-export function pageWindow(path: string) {
-	popup(
-		MkPageWindow,
-		{
-			initialPath: path,
-		},
-		{},
-		"closed",
-	);
 }
 
 export function toast(message: string) {

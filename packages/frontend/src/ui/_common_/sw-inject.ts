@@ -1,7 +1,7 @@
 import { api, post } from "@/os";
 import { $i, login } from "@/account";
 import { getAccountFromId } from "@/scripts/get-account-from-id";
-import { mainRouter } from "@/router";
+import { router } from "@/router";
 import { deepClone } from "@/scripts/clone";
 
 export function swInject() {
@@ -33,10 +33,10 @@ export function swInject() {
 				return post(props);
 			}
 			case "push":
-				if (mainRouter.currentRoute.value.path === ev.data.url) {
+				if (router.currentRoute.value.path === ev.data.url) {
 					return window.scroll({ top: 0, behavior: "smooth" });
 				}
-				return mainRouter.push(ev.data.url);
+				return router.push(ev.data.url);
 			default:
 				return;
 		}

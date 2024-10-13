@@ -167,7 +167,7 @@ import { userPage } from "@/filters/user";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
 import { api } from "@/os";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { confetti } from "@/scripts/confetti";
 import { getUserMenu } from "@/scripts/get-user-menu";
 import { getScrollPosition } from "@/scripts/scroll";
@@ -195,8 +195,6 @@ const props = withDefaults(
 		disableNotes: false,
 	},
 );
-
-const router = useRouter();
 
 let parallaxAnimationId = $ref<null | number>(null);
 let rootEl = $ref<null | HTMLElement>(null);

@@ -74,11 +74,9 @@ import MkTextarea from "@/components/MkTextarea.vue";
 import FormSplit from "@/components/form/split.vue";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import * as Acct from "misskey-js/built/acct";
 import { ref, watch } from "vue";
-
-const router = useRouter();
 
 let key = $ref(0);
 const searchQuery = ref("");

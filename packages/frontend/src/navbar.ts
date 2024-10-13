@@ -6,12 +6,9 @@ import { lookup } from "./scripts/lookup";
 import * as os from "@/os";
 import { i18n } from "@/i18n";
 import { ui } from "@/config";
-import { unisonReload } from "@/scripts/unison-reload";
 import { defaultStore } from "@/store";
 import { clearCache } from "@/scripts/cache-clear";
-import { useRouter } from "@/router";
-
-const router = useRouter();
+import { router } from "@/router";
 
 export const navbarItemDef = reactive({
 	notifications: {
@@ -116,45 +113,6 @@ export const navbarItemDef = reactive({
 		icon: "ti ti-medal",
 		show: computed(() => $i != null),
 		to: "/secure/my/achievements",
-	},
-	ui: {
-		title: i18n.ts.switchUi,
-		icon: "ti ti-devices",
-		action: (ev) => {
-			os.popupMenu(
-				[
-					{
-						text: i18n.ts.default,
-						active: ui === "default" || ui === null,
-						action: () => {
-							miLocalStorage.setItem("ui", "default");
-							router.push("/");
-						},
-					},
-					{
-						text: i18n.ts.deck,
-						active: ui === "deck",
-						action: () => {
-							miLocalStorage.setItem("ui", "deck");
-							router.push("/");
-						},
-					},
-					...(window.innerWidth < 1024
-						? []
-						: [
-								{
-									text: i18n.ts.classic,
-									active: ui === "classic",
-									action: () => {
-										miLocalStorage.setItem("ui", "classic");
-										router.push("/");
-									},
-								},
-							]),
-				],
-				ev.currentTarget ?? ev.target,
-			);
-		},
 	},
 	about: {
 		title: i18n.ts.about,

@@ -258,11 +258,10 @@ import * as os from "@/os";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { instance } from "@/instance";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import MkFoldableSection from "@/components/MkFoldableSection.vue";
 import { ROLE_POLICIES } from "@/const";
 
-const router = useRouter();
 const baseRoleQ = ref("");
 
 const roles = await os.api("admin/roles/list");

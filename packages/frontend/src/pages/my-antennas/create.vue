@@ -8,10 +8,8 @@
 import XAntenna from "./editor.vue";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { antennasCache } from "@/cache";
-
-const router = useRouter();
 
 let draft = $ref({
 	name: "",

@@ -40,11 +40,9 @@ import { computed } from "vue";
 import MkFlashPreview from "@/components/MkFlashPreview.vue";
 import MkPagination from "@/components/MkPagination.vue";
 import MkButton from "@/components/MkButton.vue";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
-
-const router = useRouter();
 
 let tab = $ref("featured");
 

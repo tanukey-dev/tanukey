@@ -1,70 +1,81 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer :contentMax="800" :marginMin="16" :marginMax="32">
-		<div class="cwepdizn _gaps_m">
-			<MkFolder :defaultOpen="true">
-				<template #label>{{ i18n.ts.backgroundColor }}</template>
-				<div class="cwepdizn-colors">
-					<div class="row">
-						<button v-for="color in bgColors.filter(x => x.kind === 'light')" :key="color.color" class="color _button" :class="{ active: theme.props.bg === color.color }" @click="setBgColor(color)">
-							<div class="preview" :style="{ background: color.forPreview }"></div>
-						</button>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer :contentMax="800" :marginMin="16" :marginMax="32">
+			<div class="cwepdizn _gaps_m">
+				<MkFolder :defaultOpen="true">
+					<template #label>{{ i18n.ts.backgroundColor }}</template>
+					<div class="cwepdizn-colors">
+						<div class="row">
+							<button v-for="color in bgColors.filter(x => x.kind === 'light')" :key="color.color"
+								class="color _button" :class="{ active: theme.props.bg === color.color }"
+								@click="setBgColor(color)">
+								<div class="preview" :style="{ background: color.forPreview }"></div>
+							</button>
+						</div>
+						<div class="row">
+							<button v-for="color in bgColors.filter(x => x.kind === 'dark')" :key="color.color"
+								class="color _button" :class="{ active: theme.props.bg === color.color }"
+								@click="setBgColor(color)">
+								<div class="preview" :style="{ background: color.forPreview }"></div>
+							</button>
+						</div>
 					</div>
-					<div class="row">
-						<button v-for="color in bgColors.filter(x => x.kind === 'dark')" :key="color.color" class="color _button" :class="{ active: theme.props.bg === color.color }" @click="setBgColor(color)">
-							<div class="preview" :style="{ background: color.forPreview }"></div>
-						</button>
+				</MkFolder>
+
+				<MkFolder :defaultOpen="true">
+					<template #label>{{ i18n.ts.accentColor }}</template>
+					<div class="cwepdizn-colors">
+						<div class="row">
+							<button v-for="color in accentColors" :key="color" class="color rounded _button"
+								:class="{ active: theme.props.accent === color }" @click="setAccentColor(color)">
+								<div class="preview" :style="{ background: color }"></div>
+							</button>
+						</div>
 					</div>
-				</div>
-			</MkFolder>
+				</MkFolder>
 
-			<MkFolder :defaultOpen="true">
-				<template #label>{{ i18n.ts.accentColor }}</template>
-				<div class="cwepdizn-colors">
-					<div class="row">
-						<button v-for="color in accentColors" :key="color" class="color rounded _button" :class="{ active: theme.props.accent === color }" @click="setAccentColor(color)">
-							<div class="preview" :style="{ background: color }"></div>
-						</button>
+				<MkFolder :defaultOpen="true">
+					<template #label>{{ i18n.ts.textColor }}</template>
+					<div class="cwepdizn-colors">
+						<div class="row">
+							<button v-for="color in fgColors" :key="color" class="color char _button"
+								:class="{ active: (theme.props.fg === color.forLight) || (theme.props.fg === color.forDark) }"
+								@click="setFgColor(color)">
+								<div class="preview"
+									:style="{ color: color.forPreview ? color.forPreview : theme.base === 'light' ? '#5f5f5f' : '#dadada' }">
+									A</div>
+							</button>
+						</div>
 					</div>
-				</div>
-			</MkFolder>
+				</MkFolder>
 
-			<MkFolder :defaultOpen="true">
-				<template #label>{{ i18n.ts.textColor }}</template>
-				<div class="cwepdizn-colors">
-					<div class="row">
-						<button v-for="color in fgColors" :key="color" class="color char _button" :class="{ active: (theme.props.fg === color.forLight) || (theme.props.fg === color.forDark) }" @click="setFgColor(color)">
-							<div class="preview" :style="{ color: color.forPreview ? color.forPreview : theme.base === 'light' ? '#5f5f5f' : '#dadada' }">A</div>
-						</button>
+				<MkFolder :defaultOpen="false">
+					<template #icon><i class="ti ti-code"></i></template>
+					<template #label>{{ i18n.ts.editCode }}</template>
+
+					<div class="_gaps_m">
+						<MkTextarea v-model="themeCode" tall>
+							<template #label>{{ i18n.ts._theme.code }}</template>
+						</MkTextarea>
+						<MkButton primary @click="applyThemeCode">{{ i18n.ts.apply }}</MkButton>
 					</div>
-				</div>
-			</MkFolder>
+				</MkFolder>
 
-			<MkFolder :defaultOpen="false">
-				<template #icon><i class="ti ti-code"></i></template>
-				<template #label>{{ i18n.ts.editCode }}</template>
+				<MkFolder :defaultOpen="false">
+					<template #label>{{ i18n.ts.addDescription }}</template>
 
-				<div class="_gaps_m">
-					<MkTextarea v-model="themeCode" tall>
-						<template #label>{{ i18n.ts._theme.code }}</template>
-					</MkTextarea>
-					<MkButton primary @click="applyThemeCode">{{ i18n.ts.apply }}</MkButton>
-				</div>
-			</MkFolder>
-
-			<MkFolder :defaultOpen="false">
-				<template #label>{{ i18n.ts.addDescription }}</template>
-
-				<div class="_gaps_m">
-					<MkTextarea v-model="description">
-						<template #label>{{ i18n.ts._theme.description }}</template>
-					</MkTextarea>
-				</div>
-			</MkFolder>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+					<div class="_gaps_m">
+						<MkTextarea v-model="description">
+							<template #label>{{ i18n.ts._theme.description }}</template>
+						</MkTextarea>
+					</div>
+				</MkFolder>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -89,6 +100,7 @@ import { addTheme } from "@/theme-store";
 import { i18n } from "@/i18n";
 import { useLeaveGuard } from "@/scripts/use-leave-guard";
 import { definePageMetadata } from "@/scripts/page-metadata";
+import { router } from "@/router";
 
 const bgColors = [
 	{ color: "#f5f5f5", kind: "light", forPreview: "#f5f5f5" },
@@ -169,7 +181,7 @@ let changed = $ref(false);
 useLeaveGuard($$(changed));
 
 function showPreview() {
-	os.pageWindow("/preview");
+	router.push("/preview");
 }
 
 function setBgColor(color: (typeof bgColors)[number]) {
@@ -280,15 +292,15 @@ definePageMetadata({
 	::v-deep(.cwepdizn-colors) {
 		text-align: center;
 
-		> .row {
-			> .color {
+		>.row {
+			>.color {
 				display: inline-block;
 				position: relative;
 				width: 64px;
 				height: 64px;
 				border-radius: 8px;
 
-				> .preview {
+				>.preview {
 					position: absolute;
 					top: 0;
 					left: 0;
@@ -303,7 +315,7 @@ definePageMetadata({
 				}
 
 				&:hover {
-					> .preview {
+					>.preview {
 						transform: scale(1.1);
 					}
 				}
@@ -315,7 +327,7 @@ definePageMetadata({
 				&.rounded {
 					border-radius: 999px;
 
-					> .preview {
+					>.preview {
 						border-radius: 999px;
 					}
 				}

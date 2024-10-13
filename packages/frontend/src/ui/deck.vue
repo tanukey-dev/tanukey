@@ -1,84 +1,45 @@
 <template>
-	<div :class="[$style.root, { [$style.rootIsMobile]: isMobile }]">
-		<XSidebar v-if="!isMobile" />
-
-		<div :class="$style.main">
-			<XAnnouncements v-if="$i" :class="$style.announcements" />
-			<XStatusBars />
-			<div ref="columnsEl"
-				:class="[$style.sections, { [$style.center]: deckStore.reactiveState.columnAlign.value === 'center', [$style.snapScroll]: snapScroll }]"
-				@contextmenu.self.prevent="onContextmenu">
-				<!-- sectionを利用しているのは、deck.vue側でcolumnに対してfirst-of-typeを効かせるため -->
-				<section v-for="ids in layout" :class="$style.section"
-					:style="columns.filter(c => ids.includes(c.id)).some(c => c.flexible) ? { flex: 1, minWidth: '350px' } : { width: Math.max(...columns.filter(c => ids.includes(c.id)).map(c => c.width)) + 'px' }">
-					<component :is="columnComponents[columns.find(c => c.id === id)!.type] ?? XTlColumn"
-						v-for="id in ids" :ref="id" :key="id" :class="$style.column"
-						:column="columns.find(c => c.id === id)" :isStacked="ids.length > 1" />
-				</section>
-				<div v-if="layout.length === 0" class="_panel" :class="$style.onboarding">
-					<div>{{ i18n.ts._deck.introduction }}</div>
-					<MkButton primary style="margin: 1em auto;" @click="addColumn">{{ i18n.ts._deck.addColumn }}
-					</MkButton>
-					<div>{{ i18n.ts._deck.introduction2 }}</div>
+	<div :class="$style.root">
+		<div ref="columnsEl"
+			:class="[$style.sections, { [$style.center]: deckStore.reactiveState.columnAlign.value === 'center', [$style.snapScroll]: snapScroll }]"
+			@contextmenu.self.prevent="onContextmenu">
+			<!-- sectionを利用しているのは、deck.vue側でcolumnに対してfirst-of-typeを効かせるため -->
+			<section v-for="ids in layout" :class="$style.section"
+				:style="columns.filter(c => ids.includes(c.id)).some(c => c.flexible) ? { flex: 1, minWidth: '350px' } : { width: Math.max(...columns.filter(c => ids.includes(c.id)).map(c => c.width)) + 'px' }">
+				<component :is="columnComponents[columns.find(c => c.id === id)!.type] ?? XTlColumn" v-for="id in ids"
+					:ref="id" :key="id" :class="$style.column" :column="columns.find(c => c.id === id)"
+					:isStacked="ids.length > 1" />
+			</section>
+			<div v-if="layout.length === 0" class="_panel" :class="$style.onboarding">
+				<div>{{ i18n.ts._deck.introduction }}</div>
+				<MkButton primary style="margin: 1em auto;" @click="addColumn">{{ i18n.ts._deck.addColumn }}
+				</MkButton>
+				<div>{{ i18n.ts._deck.introduction2 }}</div>
+			</div>
+			<div :class="$style.sideMenu">
+				<div :class="$style.sideMenuTop">
+					<button v-tooltip.noDelay.left="`${i18n.ts._deck.profile}: ${deckStore.state.profile}`"
+						:class="$style.sideMenuButton" class="_button" @click="changeProfile"><i
+							class="ti ti-caret-down"></i></button>
+					<button v-tooltip.noDelay.left="i18n.ts._deck.deleteProfile" :class="$style.sideMenuButton"
+						class="_button" @click="deleteProfile"><i class="ti ti-trash"></i></button>
 				</div>
-				<div :class="$style.sideMenu">
-					<div :class="$style.sideMenuTop">
-						<button v-tooltip.noDelay.left="`${i18n.ts._deck.profile}: ${deckStore.state.profile}`"
-							:class="$style.sideMenuButton" class="_button" @click="changeProfile"><i
-								class="ti ti-caret-down"></i></button>
-						<button v-tooltip.noDelay.left="i18n.ts._deck.deleteProfile" :class="$style.sideMenuButton"
-							class="_button" @click="deleteProfile"><i class="ti ti-trash"></i></button>
-					</div>
-					<div :class="$style.sideMenuMiddle">
-						<button v-tooltip.noDelay.left="i18n.ts._deck.addColumn" :class="$style.sideMenuButton"
-							class="_button" @click="addColumn"><i class="ti ti-plus"></i></button>
-					</div>
-					<div :class="$style.sideMenuBottom">
-						<button v-tooltip.noDelay.left="i18n.ts.settings" :class="$style.sideMenuButton" class="_button"
-							@click="showSettings"><i class="ti ti-settings"></i></button>
-					</div>
+				<div :class="$style.sideMenuMiddle">
+					<button v-tooltip.noDelay.left="i18n.ts._deck.addColumn" :class="$style.sideMenuButton"
+						class="_button" @click="addColumn"><i class="ti ti-plus"></i></button>
+				</div>
+				<div :class="$style.sideMenuBottom">
+					<button v-tooltip.noDelay.left="i18n.ts.settings" :class="$style.sideMenuButton" class="_button"
+						@click="showSettings"><i class="ti ti-settings"></i></button>
 				</div>
 			</div>
 		</div>
-
-		<div v-if="isMobile" :class="$style.nav">
-			<button :class="$style.navButton" class="_button" @click="drawerMenuShowing = true"><i
-					:class="$style.navButtonIcon" class="ti ti-menu-2"></i><span v-if="menuIndicated"
-					:class="$style.navButtonIndicator"><i class="_indicatorCircle"></i></span></button>
-			<button :class="$style.navButton" class="_button" @click="mainRouter.push('/secure')"><i
-					:class="$style.navButtonIcon" class="ti ti-home"></i></button>
-			<button :class="$style.navButton" class="_button" @click="mainRouter.push('/secure/my/notifications')"><i
-					:class="$style.navButtonIcon" class="ti ti-bell"></i><span v-if="$i?.hasUnreadNotification"
-					:class="$style.navButtonIndicator"><i class="_indicatorCircle"></i></span></button>
-			<button :class="$style.postButton" class="_button" @click="os.post()"><i :class="$style.navButtonIcon"
-					class="ti ti-pencil"></i></button>
-		</div>
-
-		<Transition :enterActiveClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_enterActive : ''"
-			:leaveActiveClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_leaveActive : ''"
-			:enterFromClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_enterFrom : ''"
-			:leaveToClass="defaultStore.state.animation ? $style.transition_menuDrawerBg_leaveTo : ''">
-			<div v-if="drawerMenuShowing" :class="$style.menuBg" class="_modalBg" @click="drawerMenuShowing = false"
-				@touchstart.passive="drawerMenuShowing = false"></div>
-		</Transition>
-
-		<Transition :enterActiveClass="defaultStore.state.animation ? $style.transition_menuDrawer_enterActive : ''"
-			:leaveActiveClass="defaultStore.state.animation ? $style.transition_menuDrawer_leaveActive : ''"
-			:enterFromClass="defaultStore.state.animation ? $style.transition_menuDrawer_enterFrom : ''"
-			:leaveToClass="defaultStore.state.animation ? $style.transition_menuDrawer_leaveTo : ''">
-			<div v-if="drawerMenuShowing" :class="$style.menu">
-				<XDrawerMenu />
-			</div>
-		</Transition>
-
-		<XCommon />
 	</div>
 </template>
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref, watch } from "vue";
 import { v4 as uuid } from "uuid";
-import XCommon from "./_common_/common.vue";
 import {
 	deckStore,
 	addColumn as addColumnToStore,
@@ -86,18 +47,13 @@ import {
 	getProfiles,
 	deleteProfile as deleteProfile_,
 } from "./deck/deck-store";
-import XSidebar from "@/ui/_common_/navbar.vue";
-import XDrawerMenu from "@/ui/_common_/navbar-for-mobile.vue";
 import MkButton from "@/components/MkButton.vue";
 import { getScrollContainer } from "@/scripts/scroll";
 import * as os from "@/os";
-import { navbarItemDef } from "@/navbar";
-import { $i } from "@/account";
 import { i18n } from "@/i18n";
-import { mainRouter } from "@/router";
+import { router } from "@/router";
 import { unisonReload } from "@/scripts/unison-reload";
 import { deviceKind } from "@/scripts/device-kind";
-import { defaultStore } from "@/store";
 import XMainColumn from "@/ui/deck/main-column.vue";
 import XTlColumn from "@/ui/deck/tl-column.vue";
 import XAntennaColumn from "@/ui/deck/antenna-column.vue";
@@ -108,12 +64,6 @@ import XWidgetsColumn from "@/ui/deck/widgets-column.vue";
 import XMentionsColumn from "@/ui/deck/mentions-column.vue";
 import XDirectColumn from "@/ui/deck/direct-column.vue";
 import XRoleTimelineColumn from "@/ui/deck/role-timeline-column.vue";
-const XStatusBars = defineAsyncComponent(
-	() => import("@/ui/_common_/statusbars.vue"),
-);
-const XAnnouncements = defineAsyncComponent(
-	() => import("@/ui/_common_/announcements.vue"),
-);
 
 const columnComponents = {
 	main: XMainColumn,
@@ -128,16 +78,6 @@ const columnComponents = {
 	roleTimeline: XRoleTimelineColumn,
 };
 
-mainRouter.navHook = (path, flag): boolean => {
-	if (flag === "forcePage") return false;
-	const noMainColumn = !deckStore.state.columns.some((x) => x.type === "main");
-	if (deckStore.state.navWindow || noMainColumn) {
-		os.pageWindow(path);
-		return true;
-	}
-	return false;
-};
-
 const isMobile = ref(window.innerWidth <= 500);
 window.addEventListener("resize", () => {
 	isMobile.value = window.innerWidth <= 500;
@@ -146,23 +86,15 @@ window.addEventListener("resize", () => {
 const snapScroll = deviceKind === "smartphone" || deviceKind === "tablet";
 const drawerMenuShowing = ref(false);
 
-const route = "TODO";
-watch(route, () => {
+watch(router.currentRoute, () => {
 	drawerMenuShowing.value = false;
 });
 
 const columns = deckStore.reactiveState.columns;
 const layout = deckStore.reactiveState.layout;
-const menuIndicated = computed(() => {
-	if ($i == null) return false;
-	for (const def in navbarItemDef) {
-		if (navbarItemDef[def].indicated) return true;
-	}
-	return false;
-});
 
 function showSettings() {
-	os.pageWindow("/secure/settings/deck");
+	router.push("/secure/settings/deck");
 }
 
 let columnsEl = $shallowRef<HTMLElement>();
@@ -279,28 +211,6 @@ async function deleteProfile() {
 	unisonReload();
 }
 </script>
-
-<style>
-html,
-body {
-	width: 100%;
-	height: 100%;
-	overflow: clip;
-	position: fixed;
-	top: 0;
-	left: 0;
-	overscroll-behavior: none;
-}
-
-#misskey_app {
-	width: 100%;
-	height: 100%;
-	overflow: clip;
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-</style>
 
 <style lang="scss" module>
 .transition_menuDrawerBg_enterActive,

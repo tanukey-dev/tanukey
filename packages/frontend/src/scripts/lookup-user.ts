@@ -1,6 +1,7 @@
 import * as Acct from "misskey-js/built/acct";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
+import { router } from "@/router";
 
 export async function lookupUser() {
 	const { canceled, result } = await os.inputText({
@@ -9,7 +10,7 @@ export async function lookupUser() {
 	if (canceled) return;
 
 	const show = (user) => {
-		os.pageWindow(`/user-info/${user.id}`);
+		router.push(`/user-info/${user.id}`);
 	};
 
 	const usernamePromise = os.api("users/show", Acct.parse(result));

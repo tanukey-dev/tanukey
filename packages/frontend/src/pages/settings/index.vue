@@ -16,7 +16,9 @@
 					</div>
 					<div v-if="!(narrow && currentPath === '/secure/settings')" class="main">
 						<div class="bkzroven" style="container-type: inline-size;" ref="contents">
-							<RouterView />
+							<Suspense suspensible>
+								<router-view />
+							</Suspense>
 						</div>
 					</div>
 				</div>
@@ -32,7 +34,7 @@ import MkSuperMenu from "@/components/MkSuperMenu.vue";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import * as os from "@/os";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { clearCache } from "@/scripts/cache-clear";
 import {
 	definePageMetadata,
@@ -47,8 +49,6 @@ import {
 	shallowRef,
 	watch,
 } from "vue";
-import { useScrollPositionManager } from "@/nirax";
-import { getScrollContainer } from "@/scripts/scroll";
 
 const indexInfo = {
 	title: i18n.ts.settings,
@@ -59,10 +59,8 @@ const INFO = ref(indexInfo);
 const el = shallowRef<HTMLElement | null>(null);
 const childInfo = ref(null);
 
-const router = useRouter();
 const contents = shallowRef<HTMLElement>();
-
-useScrollPositionManager(() => getScrollContainer(contents.value), router, "/secure/settings");
+const currentPath = computed(() => router.currentRoute.value.path);
 
 let narrow = $ref(false);
 const NARROW_THRESHOLD = 600;
@@ -72,15 +70,8 @@ const ro = new ResizeObserver((entries, observer) => {
 	narrow = entries[0].borderBoxSize[0].inlineSize < NARROW_THRESHOLD;
 });
 
-const currentPath = router.getCurrentPathRef();
-
 function isActive(path: string): boolean {
-	const resolved = router.resolve(path);
-	if (resolved == null) {
-		return false;
-	}
-	const fullPath = router.geFullPathFromResolved(resolved);
-	if (currentPath.value.startsWith(fullPath)) {
+	if (router.currentRoute.value.path === path) {
 		return true;
 	}
 	return false;

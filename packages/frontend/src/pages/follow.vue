@@ -7,7 +7,7 @@
 import { } from "vue";
 import * as Acct from "misskey-js/built/acct";
 import * as os from "@/os";
-import { mainRouter } from "@/router";
+import { router } from "@/router";
 import { i18n } from "@/i18n";
 
 async function follow(user): Promise<void> {
@@ -41,7 +41,7 @@ if (acct.startsWith("https://")) {
 		if (res.type === "User") {
 			follow(res.object);
 		} else if (res.type === "Note") {
-			mainRouter.push(`/secure/notes/${res.object.id}`);
+			router.push(`/secure/notes/${res.object.id}`);
 		} else {
 			os.alert({
 				type: "error",

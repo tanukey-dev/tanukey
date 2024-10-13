@@ -27,11 +27,9 @@ import XEditor from "./roles.editor.vue";
 import * as os from "@/os";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import MkButton from "@/components/MkButton.vue";
 import { rolesCache } from "@/cache";
-
-const router = useRouter();
 
 const props = defineProps<{
 	id?: string;

@@ -27,7 +27,6 @@ import { getAccountFromId } from "@/scripts/get-account-from-id";
 import { deckStore } from "@/ui/deck/deck-store";
 import { miLocalStorage } from "@/local-storage";
 import { fetchCustomEmojis } from "@/custom-emojis";
-import { mainRouter } from "@/router";
 
 export async function common(createVue: () => App<Element>) {
 	console.info(`Misskey v${version}`);

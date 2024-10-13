@@ -1,19 +1,19 @@
 <template>
-<MkContainer :naked="widgetProps.transparent" :showHeader="false" class="mkw-instance-cloud">
-	<div class="">
-		<MkTagCloud v-if="activeInstances">
-			<li v-for="instance in activeInstances" :key="instance.id">
-				<a @click.prevent="onInstanceClick(instance)">
-					<img style="width: 32px;" :src="getInstanceIcon(instance)">
-				</a>
-			</li>
-		</MkTagCloud>
-	</div>
-</MkContainer>
+	<MkContainer :naked="widgetProps.transparent" :showHeader="false" class="mkw-instance-cloud">
+		<div class="">
+			<MkTagCloud v-if="activeInstances">
+				<li v-for="instance in activeInstances" :key="instance.id">
+					<a @click.prevent="onInstanceClick(instance)">
+						<img style="width: 32px;" :src="getInstanceIcon(instance)">
+					</a>
+				</li>
+			</MkTagCloud>
+		</div>
+	</MkContainer>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue";
+import { } from "vue";
 import {
 	useWidgetPropsManager,
 	Widget,
@@ -27,6 +27,7 @@ import MkTagCloud from "@/components/MkTagCloud.vue";
 import * as os from "@/os";
 import { useInterval } from "@/scripts/use-interval";
 import { getProxiedImageUrlNullable } from "@/scripts/media-proxy";
+import { router } from "@/router";
 
 const name = "instanceCloud";
 
@@ -53,7 +54,7 @@ let cloud = $shallowRef<InstanceType<typeof MkTagCloud> | null>();
 let activeInstances = $shallowRef(null);
 
 function onInstanceClick(i) {
-	os.pageWindow(`/instance-info/${i.host}`);
+	router.push(`/instance-info/${i.host}`);
 }
 
 useInterval(

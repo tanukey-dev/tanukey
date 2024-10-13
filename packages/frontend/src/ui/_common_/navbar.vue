@@ -11,9 +11,14 @@
 			</div>
 			<div :class="$style.middle">
 				<MkA v-tooltip.noDelay.right="i18n.ts.timeline" :class="$style.item" :activeClass="$style.active"
-					:to="ui === 'deck' ? '/secure' : '/secure/timeline'" exact>
+					:to="'/secure/timeline'" exact>
 					<i :class="$style.itemIcon" class="ti ti-home ti-fw"></i><span :class="$style.itemText">{{
 						i18n.ts.timeline }}</span>
+				</MkA>
+				<MkA v-tooltip.noDelay.right="i18n.ts.deck" :class="$style.item" :activeClass="$style.active"
+					:to="'/secure/deck'" exact>
+					<i :class="$style.itemIcon" class="ti ti-layout-list ti-fw"></i><span :class="$style.itemText">{{
+						i18n.ts.deck }}</span>
 				</MkA>
 				<template v-for="item in menu">
 					<div v-if="item === '-'" :class="$style.divider"></div>

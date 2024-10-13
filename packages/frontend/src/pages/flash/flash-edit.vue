@@ -36,7 +36,7 @@ import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import MkTextarea from "@/components/MkTextarea.vue";
 import MkInput from "@/components/MkInput.vue";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 
 const PRESET_DEFAULT = `/// @ 0.15.0
 
@@ -351,8 +351,6 @@ const PRESET_TIMELINE = `/// @ 0.15.0
 fetch()
 `;
 
-const router = useRouter();
-
 const props = defineProps<{
 	id?: string;
 }>();
@@ -428,7 +426,7 @@ function show() {
 			text: "Please save",
 		});
 	} else {
-		os.pageWindow(`/secure/play/${flash.id}`);
+		router.push(`/secure/play/${flash.id}`);
 	}
 }
 

@@ -89,7 +89,7 @@ import MkTimeline from "@/components/MkTimeline.vue";
 import XChannelFollowButton from "@/components/MkChannelFollowButton.vue";
 import * as misskey from "misskey-js";
 import * as os from "@/os";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { $i, iAmModerator } from "@/account";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
@@ -103,8 +103,6 @@ import MkNote from "@/components/MkNote.vue";
 import MkInfo from "@/components/MkInfo.vue";
 import MkMention from "@/components/MkMention.vue";
 import MkFoldableSection from "@/components/MkFoldableSection.vue";
-
-const router = useRouter();
 
 const props = defineProps<{
 	channelId: string;

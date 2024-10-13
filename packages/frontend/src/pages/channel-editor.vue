@@ -115,7 +115,7 @@ import MkSwitch from "@/components/MkSwitch.vue";
 import MkTextarea from "@/components/MkTextarea.vue";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { selectFile } from "@/scripts/select-file";
 import Multiselect from "@vueform/multiselect";
@@ -124,8 +124,6 @@ import { computed, defineAsyncComponent, onBeforeMount, ref, watch } from "vue";
 const Sortable = defineAsyncComponent(() =>
 	import("vuedraggable").then((x) => x.default),
 );
-
-const router = useRouter();
 
 const props = defineProps<{
 	channelId?: string;

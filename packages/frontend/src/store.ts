@@ -131,8 +131,6 @@ export const defaultStore = markRaw(
 				"explore",
 				"announcements",
 				"search",
-				"-",
-				"ui",
 			],
 		},
 		visibility: {

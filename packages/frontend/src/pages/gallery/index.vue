@@ -51,9 +51,7 @@ import MkPagination from "@/components/MkPagination.vue";
 import MkGalleryPostPreview from "@/components/MkGalleryPostPreview.vue";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { i18n } from "@/i18n";
-import { useRouter } from "@/router";
-
-const router = useRouter();
+import { router } from "@/router";
 
 const props = defineProps<{
 	tag?: string;

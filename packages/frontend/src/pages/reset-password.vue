@@ -1,17 +1,19 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<MkSpacer v-if="token" :contentMax="700" :marginMin="16" :marginMax="32">
-		<div class="_gaps_m">
-			<MkInput v-model="password" type="password">
-				<template #prefix><i class="ti ti-lock"></i></template>
-				<template #label>{{ i18n.ts.newPassword }}</template>
-			</MkInput>
-		
-			<MkButton primary @click="save">{{ i18n.ts.save }}</MkButton>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<MkSpacer v-if="token" :contentMax="700" :marginMin="16" :marginMax="32">
+			<div class="_gaps_m">
+				<MkInput v-model="password" type="password">
+					<template #prefix><i class="ti ti-lock"></i></template>
+					<template #label>{{ i18n.ts.newPassword }}</template>
+				</MkInput>
+
+				<MkButton primary @click="save">{{ i18n.ts.save }}</MkButton>
+			</div>
+		</MkSpacer>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -20,7 +22,7 @@ import MkInput from "@/components/MkInput.vue";
 import MkButton from "@/components/MkButton.vue";
 import * as os from "@/os";
 import { i18n } from "@/i18n";
-import { mainRouter } from "@/router";
+import { router } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 
 const props = defineProps<{
@@ -34,7 +36,7 @@ async function save() {
 		token: props.token,
 		password: password,
 	});
-	mainRouter.push("/");
+	router.push("/");
 }
 
 onMounted(() => {
@@ -45,7 +47,7 @@ onMounted(() => {
 			{},
 			"closed",
 		);
-		mainRouter.push("/");
+		router.push("/");
 	}
 });
 

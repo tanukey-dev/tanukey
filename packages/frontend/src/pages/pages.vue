@@ -54,11 +54,9 @@ import MkButton from "@/components/MkButton.vue";
 import MkInput from "@/components/MkInput.vue";
 import MkPageList from "@/components/MkPageList.vue";
 import MkFoldableSection from "@/components/MkFoldableSection.vue";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
-
-const router = useRouter();
 
 let key = $ref("");
 let tab = $ref("search");

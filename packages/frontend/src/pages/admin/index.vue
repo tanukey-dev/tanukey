@@ -26,7 +26,9 @@
 			</MkSpacer>
 		</div>
 		<div v-if="!(narrow && currentPath === '/secure/admin')" class="main" ref="contents">
-			<RouterView />
+			<Suspense suspensible>
+				<router-view />
+			</Suspense>
 		</div>
 	</div>
 </template>
@@ -37,24 +39,18 @@ import MkSuperMenu from "@/components/MkSuperMenu.vue";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import * as os from "@/os";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { lookupUser } from "@/scripts/lookup-user";
 import {
 	definePageMetadata,
 	provideMetadataReceiver,
 } from "@/scripts/page-metadata";
-import RouterView from "@/components/global/RouterView.vue";
-import { onActivated, onMounted, onUnmounted, provide, watch, shallowRef } from "vue";
-import { useScrollPositionManager } from "@/nirax";
-import { getScrollContainer } from "@/scripts/scroll";
+import { onActivated, onMounted, onUnmounted, provide, watch, shallowRef, computed } from "vue";
 
 const isEmpty = (x: string | null) => x == null || x === "";
 
-const router = useRouter();
 const contents = shallowRef<HTMLElement>();
-const currentPath = router.getCurrentPathRef();
-
-useScrollPositionManager(() => getScrollContainer(contents.value), router, "/secure/admin/settings");
+const currentPath = computed(() => router.currentRoute.value.path);
 
 const indexInfo = {
 	title: i18n.ts.controlPanel,
@@ -94,12 +90,7 @@ const ro = new ResizeObserver((entries, observer) => {
 });
 
 function isActive(path: string): boolean {
-	const resolved = router.resolve(path);
-	if (resolved == null) {
-		return false;
-	}
-	const fullPath = router.geFullPathFromResolved(resolved);
-	if (currentPath.value.startsWith(fullPath)) {
+	if (router.currentRoute.value.path === path) {
 		return true;
 	}
 	return false;

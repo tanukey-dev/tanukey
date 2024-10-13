@@ -18,26 +18,22 @@ import { makeHotkey } from "@/scripts/hotkey";
 import { reactionPicker } from "@/scripts/reaction-picker";
 import { miLocalStorage } from "@/local-storage";
 import { claimAchievement, claimedAchievements } from "@/scripts/achievements";
-import { mainRouter } from "@/router";
+import { router } from "@/router";
 import { initializeSw } from "@/scripts/initialize-sw";
 import Vue3TouchEvents from "vue3-touch-events";
 
 export async function mainBoot() {
 	const { isClientUpdated } = await common(() => {
 		const app = createApp(
-			new URLSearchParams(window.location.search).has("zen") ||
-				(ui === "deck" && location.pathname !== "/secure")
+			new URLSearchParams(window.location.search).has("zen")
 				? defineAsyncComponent(() => import("@/ui/zen.vue"))
 				: !$i
 					? defineAsyncComponent(() => import("@/ui/visitor.vue"))
-					: ui === "deck"
-						? defineAsyncComponent(() => import("@/ui/deck.vue"))
-						: ui === "classic"
-							? defineAsyncComponent(() => import("@/ui/classic.vue"))
-							: defineAsyncComponent(() => import("@/ui/universal.vue")),
+					: defineAsyncComponent(() => import("@/ui/universal.vue")),
 		);
 
 		app.use(Vue3TouchEvents);
+		app.use(router);
 
 		return app;
 	});
@@ -89,7 +85,7 @@ export async function mainBoot() {
 			defaultStore.set("darkMode", !defaultStore.state.darkMode);
 		},
 		s: (): void => {
-			mainRouter.push("/secure/search");
+			router.push("/secure/search");
 		},
 	};
 

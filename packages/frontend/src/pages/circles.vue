@@ -19,11 +19,9 @@ import { computed } from "vue";
 import MkCirclePreview from "@/components/MkCirclePreview.vue";
 import MkPagination from "@/components/MkPagination.vue";
 import MkButton from "@/components/MkButton.vue";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { i18n } from "@/i18n";
-
-const router = useRouter();
 
 const props = defineProps<{
 	query: string;

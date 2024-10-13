@@ -78,14 +78,12 @@ import MkFolder from "@/components/MkFolder.vue";
 import * as os from "@/os";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import MkButton from "@/components/MkButton.vue";
 import MkUserCardMini from "@/components/MkUserCardMini.vue";
 import MkInfo from "@/components/MkInfo.vue";
 import MkPagination, { Paging } from "@/components/MkPagination.vue";
 import { infoImageUrl } from "@/instance";
-
-const router = useRouter();
 
 const props = defineProps<{
 	id?: string;

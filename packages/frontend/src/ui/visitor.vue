@@ -12,10 +12,14 @@
 		<div class="main">
 			<div class="contents">
 				<main v-if="!root" style="container-type: inline-size;">
-					<RouterView />
+					<Suspense>
+						<router-view />
+					</Suspense>
 				</main>
 				<main v-else>
-					<RouterView />
+					<Suspense>
+						<router-view />
+					</Suspense>
 				</main>
 			</div>
 			<div v-if="!root" class="footer">
@@ -37,7 +41,7 @@ import { instanceName } from "@/config";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import * as os from "@/os";
-import { mainRouter } from "@/router";
+import { router } from "@/router";
 import { PageMetadata, provideMetadataReceiver } from "@/scripts/page-metadata";
 import { ComputedRef, onMounted, provide } from "vue";
 import XCommon from "./_common_/common.vue";
@@ -46,7 +50,7 @@ const DESKTOP_THRESHOLD = 1100;
 
 let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
 
-provide("router", mainRouter);
+provide("router", router);
 provideMetadataReceiver((info) => {
 	pageMetadata = info;
 	if (pageMetadata.value) {
@@ -59,7 +63,7 @@ let isDesktop = $ref(window.innerWidth >= DESKTOP_THRESHOLD);
 let narrow = $ref(window.innerWidth < 1280);
 let meta = $ref();
 
-const root = $computed(() => mainRouter.currentRoute.value.name === "index");
+const root = $computed(() => ["/", "/signin", "/signup"].includes(router.currentRoute.value.path));
 
 os.api("meta", { detail: true }).then((res) => {
 	meta = res;

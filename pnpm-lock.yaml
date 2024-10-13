@@ -342,7 +342,7 @@ importers:
         version: 5.17.16
       tfm-js:
         specifier: github:tanukey-dev/tfm.js
-        version: https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/436d03610c5fa63202ed8a88fc480020682acf5e
+        version: https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab
       tinycolor2:
         specifier: 1.6.0
         version: 1.6.0
@@ -707,7 +707,7 @@ importers:
         version: 3.1.0
       tfm-js:
         specifier: github:tanukey-dev/tfm.js
-        version: https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/436d03610c5fa63202ed8a88fc480020682acf5e
+        version: https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab
       three:
         specifier: 0.153.0
         version: 0.153.0
@@ -744,6 +744,9 @@ importers:
       vue-prism-editor:
         specifier: 2.0.0-alpha.2
         version: 2.0.0-alpha.2(vue@3.5.11(typescript@5.1.3))
+      vue-router:
+        specifier: '4'
+        version: 4.4.5(vue@3.5.11(typescript@5.1.3))
       vue3-touch-events:
         specifier: ^4.1.2
         version: 4.1.2
@@ -3152,6 +3155,9 @@ packages:
 
   '@vue/compiler-ssr@3.5.11':
     resolution: {integrity: sha512-P4+GPjOuC2aFTk1Z4WANvEhyOykcvEd5bIj2KVNGKGfM745LaXGr++5njpdBTzVz5pZifdlR1kpYSJJpIlSePA==}
+
+  '@vue/devtools-api@6.6.4':
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
   '@vue/reactivity-transform@3.3.4':
     resolution: {integrity: sha512-MXgwjako4nu5WFLAjpBnCj/ieqcjE2aJBINUNQzkZQfzIZA4xn+0fV1tIYBJvvva3N3OvKGofRLvQIwEQPpaXw==}
@@ -7910,8 +7916,8 @@ packages:
     resolution: {integrity: sha512-mk82dS8eRABNbeVJrEiN5/UMSCliINAuz8mkUwH4SwslkNP//gbEzlWNS5au0z5Dpx40SQxzqZevZkn+WYJ9Dw==}
     engines: {node: '>=8'}
 
-  tfm-js@https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/436d03610c5fa63202ed8a88fc480020682acf5e:
-    resolution: {tarball: https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/436d03610c5fa63202ed8a88fc480020682acf5e}
+  tfm-js@https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab:
+    resolution: {tarball: https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab}
     version: 0.24.2
 
   thenify-all@1.6.0:
@@ -8401,6 +8407,11 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       vue: ^3.0.0
+
+  vue-router@4.4.5:
+    resolution: {integrity: sha512-4fKZygS8cH1yCyuabAXGUAsyi1b2/o/OKgu/RUb+znIYOxPRxdkytJEx+0wGcpBE1pX6vUgh5jwWOKRGvuA/7Q==}
+    peerDependencies:
+      vue: ^3.2.0
 
   vue-template-compiler@2.7.16:
     resolution: {integrity: sha512-AYbUWAJHLGGQM7+cNTELw+KsOG9nl2CnSv467WobS5Cv9uk3wFcnr1Etsz2sEIHEZvw1U+o9mRlEO6QbZvUPGQ==}
@@ -11701,6 +11712,8 @@ snapshots:
     dependencies:
       '@vue/compiler-dom': 3.5.11
       '@vue/shared': 3.5.11
+
+  '@vue/devtools-api@6.6.4': {}
 
   '@vue/reactivity-transform@3.3.4':
     dependencies:
@@ -17157,7 +17170,7 @@ snapshots:
 
   textextensions@3.3.0: {}
 
-  tfm-js@https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/436d03610c5fa63202ed8a88fc480020682acf5e:
+  tfm-js@https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab:
     dependencies:
       '@twemoji/parser': 15.0.0
 
@@ -17599,6 +17612,11 @@ snapshots:
 
   vue-prism-editor@2.0.0-alpha.2(vue@3.5.11(typescript@5.1.3)):
     dependencies:
+      vue: 3.5.11(typescript@5.1.3)
+
+  vue-router@4.4.5(vue@3.5.11(typescript@5.1.3)):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
       vue: 3.5.11(typescript@5.1.3)
 
   vue-template-compiler@2.7.16:

@@ -25,12 +25,13 @@ import MkInfo from "@/components/MkInfo.vue";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import { definePageMetadata } from "@/scripts/page-metadata";
-import { computed, defineAsyncComponent } from "vue";
+import { computed, ref } from "vue";
+import MkPageHeader from "@/components/global/MkPageHeader.vue";
+import MkStickyContainer from "@/components/global/MkStickyContainer.vue";
+import XNote from "./search.note.vue";
+import XUser from "./search.user.vue";
 
-const XNote = defineAsyncComponent(() => import("./search.note.vue"));
-const XUser = defineAsyncComponent(() => import("./search.user.vue"));
-
-const tab = $ref("note");
+const tab = ref("note");
 
 const notesSearchAvailable =
 	($i == null && instance.policies.canSearchNotes) ||

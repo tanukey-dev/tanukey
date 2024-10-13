@@ -13,9 +13,7 @@ import { } from "vue";
 import MkSignin from "@/components/MkSignin.vue";
 import MkModalWindow from "@/components/MkModalWindow.vue";
 import { i18n } from "@/i18n";
-import { useRouter } from "@/router";
-
-const router = useRouter();
+import { router } from "@/router";
 
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
 

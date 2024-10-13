@@ -12,7 +12,6 @@ import MkEllipsis from "./global/MkEllipsis.vue";
 import MkTime from "./global/MkTime.vue";
 import MkUrl from "./global/MkUrl.vue";
 import I18n from "./global/i18n";
-import RouterView from "./global/RouterView.vue";
 import MkLoading from "./global/MkLoading.vue";
 import MkError from "./global/MkError.vue";
 import MkAd from "./global/MkAd.vue";
@@ -28,7 +27,6 @@ export default function (app: App) {
 
 export const components = {
 	I18n: I18n,
-	RouterView: RouterView,
 	Mfm: Mfm,
 	MkA: MkA,
 	MkAcct: MkAcct,
@@ -51,7 +49,6 @@ export const components = {
 declare module "@vue/runtime-core" {
 	export interface GlobalComponents {
 		I18n: typeof I18n;
-		RouterView: typeof RouterView;
 		Mfm: typeof Mfm;
 		MkA: typeof MkA;
 		MkAcct: typeof MkAcct;

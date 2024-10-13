@@ -71,6 +71,8 @@ import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import MkUserCardMini from "@/components/MkUserCardMini.vue";
 import { dateString } from "@/filters/date";
+import { roundPoint } from "photoswipe/dist/types/util/util";
+import { router } from "@/router";
 
 let paginationComponent = $shallowRef<InstanceType<typeof MkPagination>>();
 
@@ -119,7 +121,7 @@ async function addUser() {
 }
 
 function show(user) {
-	os.pageWindow(`/user-info/${user.id}`);
+	router.push(`/user-info/${user.id}`);
 }
 
 const headerActions = $computed(() => [

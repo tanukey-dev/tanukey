@@ -39,12 +39,10 @@ import MkButton from "@/components/MkButton.vue";
 import MkSelect from "@/components/MkSelect.vue";
 import { selectFile } from "@/scripts/select-file";
 import * as os from "@/os";
-import { useRouter } from "@/router";
+import { router } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { i18n } from "@/i18n";
 import { $i } from "@/account";
-
-const router = useRouter();
 
 const props = defineProps<{
 	eventId?: string;

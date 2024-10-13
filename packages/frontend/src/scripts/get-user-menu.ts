@@ -4,19 +4,15 @@ import { antennasCache, rolesCache, userListsCache } from "@/cache";
 import { url, host } from "@/config";
 import { dateString } from "@/filters/date";
 import { i18n } from "@/i18n";
-import { Router } from "@/nirax";
 import * as os from "@/os";
-import { mainRouter } from "@/router";
+import { router } from "@/router";
 import copyToClipboard from "@/scripts/copy-to-clipboard";
 import { sendMessage } from "@/scripts/send-message";
 import { defaultStore, userActions } from "@/store";
 import * as misskey from "misskey-js";
 import { computed, defineAsyncComponent, ref, watch } from "vue";
 
-export function getUserMenu(
-	user: misskey.entities.UserDetailed,
-	router: Router = mainRouter,
-) {
+export function getUserMenu(user: misskey.entities.UserDetailed) {
 	const meId = $i ? $i.id : null;
 
 	const cleanups = [] as (() => void)[];

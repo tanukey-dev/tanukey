@@ -1,21 +1,22 @@
 <template>
-<div :class="$style.root" style="container-type: inline-size;">
-	<RouterView/>
-
-	<XCommon/>
-</div>
+	<div :class="$style.root" style="container-type: inline-size;">
+		<Suspense>
+			<router-view />
+		</Suspense>
+		<XCommon />
+	</div>
 </template>
 
 <script lang="ts" setup>
 import { provide, ComputedRef } from "vue";
 import XCommon from "./_common_/common.vue";
-import { mainRouter } from "@/router";
+import { router } from "@/router";
 import { PageMetadata, provideMetadataReceiver } from "@/scripts/page-metadata";
 import { instanceName } from "@/config";
 
 let pageMetadata = $ref<null | ComputedRef<PageMetadata>>();
 
-provide("router", mainRouter);
+provide("router", router);
 provideMetadataReceiver((info) => {
 	pageMetadata = info;
 	if (pageMetadata.value) {

@@ -27,9 +27,7 @@ import MkButton from "@/components/MkButton.vue";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
 import MkFoldableSection from "@/components/MkFoldableSection.vue";
-import { useRouter } from "@/router";
-
-const router = useRouter();
+import { router } from "@/router";
 
 let key = $ref("");
 let searchQuery = $ref("");
