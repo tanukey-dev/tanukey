@@ -4,6 +4,7 @@ import MkLoading from "@/pages/_loading_.vue";
 import type { AsyncComponentLoader } from "vue";
 import { defineAsyncComponent } from "vue";
 import { createWebHistory, createRouter } from "vue-router";
+import { uiMode } from "@/config";
 
 const page = (loader: AsyncComponentLoader<any>) =>
 	defineAsyncComponent({
@@ -919,6 +920,9 @@ export const router = createRouter({
 
 router.beforeEach((to, from, next) => {
 	if ($i && to.meta.redirectToHomeNotVisitor) {
+		if (uiMode.value === "deck") {
+			return next({ path: "/secure/deck" });
+		}
 		return next({ path: "/secure/timeline" });
 	}
 	if ($i && to.meta.loginedUserRedirect) {

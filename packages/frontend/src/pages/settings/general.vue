@@ -20,6 +20,12 @@
 			<option value="desktop"><i class="ti ti-device-desktop" /> {{ i18n.ts.desktop }}</option>
 		</MkRadios>
 
+		<MkRadios v-model="uiMode" :key="uiModeKey">
+			<template #label>{{ i18n.ts.switchUi }}</template>
+			<option value="default"><i class="ti ti-home" /> {{ i18n.ts.default }}</option>
+			<option value="deck"><i class="ti ti-layout-list" /> {{ i18n.ts.deck }}</option>
+		</MkRadios>
+
 		<FormSection>
 			<div class="_gaps_s">
 				<MkSwitch v-model="showFixedPostForm">{{ i18n.ts.showFixedPostForm }}</MkSwitch>
@@ -186,6 +192,7 @@ import { unisonReload } from "@/scripts/unison-reload";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { miLocalStorage } from "@/local-storage";
+import { uiMode } from "@/config";
 
 const lang = ref(miLocalStorage.getItem("lang"));
 const fontSize = ref(miLocalStorage.getItem("fontSize"));
@@ -204,6 +211,7 @@ async function reloadAsk() {
 const overridedDeviceKind = computed(
 	defaultStore.makeGetterSetter("overridedDeviceKind"),
 );
+
 const serverDisconnectedBehavior = computed(
 	defaultStore.makeGetterSetter("serverDisconnectedBehavior"),
 );

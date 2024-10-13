@@ -81,7 +81,6 @@ import { $i, openAccountMenu as openAccountMenu_ } from "@/account";
 import { defaultStore } from "@/store";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
-import { ui } from "@/config";
 
 const iconOnly = ref(false);
 

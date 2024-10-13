@@ -1,4 +1,5 @@
 import { miLocalStorage } from "./local-storage";
+import { ref, watch } from "vue";
 
 const address = new URL(location.href);
 const siteName = document.querySelector<HTMLMetaElement>(
@@ -23,3 +24,8 @@ export const debug = miLocalStorage.getItem("debug") === "true";
 export function updateLocale(newLocale): void {
 	locale = newLocale;
 }
+
+export const uiMode = ref(miLocalStorage.getItem("ui") ?? "default");
+watch(uiMode, (newValue) => {
+	miLocalStorage.setItem("ui", newValue);
+});

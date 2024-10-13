@@ -24,9 +24,12 @@
 			<button :class="$style.navButton" class="_button" @click="drawerMenuShowing = true"><i
 					:class="$style.navButtonIcon" class="ti ti-menu-2"></i><span v-if="menuIndicated"
 					:class="$style.navButtonIndicator"><i class="_indicatorCircle"></i></span></button>
-			<button :class="$style.navButton" class="_button"
-				@click="router.currentRoute.value.name === 'index' ? top() : router.push({ path: '/secure/timeline' })"><i
-					:class="$style.navButtonIcon" class="ti ti-home"></i></button>
+			<button v-if="uiMode === 'default'" :class="$style.navButton" class="_button"
+				@click="router.currentRoute.value.path === '/secure/timeline' ? top() : router.push({ path: '/secure/timeline' })"><i
+					:class="[$style.navButtonIcon, 'ti ti-home']"></i></button>
+			<button v-if="uiMode === 'deck'" :class="$style.navButton" class="_button"
+				@click="router.push({ path: '/secure/deck' })"><i
+					:class="[$style.navButtonIcon, 'ti ti-layout-list']"></i></button>
 			<button :class="$style.navButton" class="_button"
 				@click="router.push({ path: '/secure/my/notifications' })"><i :class="$style.navButtonIcon"
 					class="ti ti-bell"></i><span v-if="$i?.hasUnreadNotification" :class="$style.navButtonIndicator"><i
@@ -97,7 +100,6 @@ import XDrawerMenu from "@/ui/_common_/navbar-for-mobile.vue";
 import * as os from "@/os";
 import { defaultStore } from "@/store";
 import { navbarItemDef } from "@/navbar";
-import { i18n } from "@/i18n";
 import { $i } from "@/account";
 import { router } from "@/router";
 import { PageMetadata, provideMetadataReceiver } from "@/scripts/page-metadata";
@@ -105,6 +107,7 @@ import { deviceKind } from "@/scripts/device-kind";
 import { miLocalStorage } from "@/local-storage";
 import { CURRENT_STICKY_BOTTOM } from "@/const";
 import RouterView from "@/components/global/RouterView.vue";
+import { uiMode } from "@/config";
 
 const XWidgets = defineAsyncComponent(() => import("./universal.widgets.vue"));
 const XSidebar = defineAsyncComponent(() => import("@/ui/_common_/navbar.vue"));
