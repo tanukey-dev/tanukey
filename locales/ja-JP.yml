@@ -1605,6 +1605,7 @@ _aboutTanukey:
   source: "ソースコード"
   translation: "Tanukeyを翻訳"
   donate: "Tanukeyに寄付"
+  taskList: "タスクリスト"
   morePatrons: "他にも多くの方が支援してくれています。ありがとうございます🥰"
   patrons: "支援者"
 

@@ -1,70 +1,78 @@
 <template>
-<MkStickyContainer>
-	<template #header><MkPageHeader :actions="headerActions" :tabs="headerTabs"/></template>
-	<div style="overflow: clip;">
-		<MkSpacer :contentMax="600" :marginMin="20">
-			<div class="_gaps_m znqjceqz">
-				<div v-panel class="about">
-					<div ref="containerEl" class="container" :class="{ playing: easterEggEngine != null }">
-						<img src="/client-assets/about-icon.png" alt="" class="icon" draggable="false" @load="iconLoaded" @click="gravity"/>
-						<div class="misskey">Tanukey</div>
-						<div class="version">v{{ version }}</div>
-						<span v-for="emoji in easterEggEmojis" :key="emoji.id" class="emoji" :data-physics-x="emoji.left" :data-physics-y="emoji.top" :class="{ _physics_circle_: !emoji.emoji.startsWith(':') }">
-							<MkCustomEmoji v-if="emoji.emoji[0] === ':'" class="emoji" :name="emoji.emoji" :normal="true" :noStyle="true"/>
-							<MkEmoji v-else class="emoji" :emoji="emoji.emoji" :normal="true" :noStyle="true"/>
-						</span>
-					</div>
-					<button v-if="thereIsTreasure" class="_button treasure" @click="getTreasure"><img src="/fluent-emoji/1f3c6.png" class="treasureImg"></button>
-				</div>
-				<div style="text-align: center;">
-					{{ i18n.ts._aboutTanukey.about }}<br>
-				</div>
-				<div v-if="$i != null" style="text-align: center;">
-					<MkButton primary rounded inline @click="iLoveTanukey">I <Mfm text="$[jelly ❤]"/> #Tanukey</MkButton>
-				</div>
-				<FormSection>
-					<div class="_formLinks">
-						<FormLink to="https://github.com/tar-bin/tanukey" external>
-							<template #icon><i class="ti ti-code"></i></template>
-							{{ i18n.ts._aboutTanukey.source }}
-							<template #suffix>GitHub</template>
-						</FormLink>
-						<FormLink to="https://crowdin.com/project/tanukey" external>
-							<template #icon><i class="ti ti-language-hiragana"></i></template>
-							{{ i18n.ts._aboutTanukey.translation }}
-							<template #suffix>Crowdin</template>
-						</FormLink>
-						<FormLink to="https://tar-bin.fanbox.cc/" external>
-							<template #icon><i class="ti ti-pig-money"></i></template>
-							{{ i18n.ts._aboutTanukey.donate }}
-							<template #suffix>Pixiv Fanbox</template>
-						</FormLink>
-					</div>
-				</FormSection>
-				<FormSection>
-					<template #label><Mfm text="$[jelly ❤]"/> {{ i18n.ts._aboutTanukey.patrons }}</template>
-					<div :class="$style.patronsWithIcon">
-						<div v-for="patron in patronsWithIcon" :class="$style.patronWithIcon">
-							<img :src="patron.icon" :class="$style.patronIcon">
-							<span :class="$style.patronName">{{ patron.name }}</span>
+	<MkStickyContainer>
+		<template #header>
+			<MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+		</template>
+		<div style="overflow: clip;">
+			<MkSpacer :contentMax="600" :marginMin="20">
+				<div class="_gaps_m znqjceqz">
+					<div v-panel class="about">
+						<div ref="containerEl" class="container" :class="{ playing: easterEggEngine != null }">
+							<img src="/client-assets/about-icon.png" alt="" class="icon" draggable="false"
+								@load="iconLoaded" @click="gravity" />
+							<div class="misskey">Tanukey</div>
+							<div class="version">v{{ version }}</div>
+							<span v-for="emoji in easterEggEmojis" :key="emoji.id" class="emoji"
+								:data-physics-x="emoji.left" :data-physics-y="emoji.top"
+								:class="{ _physics_circle_: !emoji.emoji.startsWith(':') }">
+								<MkCustomEmoji v-if="emoji.emoji[0] === ':'" class="emoji" :name="emoji.emoji"
+									:normal="true" :noStyle="true" />
+								<MkEmoji v-else class="emoji" :emoji="emoji.emoji" :normal="true" :noStyle="true" />
+							</span>
 						</div>
+						<button v-if="thereIsTreasure" class="_button treasure" @click="getTreasure"><img
+								src="/fluent-emoji/1f3c6.png" class="treasureImg"></button>
 					</div>
-					<div style="margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); grid-gap: 12px;">
-						<div v-for="patron in patrons" :key="patron"><a :href="patron.url" target="_blank" rel="noopener noreferrer">{{ patron.name }}</a></div>
+					<div style="text-align: center;">
+						{{ i18n.ts._aboutTanukey.about }}<br>
 					</div>
-					<!-- <p>{{ i18n.ts._aboutTanukey.morePatrons }}</p> -->
-				</FormSection>
-				<!--
+					<div v-if="$i != null" style="text-align: center;">
+						<MkButton primary rounded inline @click="iLoveTanukey">I
+							<Mfm text="$[jelly ❤]" /> #Tanukey
+						</MkButton>
+					</div>
+					<FormSection>
+						<div class="_formLinks">
+							<FormLink to="https://github.com/tar-bin/tanukey" external>
+								<template #icon><i class="ti ti-code"></i></template>
+								{{ i18n.ts._aboutTanukey.source }}
+								<template #suffix>GitHub</template>
+							</FormLink>
+							<FormLink to="https://trello.com/b/4EKgpcEK/tanukey-project" external>
+								<template #icon><i class="ti ti-checklist"></i></template>
+								{{ i18n.ts._aboutTanukey.taskList }}
+								<template #suffix>開発計画・不具合対応リスト</template>
+							</FormLink>
+						</div>
+					</FormSection>
+					<FormSection>
+						<template #label>
+							<Mfm text="$[jelly ❤]" /> {{ i18n.ts._aboutTanukey.patrons }}
+						</template>
+						<div :class="$style.patronsWithIcon">
+							<div v-for="patron in patronsWithIcon" :class="$style.patronWithIcon">
+								<img :src="patron.icon" :class="$style.patronIcon">
+								<span :class="$style.patronName">{{ patron.name }}</span>
+							</div>
+						</div>
+						<div
+							style="margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); grid-gap: 12px;">
+							<div v-for="patron in patrons" :key="patron"><a :href="patron.url" target="_blank"
+									rel="noopener noreferrer">{{ patron.name }}</a></div>
+						</div>
+						<!-- <p>{{ i18n.ts._aboutTanukey.morePatrons }}</p> -->
+					</FormSection>
+					<!--
 				<FormSection>
 					<template #label>Special thanks</template>
 					<div style="text-align: center;">
 					</div>
 				</FormSection>
 				-->
-			</div>
-		</MkSpacer>
-	</div>
-</MkStickyContainer>
+				</div>
+			</MkSpacer>
+		</div>
+	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -73,7 +81,6 @@ import { version } from "@/config";
 import FormLink from "@/components/form/link.vue";
 import FormSection from "@/components/form/section.vue";
 import MkButton from "@/components/MkButton.vue";
-import MkLink from "@/components/MkLink.vue";
 import { physics } from "@/scripts/physics";
 import { i18n } from "@/i18n";
 import { defaultStore } from "@/store";
@@ -165,11 +172,11 @@ definePageMetadata({
 
 <style lang="scss" scoped>
 .znqjceqz {
-	> .about {
+	>.about {
 		position: relative;
 		border-radius: var(--radius);
 
-		> .treasure {
+		>.treasure {
 			position: absolute;
 			top: 60px;
 			left: 0;
@@ -177,19 +184,21 @@ definePageMetadata({
 			margin: 0 auto;
 			width: min-content;
 
-			> .treasureImg {
+			>.treasureImg {
 				width: 25px;
 				vertical-align: bottom;
 			}
 		}
 
-		> .container {
+		>.container {
 			position: relative;
 			text-align: center;
 			padding: 16px;
 
 			&.playing {
-				&, * {
+
+				&,
+				* {
 					user-select: none;
 				}
 
@@ -197,12 +206,12 @@ definePageMetadata({
 					will-change: transform;
 				}
 
-				> .emoji {
+				>.emoji {
 					visibility: visible;
 				}
 			}
 
-			> .icon {
+			>.icon {
 				display: block;
 				width: 80px;
 				margin: 0 auto;
@@ -211,14 +220,14 @@ definePageMetadata({
 				z-index: 1;
 			}
 
-			> .misskey {
+			>.misskey {
 				margin: 0.75em auto 0 auto;
 				width: max-content;
 				position: relative;
 				z-index: 1;
 			}
 
-			> .version {
+			>.version {
 				margin: 0 auto;
 				width: max-content;
 				opacity: 0.5;
@@ -226,14 +235,14 @@ definePageMetadata({
 				z-index: 1;
 			}
 
-			> .emoji {
+			>.emoji {
 				position: absolute;
 				z-index: 1;
 				top: 0;
 				left: 0;
 				visibility: hidden;
 
-				> .emoji {
+				>.emoji {
 					pointer-events: none;
 					font-size: 24px;
 					width: 24px;

@@ -1684,6 +1684,7 @@ export interface Locale {
         "source": string;
         "translation": string;
         "donate": string;
+        "taskList": string;
         "morePatrons": string;
         "patrons": string;
     };
