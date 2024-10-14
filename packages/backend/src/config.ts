@@ -100,6 +100,9 @@ export type Source = {
 		secretKey: string;
 		webhookSecret: string;
 	};
+
+	siteGtagGoogleAnalytics: string;
+	siteGtagGoogleAds: string;
 };
 
 /**

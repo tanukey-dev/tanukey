@@ -670,8 +670,8 @@ importers:
         specifier: workspace:*
         version: link:../misskey-js
       photoswipe:
-        specifier: 5.3.7
-        version: 5.3.7
+        specifier: 5.4.4
+        version: 5.4.4
       prismjs:
         specifier: 1.29.0
         version: 1.29.0
@@ -741,6 +741,9 @@ importers:
       vue:
         specifier: 3.5.11
         version: 3.5.11(typescript@5.1.3)
+      vue-gtag:
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.11(typescript@5.1.3))
       vue-prism-editor:
         specifier: 2.0.0-alpha.2
         version: 2.0.0-alpha.2(vue@3.5.11(typescript@5.1.3))
@@ -6660,8 +6663,8 @@ packages:
   pgpass@1.0.5:
     resolution: {integrity: sha512-FdW9r/jQZhSeohs1Z3sI1yxFQNFvMcnmfuj4WBMUTxOrAyLMaTcE1aAMBiTlbMNaXvBCQuVi0R7hd8udDSP7ug==}
 
-  photoswipe@5.3.7:
-    resolution: {integrity: sha512-zsyLsTTLFrj0XR1m4/hO7qNooboFKUrDy+Zt5i2d6qjFPAtBjzaj/Xtydso4uxzcXpcqbTmyxDibb3BcSISseg==}
+  photoswipe@5.4.4:
+    resolution: {integrity: sha512-WNFHoKrkZNnvFFhbHL93WDkW3ifwVOXSW3w1UuZZelSmgXpIGiZSNlZJq37rR8YejqME2rHs9EhH9ZvlvFH2NA==}
     engines: {node: '>= 0.12.0'}
 
   picocolors@1.0.0:
@@ -8401,6 +8404,11 @@ packages:
   void-elements@3.1.0:
     resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
     engines: {node: '>=0.10.0'}
+
+  vue-gtag@2.0.1:
+    resolution: {integrity: sha512-aM4A58FVL0wV2ptYi+xzAjeg+pQVRyUcfBc5UkXAwQrR4t3WBhor50Izp2I+3Oo7+l+vWJ7u78DGcNzReb8S/A==}
+    peerDependencies:
+      vue: ^3.0.0
 
   vue-prism-editor@2.0.0-alpha.2:
     resolution: {integrity: sha512-Gu42ba9nosrE+gJpnAEuEkDMqG9zSUysIR8SdXUw8MQKDjBnnNR9lHC18uOr/ICz7yrA/5c7jHJr9lpElODC7w==}
@@ -15747,7 +15755,7 @@ snapshots:
     dependencies:
       split2: 4.2.0
 
-  photoswipe@5.3.7: {}
+  photoswipe@5.4.4: {}
 
   picocolors@1.0.0: {}
 
@@ -17609,6 +17617,10 @@ snapshots:
       terser: 5.34.1
 
   void-elements@3.1.0: {}
+
+  vue-gtag@2.0.1(vue@3.5.11(typescript@5.1.3)):
+    dependencies:
+      vue: 3.5.11(typescript@5.1.3)
 
   vue-prism-editor@2.0.0-alpha.2(vue@3.5.11(typescript@5.1.3)):
     dependencies:

@@ -1,18 +1,11 @@
-import {
-	computed,
-	createApp,
-	watch,
-	markRaw,
-	version as vueVersion,
-	defineAsyncComponent,
-} from "vue";
+import { createApp, markRaw, defineAsyncComponent } from "vue";
 import { common } from "./common";
-import { version, ui, lang, updateLocale } from "@/config";
-import { i18n, updateI18n } from "@/i18n";
+import { siteGtagGoogleAnalytics } from "@/config";
+import { i18n } from "@/i18n";
 import { confirm, alert, post, popup, toast } from "@/os";
 import { useStream } from "@/stream";
 import * as sound from "@/scripts/sound";
-import { $i, refreshAccount, login, updateAccount, signout } from "@/account";
+import { $i, updateAccount, signout } from "@/account";
 import { defaultStore, ColdDeviceStorage } from "@/store";
 import { makeHotkey } from "@/scripts/hotkey";
 import { reactionPicker } from "@/scripts/reaction-picker";
@@ -21,6 +14,7 @@ import { claimAchievement, claimedAchievements } from "@/scripts/achievements";
 import { router } from "@/router";
 import { initializeSw } from "@/scripts/initialize-sw";
 import Vue3TouchEvents from "vue3-touch-events";
+import VueGtag from "vue-gtag";
 
 export async function mainBoot() {
 	const { isClientUpdated } = await common(() => {
@@ -34,6 +28,12 @@ export async function mainBoot() {
 
 		app.use(Vue3TouchEvents);
 		app.use(router);
+		if (siteGtagGoogleAnalytics) {
+			app.use(VueGtag, {
+				disableScriptLoad: true,
+				config: { id: siteGtagGoogleAnalytics },
+			});
+		}
 
 		return app;
 	});

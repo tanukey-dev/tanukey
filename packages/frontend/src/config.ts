@@ -20,6 +20,9 @@ export const version = _VERSION_;
 export const instanceName = siteName === "Misskey" ? host : siteName;
 export const ui = miLocalStorage.getItem("ui");
 export const debug = miLocalStorage.getItem("debug") === "true";
+export const siteGtagGoogleAnalytics = document.querySelector<HTMLMetaElement>(
+	'meta[property="siteGtagGoogleAnalytics"]',
+)?.content;
 
 export function updateLocale(newLocale): void {
 	locale = newLocale;

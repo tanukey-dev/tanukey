@@ -26,6 +26,10 @@ html
 		meta(name='referrer' content='origin')
 		meta(name='theme-color' content= themeColor || '#86b300')
 		meta(name='theme-color-orig' content= themeColor || '#86b300')
+		if siteGtagGoogleAnalytics
+			meta(name='siteGtagGoogleAnalytics' content= siteGtagGoogleAnalytics)
+		if siteGtagGoogleAds
+			meta(name='siteGtagGoogleAds' content= siteGtagGoogleAds)
 		meta(property='og:site_name' content= instanceName || 'Tanukey')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 		link(rel='icon' href= icon || '/favicon.ico')
@@ -67,6 +71,20 @@ html
 		script.
 			var VERSION = "#{version}";
 			var CLIENT_ENTRY = "#{clientEntry.file}";
+
+		if siteGtagGoogleAnalytics || siteGtagGoogleAds
+			<!-- Google tag (gtag.js) -->
+			script(async src="https://www.googletagmanager.com/gtag/js?id=G-3R1CJW4349")
+			script.
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+				if ("#{siteGtagGoogleAnalytics}" !== "") {
+					gtag('config', "#{siteGtagGoogleAnalytics}");
+				}
+				if ("#{siteGtagGoogleAds}" !== "") {
+					gtag('config', "#{siteGtagGoogleAds}");
+				}
 
 		script
 			include ../boot.js

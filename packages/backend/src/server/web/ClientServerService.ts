@@ -154,6 +154,8 @@ export class ClientServerService {
 			infoImageUrl: meta.infoImageUrl ?? "https://xn--931a.moe/assets/info.jpg",
 			notFoundImageUrl:
 				meta.notFoundImageUrl ?? "https://xn--931a.moe/assets/not-found.jpg",
+			siteGtagGoogleAnalytics: this.config.siteGtagGoogleAnalytics,
+			siteGtagGoogleAds: this.config.siteGtagGoogleAds,
 		};
 	}
 
