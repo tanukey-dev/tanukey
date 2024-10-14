@@ -3,80 +3,165 @@
 		<template #header>
 			<MkPageHeader v-model:tab="tab" :actions="headerActions" :tabs="headerTabs" />
 		</template>
-		<MkSpacer :contentMax="700">
-			<MkStickyContainer>
-				<template #header>
-					<MkSpacer class="contentHeader">
-						<div class="jqqmcavi">
-							<MkButton v-if="pageId" class="button" inline link
-								:to="`/secure/@${author.username}/pages/${currentName}`"><i
-									class="ti ti-external-link"></i> {{ i18n.ts._pages.viewPage }}</MkButton>
-							<MkButton v-if="!readonly" inline primary class="button" @click="save"><i
-									class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
-							<MkButton v-if="pageId" inline class="button" @click="duplicate"><i class="ti ti-copy"></i>
-								{{ i18n.ts.duplicate }}</MkButton>
-							<MkButton v-if="pageId && !readonly" inline class="button" danger @click="del"><i
-									class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
-						</div>
-					</MkSpacer>
-				</template>
+		<template v-if="editorVersion === '1'">
+			<MkSpacer :contentMax="700">
+				<MkStickyContainer>
+					<template #header>
+						<MkSpacer class="contentHeader">
+							<div class="jqqmcavi">
+								<MkButton v-if="pageId" class="button" inline link
+									:to="`/secure/@${author.username}/pages/${currentName}`"><i
+										class="ti ti-external-link"></i> {{ i18n.ts._pages.viewPage }}</MkButton>
+								<MkButton v-if="!readonly" inline primary class="button" @click="save"><i
+										class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
+								<MkButton v-if="pageId" inline class="button" @click="duplicate"><i
+										class="ti ti-copy"></i>
+									{{ i18n.ts.duplicate }}</MkButton>
+								<MkButton v-if="pageId && !readonly" inline class="button" danger @click="del"><i
+										class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+							</div>
+						</MkSpacer>
+					</template>
 
-				<div v-if="tab === 'settings'">
-					<div class="_gaps_m">
-						<MkInput v-model="title">
-							<template #label>{{ i18n.ts._pages.title }}</template>
-						</MkInput>
+					<div v-if="tab === 'settings'">
+						<div class="_gaps_m">
+							<MkInput v-model="title">
+								<template #label>{{ i18n.ts._pages.title }}</template>
+							</MkInput>
 
-						<MkInput v-model="summary">
-							<template #label>{{ i18n.ts._pages.summary }}</template>
-						</MkInput>
+							<MkInput v-model="summary">
+								<template #label>{{ i18n.ts._pages.summary }}</template>
+							</MkInput>
 
-						<MkInput v-model="name">
-							<template #prefix>{{ url }}/@{{ author.username }}/pages/</template>
-							<template #label>{{ i18n.ts._pages.url }}</template>
-						</MkInput>
+							<MkInput v-model="name">
+								<template #prefix>{{ url }}/@{{ author.username }}/pages/</template>
+								<template #label>{{ i18n.ts._pages.url }}</template>
+							</MkInput>
 
-						<MkSwitch v-model="alignCenter">{{ i18n.ts._pages.alignCenter }}</MkSwitch>
+							<MkSelect v-model="editorVersion">
+								<template #label>{{ i18n.ts._pages.editorVersion }}</template>
+								<option value="1">version 1 ({{ i18n.ts._pages.duplicate }})</option>
+								<option value="2">version 2</option>
+							</MkSelect>
 
-						<MkSelect v-model="font">
-							<template #label>{{ i18n.ts._pages.font }}</template>
-							<option value="serif">{{ i18n.ts._pages.fontSerif }}</option>
-							<option value="sans-serif">{{ i18n.ts._pages.fontSansSerif }}</option>
-						</MkSelect>
+							<MkSwitch v-model="alignCenter">{{ i18n.ts._pages.alignCenter }}</MkSwitch>
 
-						<MkSwitch v-model="hideTitleWhenPinned">{{ i18n.ts._pages.hideTitleWhenPinned }}</MkSwitch>
+							<MkSelect v-model="font">
+								<template #label>{{ i18n.ts._pages.font }}</template>
+								<option value="serif">{{ i18n.ts._pages.fontSerif }}</option>
+								<option value="sans-serif">{{ i18n.ts._pages.fontSansSerif }}</option>
+							</MkSelect>
 
-						<div class="eyeCatch">
-							<MkButton v-if="eyeCatchingImageId == null && !readonly" @click="setEyeCatchingImage"><i
-									class="ti ti-plus"></i> {{ i18n.ts._pages.eyeCatchingImageSet }}</MkButton>
-							<div v-else-if="eyeCatchingImage">
-								<img :src="eyeCatchingImage.url" :alt="eyeCatchingImage.name"
-									style="max-width: 100%;" />
-								<MkButton v-if="!readonly" @click="removeEyeCatchingImage()"><i class="ti ti-trash"></i>
-									{{
-										i18n.ts._pages.eyeCatchingImageRemove }}</MkButton>
+							<MkSwitch v-model="hideTitleWhenPinned">{{ i18n.ts._pages.hideTitleWhenPinned }}</MkSwitch>
+
+							<div class="eyeCatch">
+								<MkButton v-if="eyeCatchingImageId == null && !readonly" @click="setEyeCatchingImage"><i
+										class="ti ti-plus"></i> {{ i18n.ts._pages.eyeCatchingImageSet }}</MkButton>
+								<div v-else-if="eyeCatchingImage">
+									<img :src="eyeCatchingImage.url" :alt="eyeCatchingImage.name"
+										style="max-width: 100%;" />
+									<MkButton v-if="!readonly" @click="removeEyeCatchingImage()"><i
+											class="ti ti-trash"></i>
+										{{
+											i18n.ts._pages.eyeCatchingImageRemove }}</MkButton>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+					<div v-if="tab === 'contents'">
+						<div :class="$style.contents">
+							<XBlocks v-model="content" class="content" />
 
-				<div v-else-if="tab === 'contents'">
-					<div :class="$style.contents">
-						<XBlocks v-model="content" class="content" />
-
-						<MkButton v-if="!readonly" rounded class="add" @click="add()"><i class="ti ti-plus"></i>
-						</MkButton>
+							<MkButton v-if="!readonly" rounded class="add" @click="add()"><i class="ti ti-plus"></i>
+							</MkButton>
+						</div>
 					</div>
-				</div>
-			</MkStickyContainer>
-		</MkSpacer>
+				</MkStickyContainer>
+			</MkSpacer>
+		</template>
+		<template v-if="editorVersion === '2'">
+			<MkSpacer v-if="tab === 'settings'" :contentMax="700">
+				<MkStickyContainer>
+					<template #header>
+						<MkSpacer class="contentHeader">
+							<div class="jqqmcavi">
+								<MkButton v-if="pageId" class="button" inline link
+									:to="`/secure/@${author.username}/pages/${currentName}`"><i
+										class="ti ti-external-link"></i> {{ i18n.ts._pages.viewPage }}</MkButton>
+								<MkButton v-if="!readonly" inline primary class="button" @click="save"><i
+										class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
+								<MkButton v-if="pageId" inline class="button" @click="duplicate"><i
+										class="ti ti-copy"></i>
+									{{ i18n.ts.duplicate }}</MkButton>
+								<MkButton v-if="pageId && !readonly" inline class="button" danger @click="del"><i
+										class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+							</div>
+						</MkSpacer>
+					</template>
+
+					<div>
+						<div class="_gaps_m">
+							<MkInput v-model="title">
+								<template #label>{{ i18n.ts._pages.title }}</template>
+							</MkInput>
+
+							<MkInput v-model="summary">
+								<template #label>{{ i18n.ts._pages.summary }}</template>
+							</MkInput>
+
+							<MkInput v-model="name">
+								<template #prefix>{{ url }}/@{{ author.username }}/pages/</template>
+								<template #label>{{ i18n.ts._pages.url }}</template>
+							</MkInput>
+
+							<MkSelect v-model="editorVersion">
+								<template #label>{{ i18n.ts._pages.editorVersion }}</template>
+								<option value="1">version 1 ({{ i18n.ts._pages.duplicate }})</option>
+								<option value="2">version 2</option>
+							</MkSelect>
+
+							<MkSwitch v-model="alignCenter">{{ i18n.ts._pages.alignCenter }}</MkSwitch>
+
+							<MkSelect v-model="font">
+								<template #label>{{ i18n.ts._pages.font }}</template>
+								<option value="serif">{{ i18n.ts._pages.fontSerif }}</option>
+								<option value="sans-serif">{{ i18n.ts._pages.fontSansSerif }}</option>
+							</MkSelect>
+
+							<MkSwitch v-model="hideTitleWhenPinned">{{ i18n.ts._pages.hideTitleWhenPinned }}</MkSwitch>
+
+							<div class="eyeCatch">
+								<MkButton v-if="eyeCatchingImageId == null && !readonly" @click="setEyeCatchingImage"><i
+										class="ti ti-plus"></i> {{ i18n.ts._pages.eyeCatchingImageSet }}</MkButton>
+								<div v-else-if="eyeCatchingImage">
+									<img :src="eyeCatchingImage.url" :alt="eyeCatchingImage.name"
+										style="max-width: 100%;" />
+									<MkButton v-if="!readonly" @click="removeEyeCatchingImage()"><i
+											class="ti ti-trash"></i>
+										{{
+											i18n.ts._pages.eyeCatchingImageRemove }}</MkButton>
+								</div>
+							</div>
+						</div>
+					</div>
+				</MkStickyContainer>
+			</MkSpacer>
+			<div v-if="tab === 'contents'">
+				<XEditorV2 v-model="text">
+					<MkButton v-if="!readonly" inline primary class="button" @click="save"><i
+							class="ti ti-device-floppy"></i> {{
+								i18n.ts.save }}</MkButton>
+				</XEditorV2>
+			</div>
+		</template>
 	</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { computed, provide, watch } from "vue";
+import { computed, provide, watch, ref } from "vue";
 import { v4 as uuid } from "uuid";
 import XBlocks from "./page-editor.blocks.vue";
+import XEditorV2 from "./page-editor.v2.vue";
 import MkButton from "@/components/MkButton.vue";
 import MkSelect from "@/components/MkSelect.vue";
 import MkSwitch from "@/components/MkSwitch.vue";
@@ -110,6 +195,13 @@ let font = $ref("sans-serif");
 let content = $ref([]);
 let alignCenter = $ref(false);
 let hideTitleWhenPinned = $ref(false);
+const editorVersion = ref<string>("2");
+const text = ref<string>("");
+
+const isMobile = ref(window.innerWidth <= 500);
+window.addEventListener("resize", () => {
+	isMobile.value = window.innerWidth <= 500;
+});
 
 provide("readonly", readonly);
 provide("getPageBlockList", getPageBlockList);
@@ -131,6 +223,8 @@ function getSaveOptions() {
 		summary: summary,
 		font: font,
 		script: "",
+		editorVersion: Number(editorVersion.value),
+		text: text.value,
 		hideTitleWhenPinned: hideTitleWhenPinned,
 		alignCenter: alignCenter,
 		content: content,
@@ -262,6 +356,7 @@ async function init() {
 	}
 
 	if (page) {
+		tab = "contents";
 		author = page.user;
 		pageId = page.id;
 		title = page.title;
@@ -273,6 +368,8 @@ async function init() {
 		alignCenter = page.alignCenter;
 		content = page.content;
 		eyeCatchingImageId = page.eyeCatchingImageId;
+		text.value = page.text;
+		editorVersion.value = String(page.editorVersion);
 	} else {
 		const id = uuid();
 		content = [

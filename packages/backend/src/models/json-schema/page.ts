@@ -35,6 +35,16 @@ export const packedPageSchema = {
 			optional: false,
 			nullable: true,
 		},
+		editorVersion: {
+			type: "number",
+			optional: false,
+			nullable: false,
+		},
+		text: {
+			type: "string",
+			optional: false,
+			nullable: true,
+		},
 		content: {
 			type: "array",
 			optional: false,

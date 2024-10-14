@@ -83,6 +83,19 @@ export class Page {
 	@JoinColumn()
 	public eyeCatchingImage: DriveFile | null;
 
+	@Column({
+		default: 1,
+		nullable: false,
+	})
+	public editorVersion: number;
+
+	// v2
+	@Column("text", {
+		nullable: true,
+	})
+	public text: string | null;
+
+	// v1: duplicate
 	@Column("jsonb", {
 		default: [],
 	})

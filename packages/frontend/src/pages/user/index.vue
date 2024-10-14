@@ -119,7 +119,7 @@ const headerTabs = $computed(() =>
 			},
 			{
 				key: "pages",
-				title: i18n.ts.pages,
+				title: i18n.ts.blog,
 				icon: "ti ti-news",
 			},
 			{

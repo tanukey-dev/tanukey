@@ -368,6 +368,7 @@ export interface Locale {
     "monthX": string;
     "yearX": string;
     "pages": string;
+    "blog": string;
     "integration": string;
     "connectService": string;
     "disconnectService": string;
@@ -2257,6 +2258,8 @@ export interface Locale {
         "contentBlocks": string;
         "inputBlocks": string;
         "specialBlocks": string;
+        "editorVersion": string;
+        "duplicate": string;
         "blocks": {
             "text": string;
             "textarea": string;

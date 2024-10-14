@@ -466,6 +466,8 @@ export type Page = {
 	updatedAt: DateString;
 	userId: User["id"];
 	user: User;
+	editorVersion: number;
+	text: string;
 	content: Block[];
 	variables: Record<string, any>[];
 	title: string;
