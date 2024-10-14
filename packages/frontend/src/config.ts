@@ -23,6 +23,10 @@ export const debug = miLocalStorage.getItem("debug") === "true";
 export const siteGtagGoogleAnalytics = document.querySelector<HTMLMetaElement>(
 	'meta[property="siteGtagGoogleAnalytics"]',
 )?.content;
+export const siteGtagGoogleAdsConversion =
+	document.querySelector<HTMLMetaElement>(
+		'meta[property="siteGtagGoogleAdsConversion"]',
+	)?.content;
 
 export function updateLocale(newLocale): void {
 	locale = newLocale;

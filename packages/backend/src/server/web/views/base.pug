@@ -30,6 +30,7 @@ html
 			meta(name='siteGtagGoogleAnalytics' content= siteGtagGoogleAnalytics)
 		if siteGtagGoogleAds
 			meta(name='siteGtagGoogleAds' content= siteGtagGoogleAds)
+			meta(name='siteGtagGoogleAdsConversion' content= siteGtagGoogleAdsConversion)
 		meta(property='og:site_name' content= instanceName || 'Tanukey')
 		meta(name='viewport' content='width=device-width, initial-scale=1')
 		link(rel='icon' href= icon || '/favicon.ico')
@@ -72,9 +73,12 @@ html
 			var VERSION = "#{version}";
 			var CLIENT_ENTRY = "#{clientEntry.file}";
 
+		<!-- Google tag (gtag.js) -->
+		if siteGtagGoogleAnalytics
+			script(async src= 'https://www.googletagmanager.com/gtag/js?id=' + siteGtagGoogleAnalytics)
+		if siteGtagGoogleAds
+			script(async src= 'https://www.googletagmanager.com/gtag/js?id=' + siteGtagGoogleAds)
 		if siteGtagGoogleAnalytics || siteGtagGoogleAds
-			<!-- Google tag (gtag.js) -->
-			script(async src="https://www.googletagmanager.com/gtag/js?id=G-3R1CJW4349")
 			script.
 				window.dataLayer = window.dataLayer || [];
 				function gtag(){dataLayer.push(arguments);}

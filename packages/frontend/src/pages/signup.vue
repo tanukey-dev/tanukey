@@ -14,6 +14,7 @@ import XSignup from "@/components/MkSignup.vue";
 import { i18n } from "@/i18n";
 import { } from "vue";
 import { router } from "@/router";
+import { siteGtagGoogleAdsConversion } from "@/config";
 
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
 
@@ -22,6 +23,10 @@ function onCancel() {
 }
 
 function onSignup() {
+	if (siteGtagGoogleAdsConversion) {
+		// @ts-ignore
+		this.$gtag.event('event', 'conversion', { 'send_to': siteGtagGoogleAdsConversion });
+	}
 	router.push("/signin");
 }
 </script>

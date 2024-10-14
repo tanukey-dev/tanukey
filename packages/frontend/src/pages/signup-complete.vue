@@ -1,31 +1,34 @@
 <template>
-<div>
-	<MkAnimBg style="position: fixed; top: 0;"/>
-	<div :class="$style.formContainer">
-		<form :class="$style.form" class="_panel" @submit.prevent="submit()">
-			<div :class="$style.banner">
-				<i class="ti ti-user-check"></i>
-			</div>
-			<div class="_gaps_m" style="padding: 32px;">
-				<div>{{ i18n.t('clickToFinishEmailVerification', { ok: i18n.ts.gotIt }) }}</div>
-				<div>
-					<MkButton gradate large rounded type="submit" :disabled="submitting" data-cy-admin-ok style="margin: 0 auto;">
-						{{ submitting ? i18n.ts.processing : i18n.ts.gotIt }}<MkEllipsis v-if="submitting"/>
-					</MkButton>
+	<div>
+		<MkAnimBg style="position: fixed; top: 0;" />
+		<div :class="$style.formContainer">
+			<form :class="$style.form" class="_panel" @submit.prevent="submit()">
+				<div :class="$style.banner">
+					<i class="ti ti-user-check"></i>
 				</div>
-			</div>
-		</form>
+				<div class="_gaps_m" style="padding: 32px;">
+					<div>{{ i18n.t('clickToFinishEmailVerification', { ok: i18n.ts.gotIt }) }}</div>
+					<div>
+						<MkButton gradate large rounded type="submit" :disabled="submitting" data-cy-admin-ok
+							style="margin: 0 auto;">
+							{{ submitting ? i18n.ts.processing : i18n.ts.gotIt }}
+							<MkEllipsis v-if="submitting" />
+						</MkButton>
+					</div>
+				</div>
+			</form>
+		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue";
+import { } from "vue";
 import MkButton from "@/components/MkButton.vue";
 import MkAnimBg from "@/components/MkAnimBg.vue";
 import { login } from "@/account";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
+import { siteGtagGoogleAdsConversion } from "@/config";
 
 let submitting = $ref(false);
 
@@ -41,11 +44,15 @@ function submit() {
 		code: props.code,
 	})
 		.then((res) => {
-			return login(res.i, "/");
+			const logined = login(res.i, "/");
+			if (siteGtagGoogleAdsConversion) {
+				// @ts-ignore
+				this.$gtag.event('event', 'conversion', { 'send_to': siteGtagGoogleAdsConversion });
+			}
+			return logined;
 		})
 		.catch(() => {
 			submitting = false;
-
 			os.alert({
 				type: "error",
 				text: i18n.ts.somethingHappened,
@@ -59,8 +66,8 @@ function submit() {
 	min-height: 100svh;
 	padding: 32px 32px 64px 32px;
 	box-sizing: border-box;
-display: grid;
-place-content: center;
+	display: grid;
+	place-content: center;
 }
 
 .form {
