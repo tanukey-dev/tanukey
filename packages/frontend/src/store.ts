@@ -128,7 +128,6 @@ export const defaultStore = markRaw(
 				"channels",
 				"pages",
 				"-",
-				"explore",
 				"announcements",
 				"search",
 			],

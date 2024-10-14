@@ -279,10 +279,6 @@ export const router = createRouter({
 					props: true,
 				},
 				{
-					path: "explore",
-					component: page(() => import("./pages/explore.vue")),
-				},
-				{
 					path: "search",
 					component: page(() => import("./pages/search.vue")),
 				},
