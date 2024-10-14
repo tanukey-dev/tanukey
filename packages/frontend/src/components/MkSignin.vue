@@ -23,11 +23,13 @@
 				</MkInput>
 				<MkCaptcha v-if="instance.enableTurnstile" ref="turnstile" v-model="turnstileResponse"
 					:class="$style.captcha" provider="turnstile" :sitekey="instance.turnstileSiteKey" />
-				<MkButton type="submit" large primary rounded :disabled="shouldDisableSubmitting"
-					style="margin: 0 auto;">{{
+				<div class="_buttonsCenter">
+					<MkButton inline rounded @click="emit('cancel')">{{ i18n.ts.cancel }}</MkButton>
+					<MkButton type="submit" large primary rounded :disabled="shouldDisableSubmitting">{{
 						signing ?
 							i18n.ts.loggingIn
 							: i18n.ts.login }}</MkButton>
+				</div>
 			</div>
 			<div v-if="totpLogin" class="2fa-signin" :class="{ securityKeys: user && user.securityKeys }">
 				<div v-if="user && user.securityKeys" class="twofa-group tap-group">
@@ -105,6 +107,7 @@ const shouldDisableSubmitting = $computed((): boolean => {
 const meta = $computed(() => instance);
 
 const emit = defineEmits<{
+	(ev: "cancel"): void;
 	(ev: "login", v: any): void;
 }>();
 

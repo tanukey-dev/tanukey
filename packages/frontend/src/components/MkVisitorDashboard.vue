@@ -44,12 +44,11 @@
 import MkButton from "@/components/MkButton.vue";
 import MkInfo from "@/components/MkInfo.vue";
 import MkNumber from "@/components/MkNumber.vue";
-import XSigninDialog from "@/components/MkSigninDialog.vue";
-import XSignupDialog from "@/components/MkSignupDialog.vue";
 import { instanceName } from "@/config";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import * as os from "@/os";
+import { router } from "@/router";
 import { Instance } from "misskey-js/built/entities";
 import { } from "vue";
 
@@ -65,25 +64,11 @@ os.api("stats", {}).then((res) => {
 });
 
 function signin() {
-	os.popup(
-		XSigninDialog,
-		{
-			autoSet: true,
-		},
-		{},
-		"closed",
-	);
+	router.push("/signin");
 }
 
 function signup() {
-	os.popup(
-		XSignupDialog,
-		{
-			autoSet: true,
-		},
-		{},
-		"closed",
-	);
+	router.push("/signup");
 }
 
 </script>

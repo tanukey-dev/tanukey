@@ -3,7 +3,7 @@
 		<template #header>{{ i18n.ts.login }}</template>
 
 		<MkSpacer :marginMin="20" :marginMax="28">
-			<MkSignin :autoSet="true" @login="onLogin" />
+			<MkSignin :autoSet="true" @login="onLogin" @cancel="onCancel" />
 		</MkSpacer>
 	</MkModalWindow>
 </template>
@@ -16,6 +16,10 @@ import { i18n } from "@/i18n";
 import { router } from "@/router";
 
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
+
+function onCancel() {
+	router.go(-1);
+}
 
 function onLogin() {
 	router.push("/secure/timeline");

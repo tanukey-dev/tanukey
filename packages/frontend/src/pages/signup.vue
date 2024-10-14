@@ -19,7 +19,7 @@ import { siteGtagGoogleAdsConversion } from "@/config";
 const dialog = $shallowRef<InstanceType<typeof MkModalWindow>>();
 
 function onCancel() {
-	router.push("/");
+	router.go(-1);
 }
 
 function onSignup() {
