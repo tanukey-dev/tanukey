@@ -18,6 +18,10 @@ export const router = createRouter({
 	routes: [
 		// public
 		{
+			path: "/timeline",
+			component: page(() => import("./pages/timeline-public.vue")),
+		},
+		{
 			path: "/@:initUser/pages/:initPageName/view-source",
 			component: page(() => import("./pages/page-editor/page-editor.vue")),
 			props: true,

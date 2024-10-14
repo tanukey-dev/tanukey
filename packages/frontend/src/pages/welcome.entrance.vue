@@ -57,8 +57,10 @@
 		<div :class="$style.mainDescription">
 			<div :class="[$style.mainDescriptionItem, $style.panel]">
 				<div :class="$style.headerText">公開タイムラインを見てみる</div>
-				<div :class="$style.tlBody">
-					<MkTimeline src="local" />
+				<div :class="$style.buttons">
+					<MkButton :class="$style.button" rounded data-cy-signin @click="timeline()">
+						公開タイムラインを表示
+					</MkButton>
 				</div>
 			</div>
 		</div>
@@ -70,10 +72,10 @@
 
 <script lang="ts" setup>
 import MkButton from "@/components/MkButton.vue";
-import MkTimeline from "@/components/MkTimeline.vue";
 import { host } from "@/config";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
+import { router } from "@/router";
 import { DetailedInstanceMetadata } from "misskey-js/built/entities";
 
 let meta = $ref<DetailedInstanceMetadata>();
@@ -83,13 +85,15 @@ os.api("meta", { detail: true }).then((_meta) => {
 });
 
 function signin() {
-	// トラッキングのためルーターは使わない
-	window.location.href = "/signin";
+	router.push("/signin");
 }
 
 function signup() {
-	// トラッキングのためルーターは使わない
-	window.location.href = "/signup";
+	router.push("/signup");
+}
+
+function timeline() {
+	router.push("/timeline");
 }
 
 </script>

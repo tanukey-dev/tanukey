@@ -23,13 +23,17 @@ import { defaultStore } from "@/store";
 import { MenuItem } from "@/types/menu";
 import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
 import { Tab } from "./global/MkPageHeader.tabs.vue";
+import MkStickyContainer from "./global/MkStickyContainer.vue";
+import MkPageHeader from "./global/MkPageHeader.vue";
+import MkSpacer from "./global/MkSpacer.vue";
+import { $i } from "@/account";
 
 const tabs = ref<Tab[]>([
 	{ key: "public", title: i18n.ts.public, icon: "ti ti-planet" },
 ]);
 const srcCh = computed(() =>
 	tab.value === "public"
-		? "public"
+		? $i ? "public" : "local"
 		: "channel",
 );
 const postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
