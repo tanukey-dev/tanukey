@@ -23,18 +23,17 @@
 					</header>
 				</div>
 			</template>
-			<div v-if="!isMobile" :class="$style.mainContent">
-				<textarea ref="textareaEl" v-model="text" :class="$style.text" data-cy-post-form-text @paste="onPaste"
-					:style="textareaMainStyle" @input="handleInputMain($event)" @compositionupdate="onCompositionUpdate"
-					@compositionend="onCompositionEnd"></textarea>
-				<Mfm :class="$style.mfm" :text="text" :author="$i" :i="$i" />
-			</div>
-			<div v-if="isMobile" :class="$style.mainContentMobile">
-				<textarea ref="textareaEl" v-model="text" :class="[$style.text, $style.textMobile]"
-					data-cy-post-form-text @paste="onPaste" :style="textareaMainStyle" @input="handleInputMain($event)"
+
+			<div :class="isMobile ? $style.mainContentMobile : $style.mainContent">
+				<textarea ref="textareaEl" v-model="text"
+					:class="isMobile ? [$style.text, $style.textMobile] : $style.text" data-cy-post-form-text
+					@paste="onPaste" :style="textareaMainStyle" @input="handleInputMain($event)"
 					@compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd"></textarea>
-				<Mfm v-if="showPreview" :class="[$style.mfm, $style.mfmMobile]" :text="text" :author="$i" :i="$i" />
+				<Mfm v-if="!isMobile || (isMobile && showPreview)"
+					:class="isMobile ? [$style.mfm, $style.mfmMobile] : $style.mfm" :text="text" :author="$i" :i="$i">
+				</Mfm>
 			</div>
+
 		</MkStickyContainer>
 	</div>
 </template>
@@ -56,6 +55,7 @@ import { defaultStore } from "@/store";
 import { i18n } from "@/i18n";
 import { uploadFile } from "@/scripts/upload";
 import { $i } from '@/account';
+import MkStickyContainer from "@/components/global/MkStickyContainer.vue";
 
 const textareaEl = $shallowRef<HTMLTextAreaElement | null>(null);
 const text = defineModel<string>()
