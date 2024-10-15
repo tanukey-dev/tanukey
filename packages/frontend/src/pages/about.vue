@@ -88,12 +88,16 @@
 				</FormSection>
 			</div>
 		</MkSpacer>
-		<XEmojis v-else-if="tab === 'emojis'" />
 		<MkSpacer v-else-if="tab === 'federation'" :contentMax="1000" :marginMin="20">
 			<XFederation />
 		</MkSpacer>
 		<MkSpacer v-else-if="tab === 'charts'" :contentMax="1000" :marginMin="20">
 			<MkInstanceStats />
+		</MkSpacer>
+		<MkSpacer v-if="tab === 'ads'" :contentMax="500">
+			<div class="_gaps">
+				<MkAd v-for="ad in instance.ads" :key="ad.id" :specify="ad" />
+			</div>
 		</MkSpacer>
 	</MkStickyContainer>
 </template>
@@ -148,11 +152,6 @@ const headerTabs = $computed(() => [
 		title: i18n.ts.overview,
 	},
 	{
-		key: "emojis",
-		title: i18n.ts.customEmojis,
-		icon: "ti ti-icons",
-	},
-	{
 		key: "federation",
 		title: i18n.ts.federation,
 		icon: "ti ti-whirl",
@@ -161,6 +160,11 @@ const headerTabs = $computed(() => [
 		key: "charts",
 		title: i18n.ts.charts,
 		icon: "ti ti-chart-line",
+	},
+	{
+		key: "ads",
+		title: i18n.ts.ads,
+		icon: "ti ti-ad",
 	},
 ]);
 

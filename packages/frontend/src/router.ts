@@ -263,15 +263,6 @@ export const router = createRouter({
 					component: page(() => import("./pages/about-tanukey.vue")),
 				},
 				{
-					path: "invite",
-					name: "invite",
-					component: page(() => import("./pages/invite.vue")),
-				},
-				{
-					path: "ads",
-					component: page(() => import("./pages/ads.vue")),
-				},
-				{
 					path: "theme-editor",
 					component: page(() => import("./pages/theme-editor.vue")),
 				},
@@ -296,14 +287,6 @@ export const router = createRouter({
 				{
 					path: "share",
 					component: page(() => import("./pages/share.vue")),
-				},
-				{
-					path: "api-console",
-					component: page(() => import("./pages/api-console.vue")),
-				},
-				{
-					path: "scratchpad",
-					component: page(() => import("./pages/scratchpad.vue")),
 				},
 				{
 					path: "tags/:tag",
@@ -541,6 +524,11 @@ export const router = createRouter({
 					props: true,
 				},
 				{
+					path: "custom-emojis",
+					component: page(() => import("./pages/about.emojis.vue")),
+					props: true,
+				},
+				{
 					path: "settings",
 					component: page(() => import("./pages/settings/index.vue")),
 					children: [
@@ -706,6 +694,10 @@ export const router = createRouter({
 						{
 							path: "points",
 							component: page(() => import("./pages/settings/points.vue")),
+						},
+						{
+							path: "invite",
+							component: page(() => import("./pages/invite.vue")),
 						},
 						{
 							path: "other",

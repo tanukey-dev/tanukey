@@ -2,7 +2,7 @@
 	<div :class="$style.root">
 		<div :class="$style.top">
 			<div :class="$style.banner" :style="{ backgroundImage: `url(${instance.bannerUrl})` }"></div>
-			<button class="_button" :class="$style.instance" @click="openInstanceMenu">
+			<button class="_button" :class="$style.instance">
 				<img :src="instance.iconUrl || instance.faviconUrl || '/favicon.ico'" alt=""
 					:class="$style.instanceIcon" />
 			</button>
@@ -57,7 +57,6 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, toRef } from "vue";
-import { openInstanceMenu } from "./common";
 import * as os from "@/os";
 import { navbarItemDef } from "@/navbar";
 import { $i, openAccountMenu as openAccountMenu_ } from "@/account";
@@ -65,6 +64,7 @@ import { defaultStore } from "@/store";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import MkA from "@/components/global/MkA.vue";
+import { router } from "@/router";
 
 const menu = toRef(defaultStore.state, "menu");
 const otherMenuItemIndicated = computed(() => {

@@ -118,11 +118,9 @@ export const navbarItemDef = reactive({
 		to: "/secure/my/achievements",
 	},
 	about: {
-		title: i18n.ts.about,
+		title: i18n.ts.instanceInfo,
 		icon: "ti ti-info-circle",
-		action: (ev) => {
-			openInstanceMenu(ev);
-		},
+		to: "/secure/about",
 	},
 	reload: {
 		title: i18n.ts.reload,
@@ -141,8 +139,8 @@ export const navbarItemDef = reactive({
 	},
 	customEmojis: {
 		title: i18n.ts.customEmojis,
-		icon: "ti ti-icons",
-		to: "/secure/about#emojis",
+		icon: "ti ti-mood-happy",
+		to: "/secure/custom-emojis",
 	},
 	clearCache: {
 		title: i18n.ts.clearCache,

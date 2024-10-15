@@ -4,7 +4,7 @@
 			<div :class="$style.top">
 				<div :class="$style.banner" :style="{ backgroundImage: `url(${instance.bannerUrl})` }"></div>
 				<button v-tooltip.noDelay.right="instance.name ?? i18n.ts.instance" class="_button"
-					:class="$style.instance" @click="openInstanceMenu">
+					:class="$style.instance">
 					<img :src="instance.iconUrl || instance.faviconUrl || '/favicon.ico'" alt=""
 						:class="$style.instanceIcon" />
 				</button>
@@ -68,7 +68,6 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent } from "vue";
-import { openInstanceMenu } from "./common";
 import * as os from "@/os";
 import { navbarItemDef } from "@/navbar";
 import { $i, openAccountMenu as openAccountMenu_ } from "@/account";
@@ -76,6 +75,7 @@ import { defaultStore } from "@/store";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import MkA from "@/components/global/MkA.vue";
+import { router } from "@/router";
 
 const menu = computed(defaultStore.makeGetterSetter("menu"));
 const otherMenuItemIndicated = computed(() => {
@@ -275,6 +275,7 @@ function more(ev: MouseEvent) {
 	}
 
 	.middle {
+		padding-top: 12px;
 		flex: 1;
 	}
 
@@ -460,6 +461,7 @@ function more(ev: MouseEvent) {
 	.item {
 		display: block;
 		position: relative;
+		line-height: 2.85rem;
 		padding: 18px 0;
 		width: 100%;
 		text-align: center;

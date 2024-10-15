@@ -15,7 +15,7 @@
 <script lang="ts" setup>
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
-import { defineAsyncComponent, ref } from "vue";
+import { defineAsyncComponent, computed } from "vue";
 
 
 const Emojis = defineAsyncComponent(() => import('./about.emojis.approved.vue'));
@@ -54,7 +54,12 @@ const headerTabs = $computed(() => [
 	},
 ]);
 
-definePageMetadata(ref({}));
+definePageMetadata(
+	computed(() => ({
+		title: i18n.ts.customEmojis,
+		icon: "ti ti-mood-happy",
+	})),
+);
 
 </script>
 

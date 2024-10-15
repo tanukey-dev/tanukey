@@ -188,6 +188,12 @@ const menuDef = computed(() => [
 				to: "/secure/settings/points",
 				active: isActive("/secure/settings/points")
 			},
+			$i && ($i.isAdmin || $i.policies.canInvite) && instance.disableRegistration ? {
+				icon: "ti ti-users-plus",
+				text: i18n.ts.invite,
+				to: "/secure/settings/invite",
+				active: isActive("/secure/settings/invite")
+			} : undefined,
 			{
 				icon: "ti ti-badges",
 				text: i18n.ts.roles,
