@@ -183,9 +183,8 @@ function queryKey() {
 			});
 		})
 		.then((res) => {
-			onLogin(res)?.then(() => {
-				emit("login", res);
-			});
+			emit("login", res);
+			onLogin(res)
 		})
 		.catch((err) => {
 			if (err === null) return;
@@ -228,9 +227,8 @@ function onSubmit() {
 			"turnstile-response": turnstileResponse,
 		})
 			.then((res) => {
-				onLogin(res)?.then(() => {
-					emit("login", res);
-				})
+				emit("login", res);
+				onLogin(res);
 			})
 			.catch(loginFailed);
 	}
