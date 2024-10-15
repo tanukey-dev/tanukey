@@ -1,16 +1,24 @@
 import { computed, reactive } from "vue";
 import { $i } from "./account";
-import { miLocalStorage } from "./local-storage";
 import { openInstanceMenu } from "./ui/_common_/common";
 import { lookup } from "./scripts/lookup";
-import * as os from "@/os";
 import { i18n } from "@/i18n";
-import { ui } from "@/config";
 import { defaultStore } from "@/store";
 import { clearCache } from "@/scripts/cache-clear";
-import { router } from "@/router";
 
 export const navbarItemDef = reactive({
+	timeline: {
+		title: i18n.ts.timeline,
+		icon: "ti ti-timeline",
+		show: computed(() => $i != null),
+		to: "/secure/timeline",
+	},
+	deck: {
+		title: i18n.ts.deck,
+		icon: "ti ti-layout-list",
+		show: computed(() => $i != null),
+		to: "/secure/deck",
+	},
 	notifications: {
 		title: i18n.ts.notifications,
 		icon: "ti ti-bell",

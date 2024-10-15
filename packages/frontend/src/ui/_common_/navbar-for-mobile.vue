@@ -8,14 +8,6 @@
 			</button>
 		</div>
 		<div :class="$style.middle">
-			<MkA :class="$style.item" :activeClass="$style.active" to="/secure/timeline" exact>
-				<i :class="$style.itemIcon" class="ti ti-home ti-fw"></i><span :class="$style.itemText">{{
-					i18n.ts.timeline }}</span>
-			</MkA>
-			<MkA :class="$style.item" :activeClass="$style.active" to="/secure/deck" exact>
-				<i :class="$style.itemIcon" class="ti ti-layout-list ti-fw"></i><span :class="$style.itemText">{{
-					i18n.ts.deck }}</span>
-			</MkA>
 			<template v-for="item in menu">
 				<div v-if="item === '-'" :class="$style.divider"></div>
 				<component :is="navbarItemDef[item].to ? 'MkA' : 'button'"
@@ -30,7 +22,7 @@
 				</component>
 			</template>
 			<div :class="$style.divider"></div>
-			<MkA v-if="$i.isAdmin || $i.isModerator" :class="$style.item" :activeClass="$style.active"
+			<MkA v-if="$i && ($i.isAdmin || $i.isModerator)" :class="$style.item" :activeClass="$style.active"
 				to="/secure/admin">
 				<i :class="$style.itemIcon" class="ti ti-dashboard ti-fw"></i><span :class="$style.itemText">{{
 					i18n.ts.controlPanel

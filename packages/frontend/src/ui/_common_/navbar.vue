@@ -10,16 +10,6 @@
 				</button>
 			</div>
 			<div :class="$style.middle">
-				<MkA v-tooltip.noDelay.right="i18n.ts.timeline" :class="$style.item" :activeClass="$style.active"
-					:to="'/secure/timeline'" exact>
-					<i :class="$style.itemIcon" class="ti ti-home ti-fw"></i><span :class="$style.itemText">{{
-						i18n.ts.timeline }}</span>
-				</MkA>
-				<MkA v-tooltip.noDelay.right="i18n.ts.deck" :class="$style.item" :activeClass="$style.active"
-					:to="'/secure/deck'" exact>
-					<i :class="$style.itemIcon" class="ti ti-layout-list ti-fw"></i><span :class="$style.itemText">{{
-						i18n.ts.deck }}</span>
-				</MkA>
 				<template v-for="item in menu">
 					<div v-if="item === '-'" :class="$style.divider"></div>
 					<component :is="navbarItemDef[item].to ? 'MkA' : 'button'"
@@ -35,12 +25,6 @@
 					</component>
 				</template>
 				<div :class="$style.divider"></div>
-				<MkA v-if="$i.isAdmin || $i.isModerator" v-tooltip.noDelay.right="i18n.ts.controlPanel"
-					:class="$style.item" :activeClass="$style.active" to="/secure/admin">
-					<i :class="$style.itemIcon" class="ti ti-dashboard ti-fw"></i><span :class="$style.itemText">{{
-						i18n.ts.controlPanel
-					}}</span>
-				</MkA>
 				<button class="_button" :class="$style.item" @click="more">
 					<i :class="$style.itemIcon" class="ti ti-grid-dots ti-fw"></i><span :class="$style.itemText">{{
 						i18n.ts.more
@@ -52,6 +36,12 @@
 					to="/secure/settings">
 					<i :class="$style.itemIcon" class="ti ti-settings ti-fw"></i><span :class="$style.itemText">{{
 						i18n.ts.settings
+					}}</span>
+				</MkA>
+				<MkA v-if="$i && ($i.isAdmin || $i.isModerator)" v-tooltip.noDelay.right="i18n.ts.controlPanel"
+					:class="$style.item" :activeClass="$style.active" to="/secure/admin">
+					<i :class="$style.itemIcon" class="ti ti-dashboard ti-fw"></i><span :class="$style.itemText">{{
+						i18n.ts.controlPanel
 					}}</span>
 				</MkA>
 			</div>
@@ -81,6 +71,7 @@ import { $i, openAccountMenu as openAccountMenu_ } from "@/account";
 import { defaultStore } from "@/store";
 import { i18n } from "@/i18n";
 import { instance } from "@/instance";
+import MkA from "@/components/global/MkA.vue";
 
 const iconOnly = ref(false);
 

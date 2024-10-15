@@ -20,9 +20,9 @@
 			<option value="desktop"><i class="ti ti-device-desktop" /> {{ i18n.ts.desktop }}</option>
 		</MkRadios>
 
-		<MkRadios v-model="uiMode" :key="uiModeKey">
+		<MkRadios v-model="uiMode">
 			<template #label>{{ i18n.ts.switchUi }}</template>
-			<option value="default"><i class="ti ti-home" /> {{ i18n.ts.default }}</option>
+			<option value="default"><i class="ti ti-timeline" /> {{ i18n.ts.default }}</option>
 			<option value="deck"><i class="ti ti-layout-list" /> {{ i18n.ts.deck }}</option>
 		</MkRadios>
 

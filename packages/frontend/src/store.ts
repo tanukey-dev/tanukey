@@ -121,6 +121,8 @@ export const defaultStore = markRaw(
 		menu: {
 			where: "deviceAccount",
 			default: [
+				"timeline",
+				"deck",
 				"notifications",
 				"favorites",
 				"drive",
