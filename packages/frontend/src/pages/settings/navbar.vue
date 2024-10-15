@@ -21,17 +21,12 @@
 		<div class="_buttons">
 			<MkButton @click="addItem"><i class="ti ti-plus"></i> {{ i18n.ts.addItem }}</MkButton>
 			<MkButton danger @click="reset"><i class="ti ti-reload"></i> {{ i18n.ts.default }}</MkButton>
-			<MkButton primary class="save" @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}
-			</MkButton>
 		</div>
 
 		<MkRadios v-model="menuDisplay">
 			<template #label>{{ i18n.ts.display }}</template>
 			<option value="sideFull">{{ i18n.ts._menuDisplay.sideFull }}</option>
 			<option value="sideIcon">{{ i18n.ts._menuDisplay.sideIcon }}</option>
-			<option value="top">{{ i18n.ts._menuDisplay.top }}</option>
-			<!-- <MkRadio v-model="menuDisplay" value="hide" disabled>{{ i18n.ts._menuDisplay.hide }}</MkRadio>-->
-			<!-- TODO: サイドバーを完全に隠せるようにすると、別途ハンバーガーボタンのようなものをUIに表示する必要があり面倒 -->
 		</MkRadios>
 	</div>
 </template>
@@ -45,7 +40,6 @@ import MkContainer from "@/components/MkContainer.vue";
 import * as os from "@/os";
 import { navbarItemDef } from "@/navbar";
 import { defaultStore } from "@/store";
-import { unisonReload } from "@/scripts/unison-reload";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
 
@@ -61,16 +55,6 @@ const items = ref(
 );
 
 const menuDisplay = computed(defaultStore.makeGetterSetter("menuDisplay"));
-
-async function reloadAsk() {
-	const { canceled } = await os.confirm({
-		type: "info",
-		text: i18n.ts.reloadToApplySetting,
-	});
-	if (canceled) return;
-
-	unisonReload();
-}
 
 async function addItem() {
 	const menu = Object.keys(navbarItemDef).filter(
@@ -101,14 +85,18 @@ async function addItem() {
 
 function removeItem(index: number) {
 	items.value.splice(index, 1);
+	update();
 }
 
-async function save() {
+watch(items, () => {
+	update();
+})
+
+function update() {
 	defaultStore.set(
 		"menu",
 		items.value.map((x) => x.type),
 	);
-	await reloadAsk();
 }
 
 function reset() {
@@ -116,11 +104,8 @@ function reset() {
 		id: Math.random().toString(),
 		type: x,
 	}));
+	update();
 }
-
-watch(menuDisplay, async () => {
-	await reloadAsk();
-});
 
 const headerActions = $computed(() => []);
 

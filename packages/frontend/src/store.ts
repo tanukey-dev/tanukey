@@ -300,7 +300,7 @@ export const defaultStore = markRaw(
 		},
 		menuDisplay: {
 			where: "device",
-			default: "sideFull" as "sideFull" | "sideIcon" | "top",
+			default: "sideFull" as "sideFull" | "sideIcon",
 		},
 		reportError: {
 			where: "device",

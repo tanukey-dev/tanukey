@@ -52,18 +52,22 @@
 						i18n.ts.note
 					}}</span>
 				</button>
-				<button v-tooltip.noDelay.right="`${i18n.ts.account}: @${$i.username}`" class="_button"
+				<div v-tooltip.noDelay.right="`${i18n.ts.account}: @${$i.username}`" class="_button"
 					:class="[$style.account]" @click="openAccountMenu">
 					<MkAvatar :user="$i" :class="$style.avatar" />
 					<MkAcct class="_nowrap" :class="$style.acct" :user="$i" />
-				</button>
+				</div>
 			</div>
 		</div>
+	</div>
+	<div :class="$style.switchSidebar" @click="switchSideBar">
+		<i v-if="iconOnly" :class="$style.switchSidebarIcon" class="ti ti-chevrons-right ti-fw"></i>
+		<i v-else :class="$style.switchSidebarIcon" class="ti ti-chevrons-left ti-fw"></i>
 	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, defineAsyncComponent, ref, watch } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { openInstanceMenu } from "./common";
 import * as os from "@/os";
 import { navbarItemDef } from "@/navbar";
@@ -73,9 +77,7 @@ import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import MkA from "@/components/global/MkA.vue";
 
-const iconOnly = ref(false);
-
-const menu = computed(() => defaultStore.state.menu);
+const menu = computed(defaultStore.makeGetterSetter("menu"));
 const otherMenuItemIndicated = computed(() => {
 	for (const def in navbarItemDef) {
 		if (menu.value.includes(def)) continue;
@@ -84,18 +86,16 @@ const otherMenuItemIndicated = computed(() => {
 	return false;
 });
 
-const calcViewState = () => {
-	iconOnly.value =
-		window.innerWidth <= 1279 || defaultStore.state.menuDisplay === "sideIcon";
-};
+const menuDisplay = computed(defaultStore.makeGetterSetter("menuDisplay"));
+const iconOnly = computed(() => window.innerWidth <= 1279 || menuDisplay.value === "sideIcon");
 
-calcViewState();
-
-window.addEventListener("resize", calcViewState);
-
-watch(defaultStore.reactiveState.menuDisplay, () => {
-	calcViewState();
-});
+function switchSideBar(ev: MouseEvent) {
+	if (menuDisplay.value === "sideIcon") {
+		menuDisplay.value = "sideFull";
+	} else {
+		menuDisplay.value = "sideIcon";
+	}
+}
 
 function openAccountMenu(ev: MouseEvent) {
 	openAccountMenu_(
@@ -143,6 +143,17 @@ function more(ev: MouseEvent) {
 	contain: strict;
 	display: flex;
 	flex-direction: column;
+}
+
+.switchSidebar {
+	position: relative;
+	z-index: 10000;
+}
+
+.switchSidebarIcon {
+	position: absolute;
+	bottom: 5px;
+	left: 5px;
 }
 
 .root:not(.iconOnly) {
@@ -419,6 +430,11 @@ function more(ev: MouseEvent) {
 		display: block;
 		text-align: center;
 		width: 100%;
+	}
+
+	.accountItems {
+		display: flex;
+		text-align: center;
 	}
 
 	.avatar {
