@@ -26,7 +26,7 @@
 				</MkPagination>
 			</div>
 
-			<div v-else-if="tab === 'my'" class="_gaps">
+			<div v-else-if="$i && tab === 'my'" class="_gaps">
 				<MkButton class="new" @click="create()"><i class="ti ti-plus"></i></MkButton>
 				<MkPagination v-slot="{ items }" :pagination="myPagesPagination">
 					<div class="_gaps">
@@ -35,7 +35,7 @@
 				</MkPagination>
 			</div>
 
-			<div v-else-if="tab === 'liked'">
+			<div v-else-if="$i && tab === 'liked'">
 				<MkPagination v-slot="{ items }" :pagination="likedPagesPagination">
 					<div class="_gaps">
 						<MkPagePreview v-for="like in items" :key="like.page.id" :page="like.page" />
@@ -57,6 +57,7 @@ import MkFoldableSection from "@/components/MkFoldableSection.vue";
 import { router } from "@/router";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
+import { $i } from "@/account";
 
 let key = $ref("");
 let tab = $ref("search");
@@ -115,7 +116,7 @@ const headerTabs = $computed(() => [
 		title: i18n.ts._pages.featured,
 		icon: "ti ti-flare",
 	},
-	{
+	...($i ? [{
 		key: "my",
 		title: i18n.ts._pages.my,
 		icon: "ti ti-edit",
@@ -124,7 +125,7 @@ const headerTabs = $computed(() => [
 		key: "liked",
 		title: i18n.ts._pages.liked,
 		icon: "ti ti-heart",
-	},
+	}] : []),
 ]);
 
 definePageMetadata(

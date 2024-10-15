@@ -70,6 +70,13 @@ export const router = createRouter({
 			},
 		},
 		{
+			path: "/pages",
+			component: page(() => import("./pages/pages.vue")),
+			meta: {
+				loginedUserRedirect: true,
+			},
+		},
+		{
 			path: "/list/:listId",
 			component: page(() => import("./pages/list.vue")),
 			props: true,
@@ -318,6 +325,9 @@ export const router = createRouter({
 				{
 					path: "pages",
 					component: page(() => import("./pages/pages.vue")),
+					meta: {
+						notLoginedUserRedirect: true,
+					},
 				},
 				{
 					path: "play/:id/edit",
