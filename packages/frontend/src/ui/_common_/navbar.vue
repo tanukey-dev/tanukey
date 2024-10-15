@@ -3,7 +3,7 @@
 		<div :class="$style.body">
 			<div :class="$style.top">
 				<div :class="$style.banner" :style="{ backgroundImage: `url(${instance.bannerUrl})` }"></div>
-				<button v-tooltip.noDelay.right="instance.name ?? i18n.ts.instance" class="_button"
+				<button v-if="iconOnly" v-tooltip.noDelay.right="instance.name ?? i18n.ts.instance" class="_button"
 					:class="$style.instance">
 					<img :src="instance.iconUrl || instance.faviconUrl || '/favicon.ico'" alt=""
 						:class="$style.instanceIcon" />
@@ -176,7 +176,7 @@ function more(ev: MouseEvent) {
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 100%;
+		height: 100px;
 		background-size: cover;
 		background-position: center center;
 		-webkit-mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 15%);
@@ -275,7 +275,7 @@ function more(ev: MouseEvent) {
 	}
 
 	.middle {
-		padding-top: 12px;
+		padding-top: 65px;
 		flex: 1;
 	}
 

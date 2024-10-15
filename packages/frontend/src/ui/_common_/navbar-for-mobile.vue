@@ -2,10 +2,6 @@
 	<div :class="$style.root">
 		<div :class="$style.top">
 			<div :class="$style.banner" :style="{ backgroundImage: `url(${instance.bannerUrl})` }"></div>
-			<button class="_button" :class="$style.instance">
-				<img :src="instance.iconUrl || instance.faviconUrl || '/favicon.ico'" alt=""
-					:class="$style.instanceIcon" />
-			</button>
 		</div>
 		<div :class="$style.middle">
 			<template v-for="item in menu">
@@ -115,11 +111,11 @@ function more() {
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 100%;
+	height: 100px;
 	background-size: cover;
 	background-position: center center;
-	-webkit-mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 0.75) 100%);
-	mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 0.75) 100%);
+	-webkit-mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 15%);
+	mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 15%);
 }
 
 .instance {
@@ -211,6 +207,7 @@ function more() {
 
 .middle {
 	flex: 1;
+	padding-top: 65px;
 }
 
 .divider {
