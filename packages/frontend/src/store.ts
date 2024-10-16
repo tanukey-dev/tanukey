@@ -122,7 +122,6 @@ export const defaultStore = markRaw(
 			where: "deviceAccount",
 			default: [
 				"timeline",
-				"deck",
 				"notifications",
 				"favorites",
 				"drive",
@@ -130,6 +129,7 @@ export const defaultStore = markRaw(
 				"channels",
 				"pages",
 				"-",
+				"deck",
 				"announcements",
 				"search",
 			],
