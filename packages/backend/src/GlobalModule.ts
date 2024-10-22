@@ -1,15 +1,15 @@
-import { setTimeout } from 'node:timers/promises';
-import { Global, Inject, Module } from '@nestjs/common';
-import * as Redis from 'ioredis';
-import { DataSource } from 'typeorm';
-import { defaultProvider } from '@aws-sdk/credential-provider-node';
-import { Client as OpenSearch } from '@opensearch-project/opensearch';
-import { AwsSigv4Signer } from '@opensearch-project/opensearch/aws';
-import { DI } from './di-symbols.js';
-import { Config, loadConfig } from './config.js';
-import { createPostgresDataSource } from './postgres.js';
-import { RepositoryModule } from './models/RepositoryModule.js';
-import type { Provider, OnApplicationShutdown } from '@nestjs/common';
+import { setTimeout } from "node:timers/promises";
+import { Global, Inject, Module } from "@nestjs/common";
+import * as Redis from "ioredis";
+import { DataSource } from "typeorm";
+import { defaultProvider } from "@aws-sdk/credential-provider-node";
+import { Client as OpenSearch } from "@opensearch-project/opensearch";
+import { AwsSigv4Signer } from "@opensearch-project/opensearch/aws";
+import { DI } from "./di-symbols.js";
+import { Config, loadConfig } from "./config.js";
+import { createPostgresDataSource } from "./postgres.js";
+import { RepositoryModule } from "./models/RepositoryModule.js";
+import type { Provider, OnApplicationShutdown } from "@nestjs/common";
 
 const $config: Provider = {
 	provide: DI.config,
@@ -30,28 +30,10 @@ const $opensearch: Provider = {
 	useFactory: (config: Config) => {
 		if (config.opensearch) {
 			return new OpenSearch({
-				node: `${config.opensearch.ssl ? 'https' : 'http'}://${config.opensearch.host}:${config.opensearch.port}`,
-				// see: https://opensearch.org/docs/latest/clients/javascript/index
-				...AwsSigv4Signer({
-					region: `${config.opensearch.region}`,
-					service: 'es', // 'aoss' for OpenSearch Serverless
-					// Must return a Promise that resolve to an AWS.Credentials object.
-					// This function is used to acquire the credentials when the client start and
-					// when the credentials are expired.
-					// The Client will refresh the Credentials only when they are expired.
-					// With AWS SDK V2, Credentials.refreshPromise is used when available to refresh the credentials.
-
-					// Example with AWS SDK V3:
-					getCredentials: () => {
-						// Any other method to acquire a new Credentials object can be used.
-						const credentialsProvider = defaultProvider();
-						return credentialsProvider();
-					},
-				}),
+				node: `${config.opensearch.ssl ? "https" : "http"}://${config.opensearch.host}:${config.opensearch.port}`,
 			});
-		} else {
-			return null;
 		}
+		return null;
 	},
 	inject: [DI.config],
 };
@@ -77,7 +59,8 @@ const $redisForPub: Provider = {
 		const redis = new Redis.Redis({
 			port: config.redisForPubsub.port,
 			host: config.redisForPubsub.host,
-			family: config.redisForPubsub.family == null ? 0 : config.redisForPubsub.family,
+			family:
+				config.redisForPubsub.family == null ? 0 : config.redisForPubsub.family,
 			password: config.redisForPubsub.pass,
 			keyPrefix: `${config.redisForPubsub.prefix}:`,
 			db: config.redisForPubsub.db ?? 0,
@@ -93,7 +76,8 @@ const $redisForSub: Provider = {
 		const redis = new Redis.Redis({
 			port: config.redisForPubsub.port,
 			host: config.redisForPubsub.host,
-			family: config.redisForPubsub.family == null ? 0 : config.redisForPubsub.family,
+			family:
+				config.redisForPubsub.family == null ? 0 : config.redisForPubsub.family,
 			password: config.redisForPubsub.pass,
 			keyPrefix: `${config.redisForPubsub.prefix}:`,
 			db: config.redisForPubsub.db ?? 0,
@@ -108,7 +92,15 @@ const $redisForSub: Provider = {
 @Module({
 	imports: [RepositoryModule],
 	providers: [$config, $db, $opensearch, $redis, $redisForPub, $redisForSub],
-	exports: [$config, $db, $opensearch, $redis, $redisForPub, $redisForSub, RepositoryModule],
+	exports: [
+		$config,
+		$db,
+		$opensearch,
+		$redis,
+		$redisForPub,
+		$redisForSub,
+		RepositoryModule,
+	],
 })
 export class GlobalModule implements OnApplicationShutdown {
 	constructor(
@@ -119,7 +111,7 @@ export class GlobalModule implements OnApplicationShutdown {
 	) {}
 
 	public async dispose(): Promise<void> {
-		if (process.env.NODE_ENV === 'test') {
+		if (process.env.NODE_ENV === "test") {
 			// XXX:
 			// Shutting down the existing connections causes errors on Jest as
 			// Misskey has asynchronous postgres/redis connections that are not
