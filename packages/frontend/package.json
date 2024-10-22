@@ -17,6 +17,7 @@
 		"@rollup/pluginutils": "5.0.2",
 		"@syuilo/aiscript": "0.15.0",
 		"@tabler/icons-webfont": "2.30.0",
+		"@vitejs/plugin-vue": "^5.1.4",
 		"@vue-macros/reactivity-transform": "0.3.9",
 		"@vue/compiler-sfc": "3.3.4",
 		"@vueform/multiselect": "^2.6.2",
