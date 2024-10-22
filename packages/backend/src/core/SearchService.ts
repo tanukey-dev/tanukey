@@ -51,8 +51,8 @@ export class SearchService {
 				.exists({
 					index: indexName,
 				})
-				.then((indexExists: any) => {
-					if (!indexExists) {
+				.then((response: any) => {
+					if (!response?.body) {
 						this.opensearch?.indices
 							.create({
 								index: indexName,
@@ -81,14 +81,14 @@ export class SearchService {
 													sudachi_c_tokenizer: {
 														type: "sudachi_tokenizer",
 														additional_settings:
-															"{'systemDict':'system_core.dic'}",
+															'{"systemDict":"system_core.dic"}',
 														split_mode: "C",
 														discard_punctuation: true,
 													},
 													sudachi_a_tokenizer: {
 														type: "sudachi_tokenizer",
 														additional_settings:
-															"{'systemDict':'system_core.dic'}",
+															'{"systemDict":"system_core.dic"}',
 														split_mode: "A",
 														discard_punctuation: true,
 													},
