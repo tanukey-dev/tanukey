@@ -1,6 +1,6 @@
 {
 	"name": "tanukey",
-	"version": "14.21.2",
+	"version": "14.21.3",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/tanukey-dev/tanukey.git"
@@ -11,6 +11,7 @@
 	"scripts": {
 		"build-pre": "node ./scripts/build-pre.js",
 		"build": "pnpm build-pre && pnpm -r build && pnpm gulp",
+		"frontend-build": "(cd packages/misskey-js && pnpm i && pnpm build) && (cd packages/frontend && pnpm i && pnpm build)",
 		"start": "pnpm check:connect && cd packages/backend && node ./built/boot/index.js",
 		"start:test": "cd packages/backend && cross-env NODE_ENV=test node ./built/boot/index.js",
 		"init": "pnpm migrate",
@@ -23,7 +24,9 @@
 		"format": "npx @biomejs/biome format --write packages",
 		"clean": "node ./scripts/clean.js",
 		"clean-all": "node ./scripts/clean-all.js",
-		"cleanall": "pnpm clean-all"
+		"cleanall": "pnpm clean-all",
+		"start:docker": "pnpm check:connect && cd packages/backend && exec node ./built/boot/index.js",
+		"migrateandstart:docker": "pnpm migrate && exec pnpm start:docker"
 	},
 	"resolutions": {
 		"chokidar": "3.5.3",
