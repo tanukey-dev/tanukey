@@ -3,7 +3,7 @@ name: Publish Docker image (tanukey-dev/master)
 on:
   push:
     branches:
-      - develop
+      - master
   workflow_dispatch:
 
 jobs:
@@ -45,4 +45,5 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/tanukey-dev/tanukey:tanukey-buildcache
           cache-to: type=registry,ref=ghcr.io/tanukey-dev/tanukey:tanukey-buildcache,mode=max
           tags: |
+            ghcr.io/tanukey-dev/tanukey:latest
             ghcr.io/tanukey-dev/tanukey:${{ env.FORMATTED_BRANCH_NAME }}
