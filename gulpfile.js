@@ -45,39 +45,11 @@ gulp.task("copy:frontend:locales", (cb) => {
 	cb();
 });
 
-gulp.task("build:backend:script", () => {
-	return gulp
-		.src(["./packages/backend/src/server/web/boot.js"])
-		.pipe(replace("LANGS", JSON.stringify(Object.keys(locales))))
-		.pipe(
-			terser({
-				toplevel: true,
-			}),
-		)
-		.pipe(gulp.dest("./packages/backend/built/server/web/"));
-});
-
-gulp.task("build:backend:style", () => {
-	return gulp
-		.src([
-			"./packages/backend/src/server/web/style.css",
-			"./packages/backend/src/server/web/error.css",
-		])
-		.pipe(
-			cssnano({
-				zindex: false,
-			}),
-		)
-		.pipe(gulp.dest("./packages/backend/built/server/web/"));
-});
-
 gulp.task(
 	"build",
 	gulp.parallel(
 		"copy:frontend:locales",
 		"copy:backend:views",
-		"build:backend:script",
-		"build:backend:style",
 		"copy:frontend:fonts",
 		"copy:frontend:tabler-icons",
 	),

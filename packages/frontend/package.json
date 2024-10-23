@@ -4,7 +4,7 @@
 	"scripts": {
 		"watch": "vite",
 		"build": "vite build",
-		"typecheck": "vue-tsc --noEmit"
+		"preview": "vite preview"
 	},
 	"dependencies": {
 		"@discordapp/twemoji": "14.1.2",
@@ -16,6 +16,9 @@
 		"@rollup/plugin-replace": "5.0.2",
 		"@rollup/pluginutils": "5.0.2",
 		"@syuilo/aiscript": "0.15.0",
+		"@tabler/core": "1.0.0-beta21",
+		"@tabler/icons": "^3.19.0",
+		"@tabler/icons-vue": "^3.19.0",
 		"@tabler/icons-webfont": "2.30.0",
 		"@vitejs/plugin-vue": "^5.1.4",
 		"@vue-macros/reactivity-transform": "0.3.9",
@@ -94,6 +97,7 @@
 		"@types/uuid": "9.0.1",
 		"@types/websocket": "1.0.5",
 		"@types/ws": "8.5.4",
+		"@vitejs/plugin-vue": "^5.1.4",
 		"@vue/runtime-core": "3.3.4",
 		"acorn": "^8.8.2",
 		"chokidar-cli": "3.0.0",
