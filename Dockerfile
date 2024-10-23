@@ -29,7 +29,7 @@ COPY --link ["packages/frontend/package.json", "./packages/frontend/"]
 COPY --link ["packages/sw/package.json", "./packages/sw/"]
 COPY --link ["packages/misskey-js/package.json", "./packages/misskey-js/"]
 
-RUN pnpm i --frozen-lockfile --aggregate-output --offline \
+RUN pnpm i --frozen-lockfile --aggregate-output \
 	&& pnpm rebuild -r
 
 COPY --link . ./
@@ -61,7 +61,7 @@ COPY --link ["scripts", "./scripts"]
 COPY --link ["packages/backend/package.json", "./packages/backend/"]
 COPY --link ["packages/misskey-js/package.json", "./packages/misskey-js/"]
 
-RUN pnpm i --frozen-lockfile --aggregate-output --offline \
+RUN pnpm i --frozen-lockfile --aggregate-output \
 	&& pnpm rebuild -r
 
 FROM --platform=$TARGETPLATFORM node:${NODE_VERSION}-slim AS runner
