@@ -589,7 +589,7 @@ importers:
         version: 2.30.0
       '@vitejs/plugin-vue':
         specifier: ^5.1.4
-        version: 5.1.4(vite@5.4.8)(vue@3.5.11)
+        version: 5.1.4(vite@5.4.10)(vue@3.5.11)
       '@vue-macros/reactivity-transform':
         specifier: 0.3.9
         version: 0.3.9(rollup@3.23.0)(vue@3.5.11)
@@ -744,8 +744,8 @@ importers:
         specifier: 1.8.0
         version: 1.8.0
       vite:
-        specifier: 5.4.8
-        version: 5.4.8(@types/node@20.2.5)(sass@1.62.1)
+        specifier: 5.4.10
+        version: 5.4.10(@types/node@20.2.5)(sass@1.62.1)
       vue:
         specifier: 3.5.11
         version: 3.5.11(typescript@5.1.3)
@@ -5539,14 +5539,14 @@ packages:
       '@types/yargs-parser': 21.0.3
     dev: true
 
-  /@vitejs/plugin-vue@5.1.4(vite@5.4.8)(vue@3.5.11):
+  /@vitejs/plugin-vue@5.1.4(vite@5.4.10)(vue@3.5.11):
     resolution: {integrity: sha512-N2XSI2n3sQqp5w7Y/AN/L2XDjBIRGqXko+eDp42sydYSBeJuSm5a1sLf8zakmo8u7tA8NmBgoDLA1HeOESjp9A==}
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
       vite: ^5.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 5.4.8(@types/node@20.2.5)(sass@1.62.1)
+      vite: 5.4.10(@types/node@20.2.5)(sass@1.62.1)
       vue: 3.5.11(typescript@5.1.3)
     dev: false
 
@@ -15140,8 +15140,8 @@ packages:
     resolution: {integrity: sha512-irjKcKXRn7v5bPAg4mAbsS6DgibpP1VUFL9tlgxU6lloK6V9yw9qCZkS+s2PtbkZpWNzr3TN3zVJAc6J7gJZmA==}
     dev: true
 
-  /vite@5.4.8(@types/node@20.2.5)(sass@1.62.1):
-    resolution: {integrity: sha512-FqrItQ4DT1NC4zCUqMB4c4AZORMKIa0m8/URVCZ77OZ/QSNeJ54bU1vrFADbDsuwfIPcgknRkmqakQcgnL4GiQ==}
+  /vite@5.4.10(@types/node@20.2.5)(sass@1.62.1):
+    resolution: {integrity: sha512-1hvaPshuPUtxeQ0hsVH3Mud0ZanOLwVTneA1EgbAM5LhaZEqyPWGRQ7BtaMvUrTDeEaC8pxtj6a6jku3x4z6SQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:

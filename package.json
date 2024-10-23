@@ -11,7 +11,8 @@
 	"scripts": {
 		"build-pre": "node ./scripts/build-pre.js",
 		"build": "pnpm build-pre && pnpm -r build && pnpm gulp",
-		"frontend-build": "(cd packages/misskey-js && pnpm i && pnpm build) && (cd packages/frontend && pnpm i && pnpm build)",
+		"build-frontend": "cd packages/misskey-js && pnpm i && pnpm build && cd ../../ && cd packages/frontend && pnpm i && pnpm build",
+		"dev-frontend": "cd packages/misskey-js && pnpm i && pnpm build && cd ../../ && cd packages/frontend && pnpm i && pnpm watch",
 		"start": "pnpm check:connect && cd packages/backend && node ./built/boot/index.js",
 		"start:test": "cd packages/backend && cross-env NODE_ENV=test node ./built/boot/index.js",
 		"init": "pnpm migrate",
@@ -20,7 +21,7 @@
 		"migrateandstart": "pnpm migrate && pnpm start",
 		"gulp": "pnpm exec gulp build",
 		"watch": "pnpm dev",
-		"dev": "node ./scripts/dev.js",
+		"dev-backend": "node ./scripts/dev.js",
 		"format": "npx @biomejs/biome format --write packages",
 		"clean": "node ./scripts/clean.js",
 		"clean-all": "node ./scripts/clean-all.js",

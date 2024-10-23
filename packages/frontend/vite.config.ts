@@ -66,58 +66,6 @@ export function getConfig(): UserConfig {
 
 		server: {
 			port: 5173,
-			proxy: {
-				"/api": "http://localhost:3000/",
-				"/api-doc": "http://localhost:3000/",
-				"/api-json": "http://localhost:3000/",
-				// Node Info
-				"/nodeinfo": "http://localhost:3000/",
-				// .well-known
-				"/.well-known": "http://localhost:3000/",
-				// Manifest
-				"/manifest.json": "http://localhost:3000/",
-				// robot.txt
-				"/robots.txt": "http://localhost:3000/",
-				// opensearch.xml
-				"/opensearch.xml": "http://localhost:3000/",
-				// url
-				"/url": "http://localhost:3000/",
-				// Stripe
-				"/transaction/webhook": "http://localhost:3000/",
-				// Emoji
-				"/emoji": "http://localhost:3000/",
-				// Avatar
-				"/avatar": "http://localhost:3000/",
-				"/identicon": "http://localhost:3000/",
-				// E-mail
-				"/verify-email": "http://localhost:3000/",
-				// Service Worker
-				"/sw.js": "http://localhost:3000/",
-				// Websocket
-				"/streaming": {
-					target: "http://localhost:3000/",
-					ws: true,
-				},
-				// File
-				"/files": "http://localhost:3000/",
-				"/proxy": "http://localhost:3000/",
-				"/assets": "http://localhost:3000/",
-				"/static-assets": "http://localhost:3000/",
-				"/client-assets": "http://localhost:3000/",
-				"/favicon.ico": "http://localhost:3000/",
-				"/apple-touch-icon.png": "http://localhost:3000/",
-				"/fluent-emoji": "http://localhost:3000/",
-				"/twemoji": "http://localhost:3000/",
-				"/twemoji-badge": "http://localhost:3000/",
-				// Activity Pub
-				"/inbox": "http://localhost:3000/",
-				"/users": "http://localhost:3000/",
-				"/notes": "http://localhost:3000/",
-				"/@.*": "http://localhost:3000/",
-				"/emojis": "http://localhost:3000/",
-				"/likes": "http://localhost:3000/",
-				"/follows": "http://localhost:3000/",
-			},
 		},
 
 		plugins: [
