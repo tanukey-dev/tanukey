@@ -1,0 +1,59 @@
+services:
+  redis:
+    restart: always
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: "redis-cli ping"
+      interval: 5s
+      retries: 20
+    ports:
+      - 6379:6379
+
+  db:
+    restart: always
+    image: postgres:15-alpine
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"
+      interval: 5s
+      retries: 20
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: 'tanukey-pass' #FIXME
+      POSTGRES_USER: 'tanukey-user' #FIXME
+      POSTGRES_DB: 'tanukey-db'
+
+  opensearch: # This is also the hostname of the container within the Docker network (i.e. https://opensearch/)
+    image: ghcr.io/tanukey-dev/opensearch-sudachi-docker:latest # Specifying the latest available image - modify if you want a specific version
+    container_name: opensearch
+    environment:
+      - cluster.name=opensearch-cluster # Name the cluster
+      - node.name=opensearch # Name the node that will run in this container
+      - discovery.seed_hosts=opensearch # Nodes to look for when discovering the cluster
+      - cluster.initial_cluster_manager_nodes=opensearch # Nodes eligible to serve as cluster manager
+      - bootstrap.memory_lock=true # Disable JVM heap memory swapping
+      - "OPENSEARCH_JAVA_OPTS=-Xms10g -Xmx10g" # Set min and max JVM heap sizes to at least 50% of system RAM
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD} # Sets the demo admin user password when using demo configuration, required for OpenSearch 2.12 and later
+      - "DISABLE_INSTALL_DEMO_CONFIG=true" # Prevents execution of bundled demo script which installs demo certificates and security configurations to OpenSearch
+      - "DISABLE_SECURITY_PLUGIN=true" # Disables Security plugin
+    ulimits:
+      memlock:
+        soft: -1 # Set memlock to unlimited (no soft or hard limit)
+        hard: -1
+      nofile:
+        soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
+        hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
+    ports:
+      - 9200:9200 # REST API
+      - 9600:9600 # Performance Analyzer
+
+volumes:
+  opensearch-data:
+  redis-data:
+  db-data:
