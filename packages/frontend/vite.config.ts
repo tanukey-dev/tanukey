@@ -149,6 +149,15 @@ export function getConfig(): UserConfig {
 			emptyOutDir: false,
 			sourcemap: process.env.NODE_ENV === "development",
 			reportCompressedSize: false,
+			rollupOptions: {
+				output: {
+					assetFileNames: (assetInfo) => {
+						return "vue/[name]-[hash][extname]";
+					},
+					chunkFileNames: "vue/[name]-[hash].js",
+					entryFileNames: "vue/[name]-[hash].js",
+				},
+			},
 
 			// https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
 			commonjsOptions: {

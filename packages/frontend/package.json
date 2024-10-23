@@ -2,7 +2,7 @@
 	"name": "frontend",
 	"private": true,
 	"scripts": {
-		"watch": "vite",
+		"watch": "vite build --watch",
 		"build": "vite build",
 		"preview": "vite preview"
 	},
@@ -103,6 +103,8 @@
 		"chokidar-cli": "3.0.0",
 		"fast-glob": "3.2.12",
 		"happy-dom": "9.20.3",
+		"@hono/node-server": "^1.13.2",
+		"hono": "^4.6.6",
 		"micromatch": "3.1.10",
 		"vite-plugin-turbosnap": "1.0.2",
 		"vue-tsc": "1.6.5"
