@@ -77,6 +77,8 @@ export default class Stream extends EventEmitter<StreamEvents> {
 			.replace("http://", "ws://")
 			.replace("https://", "wss://");
 
+		console.log(`ws switch ${origin} to ${wsOrigin}`);
+
 		this.stream = new ReconnectingWebsocket(
 			`${wsOrigin}/streaming?${query}`,
 			"",
