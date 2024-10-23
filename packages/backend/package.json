@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"start": "node ./built/index.js",
+		"start": "node ./built/boot/index.js",
 		"migrate": "pnpm typeorm migration:run -d ormconfig.js",
 		"check:connect": "node ./check_connect.js",
 		"build": "swc src -d built -D",
