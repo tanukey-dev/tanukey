@@ -62,14 +62,14 @@ export class SearchService {
 											text: { type: "text" },
 											cw: { type: "text" },
 											createdAt: { type: "long" },
-											userId: { type: "text" },
-											userHost: { type: "text" },
-											channelId: { type: "text" },
-											tags: { type: "text" },
-											replyId: { type: "text" },
-											renoteId: { type: "text" },
-											visibility: { type: "text" },
-											visibleUserIds: { type: "text" },
+											userId: { type: "keyword" },
+											userHost: { type: "keyword" },
+											channelId: { type: "keyword" },
+											tags: { type: "keyword" },
+											replyId: { type: "keyword" },
+											renoteId: { type: "keyword" },
+											visibility: { type: "keyword" },
+											visibleUserIds: { type: "keyword" },
 											hasFile: { type: "boolean" },
 										},
 									},
@@ -123,14 +123,14 @@ export class SearchService {
 										text: { type: "text" },
 										cw: { type: "text" },
 										createdAt: { type: "long" },
-										userId: { type: "text" },
-										userHost: { type: "text" },
-										channelId: { type: "text" },
-										tags: { type: "text" },
-										replyId: { type: "text" },
-										renoteId: { type: "text" },
-										visibility: { type: "text" },
-										visibleUserIds: { type: "text" },
+										userId: { type: "keyword" },
+										userHost: { type: "keyword" },
+										channelId: { type: "keyword" },
+										tags: { type: "keyword" },
+										replyId: { type: "keyword" },
+										renoteId: { type: "keyword" },
+										visibility: { type: "keyword" },
+										visibleUserIds: { type: "keyword" },
 										hasFile: { type: "boolean" },
 									},
 								},
@@ -529,10 +529,10 @@ export class SearchService {
 			const tags = opts.tags
 				.filter((xs) => xs !== "")
 				.map((s) => s.replaceAll('"', "").replaceAll("#", ""));
-			if (tags.length > 0) {
+			for (const tag of tags) {
 				esFilter.bool.must.push({
-					terms: {
-						"tags.keyword": tags,
+					match: {
+						tags: tag,
 					},
 				});
 			}
