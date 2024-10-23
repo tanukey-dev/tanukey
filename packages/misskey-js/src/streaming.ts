@@ -68,7 +68,12 @@ export default class Stream extends EventEmitter<StreamEvents> {
 			_t: Date.now(),
 		});
 
+		//FIXME: upgrade確率するまえに差し替えが必要？APIサーバーの情報をmetaからもらわないといけないかも
 		const wsOrigin = origin
+			.replace("//dev.tarbin.net", "//api-dev.tarbin.net")
+			.replace("//staging.tarbin.net", "//api-staging.tarbin.net")
+			.replace("//novelskey.tarbin.net", "//api-novelskey.tarbin.net")
+			.replace("//otoskey.tarbin.net", "//api-otoskey.tarbin.net")
 			.replace("http://", "ws://")
 			.replace("https://", "wss://");
 
