@@ -131,14 +131,6 @@ export class ActivityPubServerService {
 			return;
 		}
 
-		if (request.headers.host !== this.config.host) {
-			// Host not specified or not match.
-			console.error("request.headers.host: " + request.headers.host);
-			console.error("config.host: " + config.host);
-			reply.code(422);
-			return;
-		}
-
 		if (signature.params.headers.indexOf("host") === -1) {
 			// Host not specified or not match.
 			reply.code(401);
