@@ -108,4 +108,6 @@ export const DI = {
 	userPointService: "UserPointService",
 	channelEntityService: "ChannelEntityService",
 	globalEventService: "GlobalEventService",
+	metaService: "MetaService",
+	httpRequestService: "HttpRequestService",
 };
