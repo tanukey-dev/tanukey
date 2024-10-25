@@ -724,6 +724,18 @@ export class ClientServerService {
 			getGallery,
 		);
 
+		fastify.get("/_info_card_", async (request, reply) => {
+			const meta = await this.metaService.fetch(true);
+
+			reply.removeHeader("X-Frame-Options");
+
+			return await reply.view("info-card", {
+				version: this.config.version,
+				host: this.config.host,
+				meta: meta,
+			});
+		});
+
 		fastify.get("/flush", async (request, reply) => {
 			return await reply.view("flush");
 		});
