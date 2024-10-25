@@ -525,17 +525,30 @@ export class SearchService {
 		}
 
 		if (opts.tags && opts.tags.length > 0) {
+			const filter = {
+				bool: {
+					must: {
+						bool: {
+							should: [] as any[],
+							minimum_should_match: 1,
+						},
+					},
+				},
+			};
+
 			// Clean up
 			const tags = opts.tags
 				.filter((xs) => xs !== "")
 				.map((s) => s.replaceAll('"', "").replaceAll("#", ""));
 			for (const tag of tags) {
-				esFilter.bool.must.push({
+				filter.bool.must.bool.should.push({
 					match: {
 						tags: tag,
 					},
 				});
 			}
+
+			esFilter.bool.must.push(filter);
 		}
 
 		return esFilter;
