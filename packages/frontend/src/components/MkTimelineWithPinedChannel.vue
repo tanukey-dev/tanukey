@@ -21,12 +21,13 @@ import { deviceKind } from "@/scripts/device-kind";
 import { scrollToTop } from "@/scripts/scroll";
 import { defaultStore } from "@/store";
 import { MenuItem } from "@/types/menu";
-import { computed, defineAsyncComponent, onMounted, ref, watch } from "vue";
+import { computed, defineAsyncComponent, ref, watch } from "vue";
 import { Tab } from "./global/MkPageHeader.tabs.vue";
 import MkStickyContainer from "./global/MkStickyContainer.vue";
 import MkPageHeader from "./global/MkPageHeader.vue";
 import MkSpacer from "./global/MkSpacer.vue";
 import { $i } from "@/account";
+import { onBeforeMount } from "vue";
 
 const tabs = ref<Tab[]>([
 	{ key: "public", title: i18n.ts.public, icon: "ti ti-planet" },
@@ -69,7 +70,7 @@ watch(tab, async () => {
 	scrollToTop(null);
 });
 
-onMounted(async () => {
+onBeforeMount(async () => {
 	let t: any[] = [];
 	let ids: string[] = [];
 
@@ -96,6 +97,21 @@ onMounted(async () => {
 	} else {
 		tab.value = selectedTab.value;
 	}
+
+	// 直前でチャンネルを選択している状態で、
+	// パブリックが選択されているおすすめ/フィードに戻った場合に対処
+	if (
+		tab.value !== "public"
+	) {
+		const ch = await os.api("channels/show", {
+			channelId: tab.value,
+		});
+		postChannel.value = ch;
+	} else {
+		postChannel.value = null;
+	}
+
+	scrollToTop(null);
 });
 
 const onSwipeLeft = (): void => {
