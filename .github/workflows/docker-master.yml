@@ -46,4 +46,4 @@ jobs:
           cache-to: type=registry,ref=ghcr.io/tanukey-dev/tanukey:tanukey-buildcache,mode=max
           tags: |
             ghcr.io/tanukey-dev/tanukey:latest
-            ghcr.io/tanukey-dev/tanukey:${{ env.FORMATTED_BRANCH_NAME }}
+            ghcr.io/tanukey-dev/tanukey:master
