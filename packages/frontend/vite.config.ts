@@ -157,18 +157,13 @@ export function getConfig(): UserConfig {
 							"photoswipe/style.css",
 						],
 					},
-					chunkFileNames:
-						process.env.NODE_ENV === "production"
-							? "[hash:8].js"
-							: "[name]-[hash:8].js",
-					assetFileNames:
-						process.env.NODE_ENV === "production"
-							? "[hash:8][extname]"
-							: "[name]-[hash:8][extname]",
+					entryFileNames: `${meta.version}.[hash].js`,
+					chunkFileNames: `${meta.version}.[hash].js`,
+					assetFileNames: `${meta.version}.[hash][extname]`,
 				},
 			},
 			cssCodeSplit: true,
-			outDir: __dirname + "/../../built/_vite_",
+			outDir: `${__dirname}/../../built/_vite_`,
 			assetsDir: ".",
 			emptyOutDir: false,
 			sourcemap: process.env.NODE_ENV === "development",
