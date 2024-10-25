@@ -62,16 +62,7 @@
 					<MkNotes :pagination="featuredPagination" />
 				</div>
 				<div v-else-if="tab === 'search'">
-					<div class="_gaps">
-						<div>
-							<MkInput v-model="searchQuery">
-								<template #prefix><i class="ti ti-search"></i></template>
-							</MkInput>
-							<MkButton primary rounded style="margin-top: 8px;" @click="search()">{{ i18n.ts.search }}
-							</MkButton>
-						</div>
-						<MkNotes v-if="searchPagination" :key="searchKey" :pagination="searchPagination" />
-					</div>
+					<XNote :channel="channelId"></XNote>
 				</div>
 			</MkSpacer>
 			<template #footer>
@@ -103,6 +94,7 @@ import MkNote from "@/components/MkNote.vue";
 import MkInfo from "@/components/MkInfo.vue";
 import MkMention from "@/components/MkMention.vue";
 import MkFoldableSection from "@/components/MkFoldableSection.vue";
+import XNote from "./search.note.vue";
 
 const props = defineProps<{
 	channelId: string;
@@ -186,24 +178,6 @@ async function unfavorite() {
 	}).then(() => {
 		favorited = false;
 	});
-}
-
-async function search() {
-	const query = searchQuery.toString().trim();
-
-	if (query == null) return;
-
-	searchPagination = {
-		endpoint: "notes/search",
-		limit: 10,
-		params: {
-			query: query,
-			channelId: channel.id,
-			checkChannelSearchable: false,
-		},
-	};
-
-	searchKey = query;
 }
 
 const headerActions = $computed(() => {
