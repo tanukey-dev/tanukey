@@ -279,7 +279,7 @@ const renoteCollapsed = $ref(
 );
 
 // チャンネルの収集タグ
-const isTagShare = ref(props.channel !== undefined && props.channel !== null && props.channel !== appearNote.channel?.id);
+const isTagShare = ref(!isRenote && props.channel !== undefined && props.channel !== null && props.channel !== appearNote.channel?.id);
 const tagShareCollapsed = $ref(defaultStore.state.collapseRenotes && isTagShare.value && isReadNote);
 
 //Renoteが既読かのチェック
