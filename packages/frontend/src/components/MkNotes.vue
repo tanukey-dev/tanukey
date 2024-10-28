@@ -31,7 +31,7 @@ import { infoImageUrl } from "@/instance";
 const props = defineProps<{
 	pagination: Paging;
 	noGap?: boolean;
-	channel?: string;
+	channel?: string | null;
 }>();
 
 const pagingComponent = shallowRef<InstanceType<typeof MkPagination>>();

@@ -38,7 +38,8 @@
 		<div v-if="renoteCollapsed || tagShareCollapsed" :class="$style.collapsedRenoteTarget">
 			<MkAvatar :class="$style.collapsedRenoteTargetAvatar" :user="appearNote.user" link preview />
 			<Mfm :text="getNoteSummary(appearNote)" :plain="true" :nowrap="true" :author="appearNote.user"
-				:class="$style.collapsedRenoteTargetText" @click="renoteCollapsed = false" />
+				:class="$style.collapsedRenoteTargetText"
+				@click="() => { renoteCollapsed = false; tagShareCollapsed = false; }" />
 		</div>
 		<article v-else :class="$style.article" @contextmenu.stop="onContextmenu">
 			<div v-if="appearNote.channel" :class="$style.colorBar" :style="{ background: appearNote.channel.color }">
@@ -195,7 +196,7 @@ import { readNoteCache, ReadNote } from "@/scripts/read-note";
 const props = defineProps<{
 	note: misskey.entities.Note;
 	pinned?: boolean;
-	channel?: string;
+	channel?: string | null;
 }>();
 
 const inChannel = inject("inChannel", null);
@@ -278,12 +279,8 @@ const renoteCollapsed = $ref(
 );
 
 // チャンネルの収集タグ
-const isTagShare = computed(() => props.channel !== null && props.channel !== note.channel?.id);
-const tagShareCollapsed = computed(() =>
-	defaultStore.state.collapseRenotes &&
-	isTagShare.value &&
-	(($i && $i.id === note.userId) || isReadNote),
-);
+const isTagShare = ref(props.channel !== undefined && props.channel !== null && props.channel !== appearNote.channel?.id);
+const tagShareCollapsed = $ref(defaultStore.state.collapseRenotes && isTagShare.value && isReadNote);
 
 //Renoteが既読かのチェック
 async function checkReadNote() {
