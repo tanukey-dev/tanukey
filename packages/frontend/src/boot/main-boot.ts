@@ -13,6 +13,7 @@ import { miLocalStorage } from "@/local-storage";
 import { claimAchievement, claimedAchievements } from "@/scripts/achievements";
 import { router } from "@/router";
 import { initializeSw } from "@/scripts/initialize-sw";
+import { readNoteCache } from "@/scripts/read-note";
 import Vue3TouchEvents from "vue3-touch-events";
 import VueGtag from "vue-gtag";
 
@@ -320,4 +321,7 @@ export async function mainBoot() {
 	document.addEventListener("keydown", makeHotkey(hotkeys));
 
 	initializeSw();
+
+	// たたむ設定のクリア
+	await readNoteCache.claerOldData();
 }
