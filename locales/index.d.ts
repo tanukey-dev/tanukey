@@ -22,6 +22,7 @@ export interface Locale {
     "noThankYou": string;
     "enterUsername": string;
     "renotedBy": string;
+    "tagSharedBy": string;
     "noNotes": string;
     "noNotifications": string;
     "instance": string;

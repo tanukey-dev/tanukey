@@ -6,11 +6,12 @@
 		<div v-if="pinned" :class="$style.tip"><i class="ti ti-pin"></i> {{ i18n.ts.pinnedNote }}</div>
 		<!--<div v-if="appearNote._prId_" class="tip"><i class="ti ti-speakerphone"></i> {{ i18n.ts.promotion }}<button class="_textButton hide" @click="readPromo()">{{ i18n.ts.hideThisNote }} <i class="ti ti-x"></i></button></div>-->
 		<!--<div v-if="appearNote._featuredId_" class="tip"><i class="ti ti-bolt"></i> {{ i18n.ts.featured }}</div>-->
-		<div v-if="isRenote" :class="$style.renote">
+		<div v-if="isRenote || isTagShare" :class="$style.renote">
 			<div v-if="note.channel" :class="$style.colorBar" :style="{ background: note.channel.color }"></div>
 			<MkAvatar :class="$style.renoteAvatar" :user="note.user" link preview />
-			<i class="ti ti-repeat" style="margin-right: 4px;"></i>
-			<I18n :src="i18n.ts.renotedBy" tag="span" :class="$style.renoteText">
+			<i v-if="isRenote" class="ti ti-repeat" style="margin-right: 4px;"></i>
+			<i v-if="isTagShare" class="ti ti-hash" style="margin-right: 4px;"></i>
+			<I18n :src="isTagShare ? i18n.ts.tagSharedBy : i18n.ts.renotedBy" tag="span" :class="$style.renoteText">
 				<template #user>
 					<MkA v-user-preview="note.userId" :class="$style.renoteUserName" :to="userPage(note.user)">
 						<MkUserName :user="note.user" />
@@ -34,7 +35,7 @@
 						class="ti ti-device-tv"></i></span>
 			</div>
 		</div>
-		<div v-if="renoteCollapsed" :class="$style.collapsedRenoteTarget">
+		<div v-if="renoteCollapsed || tagShareCollapsed" :class="$style.collapsedRenoteTarget">
 			<MkAvatar :class="$style.collapsedRenoteTargetAvatar" :user="appearNote.user" link preview />
 			<Mfm :text="getNoteSummary(appearNote)" :plain="true" :nowrap="true" :author="appearNote.user"
 				:class="$style.collapsedRenoteTargetText" @click="renoteCollapsed = false" />
@@ -194,6 +195,7 @@ import { readNoteCache, ReadNote } from "@/scripts/read-note";
 const props = defineProps<{
 	note: misskey.entities.Note;
 	pinned?: boolean;
+	channel?: string;
 }>();
 
 const inChannel = inject("inChannel", null);
@@ -269,9 +271,17 @@ const canRenote = computed(
 );
 const isReadNote = ref(false);
 
-let renoteCollapsed = $ref(
+const renoteCollapsed = $ref(
 	defaultStore.state.collapseRenotes &&
 	isRenote &&
+	(($i && $i.id === note.userId) || isReadNote),
+);
+
+// チャンネルの収集タグ
+const isTagShare = computed(() => props.channel !== null && props.channel !== note.channel?.id);
+const tagShareCollapsed = computed(() =>
+	defaultStore.state.collapseRenotes &&
+	isTagShare.value &&
 	(($i && $i.id === note.userId) || isReadNote),
 );
 

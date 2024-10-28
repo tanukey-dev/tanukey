@@ -1,29 +1,23 @@
 <template>
-<MkPagination ref="pagingComponent" :pagination="pagination">
-	<template #empty>
-		<div class="_fullinfo">
-			<img :src="infoImageUrl" class="_ghost"/>
-			<div>{{ i18n.ts.noNotes }}</div>
-		</div>
-	</template>
+	<MkPagination ref="pagingComponent" :pagination="pagination">
+		<template #empty>
+			<div class="_fullinfo">
+				<img :src="infoImageUrl" class="_ghost" />
+				<div>{{ i18n.ts.noNotes }}</div>
+			</div>
+		</template>
 
-	<template #default="{ items: notes }">
-		<div :class="[$style.root, { [$style.noGap]: noGap }]">
-			<MkDateSeparatedList
-				ref="notes"
-				v-slot="{ item: note }"
-				:items="notes"
-				:direction="pagination.reversed ? 'up' : 'down'"
-				:reversed="pagination.reversed"
-				:noGap="noGap"
-				:ad="true"
-				:class="$style.notes"
-			>
-				<MkNote :key="note._featuredId_ || note._prId_ || note.id" :class="$style.note" :note="note"/>
-			</MkDateSeparatedList>
-		</div>
-	</template>
-</MkPagination>
+		<template #default="{ items: notes }">
+			<div :class="[$style.root, { [$style.noGap]: noGap }]">
+				<MkDateSeparatedList ref="notes" v-slot="{ item: note }" :items="notes"
+					:direction="pagination.reversed ? 'up' : 'down'" :reversed="pagination.reversed" :noGap="noGap"
+					:ad="true" :class="$style.notes">
+					<MkNote :key="note._featuredId_ || note._prId_ || note.id" :class="$style.note" :note="note"
+						:channel="channel" />
+				</MkDateSeparatedList>
+			</div>
+		</template>
+	</MkPagination>
 </template>
 
 <script lang="ts" setup>
@@ -37,6 +31,7 @@ import { infoImageUrl } from "@/instance";
 const props = defineProps<{
 	pagination: Paging;
 	noGap?: boolean;
+	channel?: string;
 }>();
 
 const pagingComponent = shallowRef<InstanceType<typeof MkPagination>>();
@@ -49,13 +44,13 @@ defineExpose({
 <style lang="scss" module>
 .root {
 	&.noGap {
-		> .notes {
+		>.notes {
 			background: var(--panel);
 		}
 	}
 
 	&:not(.noGap) {
-		> .notes {
+		>.notes {
 			background: var(--bg);
 
 			.note {
