@@ -91,7 +91,7 @@
 							<span :class="$style.showLessLabel">{{ i18n.ts.showLess }}</span>
 						</button>
 					</div>
-					<MkA v-if="appearNote.channel && !inChannel" :class="$style.channel"
+					<MkA v-if="appearNote.channel && appearNote.channel.id !== channel" :class="$style.channel"
 						:to="`/secure/channels/${appearNote.channel.id}`"><i class="ti ti-device-tv"></i> {{
 							appearNote.channel.name }}
 					</MkA>
