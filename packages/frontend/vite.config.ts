@@ -10,6 +10,7 @@ import generateDTS from "../../locales/generateDTS";
 import meta from "../../package.json";
 import pluginUnwindCssModuleClassName from "./lib/rollup-plugin-unwind-css-module-class-name";
 import pluginJson5 from "./vite.json5";
+import inject from "@rollup/plugin-inject";
 
 const extensions = [
 	".ts",
@@ -69,6 +70,10 @@ export function getConfig(): UserConfig {
 		},
 
 		plugins: [
+			inject({
+				$: "jquery",
+				jQuery: "jquery",
+			}),
 			pluginVue({
 				reactivityTransform: true,
 			}),

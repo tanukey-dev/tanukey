@@ -563,6 +563,9 @@ importers:
       '@rollup/plugin-alias':
         specifier: 5.0.0
         version: 5.0.0(rollup@3.23.0)
+      '@rollup/plugin-inject':
+        specifier: ^5.0.5
+        version: 5.0.5(rollup@3.23.0)
       '@rollup/plugin-json':
         specifier: 6.0.0
         version: 6.0.0(rollup@3.23.0)
@@ -659,6 +662,9 @@ importers:
       is-file-animated:
         specifier: 1.0.2
         version: 1.0.2
+      jquery:
+        specifier: ^3.7.1
+        version: 3.7.1
       json5:
         specifier: 2.2.3
         version: 2.2.3
@@ -3955,6 +3961,21 @@ packages:
     dependencies:
       rollup: 3.23.0
       slash: 4.0.0
+    dev: false
+
+  /@rollup/plugin-inject@5.0.5(rollup@3.23.0):
+    resolution: {integrity: sha512-2+DEJbNBoPROPkgTDNe8/1YXWcqxbN5DTjASVIOx8HS+pITXushyNiBV56RB08zuptzz8gT3YfkqriTBVycepg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.0.2(rollup@3.23.0)
+      estree-walker: 2.0.2
+      magic-string: 0.30.12
+      rollup: 3.23.0
     dev: false
 
   /@rollup/plugin-json@6.0.0(rollup@3.23.0):
@@ -10296,6 +10317,10 @@ packages:
 
   /jpeg-js@0.4.4:
     resolution: {integrity: sha512-WZzeDOEtTOBK4Mdsar0IqEU5sMr3vSV2RqkAIzUEV2BHnUfKGyswWFPFwK5EeDo93K3FohSHbLAjj0s1Wzd+dg==}
+    dev: false
+
+  /jquery@3.7.1:
+    resolution: {integrity: sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==}
     dev: false
 
   /js-base64@2.6.4:

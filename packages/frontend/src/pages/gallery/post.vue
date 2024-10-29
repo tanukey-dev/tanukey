@@ -7,10 +7,32 @@
 			<div class="_root">
 				<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
 					<div v-if="post" class="rkxwuolj">
-						<div class="files">
+						<div v-if="!mangaMode" class="files">
 							<div v-for="file in post.files" :key="file.id" class="file">
 								<img :src="file.url" />
 							</div>
+						</div>
+						<div v-if="mangaMode" style="display: grid; justify-content: center; align-items: center;">
+							<Teleport to="body">
+								<div v-if="fullscreen" class="magazine-fullscreen-bg">
+									<MkButton v-if="fullscreen" :rounded="true"
+										style="position:fixed;top:10px;right:10px;" @click="closeFullscreen">
+										<i class="ti ti-x"></i>
+									</MkButton>
+									<div class="magazine-fullscreen-outer">
+										<TurnView :options="isMobile ? bookOptionsMobile : bookOptions"
+											:class="isMobile ? 'magazine-fullscreen-mobile' : 'magazine-fullscreen'">
+											<img v-for="file in post.files" :src="file.url" :key="file.id"
+												style="user-select: none;" />
+										</TurnView>
+									</div>
+								</div>
+							</Teleport>
+							<TurnView v-if="!fullscreen" :class="isMobile ? 'magazine-mobile' : 'magazine'"
+								:options="isMobile ? bookOptionsMobile : bookOptions">
+								<img v-for="file in post.files" :src="file.url" :key="file.id"
+									style="user-select: none;" />
+							</TurnView>
 						</div>
 						<div class="body">
 							<div class="title">{{ post.title }}</div>
@@ -71,7 +93,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from "vue";
+import { computed, watch, ref } from "vue";
 import MkButton from "@/components/MkButton.vue";
 import * as os from "@/os";
 import MkContainer from "@/components/MkContainer.vue";
@@ -84,6 +106,8 @@ import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { defaultStore } from "@/store";
 import { $i } from "@/account";
+import { deviceKind } from "@/scripts/device-kind.js";
+import TurnView from './turn.vue';
 
 const props = defineProps<{
 	postId: string;
@@ -91,6 +115,35 @@ const props = defineProps<{
 
 let post = $ref(null);
 let error = $ref(null);
+const mangaMode = ref(false);
+const switchViewerMode = () => {
+	mangaMode.value = true;
+}
+const fullscreen = ref(false);
+const switchFullscreen = () => {
+	fullscreen.value = true;
+}
+const closeFullscreen = () => {
+	fullscreen.value = false;
+}
+
+const MOBILE_THRESHOLD = 500;
+const isMobile = ref(
+	deviceKind === "smartphone" || window.innerWidth <= MOBILE_THRESHOLD,
+);
+
+const bookOptions = ref({
+	display: "double",
+	acceleration: true,
+	elevation: 50,
+});
+
+const bookOptionsMobile = ref({
+	display: "single",
+	acceleration: true,
+	elevation: 50,
+});
+
 const otherPostsPagination = {
 	endpoint: "users/gallery/posts" as const,
 	limit: 6,
@@ -156,6 +209,18 @@ function edit() {
 watch(() => props.postId, fetchPost, { immediate: true });
 
 const headerActions = $computed(() => [
+	...((mangaMode.value) ? [{
+		icon: "ti ti-book-off",
+		handler: () => { mangaMode.value = false },
+	}] : [{
+		icon: "ti ti-book",
+		handler: () => { mangaMode.value = true },
+	}]),
+	...((isMobile.value) ? [] : mangaMode.value ? [{
+		icon: "ti ti-maximize",
+		text: i18n.ts.fullView,
+		handler: switchFullscreen,
+	}] : []),
 	{
 		icon: "ti ti-pencil",
 		text: i18n.ts.edit,
@@ -178,6 +243,41 @@ definePageMetadata(
 </script>
 
 <style lang="scss" scoped>
+.magazine {
+	width: 634px;
+	height: 448px;
+}
+
+.magazine-mobile {
+	width: 317px;
+	height: 448px;
+}
+
+.magazine .turn-page {
+	background-color: #ccc;
+	background-size: 100% 100%;
+}
+
+.magazine-fullscreen-bg {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #000;
+}
+
+.magazine-fullscreen-outer {
+	display: grid;
+	justify-content: center;
+	align-items: center;
+}
+
+.magazine-fullscreen {
+	width: 141dvh;
+	height: 100dvh;
+}
+
 .fade-enter-active,
 .fade-leave-active {
 	transition: opacity 0.125s ease;
