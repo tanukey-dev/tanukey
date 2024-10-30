@@ -21,17 +21,20 @@
 									</MkButton>
 									<div class="magazine-fullscreen-outer">
 										<TurnView :options="isMobile ? bookOptionsMobile : bookOptions"
-											:class="isMobile ? 'magazine-fullscreen-mobile' : 'magazine-fullscreen'">
-											<img v-for="file in post.files" :src="file.url" :key="file.id"
-												style="user-select: none;" />
+											class="magazine-fullscreen">
+											<div v-for="file in post.files" class="magazine-page-img-outer">
+												<img :src="file.url" :key="file.id"
+													class="magazine-page-img-fullscreen" />
+											</div>
 										</TurnView>
 									</div>
 								</div>
 							</Teleport>
 							<TurnView v-if="!fullscreen" :class="isMobile ? 'magazine-mobile' : 'magazine'"
 								:options="isMobile ? bookOptionsMobile : bookOptions">
-								<img v-for="file in post.files" :src="file.url" :key="file.id"
-									style="user-select: none;" />
+								<div v-for="file in post.files" class="magazine-page-img-outer">
+									<img :src="file.url" :key="file.id" class="magazine-page-img" />
+								</div>
 							</TurnView>
 						</div>
 						<div class="body">
@@ -244,13 +247,38 @@ definePageMetadata(
 
 <style lang="scss" scoped>
 .magazine {
-	width: 634px;
-	height: 448px;
+	background-color: #fff;
+	display: block;
+	max-width: 100%;
+	max-height: 600px;
+	margin: 0 auto;
 }
 
 .magazine-mobile {
-	width: 317px;
-	height: 448px;
+	background-color: #fff;
+	display: block;
+	max-width: 100%;
+	max-height: 600px;
+	margin: 0 auto;
+}
+
+.magazine-page-img-outer {
+	background-color: #fff;
+	display: grid;
+	justify-content: center;
+	align-items: center;
+}
+
+.magazine-page-img {
+	user-select: none;
+	max-width: 100%;
+	max-height: 600px;
+}
+
+.magazine-page-img-fullscreen {
+	user-select: none;
+	max-width: 100%;
+	max-height: 95%;
 }
 
 .magazine .turn-page {
@@ -274,6 +302,7 @@ definePageMetadata(
 }
 
 .magazine-fullscreen {
+	background-color: #fff;
 	width: 141dvh;
 	height: 100dvh;
 }
