@@ -10,6 +10,17 @@ import { id } from "../id.js";
 import { User } from "./User.js";
 import type { DriveFile } from "./DriveFile.js";
 
+export enum ViewMode {
+	DEFAULT = 0,
+	BOOK = 1,
+}
+
+export type ViewSettings = {
+	initialMode: ViewMode;
+	rightOpening: boolean;
+	double: boolean;
+};
+
 @Entity()
 export class GalleryPost {
 	@PrimaryColumn(id())
@@ -79,6 +90,11 @@ export class GalleryPost {
 		default: "{}",
 	})
 	public tags: string[];
+
+	@Column("json", {
+		nullable: true,
+	})
+	public viewSettings: ViewSettings;
 
 	constructor(data: Partial<GalleryPost>) {
 		if (data == null) return;

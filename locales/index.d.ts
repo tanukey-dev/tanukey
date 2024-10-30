@@ -242,6 +242,11 @@ export interface Locale {
     "processing": string;
     "preview": string;
     "default": string;
+    "bookViewer": string;
+    "rightOpening": string;
+    "leftOpening": string;
+    "signlePage": string;
+    "doublePage": string;
     "defaultValueIs": string;
     "noCustomEmojis": string;
     "noJobs": string;

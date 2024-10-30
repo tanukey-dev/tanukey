@@ -7,12 +7,12 @@
 			<div class="_root">
 				<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
 					<div v-if="post" class="rkxwuolj">
-						<div v-if="!mangaMode" class="files">
+						<div v-if="!bookMode" class="files">
 							<div v-for="file in post.files" :key="file.id" class="file">
 								<img :src="file.url" />
 							</div>
 						</div>
-						<div v-if="mangaMode" style="display: grid; justify-content: center; align-items: center;">
+						<div v-if="bookMode" style="display: grid; justify-content: center; align-items: center;">
 							<Teleport to="body">
 								<div v-if="fullscreen" class="magazine-fullscreen-bg">
 									<MkButton v-if="fullscreen" :rounded="true"
@@ -22,18 +22,19 @@
 									<div class="magazine-fullscreen-outer">
 										<TurnView :options="isMobile ? bookOptionsMobile : bookOptions"
 											class="magazine-fullscreen">
-											<div v-for="file in post.files" class="magazine-page-img-outer">
-												<img :src="file.url" :key="file.id"
-													class="magazine-page-img-fullscreen" />
+											<div v-for="file in post.files" :key="file.id"
+												class="magazine-page-img-outer">
+												<img :src="file.url" class="magazine-page-img-fullscreen" />
 											</div>
 										</TurnView>
 									</div>
 								</div>
 							</Teleport>
-							<TurnView v-if="!fullscreen" :class="isMobile ? 'magazine-mobile' : 'magazine'"
+							<TurnView v-if="!fullscreen"
+								:class="isMobile ? 'magazine-mobile' : bookModeDouble ? 'magazine-double' : 'magazine-single'"
 								:options="isMobile ? bookOptionsMobile : bookOptions">
-								<div v-for="file in post.files" class="magazine-page-img-outer">
-									<img :src="file.url" :key="file.id" class="magazine-page-img" />
+								<div v-for="file in post.files" :key="file.id" class="magazine-page-img-outer">
+									<img :src="file.url" class="magazine-page-img" />
 								</div>
 							</TurnView>
 						</div>
@@ -118,10 +119,7 @@ const props = defineProps<{
 
 let post = $ref(null);
 let error = $ref(null);
-const mangaMode = ref(false);
-const switchViewerMode = () => {
-	mangaMode.value = true;
-}
+const bookMode = ref(false);
 const fullscreen = ref(false);
 const switchFullscreen = () => {
 	fullscreen.value = true;
@@ -135,17 +133,22 @@ const isMobile = ref(
 	deviceKind === "smartphone" || window.innerWidth <= MOBILE_THRESHOLD,
 );
 
-const bookOptions = ref({
+const bookOptionsDefault = {
 	display: "double",
 	acceleration: true,
 	elevation: 50,
-});
+};
 
-const bookOptionsMobile = ref({
+const bookOptions = ref(bookOptionsDefault);
+
+const bookOptionsMobileDefault = {
 	display: "single",
 	acceleration: true,
 	elevation: 50,
-});
+};
+
+const bookOptionsMobile = ref(bookOptionsMobileDefault);
+const bookModeDouble = ref(true);
 
 const otherPostsPagination = {
 	endpoint: "users/gallery/posts" as const,
@@ -162,6 +165,25 @@ function fetchPost() {
 	})
 		.then((_post) => {
 			post = _post;
+			if (_post.viewSettings) {
+				bookMode.value = _post.viewSettings.initialMode === "BOOK";
+				bookModeDouble.value = _post.viewSettings.double;
+				bookOptions.value = Object.assign(bookOptionsDefault, {
+					display: _post.viewSettings.double ? "double" : "single",
+					direction: _post.viewSettings.rightOpening ? "rtl" : undefined,
+				});
+				bookOptionsMobile.value = Object.assign(bookOptionsMobileDefault, {
+					direction: _post.viewSettings.rightOpening ? "rtl" : undefined,
+				});
+			} else {
+				bookMode.value = false;
+				bookOptions.value = Object.assign(bookOptionsDefault, {
+					direction: "rtl"
+				});
+				bookOptionsMobile.value = Object.assign(bookOptionsMobileDefault, {
+					direction: "rtl"
+				});
+			}
 		})
 		.catch((_error) => {
 			error = _error;
@@ -212,14 +234,14 @@ function edit() {
 watch(() => props.postId, fetchPost, { immediate: true });
 
 const headerActions = $computed(() => [
-	...((mangaMode.value) ? [{
+	...((bookMode.value) ? [{
 		icon: "ti ti-book-off",
-		handler: () => { mangaMode.value = false },
+		handler: () => { bookMode.value = false },
 	}] : [{
 		icon: "ti ti-book",
-		handler: () => { mangaMode.value = true },
+		handler: () => { bookMode.value = true },
 	}]),
-	...((isMobile.value) ? [] : mangaMode.value ? [{
+	...((isMobile.value) ? [] : bookMode.value ? [{
 		icon: "ti ti-maximize",
 		text: i18n.ts.fullView,
 		handler: switchFullscreen,
@@ -246,10 +268,18 @@ definePageMetadata(
 </script>
 
 <style lang="scss" scoped>
-.magazine {
+.magazine-double {
 	background-color: #fff;
 	display: block;
 	max-width: 100%;
+	max-height: 600px;
+	margin: 0 auto;
+}
+
+.magazine-single {
+	background-color: #fff;
+	display: block;
+	max-width: 80%;
 	max-height: 600px;
 	margin: 0 auto;
 }
