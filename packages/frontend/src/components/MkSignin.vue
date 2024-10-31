@@ -205,6 +205,7 @@ function onSubmit() {
 				password,
 				"hcaptcha-response": hCaptchaResponse,
 				"g-recaptcha-response": reCaptchaResponse,
+				"turnstile-response": turnstileResponse,
 			})
 				.then((res) => {
 					totpLogin = true;
