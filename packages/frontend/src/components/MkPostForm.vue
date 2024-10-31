@@ -326,8 +326,6 @@ watch(postChannel, () => {
 		if (!postChannel.value.federation) {
 			localOnly = true;
 		}
-	} else {
-		localOnly = false;
 	}
 });
 
@@ -477,6 +475,7 @@ if (props.reply && props.reply.text != null) {
 
 if (postChannel.value) {
 	visibility = "public";
+	// チャンネルの連合が許可されていない場合はローカルオンリーに
 	if (!postChannel.value.federation) {
 		localOnly = true;
 	}
@@ -661,7 +660,6 @@ function setChannel(): void {
 function setVisibility() {
 	if (postChannel.value) {
 		visibility = "public";
-		localOnly = true;
 		return;
 	}
 
@@ -1001,7 +999,7 @@ async function post(ev?: MouseEvent) {
 		channelId: postChannel.value ? postChannel.value.id : undefined,
 		poll: poll,
 		cw: useCw ? (cw ?? "") : undefined,
-		localOnly: localOnly,
+		localOnly: props.reply?.user.host ? false : localOnly,
 		visibility: visibility,
 		visibleUserIds:
 			visibility === "specified" ? visibleUsers.map((u) => u.id) : undefined,
