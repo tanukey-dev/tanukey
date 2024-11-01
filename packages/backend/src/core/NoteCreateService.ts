@@ -319,9 +319,11 @@ export class NoteCreateService implements OnApplicationShutdown {
 			data.localOnly = true;
 		}
 
-		// ローカルのみにリプライしたらローカルのみにする
-		if (data.reply && data.reply.localOnly && data.channel == null) {
-			data.localOnly = true;
+		// ローカル投稿へのリプライ、かつローカルのみにリプライしたらローカルのみにする
+		if (data.reply && data.reply.userHost === null) {
+			if (data.reply.localOnly && data.channel == null) {
+				data.localOnly = true;
+			}
 		}
 
 		if (data.text) {

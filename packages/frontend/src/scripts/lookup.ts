@@ -2,7 +2,7 @@ import * as os from "@/os";
 import { i18n } from "@/i18n";
 import { router } from "@/router";
 
-export async function lookup(router?: Router) {
+export async function lookup() {
 	const { canceled, result: query } = await os.inputText({
 		title: i18n.ts.lookup,
 	});

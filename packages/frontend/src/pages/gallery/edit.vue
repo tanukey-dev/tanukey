@@ -13,6 +13,21 @@
 					<template #label>{{ i18n.ts.description }}</template>
 				</MkTextarea>
 
+				<MkRadios v-model="viewMode">
+					<option value="DEFAULT">{{ i18n.ts.default }}</option>
+					<option value="BOOK">{{ i18n.ts.bookViewer }}</option>
+				</MkRadios>
+
+				<MkRadios v-model="bookOpenMode">
+					<option value="right">{{ i18n.ts.rightOpening }}</option>
+					<option value="left">{{ i18n.ts.leftOpening }}</option>
+				</MkRadios>
+
+				<MkRadios v-model="bookPageMode">
+					<option value="double">{{ i18n.ts.doublePage }}</option>
+					<option value="single">{{ i18n.ts.signlePage }}</option>
+				</MkRadios>
+
 				<div class="_gaps_s">
 					<div v-for="file in files" :key="file.id" class="wqugxsfx"
 						:style="{ backgroundImage: file ? `url(${file.thumbnailUrl})` : null }">
@@ -40,11 +55,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import MkButton from "@/components/MkButton.vue";
 import MkInput from "@/components/MkInput.vue";
 import MkTextarea from "@/components/MkTextarea.vue";
 import MkSwitch from "@/components/MkSwitch.vue";
+import MkRadios from "@/components/MkRadios.vue";
 import FormSuspense from "@/components/form/suspense.vue";
 import { selectFiles } from "@/scripts/select-file";
 import * as os from "@/os";
@@ -61,6 +77,9 @@ let files = $ref([]);
 let description = $ref(null);
 let title = $ref(null);
 let isSensitive = $ref(false);
+const viewMode = ref("DEFAULT");
+const bookOpenMode = ref("right");
+const bookPageMode = ref("double");
 
 function selectFile(evt) {
 	selectFiles(evt.currentTarget ?? evt.target, null).then((selected) => {
@@ -80,6 +99,11 @@ async function save() {
 			description: description,
 			fileIds: files.map((file) => file.id),
 			isSensitive: isSensitive,
+			viewSettings: {
+				initialMode: viewMode.value,
+				rightOpening: bookOpenMode.value === "right",
+				double: bookPageMode.value === "double",
+			}
 		});
 		router.push(`/secure/gallery/${props.postId}`);
 	} else {
@@ -88,6 +112,11 @@ async function save() {
 			description: description,
 			fileIds: files.map((file) => file.id),
 			isSensitive: isSensitive,
+			viewSettings: {
+				initialMode: viewMode.value,
+				rightOpening: bookOpenMode.value === "right",
+				double: bookPageMode.value === "double",
+			}
 		});
 		router.push(`/secure/gallery/${created.id}`);
 	}
@@ -119,6 +148,15 @@ watch(
 						title = post.title;
 						description = post.description;
 						isSensitive = post.isSensitive;
+						if (post.viewSettings) {
+							viewMode.value = post.viewSettings.initialMode;
+							bookOpenMode.value = post.viewSettings.rightOpening ? "right" : "left";
+							bookPageMode.value = post.viewSettings.double ? "double" : "single";
+						} else {
+							viewMode.value = "DEFAULT";
+							bookOpenMode.value = "right";
+							bookPageMode.value = "double";
+						}
 					})
 				: Promise.resolve(null);
 	},

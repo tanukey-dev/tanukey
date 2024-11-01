@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, onActivated, onDeactivated, onMounted } from "vue";
+import { computed, watch, onActivated, onDeactivated, ref } from "vue";
 import MkPostForm from "@/components/MkPostForm.vue";
 import MkTimeline from "@/components/MkTimeline.vue";
 import XChannelFollowButton from "@/components/MkChannelFollowButton.vue";
@@ -106,7 +106,7 @@ let favorited = $ref(false);
 let searchQuery = $ref("");
 let searchPagination = $ref();
 let searchKey = $ref("");
-let moderators = $ref(null);
+const moderators = ref<misskey.entities.UserDetailed[]>([]);
 const featuredPagination = $computed(() => ({
 	endpoint: "notes/featured" as const,
 	limit: 10,
@@ -118,7 +118,7 @@ const featuredPagination = $computed(() => ({
 const tags = computed(() => {
 	return channel?.tags;
 });
-let postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
+const postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
 
 onActivated(async () => {
 	postChannel.value = await os.api("channels/show", {
@@ -141,16 +141,19 @@ watch(
 			tab = "timeline";
 		}
 
-		let userIds: string[] = [];
-		if (channel && channel.userId) {
-			userIds.push(channel.userId);
+		const userIds = new Set<string>();
+		if (channel?.userId) {
+			userIds.add(channel.userId);
 		}
 		if (channel && channel.moderatorUserIds.length > 0) {
-			userIds.push(...channel.moderatorUserIds);
+			for (const id of channel.moderatorUserIds) {
+				userIds.add(id);
+			}
 		}
-		moderators = await os.api("users/show", {
-			userIds: userIds,
+		const users = await os.api("users/show", {
+			userIds: userIds.values().toArray(),
 		});
+		moderators.value = users;
 	},
 	{ immediate: true },
 );

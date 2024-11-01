@@ -51,7 +51,7 @@
 					<span><i class="ti ti-device-tv"></i></span>
 					<span :class="$style.headerRightButtonText">{{ postChannel.name }}</span>
 				</button>
-				<button v-if="visibility !== 'specified'" v-click-anime
+				<button v-if="visibility !== 'specified' && !(props.reply?.user.host)" v-click-anime
 					v-tooltip="i18n.ts._visibility.disableFederation" class="_button"
 					:class="[$style.headerRightItem, { [$style.danger]: localOnly }]" @click="toggleLocalOnly">
 					<span v-if="!localOnly"><i class="ti ti-rocket"></i></span>
@@ -326,8 +326,6 @@ watch(postChannel, () => {
 		if (!postChannel.value.federation) {
 			localOnly = true;
 		}
-	} else {
-		localOnly = false;
 	}
 });
 
@@ -477,6 +475,7 @@ if (props.reply && props.reply.text != null) {
 
 if (postChannel.value) {
 	visibility = "public";
+	// チャンネルの連合が許可されていない場合はローカルオンリーに
 	if (!postChannel.value.federation) {
 		localOnly = true;
 	}
@@ -661,7 +660,6 @@ function setChannel(): void {
 function setVisibility() {
 	if (postChannel.value) {
 		visibility = "public";
-		localOnly = true;
 		return;
 	}
 
@@ -1202,6 +1200,11 @@ onMounted(async () => {
 	// デフォルト設定が連合OFFのときに外部サーバーにDMが送信できなくなるため
 	if (visibility === "specified") {
 		localOnly = false
+	}
+
+	// 返信先がリモートへの場合は強制的に連合ありにする
+	if (props.reply?.user.host) {
+		localOnly = false;
 	}
 
 	if (props.initialVisibleUsers) {

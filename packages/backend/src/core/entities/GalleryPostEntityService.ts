@@ -1,14 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { GalleryLikesRepository, GalleryPostsRepository } from '@/models/index.js';
-import { awaitAll } from '@/misc/prelude/await-all.js';
-import type { Packed } from '@/misc/json-schema.js';
-import type { } from '@/models/entities/Blocking.js';
-import type { User } from '@/models/entities/User.js';
-import type { GalleryPost } from '@/models/entities/GalleryPost.js';
-import { bindThis } from '@/decorators.js';
-import { UserEntityService } from './UserEntityService.js';
-import { DriveFileEntityService } from './DriveFileEntityService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { DI } from "@/di-symbols.js";
+import type {
+	GalleryLikesRepository,
+	GalleryPostsRepository,
+} from "@/models/index.js";
+import { awaitAll } from "@/misc/prelude/await-all.js";
+import type { Packed } from "@/misc/json-schema.js";
+import type {} from "@/models/entities/Blocking.js";
+import type { User } from "@/models/entities/User.js";
+import { ViewMode, type GalleryPost } from "@/models/entities/GalleryPost.js";
+import { bindThis } from "@/decorators.js";
+import { UserEntityService } from "./UserEntityService.js";
+import { DriveFileEntityService } from "./DriveFileEntityService.js";
 
 @Injectable()
 export class GalleryPostEntityService {
@@ -21,16 +24,18 @@ export class GalleryPostEntityService {
 
 		private userEntityService: UserEntityService,
 		private driveFileEntityService: DriveFileEntityService,
-	) {
-	}
+	) {}
 
 	@bindThis
 	public async pack(
-		src: GalleryPost['id'] | GalleryPost,
-		me?: { id: User['id'] } | null | undefined,
-	): Promise<Packed<'GalleryPost'>> {
+		src: GalleryPost["id"] | GalleryPost,
+		me?: { id: User["id"] } | null | undefined,
+	): Promise<Packed<"GalleryPost">> {
 		const meId = me ? me.id : null;
-		const post = typeof src === 'object' ? src : await this.galleryPostsRepository.findOneByOrFail({ id: src });
+		const post =
+			typeof src === "object"
+				? src
+				: await this.galleryPostsRepository.findOneByOrFail({ id: src });
 
 		return await awaitAll({
 			id: post.id,
@@ -46,16 +51,30 @@ export class GalleryPostEntityService {
 			tags: post.tags.length > 0 ? post.tags : undefined,
 			isSensitive: post.isSensitive,
 			likedCount: post.likedCount,
-			isLiked: meId ? await this.galleryLikesRepository.findOneBy({ postId: post.id, userId: meId }).then(x => x != null) : undefined,
+			isLiked: meId
+				? await this.galleryLikesRepository
+						.findOneBy({ postId: post.id, userId: meId })
+						.then((x) => x != null)
+				: undefined,
+			viewSettings: post.viewSettings
+				? {
+						initialMode: ViewMode[post.viewSettings.initialMode],
+						rightOpening: post.viewSettings.rightOpening,
+						double: post.viewSettings.double,
+					}
+				: {
+						initialMode: "DEFAULT",
+						rightOpening: true,
+						double: true,
+					},
 		});
 	}
 
 	@bindThis
 	public packMany(
 		posts: GalleryPost[],
-		me?: { id: User['id'] } | null | undefined,
+		me?: { id: User["id"] } | null | undefined,
 	) {
-		return Promise.all(posts.map(x => this.pack(x, me)));
+		return Promise.all(posts.map((x) => this.pack(x, me)));
 	}
 }
-
