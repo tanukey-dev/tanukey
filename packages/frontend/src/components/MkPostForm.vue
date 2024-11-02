@@ -1,6 +1,6 @@
 <template>
 	<div :class="[$style.root, { [$style.modal]: modal, _popup: modal }]" @dragover.stop="onDragover"
-		@dragenter="onDragenter" @dragleave="onDragleave" @drop.stop="onDrop">
+		@drop.stop="onDrop">
 		<header :class="$style.header">
 			<div :class="$style.headerLeft">
 				<button v-if="!fixed" :class="$style.cancel" class="_button" @click="cancel"><i
@@ -154,7 +154,6 @@
 				<button v-tooltip="i18n.ts.previewNoteText" class="_button"
 					:class="[$style.footerButton, { [$style.previewButtonActive]: showPreview }]"
 					@click="showPreview = !showPreview"><i class="ti ti-eye"></i></button>
-				<!--<button v-tooltip="i18n.ts.more" class="_button" :class="$style.footerButton" @click="showingOptions = !showingOptions"><i class="ti ti-dots"></i></button>-->
 			</div>
 		</footer>
 		<MkNotePreview v-if="showPreview" :class="$style.preview" :text="text" />
@@ -276,7 +275,6 @@ let visibility = $ref(
 );
 let visibleUsers = $ref([]);
 let reactionAcceptance = $ref(defaultStore.state.reactionAcceptance);
-let draghover = $ref(false);
 let quoteId = $ref(null);
 let hasNotSpecifiedMentions = $ref(false);
 let recentHashtags = $ref(
@@ -345,28 +343,29 @@ const draftKey = $computed((): string => {
 const placeholder = $computed((): string => {
 	let postTo = "";
 	if (postChannel.value) {
-		postTo = "[" + postChannel.value.name + "] ";
+		postTo = `[${postChannel.value.name}] `;
 	} else {
-		postTo = "[" + i18n.ts._visibility[visibility] + "] ";
+		postTo = `[${i18n.ts._visibility[visibility]}] `;
 	}
 
 	if (props.renote) {
 		return postTo + i18n.ts._postForm.quotePlaceholder;
-	} else if (props.reply) {
-		return postTo + i18n.ts._postForm.replyPlaceholder;
-	} else if (postChannel.value) {
-		return postTo + i18n.ts._postForm.channelPlaceholder;
-	} else {
-		const xs = [
-			i18n.ts._postForm._placeholders.a,
-			i18n.ts._postForm._placeholders.b,
-			i18n.ts._postForm._placeholders.c,
-			i18n.ts._postForm._placeholders.d,
-			i18n.ts._postForm._placeholders.e,
-			i18n.ts._postForm._placeholders.f,
-		];
-		return postTo + xs[Math.floor(Math.random() * xs.length)];
 	}
+	if (props.reply) {
+		return postTo + i18n.ts._postForm.replyPlaceholder;
+	}
+	if (postChannel.value) {
+		return postTo + i18n.ts._postForm.channelPlaceholder;
+	}
+	const xs = [
+		i18n.ts._postForm._placeholders.a,
+		i18n.ts._postForm._placeholders.b,
+		i18n.ts._postForm._placeholders.c,
+		i18n.ts._postForm._placeholders.d,
+		i18n.ts._postForm._placeholders.e,
+		i18n.ts._postForm._placeholders.f,
+	];
+	return postTo + xs[Math.floor(Math.random() * xs.length)];
 });
 
 const submitText = $computed((): string => {
@@ -837,7 +836,6 @@ function onDragover(ev) {
 	const isDriveFile = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
 	if (isFile || isDriveFile) {
 		ev.preventDefault();
-		draghover = true;
 		switch (ev.dataTransfer.effectAllowed) {
 			case "all":
 			case "uninitialized":
@@ -857,17 +855,7 @@ function onDragover(ev) {
 	}
 }
 
-function onDragenter(ev) {
-	draghover = true;
-}
-
-function onDragleave(ev) {
-	draghover = false;
-}
-
 function onDrop(ev): void {
-	draghover = false;
-
 	// ファイルだったら
 	if (ev.dataTransfer.files.length > 0) {
 		ev.preventDefault();
