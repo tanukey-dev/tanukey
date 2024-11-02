@@ -276,7 +276,6 @@ let visibility = $ref(
 );
 let visibleUsers = $ref([]);
 let reactionAcceptance = $ref(defaultStore.state.reactionAcceptance);
-let autocomplete = $ref(null);
 let draghover = $ref(false);
 let quoteId = $ref(null);
 let hasNotSpecifiedMentions = $ref(false);
@@ -517,7 +516,7 @@ if (
 			});
 		}
 	}
-} else if (props.reply && props.reply.channel) {
+} else if (props.reply?.channel) {
 	tmpPostChannel = postChannel.value;
 	postChannel.value = props.reply.channel;
 } else if (props.reply) {
@@ -683,6 +682,11 @@ function setVisibility() {
 }
 
 async function toggleLocalOnly() {
+	// 返信の場合は返信元に従うため変更不可
+	if (props.reply) {
+		return;
+	}
+
 	if (postChannel.value) {
 		visibility = "public";
 		if (!postChannel.value.federation) {
@@ -1202,9 +1206,14 @@ onMounted(async () => {
 		localOnly = false
 	}
 
-	// 返信先がリモートへの場合は強制的に連合ありにする
-	if (props.reply?.user.host) {
-		localOnly = false;
+	if (props.reply) {
+		// 返信先がリモートへの場合は強制的に連合ありにする
+		if (props.reply.user.host) {
+			localOnly = false;
+		} else {
+			// 返信の場合は返信元のローカルオンリー設定を引き継ぐ
+			localOnly = props.reply.localOnly ?? false;
+		}
 	}
 
 	if (props.initialVisibleUsers) {
