@@ -918,9 +918,9 @@ const diceRoll = (text: string, bold: boolean): string => {
 	return text.replace(
 		/!(\d{1,3})?[dD](\d{1,3})(([-+])(\d+))?/g,
 		(match, c1, c2, c3, c4) => {
-			const dice: number = parseInt(c1 ?? 1);
+			const dice: number = Number.parseInt(c1 ?? 1);
 			const rolls: number[] = [];
-			let plus: number = parseInt(c3 ?? 0);
+			let plus: number = Number.parseInt(c3 ?? 0);
 			if (c3 === "-") {
 				plus = -c4;
 			}
@@ -929,22 +929,16 @@ const diceRoll = (text: string, bold: boolean): string => {
 			}
 
 			const replacedText =
-				match +
-				" => " +
-				(dice === 0
+				`${match} => ${dice === 0
 					? "0"
-					: rolls.map((r) => r + plus).reduce((sum, ele) => sum + ele)) +
-				(dice <= 1 && plus === 0
-					? ""
-					: " [" +
-					rolls.map((r) => r + (c3 ? "(" + (r + plus) + ")" : "")).join(",") +
-					"]");
+					: rolls.map((r) => r + plus).reduce((sum, ele) => sum + ele)}${dice <= 1 && plus === 0
+						? ""
+						: ` [${rolls.map((r) => r + (c3 ? `(${r + plus})` : "")).join(",")}]`}`;
 
 			if (bold) {
-				return "**" + replacedText + "**";
-			} else {
-				return replacedText;
+				return `**${replacedText}**`;
 			}
+			return replacedText;
 		},
 	);
 };
@@ -1025,10 +1019,7 @@ async function post(ev?: MouseEvent) {
 		asciiartText.value.trim() !== ""
 	) {
 		postData.text =
-			(postData.text === undefined ? "" : postData.text + "\n") +
-			"<asciiart>" +
-			diceRoll(asciiartText.value, false) +
-			"\n</asciiart>\n";
+			`${postData.text === undefined ? "" : `${postData.text}\n`}<asciiart>${diceRoll(asciiartText.value, false)}\n</asciiart>\n`;
 	}
 
 	// plugin
