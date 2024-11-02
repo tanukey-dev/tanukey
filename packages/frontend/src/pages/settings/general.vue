@@ -206,7 +206,6 @@ async function reloadAsk() {
 const fontSize = computed(
 	defaultStore.makeGetterSetter("fontSize"),
 );
-fontSize.value = 14;
 
 const overridedDeviceKind = computed(
 	defaultStore.makeGetterSetter("overridedDeviceKind"),
