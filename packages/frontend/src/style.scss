@@ -1,5 +1,35 @@
 @charset "utf-8";
 
+$body-font-family: 'Hiragino Maru Gothic Pro', "BIZ UDGothic", Roboto, HelveticaNeue, Arial, sans-serif !important;
+
+// Vuetifyが提供しているTypography系のoptions一覧
+$vuetifyTypographyOptions: text-h1, text-h2, text-h3, text-h4, text-h5, text-h6, text-headline,
+  text-title, text-subtitle-1, text-subtitle-2, text-body-1, text-body-2, text-button, text-caption,
+  text-overline;
+
+// テキスト関係のHTMLタグ一覧
+$htmlTags: div, span, h1, h2, h3, h4, h5, h6, p, pre, a, abbr, address, code, small, strike, strong,
+  center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead,
+  tr, th, td, article;
+
+#misskey_app {
+  font-family: $body-font-family;
+
+  // Vuetifyのtypography option使用箇所にすべて指定のfont-familyを上書きする
+  @each $vuetifyTypographyOption in $vuetifyTypographyOptions {
+    .#{$vuetifyTypographyOption} {
+      font-family: $body-font-family;
+    }
+  }
+
+  // HTMLタグ使用箇所にすべて指定のfont-familyを上書きする
+  @each $htmlTag in $htmlTags {
+    #{$htmlTag} {
+      font-family: $body-font-family;
+    }
+  }
+}
+
 :root {
 	--radius: 12px;
 	--marginFull: 16px;
@@ -27,8 +57,7 @@ html {
 	accent-color: var(--accent);
 	overflow: auto;
 	overflow-wrap: break-word;
-	font-family: 'Hiragino Maru Gothic Pro', "BIZ UDGothic", Roboto, HelveticaNeue, Arial, sans-serif;
-	font-size: 14px;
+	font-size: 14px !important;
 	line-height: 1.5em;
 	text-size-adjust: 100%;
 	tab-size: 2;

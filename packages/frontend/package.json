@@ -75,7 +75,8 @@
 		"vue-prism-editor": "2.0.0-alpha.2",
 		"vue-router": "4.4.5",
 		"vue3-touch-events": "^4.1.2",
-		"vuedraggable": "next"
+		"vuedraggable": "next",
+		"vuetify": "^3.7.3"
 	},
 	"devDependencies": {
 		"@types/escape-regexp": "0.0.1",

@@ -16,16 +16,15 @@ import { initializeSw } from "@/scripts/initialize-sw";
 import { readNoteCache } from "@/scripts/read-note";
 import Vue3TouchEvents from "vue3-touch-events";
 import VueGtag from "vue-gtag";
+import "vuetify/styles";
+import { createVuetify } from "vuetify";
 
 export async function mainBoot() {
 	const { isClientUpdated } = await common(() => {
-		const app = createApp(
-			new URLSearchParams(window.location.search).has("zen")
-				? defineAsyncComponent(() => import("@/ui/zen.vue"))
-				: !$i
-					? defineAsyncComponent(() => import("@/ui/visitor.vue"))
-					: defineAsyncComponent(() => import("@/ui/universal.vue")),
-		);
+		const app = createApp(defineAsyncComponent(() => import("@/app.vue")));
+
+		const vuetify = createVuetify();
+		app.use(vuetify);
 
 		app.use(Vue3TouchEvents);
 		app.use(router);

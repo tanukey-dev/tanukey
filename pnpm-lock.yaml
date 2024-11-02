@@ -755,6 +755,9 @@ importers:
       vuedraggable:
         specifier: next
         version: 4.1.0(vue@3.5.11)
+      vuetify:
+        specifier: ^3.7.3
+        version: 3.7.3(typescript@5.1.3)(vue@3.5.11)
     devDependencies:
       '@types/escape-regexp':
         specifier: 0.0.1
@@ -15060,6 +15063,26 @@ packages:
       vue: ^3.0.1
     dependencies:
       sortablejs: 1.14.0
+      vue: 3.5.11(typescript@5.1.3)
+    dev: false
+
+  /vuetify@3.7.3(typescript@5.1.3)(vue@3.5.11):
+    resolution: {integrity: sha512-bpuvBpZl1/+nLlXDgdVXekvMNR6W/ciaoa8CYlpeAzAARbY8zUFSoBq05JlLhkIHI58AnzKVy4c09d0OtfYAPg==}
+    engines: {node: ^12.20 || >=14.13}
+    peerDependencies:
+      typescript: '>=4.7'
+      vite-plugin-vuetify: '>=1.0.0'
+      vue: ^3.3.0
+      webpack-plugin-vuetify: '>=2.0.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      vite-plugin-vuetify:
+        optional: true
+      webpack-plugin-vuetify:
+        optional: true
+    dependencies:
+      typescript: 5.1.3
       vue: 3.5.11(typescript@5.1.3)
     dev: false
 
