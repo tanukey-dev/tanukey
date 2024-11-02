@@ -362,6 +362,7 @@ const canPost = $computed((): boolean => {
 			!!quoteId ||
 			1 <= asciiartText.value.trim().length) &&
 		textLength <= maxTextLength &&
+		!(useCw && (!cw || cw.replaceAll(" ", '').replaceAll("　", '') === "")) &&
 		(!poll || poll.choices.length >= 2)
 	);
 });
