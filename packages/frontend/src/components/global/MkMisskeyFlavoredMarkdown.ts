@@ -31,32 +31,79 @@ type MfmEvents = {
 };
 
 const convertAozoraRuby = (text: string): string => {
-	const t1 = text.replace(/(\r\n|\n|\r)/g, "\n");
-	const res: string[] = [];
-	for (const t of t1.split("\n")) {
-		res.push("\n");
-		t.replace(
+	const normalizedText = text.replace(/(\r\n|\n|\r)/g, "\n");
+	const resultText: string[] = [];
+	const parseRuby = (inputLine: string) => {
+		let line = inputLine;
+
+		line = line.replace(
 			/<ruby>(.+?)<rt>(.+?)<\/rt><\/ruby>/g,
 			"\n<ruby>$1<rt>$2</rt></ruby>\n",
-		)
-			.replace(/《《(.+?)》》/g, (match, c1) =>
-				c1.replace(/(.)/g, "\n<ruby>$1<rt>・</rt></ruby>\n"),
-			)
-			.replace(/[\|｜](.+?)《(.+?)》/g, "\n<ruby>$1<rt>$2</rt></ruby>\n")
-			.replace(/([一-龠]+)《(.+?)》/g, "\n<ruby>$1<rt>$2</rt></ruby>\n")
-			.replace(/[\|｜]《(.+?)》/g, "《$1》")
-			.split("\n")
-			.forEach((t2) => {
-				const match = t2.match(/<ruby>(.+?)<rt>(.+?)<\/rt><\/ruby>/);
-				if (match !== null && match.length > 2) {
-					res.push(`$[ruby ${match[1]} ${match[2]}]`);
-				} else if (t2 !== "") {
-					res.push(t2);
-				}
-			});
+		);
+		line = line.replace(/《《(.+?)》》/g, (_match, c1) =>
+			c1.replace(/(.)/g, "\n<ruby>$1<rt>・</rt></ruby>\n"),
+		);
+		line = line.replace(
+			/[\|｜](.+?)《(.+?)》/g,
+			"\n<ruby>$1<rt>$2</rt></ruby>\n",
+		);
+		line = line.replace(
+			/([一-龠]+)《(.+?)》/g,
+			"\n<ruby>$1<rt>$2</rt></ruby>\n",
+		);
+		line = line.replace(/[\|｜]《(.+?)》/g, "《$1》");
+
+		for (const word of line.split("\n")) {
+			const match = word.match(/<ruby>(.+?)<rt>(.+?)<\/rt><\/ruby>/);
+			if (match !== null && match.length > 2) {
+				resultText.push(`$[ruby ${match[1]} ${match[2]}]`);
+			} else if (word !== "") {
+				resultText.push(word);
+			}
+		}
+	};
+	const parsePlain = (line: string) => {
+		const matchsPlain = line.matchAll(/(.*)(<plain>.+<\/plain>)(.*)/g);
+		let found = false;
+		for (const match of matchsPlain) {
+			if (match[1] !== "") {
+				parseRuby(match[1]);
+			}
+			if (match[2] !== "") {
+				resultText.push(match[2]);
+			}
+			if (match[3] !== "") {
+				parseRuby(match[3]);
+			}
+			found = true;
+		}
+		if (!found) {
+			parseRuby(line);
+		}
+	};
+	for (const line of normalizedText.split("\n")) {
+		resultText.push("\n");
+		// inlineCode
+		const matchsInlineCode = line.matchAll(/([^`]*)(`[^`]*`)([^`]*)/g);
+		let found = false;
+		for (const match of matchsInlineCode) {
+			if (match[1] !== "") {
+				parsePlain(match[1]);
+			}
+			if (match[2] !== "") {
+				resultText.push(match[2]);
+			}
+			if (match[3] !== "") {
+				parsePlain(match[3]);
+			}
+			found = true;
+		}
+		if (!found) {
+			parsePlain(line);
+		}
 	}
-	res.shift();
-	return res.join("");
+	resultText.shift();
+	return resultText.join("");
 };
 
 export default function (
