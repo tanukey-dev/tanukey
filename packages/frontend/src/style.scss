@@ -57,7 +57,6 @@ html {
 	accent-color: var(--accent);
 	overflow: auto;
 	overflow-wrap: break-word;
-	font-size: 14px !important;
 	line-height: 1.5em;
 	text-size-adjust: 100%;
 	tab-size: 2;
@@ -87,18 +86,6 @@ html {
 				background: var(--accent);
 			}
 		}
-	}
-
-	&.f-1 {
-		font-size: 15px;
-	}
-
-	&.f-2 {
-		font-size: 16px;
-	}
-
-	&.f-3 {
-		font-size: 17px;
 	}
 
 	&.useSystemFont {

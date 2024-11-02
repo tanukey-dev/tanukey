@@ -390,6 +390,10 @@ export const defaultStore = markRaw(
 			where: "device",
 			default: false,
 		},
+		fontSize: {
+			where: "device",
+			default: 14,
+		},
 	}),
 );
 

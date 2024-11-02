@@ -1,19 +1,24 @@
 <template>
-<div class="timctyfi" :class="{ disabled, easing }">
-	<div class="label"><slot name="label"></slot></div>
-	<div v-adaptive-border class="body">
-		<div ref="containerEl" class="container">
-			<div class="track">
-				<div class="highlight" :style="{ width: (steppedRawValue * 100) + '%' }"></div>
+	<div class="timctyfi" :class="{ disabled, easing }">
+		<div class="label">
+			<slot name="label"></slot>
+		</div>
+		<div v-adaptive-border class="body">
+			<div ref="containerEl" class="container">
+				<div class="track">
+					<div class="highlight" :style="{ width: (steppedRawValue * 100) + '%' }"></div>
+				</div>
+				<div v-if="steps && showTicks" class="ticks">
+					<div v-for="i in (steps + 1)" class="tick" :style="{ left: (((i - 1) / steps) * 100) + '%' }"></div>
+				</div>
+				<div ref="thumbEl" v-tooltip="textConverter(finalValue)" class="thumb"
+					:style="{ left: thumbPosition + 'px' }" @mousedown="onMousedown" @touchstart="onMousedown"></div>
 			</div>
-			<div v-if="steps && showTicks" class="ticks">
-				<div v-for="i in (steps + 1)" class="tick" :style="{ left: (((i - 1) / steps) * 100) + '%' }"></div>
-			</div>
-			<div ref="thumbEl" v-tooltip="textConverter(finalValue)" class="thumb" :style="{ left: thumbPosition + 'px' }" @mousedown="onMousedown" @touchstart="onMousedown"></div>
+		</div>
+		<div class="caption">
+			<slot name="caption"></slot>
 		</div>
 	</div>
-	<div class="caption"><slot name="caption"></slot></div>
-</div>
 </template>
 
 <script lang="ts" setup>
@@ -147,7 +152,7 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 			Math.max(
 				0,
 				pointerPositionOnContainer /
-					(containerEl.value!.offsetWidth - thumbWidth),
+				(containerEl.value!.offsetWidth - thumbWidth),
 			),
 		);
 	};
@@ -181,7 +186,7 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 .timctyfi {
 	position: relative;
 
-	> .label {
+	>.label {
 		font-size: 0.85em;
 		padding: 0 0 8px 0;
 		user-select: none;
@@ -191,7 +196,7 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 		}
 	}
 
-	> .caption {
+	>.caption {
 		font-size: 0.85em;
 		padding: 8px 0 0 0;
 		color: var(--fgTransparentWeak);
@@ -204,17 +209,17 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 	$thumbHeight: 20px;
 	$thumbWidth: 20px;
 
-	> .body {
+	>.body {
 		padding: 7px 12px;
 		background: var(--panel);
 		border: solid 1px var(--panel);
 		border-radius: 6px;
 
-		> .container {
+		>.container {
 			position: relative;
 			height: $thumbHeight;
 
-			> .track {
+			>.track {
 				position: absolute;
 				top: 0;
 				bottom: 0;
@@ -227,7 +232,7 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 				border-radius: 999px;
 				overflow: clip;
 
-				> .highlight {
+				>.highlight {
 					position: absolute;
 					top: 0;
 					left: 0;
@@ -237,7 +242,7 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 				}
 			}
 
-			> .ticks {
+			>.ticks {
 				$tickWidth: 3px;
 
 				position: absolute;
@@ -248,7 +253,7 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 				margin: auto;
 				width: calc(100% - #{$thumbWidth});
 
-				> .tick {
+				>.tick {
 					position: absolute;
 					bottom: 0;
 					width: $tickWidth;
@@ -259,7 +264,7 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 				}
 			}
 
-			> .thumb {
+			>.thumb {
 				position: absolute;
 				width: $thumbWidth;
 				height: $thumbHeight;
@@ -275,16 +280,16 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
 	}
 
 	&.easing {
-		> .body {
-			> .container {
-				> .track {
-					> .highlight {
-						transition: width 0.2s cubic-bezier(0,0,0,1);
+		>.body {
+			>.container {
+				>.track {
+					>.highlight {
+						transition: width 0.2s cubic-bezier(0, 0, 0, 1);
 					}
 				}
 
-				> .thumb {
-					transition: left 0.2s cubic-bezier(0,0,0,1);
+				>.thumb {
+					transition: left 0.2s cubic-bezier(0, 0, 0, 1);
 				}
 			}
 		}

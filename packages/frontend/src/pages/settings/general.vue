@@ -130,13 +130,9 @@
 					</div>
 				</div>
 
-				<MkRadios v-model="fontSize">
+				<MkRange v-model="fontSize" :min="12" :max="20" :step="1" easing>
 					<template #label>{{ i18n.ts.fontSize }}</template>
-					<option :value="null"><span style="font-size: 14px;">Aa</span></option>
-					<option value="1"><span style="font-size: 15px;">Aa</span></option>
-					<option value="2"><span style="font-size: 16px;">Aa</span></option>
-					<option value="3"><span style="font-size: 17px;">Aa</span></option>
-				</MkRadios>
+				</MkRange>
 			</div>
 		</FormSection>
 
@@ -195,7 +191,6 @@ import { miLocalStorage } from "@/local-storage";
 import { uiMode } from "@/config";
 
 const lang = ref(miLocalStorage.getItem("lang"));
-const fontSize = ref(miLocalStorage.getItem("fontSize"));
 const useSystemFont = ref(miLocalStorage.getItem("useSystemFont") != null);
 
 async function reloadAsk() {
@@ -207,6 +202,11 @@ async function reloadAsk() {
 
 	unisonReload();
 }
+
+const fontSize = computed(
+	defaultStore.makeGetterSetter("fontSize"),
+);
+fontSize.value = 14;
 
 const overridedDeviceKind = computed(
 	defaultStore.makeGetterSetter("overridedDeviceKind"),
@@ -314,7 +314,6 @@ watch(useSystemFont, () => {
 watch(
 	[
 		lang,
-		fontSize,
 		useSystemFont,
 		enableInfiniteScroll,
 		squareAvatars,
