@@ -99,14 +99,12 @@
 				i18n.ts.notSpecifiedMentionWarning }} - <button class="_textButton" @click="addMissingMention()">{{
 					i18n.ts.add
 				}}</button></MkInfo>
-			<textarea v-show="useCw" ref="cwInputEl" v-model="cw" :style="textareaCwStyle" :class="$style.cw"
-				:placeholder="i18n.ts.annotation" @keydown="onKeydown"
-				@input="handleInputCw($event, textareaCwHeight)"></textarea>
+			<textarea v-show="useCw" ref="cwInputEl" v-model="cw" :class="$style.cw" :placeholder="i18n.ts.annotation"
+				@keydown="onKeydown" spellcheck="false"></textarea>
 			<div :class="[$style.textOuter, { [$style.withCw]: useCw }]">
-				<textarea ref="textareaEl" v-model="text" :style="textareaMainStyle" :class="[$style.text]"
-					:disabled="posting || posted" :placeholder="placeholder" data-cy-post-form-text @keydown="onKeydown"
-					@paste="onPaste" @compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd"
-					@input="handleInputMain($event)" />
+				<textarea ref="textareaEl" v-model="text" :class="[$style.text]" :disabled="posting || posted"
+					:placeholder="placeholder" data-cy-post-form-text @keydown="onKeydown" @paste="onPaste"
+					@compositionupdate="onCompositionUpdate" @compositionend="onCompositionEnd" spellcheck="false" />
 				<div v-if="maxTextLength - textLength < 100"
 					:class="['_acrylic', $style.textCount, { [$style.textOver]: textLength > maxTextLength }]">{{
 						maxTextLength
@@ -114,9 +112,8 @@
 			</div>
 			<input v-show="withHashtags" ref="hashtagsInputEl" v-model="hashtags" :class="$style.hashtags"
 				:placeholder="i18n.ts.hashtags" list="hashtags">
-			<textarea v-show="withAsciiArt" ref="asciiArtTextareaEl" v-model="asciiartText" :style="textareaAAStyle"
-				:class="$style.asciiart" class="asciiart" :placeholder="i18n.ts.asciiart" spellcheck="false"
-				@input="handleInputAA($event)"></textarea>
+			<textarea v-show="withAsciiArt" ref="asciiArtTextareaEl" v-model="asciiartText" :class="$style.asciiart"
+				class="asciiart" :placeholder="i18n.ts.asciiart" spellcheck="false"></textarea>
 			<XPostFormAttaches v-model="files" :class="$style.attaches" @detach="detachFile"
 				@changeSensitive="updateFileSensitive" @changeName="updateFileName" />
 			<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null" />
@@ -207,6 +204,7 @@ import { deepClone } from "@/scripts/clone";
 import MkRippleEffect from "@/components/MkRippleEffect.vue";
 import { miLocalStorage } from "@/local-storage";
 import { claimAchievement } from "@/scripts/achievements";
+import autosize from "autosize";
 
 const modal = inject("modal");
 
@@ -286,37 +284,6 @@ let postChannel: WritableComputedRef<misskey.entities.Channel | null> =
 	computed(defaultStore.makeGetterSetter("postChannel"));
 let tmpPostChannel: misskey.entities.Channel | null = null;
 let updateDraft = true;
-const textareaCwHeight = ref(30);
-const textareaCwStyle = computed(() => {
-	return { height: `${textareaCwHeight.value + 2}px` };
-});
-const textareaMainHeight = ref(90);
-const textareaMainStyle = computed(() => {
-	return { height: `${textareaMainHeight.value + 2}px` };
-});
-const textareaAAHeight = ref(300);
-const textareaAAStyle = computed(() => {
-	return { height: `${textareaAAHeight.value + 2}px` };
-});
-
-function handleInputCw(event: any) {
-	handleInput(event, textareaCwHeight);
-}
-
-function handleInputMain(event: any) {
-	handleInput(event, textareaMainHeight);
-}
-
-function handleInputAA(event: any) {
-	handleInput(event, textareaAAHeight);
-}
-
-function handleInput(event: any, textareaHeight: any) {
-	textareaHeight.value = 0;
-	nextTick(() => {
-		textareaHeight.value = event.target.scrollHeight;
-	});
-}
 
 watch(postChannel, () => {
 	if (postChannel.value) {
@@ -1172,6 +1139,10 @@ onMounted(async () => {
 	new Autocomplete(cwInputEl, $$(cw));
 	new Autocomplete(hashtagsInputEl, $$(hashtags));
 
+	autosize(textareaEl);
+	autosize(cwInputEl);
+	autosize(hashtagsInputEl);
+
 	//チャンネル指定があった場合は書き換える
 	if (props.channel) {
 		postChannel.value = await os.api("channels/show", {
@@ -1280,7 +1251,6 @@ defineExpose({
 }
 
 .mainContent {
-	max-height: 45vh;
 	overflow-y: auto;
 }
 
@@ -1474,6 +1444,8 @@ defineExpose({
 .textOuter {
 	width: 100%;
 	position: relative;
+	max-height: 50vh;
+	overflow: auto;
 
 	&.withCw {
 		padding-top: 8px;
