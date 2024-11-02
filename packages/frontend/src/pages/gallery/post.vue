@@ -12,32 +12,6 @@
 								<img :src="file.url" />
 							</div>
 						</div>
-						<div v-if="bookMode" style="display: grid; justify-content: center; align-items: center;">
-							<Teleport to="body">
-								<div v-if="fullscreen" class="magazine-fullscreen-bg">
-									<MkButton v-if="fullscreen" :rounded="true"
-										style="position:fixed;top:10px;right:10px;" @click="closeFullscreen">
-										<i class="ti ti-x"></i>
-									</MkButton>
-									<div class="magazine-fullscreen-outer">
-										<TurnView :options="isMobile ? bookOptionsMobile : bookOptions"
-											class="magazine-fullscreen">
-											<div v-for="file in post.files" :key="file.id"
-												class="magazine-page-img-outer">
-												<img :src="file.url" class="magazine-page-img-fullscreen" />
-											</div>
-										</TurnView>
-									</div>
-								</div>
-							</Teleport>
-							<TurnView v-if="!fullscreen"
-								:class="isMobile ? 'magazine-mobile' : bookModeDouble ? 'magazine-double' : 'magazine-single'"
-								:options="isMobile ? bookOptionsMobile : bookOptions">
-								<div v-for="file in post.files" :key="file.id" class="magazine-page-img-outer">
-									<img :src="file.url" class="magazine-page-img" />
-								</div>
-							</TurnView>
-						</div>
 						<div class="body">
 							<div class="title">{{ post.title }}</div>
 							<div class="description">
@@ -111,7 +85,6 @@ import { definePageMetadata } from "@/scripts/page-metadata";
 import { defaultStore } from "@/store";
 import { $i } from "@/account";
 import { deviceKind } from "@/scripts/device-kind.js";
-import TurnView from './turn.vue';
 
 const props = defineProps<{
 	postId: string;
