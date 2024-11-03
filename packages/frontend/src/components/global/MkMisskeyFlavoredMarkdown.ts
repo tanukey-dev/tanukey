@@ -81,25 +81,37 @@ const convertAozoraRuby = (text: string): string => {
 			parseRuby(line);
 		}
 	};
+	let inCodeBlock = false;
 	for (const line of normalizedText.split("\n")) {
 		resultText.push("\n");
-		// inlineCode
-		const matchsInlineCode = line.matchAll(/([^`]*)(`[^`]*`)([^`]*)/g);
-		let found = false;
-		for (const match of matchsInlineCode) {
-			if (match[1] !== "") {
-				parsePlain(match[1]);
+		// CodeBlock
+		if (line.includes("```")) {
+			resultText.push(line);
+			inCodeBlock = !inCodeBlock;
+		} else {
+			if (inCodeBlock) {
+				resultText.push(line);
+				continue;
 			}
-			if (match[2] !== "") {
-				resultText.push(match[2]);
+
+			// inlineCode
+			const matchsInlineCode = line.matchAll(/([^`]*)(`[^`]*`)([^`]*)/g);
+			let found = false;
+			for (const match of matchsInlineCode) {
+				if (match[1] !== "") {
+					parsePlain(match[1]);
+				}
+				if (match[2] !== "") {
+					resultText.push(match[2]);
+				}
+				if (match[3] !== "") {
+					parsePlain(match[3]);
+				}
+				found = true;
 			}
-			if (match[3] !== "") {
-				parsePlain(match[3]);
+			if (!found) {
+				parsePlain(line);
 			}
-			found = true;
-		}
-		if (!found) {
-			parsePlain(line);
 		}
 	}
 	resultText.shift();
