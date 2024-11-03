@@ -214,7 +214,7 @@ onMounted(async () => {
 
 .header {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 	background: var(--panel);
 	padding: 5px;
 }
@@ -244,7 +244,7 @@ onMounted(async () => {
 .mainContent {
 	display: grid;
 	grid-auto-flow: column;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 	column-gap: 10px;
 	margin-top: 10px;
 }
