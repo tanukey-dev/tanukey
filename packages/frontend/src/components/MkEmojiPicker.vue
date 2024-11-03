@@ -417,6 +417,7 @@ defineExpose({
 
 	display: flex;
 	flex-direction: column;
+	box-sizing: content-box;
 
 	&.s1 {
 		--eachSize: 40px;
