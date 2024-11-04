@@ -1,27 +1,29 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { FlashsRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { FlashEntityService } from '@/core/entities/FlashEntityService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import type { FlashsRepository } from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { FlashEntityService } from "@/core/entities/FlashEntityService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['flash'],
+	tags: ["flash"],
 
 	requireCredential: false,
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'Flash',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "Flash",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;
@@ -36,9 +38,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private flashEntityService: FlashEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const query = this.flashsRepository.createQueryBuilder('flash')
-				.andWhere('flash.likedCount > 0')
-				.orderBy('flash.likedCount', 'DESC');
+			const query = this.flashsRepository
+				.createQueryBuilder("flash")
+				.andWhere("flash.likedCount > 0")
+				.orderBy("flash.likedCount", "DESC");
 
 			const flashs = await query.limit(10).getMany();
 

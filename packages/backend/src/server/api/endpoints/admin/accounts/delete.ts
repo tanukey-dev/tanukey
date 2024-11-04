@@ -1,26 +1,26 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UsersRepository } from '@/models/index.js';
-import { QueueService } from '@/core/QueueService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { UserSuspendService } from '@/core/UserSuspendService.js';
-import { DI } from '@/di-symbols.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { UsersRepository } from "@/models/Repositories.js";
+import { QueueService } from "@/core/QueueService.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { UserSuspendService } from "@/core/UserSuspendService.js";
+import { DI } from "@/di-symbols.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireAdmin: true,
-	kind: 'write:admin:account',
+	kind: "write:admin:account",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: { type: "string", format: "misskey:id" },
 	},
-	required: ['userId'],
+	required: ["userId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -39,16 +39,16 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const user = await this.usersRepository.findOneBy({ id: ps.userId });
 
 			if (user == null) {
-				throw new Error('user not found');
+				throw new Error("user not found");
 			}
 
 			if (user.isRoot) {
-				throw new Error('cannot delete a root account');
+				throw new Error("cannot delete a root account");
 			}
 
 			if (this.userEntityService.isLocalUser(user)) {
 				// 物理削除する前にDelete activityを送信する
-				await this.userSuspendService.doPostSuspend(user).catch(err => {});
+				await this.userSuspendService.doPostSuspend(user).catch((err) => {});
 
 				this.queueService.createDeleteAccountJob(user, {
 					soft: false,

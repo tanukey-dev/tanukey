@@ -2,7 +2,7 @@ import type { QueryService } from "@/core/QueryService.js";
 import type { EmojiEntityService } from "@/core/entities/EmojiEntityService.js";
 import { DI } from "@/di-symbols.js";
 import type { Emoji } from "@/models/entities/Emoji.js";
-import type { EmojisRepository } from "@/models/index.js";
+import type { EmojisRepository } from "@/models/Repositories.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
 

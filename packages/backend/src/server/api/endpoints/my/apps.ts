@@ -1,31 +1,33 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AppsRepository } from '@/models/index.js';
-import { AppEntityService } from '@/core/entities/AppEntityService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { AppsRepository } from "@/models/Repositories.js";
+import { AppEntityService } from "@/core/entities/AppEntityService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['account', 'app'],
+	tags: ["account", "app"],
 
 	requireCredential: true,
-	kind: 'read:account',
+	kind: "read:account",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'App',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "App",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		offset: { type: 'integer', default: 0 },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 10 },
+		offset: { type: "integer", default: 0 },
 	},
 	required: [],
 } as const;
@@ -50,9 +52,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				skip: ps.offset,
 			});
 
-			return await Promise.all(apps.map(app => this.appEntityService.pack(app, me, {
-				detail: true,
-			})));
+			return await Promise.all(
+				apps.map((app) =>
+					this.appEntityService.pack(app, me, {
+						detail: true,
+					}),
+				),
+			);
 		});
 	}
 }

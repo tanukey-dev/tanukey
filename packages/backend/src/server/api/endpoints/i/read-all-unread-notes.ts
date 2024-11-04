@@ -1,19 +1,19 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { NoteUnreadsRepository } from '@/models/index.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { NoteUnreadsRepository } from "@/models/Repositories.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['account'],
+	tags: ["account"],
 
 	requireCredential: true,
 
-	kind: 'write:account',
+	kind: "write:account",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;
@@ -34,8 +34,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			});
 
 			// 全て既読になったイベントを発行
-			this.globalEventService.publishMainStream(me.id, 'readAllUnreadMentions');
-			this.globalEventService.publishMainStream(me.id, 'readAllUnreadSpecifiedNotes');
+			this.globalEventService.publishMainStream(me.id, "readAllUnreadMentions");
+			this.globalEventService.publishMainStream(
+				me.id,
+				"readAllUnreadSpecifiedNotes",
+			);
 		});
 	}
 }

@@ -1,31 +1,34 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull, Not } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { FollowingsRepository, UsersRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import type { LocalUser, RemoteUser, User } from '@/models/entities/User.js';
-import { QueueService } from '@/core/QueueService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { bindThis } from '@/decorators.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { IsNull, Not } from "typeorm";
+import { DI } from "@/di-symbols.js";
+import type {
+	FollowingsRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import type { Config } from "@/config.js";
+import type { LocalUser, RemoteUser, User } from "@/models/entities/User.js";
+import { QueueService } from "@/core/QueueService.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
+import { bindThis } from "@/decorators.js";
 
 interface IRecipe {
 	type: string;
 }
 
 interface IFollowersRecipe extends IRecipe {
-	type: 'Followers';
+	type: "Followers";
 }
 
 interface IDirectRecipe extends IRecipe {
-	type: 'Direct';
+	type: "Direct";
 	to: RemoteUser;
 }
 
 const isFollowers = (recipe: any): recipe is IFollowersRecipe =>
-	recipe.type === 'Followers';
+	recipe.type === "Followers";
 
 const isDirect = (recipe: any): recipe is IDirectRecipe =>
-	recipe.type === 'Direct';
+	recipe.type === "Direct";
 
 @Injectable()
 export class ApDeliverManagerService {
@@ -41,8 +44,7 @@ export class ApDeliverManagerService {
 
 		private userEntityService: UserEntityService,
 		private queueService: QueueService,
-	) {
-	}
+	) {}
 
 	/**
 	 * Deliver activity to followers
@@ -50,7 +52,10 @@ export class ApDeliverManagerService {
 	 * @param from Followee
 	 */
 	@bindThis
-	public async deliverToFollowers(actor: { id: LocalUser['id']; host: null; }, activity: any) {
+	public async deliverToFollowers(
+		actor: { id: LocalUser["id"]; host: null },
+		activity: any,
+	) {
 		const manager = new DeliverManager(
 			this.userEntityService,
 			this.followingsRepository,
@@ -68,7 +73,11 @@ export class ApDeliverManagerService {
 	 * @param to Target user
 	 */
 	@bindThis
-	public async deliverToUser(actor: { id: LocalUser['id']; host: null; }, activity: any, to: RemoteUser) {
+	public async deliverToUser(
+		actor: { id: LocalUser["id"]; host: null },
+		activity: any,
+		to: RemoteUser,
+	) {
 		const manager = new DeliverManager(
 			this.userEntityService,
 			this.followingsRepository,
@@ -81,20 +90,23 @@ export class ApDeliverManagerService {
 	}
 
 	@bindThis
-	public createDeliverManager(actor: { id: User['id']; host: null; }, activity: any) {
+	public createDeliverManager(
+		actor: { id: User["id"]; host: null },
+		activity: any,
+	) {
 		return new DeliverManager(
 			this.userEntityService,
 			this.followingsRepository,
 			this.queueService,
 
-			actor, 
+			actor,
 			activity,
 		);
 	}
 }
 
 class DeliverManager {
-	private actor: { id: User['id']; host: null; };
+	private actor: { id: User["id"]; host: null };
 	private activity: any;
 	private recipes: IRecipe[] = [];
 
@@ -108,7 +120,7 @@ class DeliverManager {
 		private followingsRepository: FollowingsRepository,
 		private queueService: QueueService,
 
-		actor: { id: User['id']; host: null; },
+		actor: { id: User["id"]; host: null },
 		activity: any,
 	) {
 		this.actor = actor;
@@ -121,7 +133,7 @@ class DeliverManager {
 	@bindThis
 	public addFollowersRecipe() {
 		const deliver = {
-			type: 'Followers',
+			type: "Followers",
 		} as IFollowersRecipe;
 
 		this.addRecipe(deliver);
@@ -134,7 +146,7 @@ class DeliverManager {
 	@bindThis
 	public addDirectRecipe(to: RemoteUser) {
 		const recipe = {
-			type: 'Direct',
+			type: "Direct",
 			to,
 		} as IDirectRecipe;
 
@@ -166,11 +178,11 @@ class DeliverManager {
 		Process follower recipes first to avoid duplication when processing
 		direct recipes later.
 		*/
-		if (this.recipes.some(r => isFollowers(r))) {
+		if (this.recipes.some((r) => isFollowers(r))) {
 			// followers deliver
 			// TODO: SELECT DISTINCT ON ("followerSharedInbox") "followerSharedInbox" みたいな問い合わせにすればよりパフォーマンス向上できそう
 			// ただ、sharedInboxがnullなリモートユーザーも稀におり、その対応ができなさそう？
-			const followers = await this.followingsRepository.find({
+			const followers = (await this.followingsRepository.find({
 				where: {
 					followeeId: this.actor.id,
 					followerHost: Not(IsNull()),
@@ -179,7 +191,7 @@ class DeliverManager {
 					followerSharedInbox: true,
 					followerInbox: true,
 				},
-			}) as {
+			})) as {
 				followerSharedInbox: string | null;
 				followerInbox: string;
 			}[];
@@ -190,15 +202,17 @@ class DeliverManager {
 			}
 		}
 
-		this.recipes.filter((recipe): recipe is IDirectRecipe =>
-			// followers recipes have already been processed
-			isDirect(recipe)
-			// check that shared inbox has not been added yet
-			&& !(recipe.to.sharedInbox && inboxes.has(recipe.to.sharedInbox))
-			// check that they actually have an inbox
-			&& recipe.to.inbox != null,
-		)
-			.forEach(recipe => inboxes.set(recipe.to.inbox!, false));
+		this.recipes
+			.filter(
+				(recipe): recipe is IDirectRecipe =>
+					// followers recipes have already been processed
+					isDirect(recipe) &&
+					// check that shared inbox has not been added yet
+					!(recipe.to.sharedInbox && inboxes.has(recipe.to.sharedInbox)) &&
+					// check that they actually have an inbox
+					recipe.to.inbox != null,
+			)
+			.forEach((recipe) => inboxes.set(recipe.to.inbox!, false));
 
 		// deliver
 		for (const inbox of inboxes) {

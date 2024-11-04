@@ -1,41 +1,44 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { WebhooksRepository } from '@/models/index.js';
-import { webhookEventTypes } from '@/models/entities/Webhook.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { WebhooksRepository } from "@/models/Repositories.js";
+import { webhookEventTypes } from "@/models/entities/Webhook.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../../error.js";
 
 export const meta = {
-	tags: ['webhooks'],
+	tags: ["webhooks"],
 
 	requireCredential: true,
 
-	kind: 'write:account',
+	kind: "write:account",
 
 	errors: {
 		noSuchWebhook: {
-			message: 'No such webhook.',
-			code: 'NO_SUCH_WEBHOOK',
-			id: 'fb0fea69-da18-45b1-828d-bd4fd1612518',
+			message: "No such webhook.",
+			code: "NO_SUCH_WEBHOOK",
+			id: "fb0fea69-da18-45b1-828d-bd4fd1612518",
 		},
 	},
-
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		webhookId: { type: 'string', format: 'misskey:id' },
-		name: { type: 'string', minLength: 1, maxLength: 100 },
-		url: { type: 'string', minLength: 1, maxLength: 1024 },
-		secret: { type: 'string', minLength: 1, maxLength: 1024 },
-		on: { type: 'array', items: {
-			type: 'string', enum: webhookEventTypes,
-		} },
-		active: { type: 'boolean' },
+		webhookId: { type: "string", format: "misskey:id" },
+		name: { type: "string", minLength: 1, maxLength: 100 },
+		url: { type: "string", minLength: 1, maxLength: 1024 },
+		secret: { type: "string", minLength: 1, maxLength: 1024 },
+		on: {
+			type: "array",
+			items: {
+				type: "string",
+				enum: webhookEventTypes,
+			},
+		},
+		active: { type: "boolean" },
 	},
-	required: ['webhookId', 'name', 'url', 'secret', 'on', 'active'],
+	required: ["webhookId", "name", "url", "secret", "on", "active"],
 } as const;
 
 // TODO: ロジックをサービスに切り出す
@@ -71,7 +74,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				id: ps.webhookId,
 			});
 
-			this.globalEventService.publishInternalEvent('webhookUpdated', updated);
+			this.globalEventService.publishInternalEvent("webhookUpdated", updated);
 		});
 	}
 }

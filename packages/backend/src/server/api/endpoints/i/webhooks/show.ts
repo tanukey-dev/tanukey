@@ -1,31 +1,31 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { WebhooksRepository } from '@/models/index.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { WebhooksRepository } from "@/models/Repositories.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../../error.js";
 
 export const meta = {
-	tags: ['webhooks'],
+	tags: ["webhooks"],
 
 	requireCredential: true,
 
-	kind: 'read:account',
+	kind: "read:account",
 
 	errors: {
 		noSuchWebhook: {
-			message: 'No such webhook.',
-			code: 'NO_SUCH_WEBHOOK',
-			id: '50f614d9-3047-4f7e-90d8-ad6b2d5fb098',
+			message: "No such webhook.",
+			code: "NO_SUCH_WEBHOOK",
+			id: "50f614d9-3047-4f7e-90d8-ad6b2d5fb098",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		webhookId: { type: 'string', format: 'misskey:id' },
+		webhookId: { type: "string", format: "misskey:id" },
 	},
-	required: ['webhookId'],
+	required: ["webhookId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

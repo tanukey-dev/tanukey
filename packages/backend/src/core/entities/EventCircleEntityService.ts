@@ -1,13 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { EventCirclesRepository, DriveFilesRepository } from '@/models/index.js';
-import type { Packed } from '@/misc/json-schema.js';
-import type { } from '@/models/entities/Blocking.js';
-import type { User } from '@/models/entities/User.js';
-import type { EventCircle } from '@/models/entities/EventCircle.js';
-import { bindThis } from '@/decorators.js';
-import { DriveFileEntityService } from './DriveFileEntityService.js';
-import { In } from 'typeorm';
+import { Inject, Injectable } from "@nestjs/common";
+import { DI } from "@/di-symbols.js";
+import type {
+	EventCirclesRepository,
+	DriveFilesRepository,
+} from "@/models/Repositories.js";
+import type { Packed } from "@/misc/json-schema.js";
+import type {} from "@/models/entities/Blocking.js";
+import type { User } from "@/models/entities/User.js";
+import type { EventCircle } from "@/models/entities/EventCircle.js";
+import { bindThis } from "@/decorators.js";
+import { DriveFileEntityService } from "./DriveFileEntityService.js";
+import { In } from "typeorm";
 
 @Injectable()
 export class EventCircleEntityService {
@@ -19,16 +22,18 @@ export class EventCircleEntityService {
 		private driveFilesRepository: DriveFilesRepository,
 
 		private driveFileEntityService: DriveFileEntityService,
-	) {
-	}
+	) {}
 
 	@bindThis
 	public async pack(
-		src: EventCircle['id'] | EventCircle,
-		me?: { id: User['id'] } | null | undefined,
+		src: EventCircle["id"] | EventCircle,
+		me?: { id: User["id"] } | null | undefined,
 		detailed?: boolean,
-	): Promise<Packed<'EventCircle'>> {
-		const eventCircle = typeof src === 'object' ? src : await this.eventCirclesRepository.findOneByOrFail({ id: src });
+	): Promise<Packed<"EventCircle">> {
+		const eventCircle =
+			typeof src === "object"
+				? src
+				: await this.eventCirclesRepository.findOneByOrFail({ id: src });
 		const meId = me ? me.id : null;
 
 		return {
@@ -41,4 +46,3 @@ export class EventCircleEntityService {
 		};
 	}
 }
-

@@ -1,57 +1,58 @@
-import { Inject, Injectable } from '@nestjs/common';
-import ms from 'ms';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { MutingsRepository } from '@/models/index.js';
-import { DI } from '@/di-symbols.js';
-import { GetterService } from '@/server/api/GetterService.js';
-import { UserMutingService } from '@/core/UserMutingService.js';
-import { ApiError } from '../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import ms from "ms";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { MutingsRepository } from "@/models/Repositories.js";
+import { DI } from "@/di-symbols.js";
+import { GetterService } from "@/server/api/GetterService.js";
+import { UserMutingService } from "@/core/UserMutingService.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['account'],
+	tags: ["account"],
 
 	requireCredential: true,
 	prohibitMoved: true,
 
-	kind: 'write:mutes',
+	kind: "write:mutes",
 
 	limit: {
-		duration: ms('1hour'),
+		duration: ms("1hour"),
 		max: 20,
 	},
 
 	errors: {
 		noSuchUser: {
-			message: 'No such user.',
-			code: 'NO_SUCH_USER',
-			id: '6fef56f3-e765-4957-88e5-c6f65329b8a5',
+			message: "No such user.",
+			code: "NO_SUCH_USER",
+			id: "6fef56f3-e765-4957-88e5-c6f65329b8a5",
 		},
 
 		muteeIsYourself: {
-			message: 'Mutee is yourself.',
-			code: 'MUTEE_IS_YOURSELF',
-			id: 'a4619cb2-5f23-484b-9301-94c903074e10',
+			message: "Mutee is yourself.",
+			code: "MUTEE_IS_YOURSELF",
+			id: "a4619cb2-5f23-484b-9301-94c903074e10",
 		},
 
 		alreadyMuting: {
-			message: 'You are already muting that user.',
-			code: 'ALREADY_MUTING',
-			id: '7e7359cb-160c-4956-b08f-4d1c653cd007',
+			message: "You are already muting that user.",
+			code: "ALREADY_MUTING",
+			id: "7e7359cb-160c-4956-b08f-4d1c653cd007",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: { type: "string", format: "misskey:id" },
 		expiresAt: {
-			type: 'integer',
+			type: "integer",
 			nullable: true,
-			description: 'A Unix Epoch timestamp that must lie in the future. `null` means an indefinite mute.',
+			description:
+				"A Unix Epoch timestamp that must lie in the future. `null` means an indefinite mute.",
 		},
 	},
-	required: ['userId'],
+	required: ["userId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -73,8 +74,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 
 			// Get mutee
-			const mutee = await this.getterService.getUser(ps.userId).catch(err => {
-				if (err.id === '15348ddd-432d-49c2-8a5a-8069753becff') throw new ApiError(meta.errors.noSuchUser);
+			const mutee = await this.getterService.getUser(ps.userId).catch((err) => {
+				if (err.id === "15348ddd-432d-49c2-8a5a-8069753becff")
+					throw new ApiError(meta.errors.noSuchUser);
 				throw err;
 			});
 
@@ -92,7 +94,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				return;
 			}
 
-			await this.userMutingService.mute(muter, mutee, ps.expiresAt ? new Date(ps.expiresAt) : null);
+			await this.userMutingService.mute(
+				muter,
+				mutee,
+				ps.expiresAt ? new Date(ps.expiresAt) : null,
+			);
 		});
 	}
 }

@@ -1,31 +1,31 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { ClipsRepository } from '@/models/index.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { ClipsRepository } from "@/models/Repositories.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['clips'],
+	tags: ["clips"],
 
 	requireCredential: true,
 
-	kind: 'write:account',
+	kind: "write:account",
 
 	errors: {
 		noSuchClip: {
-			message: 'No such clip.',
-			code: 'NO_SUCH_CLIP',
-			id: '70ca08ba-6865-4630-b6fb-8494759aa754',
+			message: "No such clip.",
+			code: "NO_SUCH_CLIP",
+			id: "70ca08ba-6865-4630-b6fb-8494759aa754",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		clipId: { type: 'string', format: 'misskey:id' },
+		clipId: { type: "string", format: "misskey:id" },
 	},
-	required: ['clipId'],
+	required: ["clipId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { RenoteMutingsRepository } from '@/models/index.js';
-import { awaitAll } from '@/misc/prelude/await-all.js';
-import type { Packed } from '@/misc/json-schema.js';
-import type { } from '@/models/entities/Blocking.js';
-import type { User } from '@/models/entities/User.js';
-import type { RenoteMuting } from '@/models/entities/RenoteMuting.js';
-import { bindThis } from '@/decorators.js';
-import { UserEntityService } from './UserEntityService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { DI } from "@/di-symbols.js";
+import type { RenoteMutingsRepository } from "@/models/Repositories.js";
+import { awaitAll } from "@/misc/prelude/await-all.js";
+import type { Packed } from "@/misc/json-schema.js";
+import type {} from "@/models/entities/Blocking.js";
+import type { User } from "@/models/entities/User.js";
+import type { RenoteMuting } from "@/models/entities/RenoteMuting.js";
+import { bindThis } from "@/decorators.js";
+import { UserEntityService } from "./UserEntityService.js";
 
 @Injectable()
 export class RenoteMutingEntityService {
@@ -16,15 +16,17 @@ export class RenoteMutingEntityService {
 		private renoteMutingsRepository: RenoteMutingsRepository,
 
 		private userEntityService: UserEntityService,
-	) {
-	}
+	) {}
 
 	@bindThis
 	public async pack(
-		src: RenoteMuting['id'] | RenoteMuting,
-		me?: { id: User['id'] } | null | undefined,
-	): Promise<Packed<'RenoteMuting'>> {
-		const muting = typeof src === 'object' ? src : await this.renoteMutingsRepository.findOneByOrFail({ id: src });
+		src: RenoteMuting["id"] | RenoteMuting,
+		me?: { id: User["id"] } | null | undefined,
+	): Promise<Packed<"RenoteMuting">> {
+		const muting =
+			typeof src === "object"
+				? src
+				: await this.renoteMutingsRepository.findOneByOrFail({ id: src });
 
 		return await awaitAll({
 			id: muting.id,
@@ -37,11 +39,7 @@ export class RenoteMutingEntityService {
 	}
 
 	@bindThis
-	public packMany(
-		mutings: any[],
-		me: { id: User['id'] },
-	) {
-		return Promise.all(mutings.map(x => this.pack(x, me)));
+	public packMany(mutings: any[], me: { id: User["id"] }) {
+		return Promise.all(mutings.map((x) => this.pack(x, me)));
 	}
 }
-

@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { UserPointsRepository } from '@/models/index.js';
-import type { Packed } from '@/misc/json-schema.js';
-import { IdService } from '@/core/IdService.js';
-import type { } from '@/models/entities/Blocking.js';
-import type { User } from '@/models/entities/User.js';
-import { bindThis } from '@/decorators.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { pointTypes } from '@/types';
+import { Inject, Injectable } from "@nestjs/common";
+import { DI } from "@/di-symbols.js";
+import type { UserPointsRepository } from "@/models/Repositories.js";
+import type { Packed } from "@/misc/json-schema.js";
+import { IdService } from "@/core/IdService.js";
+import type {} from "@/models/entities/Blocking.js";
+import type { User } from "@/models/entities/User.js";
+import { bindThis } from "@/decorators.js";
+import { NotificationService } from "@/core/NotificationService.js";
+import { pointTypes } from "@/types";
 
 @Injectable()
 export class UserPointService {
@@ -17,22 +17,22 @@ export class UserPointService {
 
 		private notificationService: NotificationService,
 		private idService: IdService,
-	) {
-	}
+	) {}
 
 	@bindThis
-	public async add(
-		userId: User['id'],
-		addPoint: number,
-	): Promise<void> {
-		const point = await this.userPointsRepository.createQueryBuilder('point')
-			.where('point.userId = :id', { id: userId })
+	public async add(userId: User["id"], addPoint: number): Promise<void> {
+		const point = await this.userPointsRepository
+			.createQueryBuilder("point")
+			.where("point.userId = :id", { id: userId })
 			.getOne();
 		if (point) {
-			await this.userPointsRepository.update({ id: point.id }, {
-				userId: userId,
-				point: point.point + addPoint,
-			});
+			await this.userPointsRepository.update(
+				{ id: point.id },
+				{
+					userId: userId,
+					point: point.point + addPoint,
+				},
+			);
 		} else {
 			await this.userPointsRepository.insert({
 				id: this.idService.genId(),
@@ -44,11 +44,12 @@ export class UserPointService {
 
 	@bindThis
 	public async addWhenDailyFirstNote(
-		userId: User['id'],
+		userId: User["id"],
 		addPoint: number,
 	): Promise<void> {
-		const point = await this.userPointsRepository.createQueryBuilder('point')
-			.where('point.userId = :id', { id: userId })
+		const point = await this.userPointsRepository
+			.createQueryBuilder("point")
+			.where("point.userId = :id", { id: userId })
 			.getOne();
 		if (point) {
 			if (point.updatedAtDailyFirstNote) {
@@ -59,14 +60,17 @@ export class UserPointService {
 					return;
 				}
 			}
-			await this.userPointsRepository.update({ id: point.id }, {
-				userId: userId,
-				point: point.point + addPoint,
-				updatedAtDailyFirstNote: new Date(),
-			});
-			this.notificationService.createNotification(userId, 'point', {
+			await this.userPointsRepository.update(
+				{ id: point.id },
+				{
+					userId: userId,
+					point: point.point + addPoint,
+					updatedAtDailyFirstNote: new Date(),
+				},
+			);
+			this.notificationService.createNotification(userId, "point", {
 				point: addPoint,
-				pointType: 'loginBonus',
+				pointType: "loginBonus",
 			});
 		} else {
 			await this.userPointsRepository.insert({
@@ -75,44 +79,46 @@ export class UserPointService {
 				point: addPoint,
 				updatedAtDailyFirstNote: new Date(),
 			});
-			this.notificationService.createNotification(userId, 'point', {
+			this.notificationService.createNotification(userId, "point", {
 				point: addPoint,
-				pointType: 'loginBonus',
+				pointType: "loginBonus",
 			});
 		}
 	}
 
 	@bindThis
 	public async send(
-		myUserId: User['id'],
-		targetUserId: User['id'],
+		myUserId: User["id"],
+		targetUserId: User["id"],
 		value: number,
 	): Promise<void> {
 		this.add(myUserId, -value);
 		this.add(targetUserId, value);
-		this.notificationService.createNotification(myUserId, 'point', {
+		this.notificationService.createNotification(myUserId, "point", {
 			point: value,
-			pointType: 'sendPoints',
+			pointType: "sendPoints",
 			pointReceiveUserId: targetUserId,
 		});
-		this.notificationService.createNotification(targetUserId, 'point', {
+		this.notificationService.createNotification(targetUserId, "point", {
 			point: value,
-			pointType: 'receivePoints',
+			pointType: "receivePoints",
 			pointSendUserId: myUserId,
 		});
 	}
 
 	@bindThis
-	public async pack(
-		userId: User['id'],
-	): Promise<Packed<'UserPoint'>> {
-		const point = await this.userPointsRepository.createQueryBuilder('point')
-			.where('point.userId = :id', { id: userId })
+	public async pack(userId: User["id"]): Promise<Packed<"UserPoint">> {
+		const point = await this.userPointsRepository
+			.createQueryBuilder("point")
+			.where("point.userId = :id", { id: userId })
 			.getOne();
 		if (!point) {
 			return { point: 0, updatedAtDailyFirstNote: null };
 		}
-		return { point: point.point, updatedAtDailyFirstNote: point.updatedAtDailyFirstNote?.toISOString() ?? null };
+		return {
+			point: point.point,
+			updatedAtDailyFirstNote:
+				point.updatedAtDailyFirstNote?.toISOString() ?? null,
+		};
 	}
 }
-

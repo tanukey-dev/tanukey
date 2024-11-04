@@ -1,17 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { UserListJoiningsRepository, UsersRepository } from '@/models/index.js';
-import type { User } from '@/models/entities/User.js';
-import type { UserList } from '@/models/entities/UserList.js';
-import type { UserListJoining } from '@/models/entities/UserListJoining.js';
-import { IdService } from '@/core/IdService.js';
-import { UserFollowingService } from '@/core/UserFollowingService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { ProxyAccountService } from '@/core/ProxyAccountService.js';
-import { bindThis } from '@/decorators.js';
-import { RoleService } from '@/core/RoleService.js';
-import { QueueService } from '@/core/QueueService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import type {
+	UserListJoiningsRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import type { User } from "@/models/entities/User.js";
+import type { UserList } from "@/models/entities/UserList.js";
+import type { UserListJoining } from "@/models/entities/UserListJoining.js";
+import { IdService } from "@/core/IdService.js";
+import { UserFollowingService } from "@/core/UserFollowingService.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { DI } from "@/di-symbols.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
+import { ProxyAccountService } from "@/core/ProxyAccountService.js";
+import { bindThis } from "@/decorators.js";
+import { RoleService } from "@/core/RoleService.js";
+import { QueueService } from "@/core/QueueService.js";
 
 @Injectable()
 export class UserListService {
@@ -31,15 +34,17 @@ export class UserListService {
 		private globalEventService: GlobalEventService,
 		private proxyAccountService: ProxyAccountService,
 		private queueService: QueueService,
-	) {
-	}
+	) {}
 
 	@bindThis
 	public async push(target: User, list: UserList, me: User) {
 		const currentCount = await this.userListJoiningsRepository.countBy({
 			userListId: list.id,
 		});
-		if (currentCount > (await this.roleService.getUserPolicies(me.id)).userEachUserListsLimit) {
+		if (
+			currentCount >
+			(await this.roleService.getUserPolicies(me.id)).userEachUserListsLimit
+		) {
 			throw new UserListService.TooManyUsersError();
 		}
 
@@ -50,13 +55,19 @@ export class UserListService {
 			userListId: list.id,
 		} as UserListJoining);
 
-		this.globalEventService.publishUserListStream(list.id, 'userAdded', await this.userEntityService.pack(target));
+		this.globalEventService.publishUserListStream(
+			list.id,
+			"userAdded",
+			await this.userEntityService.pack(target),
+		);
 
 		// このインスタンス内にこのリモートユーザーをフォローしているユーザーがいなくても投稿を受け取るためにダミーのユーザーがフォローしたということにする
 		if (this.userEntityService.isRemoteUser(target)) {
 			const proxy = await this.proxyAccountService.fetch();
 			if (proxy) {
-				this.queueService.createFollowJob([{ from: { id: proxy.id }, to: { id: target.id } }]);
+				this.queueService.createFollowJob([
+					{ from: { id: proxy.id }, to: { id: target.id } },
+				]);
 			}
 		}
 	}

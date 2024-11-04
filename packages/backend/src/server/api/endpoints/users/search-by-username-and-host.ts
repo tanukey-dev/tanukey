@@ -1,44 +1,46 @@
-import { Brackets } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, FollowingsRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import type { User } from '@/models/entities/User.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
+import { Brackets } from "typeorm";
+import { Inject, Injectable } from "@nestjs/common";
+import type {
+	UsersRepository,
+	FollowingsRepository,
+} from "@/models/Repositories.js";
+import type { Config } from "@/config.js";
+import type { User } from "@/models/entities/User.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
+import { DI } from "@/di-symbols.js";
+import { sqlLikeEscape } from "@/misc/sql-like-escape.js";
 
 export const meta = {
-	tags: ['users'],
+	tags: ["users"],
 
 	requireCredential: false,
 
-	description: 'Search for a user by username and/or host.',
+	description: "Search for a user by username and/or host.",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'User',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "User",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		detail: { type: 'boolean', default: true },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 10 },
+		detail: { type: "boolean", default: true },
 
-		username: { type: 'string', nullable: true },
-		host: { type: 'string', nullable: true },
+		username: { type: "string", nullable: true },
+		host: { type: "string", nullable: true },
 	},
-	anyOf: [
-		{ required: ['username'] },
-		{ required: ['host'] },
-	],
+	anyOf: [{ required: ["username"] }, { required: ["host"] }],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -57,17 +59,21 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private userEntityService: UserEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const setUsernameAndHostQuery = (query = this.usersRepository.createQueryBuilder('user')) => {
+			const setUsernameAndHostQuery = (
+				query = this.usersRepository.createQueryBuilder("user"),
+			) => {
 				if (ps.username) {
-					query.andWhere('user.usernameLower LIKE :username', { username: sqlLikeEscape(ps.username.toLowerCase()) + '%' });
+					query.andWhere("user.usernameLower LIKE :username", {
+						username: sqlLikeEscape(ps.username.toLowerCase()) + "%",
+					});
 				}
 
 				if (ps.host) {
-					if (ps.host === this.config.hostname || ps.host === '.') {
-						query.andWhere('user.host IS NULL');
+					if (ps.host === this.config.hostname || ps.host === ".") {
+						query.andWhere("user.host IS NULL");
 					} else {
-						query.andWhere('user.host LIKE :host', {
-							host: sqlLikeEscape(ps.host.toLowerCase()) + '%',
+						query.andWhere("user.host LIKE :host", {
+							host: sqlLikeEscape(ps.host.toLowerCase()) + "%",
 						});
 					}
 				}
@@ -75,41 +81,46 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				return query;
 			};
 
-			const activeThreshold = new Date(Date.now() - (1000 * 60 * 60 * 24 * 30)); // 30日
+			const activeThreshold = new Date(Date.now() - 1000 * 60 * 60 * 24 * 30); // 30日
 
 			let users: User[] = [];
 
 			if (me) {
-				const followingQuery = this.followingsRepository.createQueryBuilder('following')
-					.select('following.followeeId')
-					.where('following.followerId = :followerId', { followerId: me.id });
+				const followingQuery = this.followingsRepository
+					.createQueryBuilder("following")
+					.select("following.followeeId")
+					.where("following.followerId = :followerId", { followerId: me.id });
 
 				const query = setUsernameAndHostQuery()
-					.andWhere(`user.id IN (${ followingQuery.getQuery() })`)
-					.andWhere('user.id != :meId', { meId: me.id })
-					.andWhere('user.isSuspended = FALSE')
-					.andWhere(new Brackets(qb => { qb
-						.where('user.updatedAt IS NULL')
-						.orWhere('user.updatedAt > :activeThreshold', { activeThreshold: activeThreshold });
-					}));
+					.andWhere(`user.id IN (${followingQuery.getQuery()})`)
+					.andWhere("user.id != :meId", { meId: me.id })
+					.andWhere("user.isSuspended = FALSE")
+					.andWhere(
+						new Brackets((qb) => {
+							qb.where("user.updatedAt IS NULL").orWhere(
+								"user.updatedAt > :activeThreshold",
+								{ activeThreshold: activeThreshold },
+							);
+						}),
+					);
 
 				query.setParameters(followingQuery.getParameters());
 
 				users = await query
-					.orderBy('user.usernameLower', 'ASC')
+					.orderBy("user.usernameLower", "ASC")
 					.limit(ps.limit)
 					.getMany();
 
 				if (users.length < ps.limit) {
 					const otherQuery = setUsernameAndHostQuery()
-						.andWhere(`user.id NOT IN (${ followingQuery.getQuery() })`)
-						.andWhere('user.isSuspended = FALSE')
-						.andWhere('user.updatedAt IS NOT NULL');
+						.andWhere(`user.id NOT IN (${followingQuery.getQuery()})`)
+						.andWhere("user.isSuspended = FALSE")
+						.andWhere("user.updatedAt IS NOT NULL");
 
 					otherQuery.setParameters(followingQuery.getParameters());
 
 					const otherUsers = await otherQuery
-						.orderBy('user.updatedAt', 'DESC')
+						.orderBy("user.updatedAt", "DESC")
 						.limit(ps.limit - users.length)
 						.getMany();
 
@@ -117,16 +128,18 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				}
 			} else {
 				const query = setUsernameAndHostQuery()
-					.andWhere('user.isSuspended = FALSE')
-					.andWhere('user.updatedAt IS NOT NULL');
+					.andWhere("user.isSuspended = FALSE")
+					.andWhere("user.updatedAt IS NOT NULL");
 
 				users = await query
-					.orderBy('user.updatedAt', 'DESC')
+					.orderBy("user.updatedAt", "DESC")
 					.limit(ps.limit - users.length)
 					.getMany();
 			}
 
-			return await this.userEntityService.packMany(users, me, { detail: !!ps.detail });
+			return await this.userEntityService.packMany(users, me, {
+				detail: !!ps.detail,
+			});
 		});
 	}
 }

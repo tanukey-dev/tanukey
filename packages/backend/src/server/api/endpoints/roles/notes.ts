@@ -1,49 +1,54 @@
-import { Inject, Injectable } from '@nestjs/common';
-import * as Redis from 'ioredis';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { NotesRepository, RolesRepository } from '@/models/index.js';
-import { QueryService } from '@/core/QueryService.js';
-import { DI } from '@/di-symbols.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { IdService } from '@/core/IdService.js';
-import { ApiError } from '../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import * as Redis from "ioredis";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type {
+	NotesRepository,
+	RolesRepository,
+} from "@/models/Repositories.js";
+import { QueryService } from "@/core/QueryService.js";
+import { DI } from "@/di-symbols.js";
+import { NoteEntityService } from "@/core/entities/NoteEntityService.js";
+import { IdService } from "@/core/IdService.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['role', 'notes'],
+	tags: ["role", "notes"],
 
 	requireCredential: true,
-	kind: 'read:account',
+	kind: "read:account",
 
 	errors: {
 		noSuchRole: {
-			message: 'No such role.',
-			code: 'NO_SUCH_ROLE',
-			id: 'eb70323a-df61-4dd4-ad90-89c83c7cf26e',
+			message: "No such role.",
+			code: "NO_SUCH_ROLE",
+			id: "eb70323a-df61-4dd4-ad90-89c83c7cf26e",
 		},
 	},
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'Note',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "Note",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		roleId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		sinceDate: { type: 'integer' },
-		untilDate: { type: 'integer' },
+		roleId: { type: "string", format: "misskey:id" },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 10 },
+		sinceId: { type: "string", format: "misskey:id" },
+		untilId: { type: "string", format: "misskey:id" },
+		sinceDate: { type: "integer" },
+		untilDate: { type: "integer" },
 	},
-	required: ['roleId'],
+	required: ["roleId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -72,41 +77,50 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			if (role == null) {
 				throw new ApiError(meta.errors.noSuchRole);
 			}
-			if (!role.isExplorable) { 
+			if (!role.isExplorable) {
 				return [];
 			}
 			const limit = ps.limit + (ps.untilId ? 1 : 0) + (ps.sinceId ? 1 : 0); // untilIdに指定したものも含まれるため+1
 			const noteIdsRes = await this.redisClient.xrevrange(
 				`roleTimeline:${role.id}`,
-				ps.untilId ? this.idService.parse(ps.untilId).date.getTime() : ps.untilDate ?? '+',
-				ps.sinceId ? this.idService.parse(ps.sinceId).date.getTime() : ps.sinceDate ?? '-',
-				'COUNT', limit);
+				ps.untilId
+					? this.idService.parse(ps.untilId).date.getTime()
+					: (ps.untilDate ?? "+"),
+				ps.sinceId
+					? this.idService.parse(ps.sinceId).date.getTime()
+					: (ps.sinceDate ?? "-"),
+				"COUNT",
+				limit,
+			);
 
 			if (noteIdsRes.length === 0) {
 				return [];
 			}
 
-			const noteIds = noteIdsRes.map(x => x[1][1]).filter(x => x !== ps.untilId && x !== ps.sinceId);
+			const noteIds = noteIdsRes
+				.map((x) => x[1][1])
+				.filter((x) => x !== ps.untilId && x !== ps.sinceId);
 
 			if (noteIds.length === 0) {
 				return [];
 			}
 
-			const query = this.notesRepository.createQueryBuilder('note')
-				.where('note.id IN (:...noteIds)', { noteIds: noteIds })
-				.andWhere('(note.visibility = \'public\')')
-				.innerJoinAndSelect('note.user', 'user')
-				.leftJoinAndSelect('note.reply', 'reply')
-				.leftJoinAndSelect('note.renote', 'renote')
-				.leftJoinAndSelect('reply.user', 'replyUser')
-				.leftJoinAndSelect('renote.user', 'renoteUser');
+			const query = this.notesRepository
+				.createQueryBuilder("note")
+				.where("note.id IN (:...noteIds)", { noteIds: noteIds })
+				.andWhere("(note.visibility = 'public')")
+				.innerJoinAndSelect("note.user", "user")
+				.leftJoinAndSelect("note.reply", "reply")
+				.leftJoinAndSelect("note.renote", "renote")
+				.leftJoinAndSelect("reply.user", "replyUser")
+				.leftJoinAndSelect("renote.user", "renoteUser");
 
 			this.queryService.generateVisibilityQuery(query, me);
 			this.queryService.generateMutedUserQuery(query, me);
 			this.queryService.generateBlockedUserQuery(query, me);
 
 			const notes = await query.getMany();
-			notes.sort((a, b) => a.id > b.id ? -1 : 1);
+			notes.sort((a, b) => (a.id > b.id ? -1 : 1));
 
 			return await this.noteEntityService.packMany(notes, me);
 		});

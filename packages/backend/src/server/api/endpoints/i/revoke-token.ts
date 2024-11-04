@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AccessTokensRepository } from '@/models/index.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { AccessTokensRepository } from "@/models/Repositories.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
 	requireCredential: true,
@@ -11,11 +11,11 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		tokenId: { type: 'string', format: 'misskey:id' },
+		tokenId: { type: "string", format: "misskey:id" },
 	},
-	required: ['tokenId'],
+	required: ["tokenId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -28,7 +28,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private globalEventService: GlobalEventService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const token = await this.accessTokensRepository.findOneBy({ id: ps.tokenId });
+			const token = await this.accessTokensRepository.findOneBy({
+				id: ps.tokenId,
+			});
 
 			if (token) {
 				await this.accessTokensRepository.delete({

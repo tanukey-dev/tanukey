@@ -1,60 +1,71 @@
-import { Inject, Injectable } from '@nestjs/common';
-import ms from 'ms';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { DriveFilesRepository, EventCirclesRepository, CirclesRepository, EventsRepository } from '@/models/index.js';
-import type { EventCircle } from '@/models/entities/EventCircle.js';
-import { IdService } from '@/core/IdService.js';
-import { EventCircleEntityService } from '@/core/entities/EventCircleEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import ms from "ms";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type {
+	DriveFilesRepository,
+	EventCirclesRepository,
+	CirclesRepository,
+	EventsRepository,
+} from "@/models/Repositories.js";
+import type { EventCircle } from "@/models/entities/EventCircle.js";
+import { IdService } from "@/core/IdService.js";
+import { EventCircleEntityService } from "@/core/entities/EventCircleEntityService.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['eventCircles'],
+	tags: ["eventCircles"],
 
 	requireCredential: true,
-	kind: 'read:account',
+	kind: "read:account",
 
 	limit: {
-		duration: ms('1hour'),
+		duration: ms("1hour"),
 		max: 10,
 	},
 
 	res: {
-		type: 'object',
-		optional: false, nullable: false,
-		ref: 'EventCircle',
+		type: "object",
+		optional: false,
+		nullable: false,
+		ref: "EventCircle",
 	},
 
 	errors: {
 		noSuchFile: {
-			message: 'No such file.',
-			code: 'NO_SUCH_FILE',
-			id: 'cd1e9f3e-5a12-4ab4-96f6-5d0a2cc32050',
+			message: "No such file.",
+			code: "NO_SUCH_FILE",
+			id: "cd1e9f3e-5a12-4ab4-96f6-5d0a2cc32050",
 		},
 
 		noSuchEvent: {
-			message: 'No such event.',
-			code: 'NO_SUCH_EVENT',
-			id: '6f6c314b-7486-4893-8966-c04a66a02923',
+			message: "No such event.",
+			code: "NO_SUCH_EVENT",
+			id: "6f6c314b-7486-4893-8966-c04a66a02923",
 		},
 
 		noSuchCircle: {
-			message: 'No such circle.',
-			code: 'NO_SUCH_CIRCLE',
-			id: '6f6c314b-7486-4892-8965-c04a67a02923',
+			message: "No such circle.",
+			code: "NO_SUCH_CIRCLE",
+			id: "6f6c314b-7486-4892-8965-c04a67a02923",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		eventId: { type: 'string', format: 'misskey:id', nullable: false },
-		circleId: { type: 'string', format: 'misskey:id', nullable: false },
-		description: { type: 'string', nullable: true, minLength: 1, maxLength: 8192 },
-		pageId: { type: 'string', format: 'misskey:id', nullable: true },
+		eventId: { type: "string", format: "misskey:id", nullable: false },
+		circleId: { type: "string", format: "misskey:id", nullable: false },
+		description: {
+			type: "string",
+			nullable: true,
+			minLength: 1,
+			maxLength: 8192,
+		},
+		pageId: { type: "string", format: "misskey:id", nullable: true },
 	},
-	required: ['eventId', 'circleId'],
+	required: ["eventId", "circleId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -88,19 +99,23 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const circle = await this.circlesRepository.findOneBy({
 				id: ps.circleId,
 			});
-			
+
 			if (circle == null) {
 				throw new ApiError(meta.errors.noSuchCircle);
 			}
 
-			const eventCircle = await this.eventCirclesRepository.insert({
-				id: this.idService.genId(),
-				createdAt: new Date(),
-				eventId: ps.eventId,
-				circleId: ps.circleId,
-				description: ps.description ?? null,
-				pageId: ps.pageId ?? null,
-			} as EventCircle).then(x => this.eventCirclesRepository.findOneByOrFail(x.identifiers[0]));
+			const eventCircle = await this.eventCirclesRepository
+				.insert({
+					id: this.idService.genId(),
+					createdAt: new Date(),
+					eventId: ps.eventId,
+					circleId: ps.circleId,
+					description: ps.description ?? null,
+					pageId: ps.pageId ?? null,
+				} as EventCircle)
+				.then((x) =>
+					this.eventCirclesRepository.findOneByOrFail(x.identifiers[0]),
+				);
 
 			return await this.eventCircleEntityService.pack(eventCircle, me);
 		});

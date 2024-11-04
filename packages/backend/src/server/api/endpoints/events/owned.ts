@@ -1,34 +1,36 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Brackets } from 'typeorm';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { EventsRepository } from '@/models/index.js';
-import { QueryService } from '@/core/QueryService.js';
-import { EventEntityService } from '@/core/entities/EventEntityService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Brackets } from "typeorm";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { EventsRepository } from "@/models/Repositories.js";
+import { QueryService } from "@/core/QueryService.js";
+import { EventEntityService } from "@/core/entities/EventEntityService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['events', 'account'],
+	tags: ["events", "account"],
 
 	requireCredential: true,
-	kind: 'read:account',
+	kind: "read:account",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'Event',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "Event",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 5 },
+		sinceId: { type: "string", format: "misskey:id" },
+		untilId: { type: "string", format: "misskey:id" },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 5 },
 	},
 	required: [],
 } as const;
@@ -44,15 +46,20 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const query = this.queryService.makePaginationQuery(this.eventsRepository.createQueryBuilder('event'), ps.sinceId, ps.untilId)
+			const query = this.queryService
+				.makePaginationQuery(
+					this.eventsRepository.createQueryBuilder("event"),
+					ps.sinceId,
+					ps.untilId,
+				)
 				.andWhere({ userId: me.id })
-				.andWhere('event.isArchived = FALSE');
+				.andWhere("event.isArchived = FALSE");
 
-			const channels = await query
-				.limit(ps.limit)
-				.getMany();
+			const channels = await query.limit(ps.limit).getMany();
 
-			return await Promise.all(channels.map(x => this.eventEntityService.pack(x, me)));
+			return await Promise.all(
+				channels.map((x) => this.eventEntityService.pack(x, me)),
+			);
 		});
 	}
 }

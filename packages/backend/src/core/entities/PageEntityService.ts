@@ -4,7 +4,7 @@ import type {
 	DriveFilesRepository,
 	PagesRepository,
 	PageLikesRepository,
-} from "@/models/index.js";
+} from "@/models/Repositories.js";
 import { awaitAll } from "@/misc/prelude/await-all.js";
 import type { Packed } from "@/misc/json-schema.js";
 import type {} from "@/models/entities/Blocking.js";

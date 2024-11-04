@@ -1,38 +1,44 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Brackets } from 'typeorm';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
-import type { ChannelsRepository } from '@/models/index.js';
-import { ChannelEntityService } from '@/core/entities/ChannelEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { sqlLikeEscape } from '@/misc/sql-like-escape.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Brackets } from "typeorm";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { QueryService } from "@/core/QueryService.js";
+import type { ChannelsRepository } from "@/models/Repositories.js";
+import { ChannelEntityService } from "@/core/entities/ChannelEntityService.js";
+import { DI } from "@/di-symbols.js";
+import { sqlLikeEscape } from "@/misc/sql-like-escape.js";
 
 export const meta = {
-	tags: ['channels'],
+	tags: ["channels"],
 
 	requireCredential: false,
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'Channel',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "Channel",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		query: { type: 'string' },
-		type: { type: 'string', enum: ['nameAndDescription', 'nameOnly'], default: 'nameAndDescription' },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 5 },
+		query: { type: "string" },
+		type: {
+			type: "string",
+			enum: ["nameAndDescription", "nameOnly"],
+			default: "nameAndDescription",
+		},
+		sinceId: { type: "string", format: "misskey:id" },
+		untilId: { type: "string", format: "misskey:id" },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 5 },
 	},
-	required: ['query'],
+	required: ["query"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -46,36 +52,57 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const query = this.queryService.makePaginationQuery(this.channelsRepository.createQueryBuilder('channel'), ps.sinceId, ps.untilId)
-				.andWhere(new Brackets(qb => { qb
-					.where('channel.isPrivate = FALSE')
-					.orWhere(new Brackets(qb2 => { qb2
-						.where('channel.isPrivate = TRUE')
-						.andWhere(new Brackets(qb3 => { qb3
-							.where(':id = ANY(channel.privateUserIds)', { id: me?.id })
-							.orWhere(':id = ANY(channel.moderatorUserIds)', { id: me?.id })
-							.orWhere('channel.userId = :id', { id: me?.id });
-						}));
-					}));
-				}))
-				.andWhere('channel.isArchived = FALSE');
+			const query = this.queryService
+				.makePaginationQuery(
+					this.channelsRepository.createQueryBuilder("channel"),
+					ps.sinceId,
+					ps.untilId,
+				)
+				.andWhere(
+					new Brackets((qb) => {
+						qb.where("channel.isPrivate = FALSE").orWhere(
+							new Brackets((qb2) => {
+								qb2.where("channel.isPrivate = TRUE").andWhere(
+									new Brackets((qb3) => {
+										qb3
+											.where(":id = ANY(channel.privateUserIds)", {
+												id: me?.id,
+											})
+											.orWhere(":id = ANY(channel.moderatorUserIds)", {
+												id: me?.id,
+											})
+											.orWhere("channel.userId = :id", { id: me?.id });
+									}),
+								);
+							}),
+						);
+					}),
+				)
+				.andWhere("channel.isArchived = FALSE");
 
-			if (ps.query !== '') {
-				if (ps.type === 'nameAndDescription') {
-					query.andWhere(new Brackets(qb => { qb
-						.where('channel.name ILIKE :q', { q: `%${ sqlLikeEscape(ps.query) }%` })
-						.orWhere('channel.description ILIKE :q', { q: `%${ sqlLikeEscape(ps.query) }%` });
-					}));
+			if (ps.query !== "") {
+				if (ps.type === "nameAndDescription") {
+					query.andWhere(
+						new Brackets((qb) => {
+							qb.where("channel.name ILIKE :q", {
+								q: `%${sqlLikeEscape(ps.query)}%`,
+							}).orWhere("channel.description ILIKE :q", {
+								q: `%${sqlLikeEscape(ps.query)}%`,
+							});
+						}),
+					);
 				} else {
-					query.andWhere('channel.name ILIKE :q', { q: `%${ sqlLikeEscape(ps.query) }%` });
+					query.andWhere("channel.name ILIKE :q", {
+						q: `%${sqlLikeEscape(ps.query)}%`,
+					});
 				}
 			}
 
-			const channels = await query
-				.limit(ps.limit)
-				.getMany();
+			const channels = await query.limit(ps.limit).getMany();
 
-			return await Promise.all(channels.map(x => this.channelEntityService.pack(x, me)));
+			return await Promise.all(
+				channels.map((x) => this.channelEntityService.pack(x, me)),
+			);
 		});
 	}
 }

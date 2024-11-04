@@ -1,29 +1,31 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AntennasRepository } from '@/models/index.js';
-import { AntennaEntityService } from '@/core/entities/AntennaEntityService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { AntennasRepository } from "@/models/Repositories.js";
+import { AntennaEntityService } from "@/core/entities/AntennaEntityService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['antennas', 'account'],
+	tags: ["antennas", "account"],
 
 	requireCredential: true,
 
-	kind: 'read:account',
+	kind: "read:account",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'Antenna',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "Antenna",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;
@@ -42,7 +44,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				userId: me.id,
 			});
 
-			return await Promise.all(antennas.map(x => this.antennaEntityService.pack(x)));
+			return await Promise.all(
+				antennas.map((x) => this.antennaEntityService.pack(x)),
+			);
 		});
 	}
 }

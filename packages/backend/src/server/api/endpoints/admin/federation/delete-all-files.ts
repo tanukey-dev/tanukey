@@ -1,23 +1,23 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { DriveFilesRepository } from '@/models/index.js';
-import { DriveService } from '@/core/DriveService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { DriveFilesRepository } from "@/models/Repositories.js";
+import { DriveService } from "@/core/DriveService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:federation',
+	kind: "write:admin:federation",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		host: { type: 'string' },
+		host: { type: "string" },
 	},
-	required: ['host'],
+	required: ["host"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

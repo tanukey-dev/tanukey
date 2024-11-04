@@ -9,7 +9,7 @@ import type {
 	DriveFilesRepository,
 	EmojisRepository,
 	UsersRepository,
-} from "@/models/index.js";
+} from "@/models/Repositories.js";
 import { Inject, Injectable } from "@nestjs/common";
 
 @Injectable()

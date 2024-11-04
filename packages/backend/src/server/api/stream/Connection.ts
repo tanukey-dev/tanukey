@@ -5,7 +5,7 @@ import type { NoteReadService } from "@/core/NoteReadService.js";
 import type { NotificationService } from "@/core/NotificationService.js";
 import { bindThis } from "@/decorators.js";
 import { CacheService } from "@/core/CacheService.js";
-import { UserProfile } from "@/models/index.js";
+import { UserProfile } from "@/models/Repositories.js";
 import type { ChannelsService } from "./ChannelsService.js";
 import type * as websocket from "websocket";
 import type { EventEmitter } from "events";

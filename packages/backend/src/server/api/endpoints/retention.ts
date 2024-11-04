@@ -1,22 +1,21 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { RetentionAggregationsRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import type { RetentionAggregationsRepository } from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['users'],
+	tags: ["users"],
 
 	requireCredential: false,
 
-	res: {
-	},
+	res: {},
 
 	allowGet: true,
 	cacheSec: 60 * 60,
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;
@@ -31,12 +30,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		super(meta, paramDef, async (ps, me) => {
 			const records = await this.retentionAggregationsRepository.find({
 				order: {
-					id: 'DESC',
+					id: "DESC",
 				},
 				take: 30,
 			});
 
-			return records.map(record => ({
+			return records.map((record) => ({
 				createdAt: record.createdAt.toISOString(),
 				users: record.usersCount,
 				data: record.data,

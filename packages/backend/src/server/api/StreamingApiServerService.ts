@@ -1,20 +1,27 @@
-import { EventEmitter } from 'events';
-import type * as http from 'node:http';
-import type { ParsedUrlQuery } from 'node:querystring';
-import type { Config } from '@/config.js';
-import { CacheService } from '@/core/CacheService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { NoteReadService } from '@/core/NoteReadService.js';
-import { NotificationService } from '@/core/NotificationService.js';
-import { bindThis } from '@/decorators.js';
-import { DI } from '@/di-symbols.js';
-import type { BlockingsRepository, ChannelFollowingsRepository, FollowingsRepository, MutingsRepository, RenoteMutingsRepository, UserProfilesRepository, UsersRepository } from '@/models/index.js';
-import { Inject, Injectable } from '@nestjs/common';
-import * as Redis from 'ioredis';
-import * as websocket from 'websocket';
-import { AuthenticateService } from './AuthenticateService.js';
-import { ChannelsService } from './stream/ChannelsService.js';
-import MainStreamConnection from './stream/index.js';
+import { EventEmitter } from "node:events";
+import type * as http from "node:http";
+import type { ParsedUrlQuery } from "node:querystring";
+import type { Config } from "@/config.js";
+import type { CacheService } from "@/core/CacheService.js";
+import type { NoteReadService } from "@/core/NoteReadService.js";
+import type { NotificationService } from "@/core/NotificationService.js";
+import { bindThis } from "@/decorators.js";
+import { DI } from "@/di-symbols.js";
+import type {
+	BlockingsRepository,
+	ChannelFollowingsRepository,
+	FollowingsRepository,
+	MutingsRepository,
+	RenoteMutingsRepository,
+	UserProfilesRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import { Inject, Injectable } from "@nestjs/common";
+import type * as Redis from "ioredis";
+import * as websocket from "websocket";
+import type { AuthenticateService } from "./AuthenticateService.js";
+import type { ChannelsService } from "./stream/ChannelsService.js";
+import MainStreamConnection from "./stream/Connection.js";
 
 @Injectable()
 export class StreamingApiServerService {
@@ -45,14 +52,22 @@ export class StreamingApiServerService {
 
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
-	
+
+		@Inject(DI.cacheService)
 		private cacheService: CacheService,
+
+		@Inject(DI.noteReadService)
 		private noteReadService: NoteReadService,
+
+		@Inject(DI.authenticateService)
 		private authenticateService: AuthenticateService,
+
+		@Inject(DI.channelsService)
 		private channelsService: ChannelsService,
+
+		@Inject(DI.notificationService)
 		private notificationService: NotificationService,
-	) {
-	}
+	) {}
 
 	@bindThis
 	public attachStreamingApi(server: http.Server) {
@@ -61,15 +76,17 @@ export class StreamingApiServerService {
 			httpServer: server,
 		});
 
-		ws.on('request', async (request) => {
+		ws.on("request", async (request) => {
 			const q = request.resourceURL.query as ParsedUrlQuery;
 
 			// TODO: トークンが間違ってるなどしてauthenticateに失敗したら
 			// コネクション切断するなりエラーメッセージ返すなりする
 			// (現状はエラーがキャッチされておらずサーバーのログに流れて邪魔なので)
-			const [user, miapp] = await this.authenticateService.authenticate(q.i as string);
+			const [user, miapp] = await this.authenticateService.authenticate(
+				q.i as string,
+			);
 
-			if (miapp && !miapp.permission.some(p => p === 'read:account')) {
+			if (miapp && !miapp.permission.some((p) => p === "read:account")) {
 				request.reject(400);
 				return;
 			}
@@ -86,14 +103,16 @@ export class StreamingApiServerService {
 				ev.emit(parsed.channel, parsed.message);
 			}
 
-			this.redisForSub.on('message', onRedisMessage);
+			this.redisForSub.on("message", onRedisMessage);
 
 			const main = new MainStreamConnection(
 				this.channelsService,
 				this.noteReadService,
 				this.notificationService,
 				this.cacheService,
-				ev, user, miapp,
+				ev,
+				user,
+				miapp,
 			);
 
 			await main.init();
@@ -102,27 +121,32 @@ export class StreamingApiServerService {
 
 			main.init2(connection);
 
-			const intervalId = user ? setInterval(() => {
-				this.usersRepository.update(user.id, {
-					lastActiveDate: new Date(),
-				});
-			}, 1000 * 60 * 5) : null;
+			const intervalId = user
+				? setInterval(
+						() => {
+							this.usersRepository.update(user.id, {
+								lastActiveDate: new Date(),
+							});
+						},
+						1000 * 60 * 5,
+					)
+				: null;
 			if (user) {
 				this.usersRepository.update(user.id, {
 					lastActiveDate: new Date(),
 				});
 			}
 
-			connection.once('close', () => {
+			connection.once("close", () => {
 				ev.removeAllListeners();
 				main.dispose();
-				this.redisForSub.off('message', onRedisMessage);
+				this.redisForSub.off("message", onRedisMessage);
 				if (intervalId) clearInterval(intervalId);
 			});
 
-			connection.on('message', async (data) => {
-				if (data.type === 'utf8' && data.utf8Data === 'ping') {
-					connection.send('pong');
+			connection.on("message", async (data) => {
+				if (data.type === "utf8" && data.utf8Data === "ping") {
+					connection.send("pong");
 				}
 			});
 		});

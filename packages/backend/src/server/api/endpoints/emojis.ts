@@ -1,29 +1,32 @@
-import { IsNull } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { EmojisRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { EmojiEntityService } from '@/core/entities/EmojiEntityService.js';
-import type { Config } from '@/config.js';
-import { DI } from '@/di-symbols.js';
+import { IsNull } from "typeorm";
+import { Inject, Injectable } from "@nestjs/common";
+import type { EmojisRepository } from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { EmojiEntityService } from "@/core/entities/EmojiEntityService.js";
+import type { Config } from "@/config.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['meta'],
+	tags: ["meta"],
 
 	requireCredential: false,
 	allowGet: true,
 	cacheSec: 3600,
 
 	res: {
-		type: 'object',
-		optional: false, nullable: false,
+		type: "object",
+		optional: false,
+		nullable: false,
 		properties: {
 			emojis: {
-				type: 'array',
-				optional: false, nullable: false,
+				type: "array",
+				optional: false,
+				nullable: false,
 				items: {
-					type: 'object',
-					optional: false, nullable: false,
-					ref: 'EmojiDetailed',
+					type: "object",
+					optional: false,
+					nullable: false,
+					ref: "EmojiDetailed",
 				},
 			},
 		},
@@ -31,9 +34,8 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
-	properties: {
-	},
+	type: "object",
+	properties: {},
 	required: [],
 } as const;
 
@@ -43,7 +45,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-	
+
 		@Inject(DI.emojisRepository)
 		private emojisRepository: EmojisRepository,
 

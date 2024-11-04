@@ -2,7 +2,7 @@ import { CustomEmojiService } from "@/core/CustomEmojiService.js";
 import { ModerationLogService } from "@/core/ModerationLogService.js";
 import { DI } from "@/di-symbols.js";
 import { EmojiStatus } from "@/models/entities/Emoji.js";
-import type { DriveFilesRepository } from "@/models/index.js";
+import type { DriveFilesRepository } from "@/models/Repositories.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { ApiError } from "../../../error.js";

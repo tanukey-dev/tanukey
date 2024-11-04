@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { LessThan } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { AttestationChallengesRepository } from '@/models/index.js';
-import { bindThis } from '@/decorators.js';
-import type { OnApplicationShutdown } from '@nestjs/common';
+import { Inject, Injectable } from "@nestjs/common";
+import { LessThan } from "typeorm";
+import { DI } from "@/di-symbols.js";
+import type { AttestationChallengesRepository } from "@/models/Repositories.js";
+import { bindThis } from "@/decorators.js";
+import type { OnApplicationShutdown } from "@nestjs/common";
 
 const interval = 30 * 60 * 1000;
 
@@ -14,8 +14,7 @@ export class JanitorService implements OnApplicationShutdown {
 	constructor(
 		@Inject(DI.attestationChallengesRepository)
 		private attestationChallengesRepository: AttestationChallengesRepository,
-	) {
-	}
+	) {}
 
 	/**
 	 * Clean up database occasionally

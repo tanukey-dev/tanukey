@@ -1,29 +1,33 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Brackets, In } from 'typeorm';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { EventCircle, EventCirclesRepository } from '@/models/index.js';
-import { QueryService } from '@/core/QueryService.js';
-import { EventCircleEntityService } from '@/core/entities/EventCircleEntityService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Brackets, In } from "typeorm";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type {
+	EventCircle,
+	EventCirclesRepository,
+} from "@/models/Repositories.js";
+import { QueryService } from "@/core/QueryService.js";
+import { EventCircleEntityService } from "@/core/entities/EventCircleEntityService.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['eventCircles'],
+	tags: ["eventCircles"],
 
 	requireCredential: false,
 
 	res: {
-		optional: false, nullable: false,
+		optional: false,
+		nullable: false,
 		oneOf: [
 			{
-				type: 'object',
-				ref: 'EventCircle',
+				type: "object",
+				ref: "EventCircle",
 			},
 			{
-				type: 'array',
+				type: "array",
 				items: {
-					type: 'object',
-					ref: 'EventCircle',
+					type: "object",
+					ref: "EventCircle",
 				},
 			},
 		],
@@ -31,27 +35,27 @@ export const meta = {
 
 	errors: {
 		noSuchEventCircle: {
-			message: 'No such eventCircle.',
-			code: 'NO_SUCH_EVENT_CIRCLE',
-			id: '6f6c314b-7486-4897-8963-c04a66a02923',
+			message: "No such eventCircle.",
+			code: "NO_SUCH_EVENT_CIRCLE",
+			id: "6f6c314b-7486-4897-8963-c04a66a02923",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		eventCircleId: { type: 'string', format: 'misskey:id', nullable: true },
-		eventId: { type: 'string', format: 'misskey:id', nullable: true },
-		circleId: { type: 'string', format: 'misskey:id', nullable: true },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 5 },
+		eventCircleId: { type: "string", format: "misskey:id", nullable: true },
+		eventId: { type: "string", format: "misskey:id", nullable: true },
+		circleId: { type: "string", format: "misskey:id", nullable: true },
+		sinceId: { type: "string", format: "misskey:id" },
+		untilId: { type: "string", format: "misskey:id" },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 5 },
 	},
 	anyOf: [
-		{ required: ['eventCircleId'] },
-		{ required: ['eventId'] },
-		{ required: ['circleId'] },
+		{ required: ["eventCircleId"] },
+		{ required: ["eventId"] },
+		{ required: ["circleId"] },
 	],
 } as const;
 
@@ -67,23 +71,35 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			if (ps.eventId) {
-				const query = this.queryService.makePaginationQuery(this.eventCirclesRepository.createQueryBuilder('eventCircle'), ps.sinceId, ps.untilId)
+				const query = this.queryService
+					.makePaginationQuery(
+						this.eventCirclesRepository.createQueryBuilder("eventCircle"),
+						ps.sinceId,
+						ps.untilId,
+					)
 					.where({ eventId: ps.eventId })
-					.andWhere('eventCircle.isArchived = FALSE');
+					.andWhere("eventCircle.isArchived = FALSE");
 
-				const eventCircles = await query
-					.getMany();
+				const eventCircles = await query.getMany();
 
-				return await Promise.all(eventCircles.map(x => this.eventCircleEntityService.pack(x, me)));
+				return await Promise.all(
+					eventCircles.map((x) => this.eventCircleEntityService.pack(x, me)),
+				);
 			} else if (ps.circleId) {
-				const query = this.queryService.makePaginationQuery(this.eventCirclesRepository.createQueryBuilder('eventCircle'), ps.sinceId, ps.untilId)
+				const query = this.queryService
+					.makePaginationQuery(
+						this.eventCirclesRepository.createQueryBuilder("eventCircle"),
+						ps.sinceId,
+						ps.untilId,
+					)
 					.where({ circleId: ps.circleId })
-					.andWhere('eventCircle.isArchived = FALSE');
+					.andWhere("eventCircle.isArchived = FALSE");
 
-				const eventCircles = await query
-					.getMany();
+				const eventCircles = await query.getMany();
 
-				return await Promise.all(eventCircles.map(x => this.eventCircleEntityService.pack(x, me)));
+				return await Promise.all(
+					eventCircles.map((x) => this.eventCircleEntityService.pack(x, me)),
+				);
 			} else if (ps.eventCircleId) {
 				const eventCircle = await this.eventCirclesRepository.findOneBy({
 					id: ps.eventCircleId,

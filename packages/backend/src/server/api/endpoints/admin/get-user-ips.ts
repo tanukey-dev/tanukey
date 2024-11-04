@@ -1,29 +1,29 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { UserIpsRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import type { UserIpsRepository } from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'read:admin:user-ips',
+	kind: "read:admin:user-ips",
 	res: {
-		type: 'array',
+		type: "array",
 		optional: false,
 		nullable: false,
 		items: {
-			type: 'object',
+			type: "object",
 			optional: false,
 			nullable: false,
 			properties: {
-				ip: { type: 'string' },
+				ip: { type: "string" },
 				createdAt: {
-					type: 'string',
+					type: "string",
 					optional: false,
 					nullable: false,
-					format: 'date-time',
+					format: "date-time",
 				},
 			},
 		},
@@ -31,11 +31,11 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: { type: "string", format: "misskey:id" },
 	},
-	required: ['userId'],
+	required: ["userId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -48,11 +48,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		super(meta, paramDef, async (ps, me) => {
 			const ips = await this.userIpsRepository.find({
 				where: { userId: ps.userId },
-				order: { createdAt: 'DESC' },
+				order: { createdAt: "DESC" },
 				take: 30,
 			});
 
-			return ips.map(x => ({
+			return ips.map((x) => ({
 				ip: x.ip,
 				createdAt: x.createdAt.toISOString(),
 			}));

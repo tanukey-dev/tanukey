@@ -1,64 +1,67 @@
-import { IsNull } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, FollowingsRepository, UserProfilesRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
-import { FollowingEntityService } from '@/core/entities/FollowingEntityService.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import { IsNull } from "typeorm";
+import { Inject, Injectable } from "@nestjs/common";
+import type {
+	UsersRepository,
+	FollowingsRepository,
+	UserProfilesRepository,
+} from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { QueryService } from "@/core/QueryService.js";
+import { FollowingEntityService } from "@/core/entities/FollowingEntityService.js";
+import { UtilityService } from "@/core/UtilityService.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['users'],
+	tags: ["users"],
 
 	requireCredential: false,
 
-	description: 'Show everyone that follows this user.',
+	description: "Show everyone that follows this user.",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'Following',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "Following",
 		},
 	},
 
 	errors: {
 		noSuchUser: {
-			message: 'No such user.',
-			code: 'NO_SUCH_USER',
-			id: '27fa5435-88ab-43de-9360-387de88727cd',
+			message: "No such user.",
+			code: "NO_SUCH_USER",
+			id: "27fa5435-88ab-43de-9360-387de88727cd",
 		},
 
 		forbidden: {
-			message: 'Forbidden.',
-			code: 'FORBIDDEN',
-			id: '3c6a84db-d619-26af-ca14-06232a21df8a',
+			message: "Forbidden.",
+			code: "FORBIDDEN",
+			id: "3c6a84db-d619-26af-ca14-06232a21df8a",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		sinceId: { type: "string", format: "misskey:id" },
+		untilId: { type: "string", format: "misskey:id" },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 10 },
 
-		userId: { type: 'string', format: 'misskey:id' },
-		username: { type: 'string' },
+		userId: { type: "string", format: "misskey:id" },
+		username: { type: "string" },
 		host: {
-			type: 'string',
+			type: "string",
 			nullable: true,
-			description: 'The local host is represented with `null`.',
+			description: "The local host is represented with `null`.",
 		},
 	},
-	anyOf: [
-		{ required: ['userId'] },
-		{ required: ['username', 'host'] },
-	],
+	anyOf: [{ required: ["userId"] }, { required: ["username", "host"] }],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -79,21 +82,28 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const user = await this.usersRepository.findOneBy(ps.userId != null
-				? { id: ps.userId }
-				: { usernameLower: ps.username!.toLowerCase(), host: this.utilityService.toPunyNullable(ps.host) ?? IsNull() });
+			const user = await this.usersRepository.findOneBy(
+				ps.userId != null
+					? { id: ps.userId }
+					: {
+							usernameLower: ps.username!.toLowerCase(),
+							host: this.utilityService.toPunyNullable(ps.host) ?? IsNull(),
+						},
+			);
 
 			if (user == null) {
 				throw new ApiError(meta.errors.noSuchUser);
 			}
 
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({
+				userId: user.id,
+			});
 
-			if (profile.ffVisibility === 'private') {
-				if (me == null || (me.id !== user.id)) {
+			if (profile.ffVisibility === "private") {
+				if (me == null || me.id !== user.id) {
 					throw new ApiError(meta.errors.forbidden);
 				}
-			} else if (profile.ffVisibility === 'followers') {
+			} else if (profile.ffVisibility === "followers") {
 				if (me == null) {
 					throw new ApiError(meta.errors.forbidden);
 				} else if (me.id !== user.id) {
@@ -107,15 +117,20 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				}
 			}
 
-			const query = this.queryService.makePaginationQuery(this.followingsRepository.createQueryBuilder('following'), ps.sinceId, ps.untilId)
-				.andWhere('following.followeeId = :userId', { userId: user.id })
-				.innerJoinAndSelect('following.follower', 'follower');
+			const query = this.queryService
+				.makePaginationQuery(
+					this.followingsRepository.createQueryBuilder("following"),
+					ps.sinceId,
+					ps.untilId,
+				)
+				.andWhere("following.followeeId = :userId", { userId: user.id })
+				.innerJoinAndSelect("following.follower", "follower");
 
-			const followings = await query
-				.limit(ps.limit)
-				.getMany();
+			const followings = await query.limit(ps.limit).getMany();
 
-			return await this.followingEntityService.packMany(followings, me, { populateFollower: true });
+			return await this.followingEntityService.packMany(followings, me, {
+				populateFollower: true,
+			});
 		});
 	}
 }

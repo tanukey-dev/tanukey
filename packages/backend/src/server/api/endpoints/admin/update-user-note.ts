@@ -1,23 +1,26 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { UserProfilesRepository, UsersRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import type {
+	UserProfilesRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:user-note',
+	kind: "write:admin:user-note",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
-		text: { type: 'string' },
+		userId: { type: "string", format: "misskey:id" },
+		text: { type: "string" },
 	},
-	required: ['userId', 'text'],
+	required: ["userId", "text"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -34,12 +37,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const user = await this.usersRepository.findOneBy({ id: ps.userId });
 
 			if (user == null) {
-				throw new Error('user not found');
+				throw new Error("user not found");
 			}
 
-			await this.userProfilesRepository.update({ userId: user.id }, {
-				moderationNote: ps.text,
-			});
+			await this.userProfilesRepository.update(
+				{ userId: user.id },
+				{
+					moderationNote: ps.text,
+				},
+			);
 		});
 	}
 }

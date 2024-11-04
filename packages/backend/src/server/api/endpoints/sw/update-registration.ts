@@ -1,51 +1,55 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { SwSubscriptionsRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import type { SwSubscriptionsRepository } from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['account'],
+	tags: ["account"],
 
 	requireCredential: true,
 	secure: true,
 
-	description: 'Update push notification registration.',
+	description: "Update push notification registration.",
 
 	res: {
-		type: 'object',
-		optional: false, nullable: false,
+		type: "object",
+		optional: false,
+		nullable: false,
 		properties: {
 			userId: {
-				type: 'string',
-				optional: false, nullable: false,
+				type: "string",
+				optional: false,
+				nullable: false,
 			},
 			endpoint: {
-				type: 'string',
-				optional: false, nullable: false,
+				type: "string",
+				optional: false,
+				nullable: false,
 			},
 			sendReadMessage: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 		},
 	},
 	errors: {
 		noSuchRegistration: {
-			message: 'No such registration.',
-			code: 'NO_SUCH_REGISTRATION',
-			id: ' b09d8066-8064-5613-efb6-0e963b21d012',
+			message: "No such registration.",
+			code: "NO_SUCH_REGISTRATION",
+			id: " b09d8066-8064-5613-efb6-0e963b21d012",
 		},
-	}
+	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		endpoint: { type: 'string' },
-		sendReadMessage: { type: 'boolean' },
+		endpoint: { type: "string" },
+		sendReadMessage: { type: "boolean" },
 	},
-	required: ['endpoint'],
+	required: ["endpoint"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

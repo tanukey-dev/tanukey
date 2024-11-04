@@ -1,5 +1,5 @@
 import type { GlobalEventService } from "@/core/GlobalEventService.js";
-import type { UsersRepository } from "@/models/index.js";
+import type { UsersRepository } from "@/models/Repositories.js";
 import type { SearchService } from "@/core/SearchService.js";
 import { bindThis } from "@/decorators.js";
 import { DI } from "@/di-symbols.js";
@@ -8,7 +8,7 @@ import type { Packed } from "@/misc/json-schema.js";
 import type { Antenna } from "@/models/entities/Antenna.js";
 import type { Note } from "@/models/entities/Note.js";
 import type { User } from "@/models/entities/User.js";
-import type { AntennasRepository } from "@/models/index.js";
+import type { AntennasRepository } from "@/models/Repositories.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { IsNull } from "typeorm";
 

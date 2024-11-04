@@ -1,35 +1,39 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Endpoint } from "@/server/api/endpoint-base.js";
-import type { RolesRepository, SubscriptionPlansRepository } from "@/models/index.js";
+import type {
+	RolesRepository,
+	SubscriptionPlansRepository,
+} from "@/models/Repositories.js";
 import { DI } from "@/di-symbols.js";
 import { SubscriptionPlanEntityService } from "@/core/entities/SubscriptionPlanEntityService.js";
 
 export const meta = {
-	tags: ['subscription-plans'],
+	tags: ["subscription-plans"],
 
 	requireCredential: false,
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'SubscriptionPlan',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "SubscriptionPlan",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
-	properties: {
-	},
-	required: [
-	],
+	type: "object",
+	properties: {},
+	required: [],
 } as const;
 
 @Injectable()
-export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-disable-line import/no-default-export
+export default class extends Endpoint<typeof meta, typeof paramDef> {
+	// eslint-disable-line import/no-default-export
 	constructor(
 		@Inject(DI.subscriptionPlansRepository)
 		private subscriptionPlansRepository: SubscriptionPlansRepository,
@@ -39,7 +43,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		super(meta, paramDef, async (ps) => {
 			const subscriptionPlans = await this.subscriptionPlansRepository.find();
 			const packed = subscriptionPlans.map(async (subscriptionPlan: any) => {
-				const role = await this.rolesRepository.findOneByOrFail({ id: subscriptionPlan.roleId });
+				const role = await this.rolesRepository.findOneByOrFail({
+					id: subscriptionPlan.roleId,
+				});
 				return {
 					id: subscriptionPlan.id,
 					name: subscriptionPlan.name,

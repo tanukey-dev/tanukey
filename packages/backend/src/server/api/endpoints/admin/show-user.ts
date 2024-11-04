@@ -1,29 +1,34 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsersRepository, SigninsRepository, UserProfilesRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { RoleService } from '@/core/RoleService.js';
-import { RoleEntityService } from '@/core/entities/RoleEntityService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import type {
+	UsersRepository,
+	SigninsRepository,
+	UserProfilesRepository,
+} from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { DI } from "@/di-symbols.js";
+import { RoleService } from "@/core/RoleService.js";
+import { RoleEntityService } from "@/core/entities/RoleEntityService.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'read:admin:show-user',
+	kind: "read:admin:show-user",
 
 	res: {
-		type: 'object',
-		nullable: false, optional: false,
+		type: "object",
+		nullable: false,
+		optional: false,
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: { type: "string", format: "misskey:id" },
 	},
-	required: ['userId'],
+	required: ["userId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -49,15 +54,19 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			]);
 
 			if (user == null || profile == null) {
-				throw new Error('user not found');
+				throw new Error("user not found");
 			}
 
 			const isModerator = await this.roleService.isModerator(user);
-			const isSilenced = !(await this.roleService.getUserPolicies(user.id)).canPublicNote;
+			const isSilenced = !(await this.roleService.getUserPolicies(user.id))
+				.canPublicNote;
 
 			const _me = await this.usersRepository.findOneByOrFail({ id: me.id });
-			if (!await this.roleService.isAdministrator(_me) && await this.roleService.isAdministrator(user)) {
-				throw new Error('cannot show info of admin');
+			if (
+				!(await this.roleService.isAdministrator(_me)) &&
+				(await this.roleService.isAdministrator(user))
+			) {
+				throw new Error("cannot show info of admin");
 			}
 
 			const signins = await this.signinsRepository.findBy({ userId: user.id });
@@ -83,7 +92,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				isSilenced: isSilenced,
 				isSuspended: user.isSuspended,
 				lastActiveDate: user.lastActiveDate,
-				moderationNote: profile.moderationNote ?? '',
+				moderationNote: profile.moderationNote ?? "",
 				signins,
 				policies: await this.roleService.getUserPolicies(user.id),
 				roles: await this.roleEntityService.packMany(roles, me),

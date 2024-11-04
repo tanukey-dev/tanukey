@@ -1,18 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { DriveFilesRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import type { RemoteUser } from '@/models/entities/User.js';
-import type { DriveFile } from '@/models/entities/DriveFile.js';
-import { MetaService } from '@/core/MetaService.js';
-import { truncate } from '@/misc/truncate.js';
-import { DB_MAX_IMAGE_COMMENT_LENGTH } from '@/const.js';
-import { DriveService } from '@/core/DriveService.js';
-import type Logger from '@/logger.js';
-import { bindThis } from '@/decorators.js';
-import { ApResolverService } from '../ApResolverService.js';
-import { ApLoggerService } from '../ApLoggerService.js';
-import { checkHttps } from '@/misc/check-https.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { DI } from "@/di-symbols.js";
+import type { DriveFilesRepository } from "@/models/Repositories.js";
+import type { Config } from "@/config.js";
+import type { RemoteUser } from "@/models/entities/User.js";
+import type { DriveFile } from "@/models/entities/DriveFile.js";
+import { MetaService } from "@/core/MetaService.js";
+import { truncate } from "@/misc/truncate.js";
+import { DB_MAX_IMAGE_COMMENT_LENGTH } from "@/const.js";
+import { DriveService } from "@/core/DriveService.js";
+import type Logger from "@/logger.js";
+import { bindThis } from "@/decorators.js";
+import { ApResolverService } from "../ApResolverService.js";
+import { ApLoggerService } from "../ApLoggerService.js";
+import { checkHttps } from "@/misc/check-https.js";
 
 @Injectable()
 export class ApImageService {
@@ -32,7 +32,7 @@ export class ApImageService {
 	) {
 		this.logger = this.apLoggerService.logger;
 	}
-	
+
 	/**
 	 * Imageを作成します。
 	 */
@@ -40,17 +40,19 @@ export class ApImageService {
 	public async createImage(actor: RemoteUser, value: any): Promise<DriveFile> {
 		// 投稿者が凍結されていたらスキップ
 		if (actor.isSuspended) {
-			throw new Error('actor has been suspended');
+			throw new Error("actor has been suspended");
 		}
 
-		const image = await this.apResolverService.createResolver().resolve(value) as any;
+		const image = (await this.apResolverService
+			.createResolver()
+			.resolve(value)) as any;
 
 		if (image.url == null) {
-			throw new Error('invalid image: url not privided');
+			throw new Error("invalid image: url not privided");
 		}
 
 		if (!checkHttps(image.url)) {
-			throw new Error('invalid image: unexpected schema of url: ' + image.url);
+			throw new Error("invalid image: unexpected schema of url: " + image.url);
 		}
 
 		this.logger.info(`Creating the Image: ${image.url}`);
@@ -70,10 +72,13 @@ export class ApImageService {
 			// URLが異なっている場合、同じ画像が以前に異なるURLで登録されていたということなので、
 			// URLを更新する
 			if (file.url !== image.url) {
-				await this.driveFilesRepository.update({ id: file.id }, {
-					url: image.url,
-					uri: image.url,
-				});
+				await this.driveFilesRepository.update(
+					{ id: file.id },
+					{
+						url: image.url,
+						uri: image.url,
+					},
+				);
 
 				file = await this.driveFilesRepository.findOneByOrFail({ id: file.id });
 			}

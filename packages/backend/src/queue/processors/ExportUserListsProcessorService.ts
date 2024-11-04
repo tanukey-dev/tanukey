@@ -1,18 +1,22 @@
-import * as fs from 'node:fs';
-import { Inject, Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
-import { format as dateFormat } from 'date-fns';
-import { DI } from '@/di-symbols.js';
-import type { UserListJoiningsRepository, UserListsRepository, UsersRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { createTemp } from '@/misc/create-temp.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
-import type Bull from 'bull';
-import type { DbJobDataWithUser } from '../types.js';
-import { bindThis } from '@/decorators.js';
+import * as fs from "node:fs";
+import { Inject, Injectable } from "@nestjs/common";
+import { In } from "typeorm";
+import { format as dateFormat } from "date-fns";
+import { DI } from "@/di-symbols.js";
+import type {
+	UserListJoiningsRepository,
+	UserListsRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import type { Config } from "@/config.js";
+import type Logger from "@/logger.js";
+import { DriveService } from "@/core/DriveService.js";
+import { createTemp } from "@/misc/create-temp.js";
+import { UtilityService } from "@/core/UtilityService.js";
+import { QueueLoggerService } from "../QueueLoggerService.js";
+import type Bull from "bull";
+import type { DbJobDataWithUser } from "../types.js";
+import { bindThis } from "@/decorators.js";
 
 @Injectable()
 export class ExportUserListsProcessorService {
@@ -35,11 +39,15 @@ export class ExportUserListsProcessorService {
 		private driveService: DriveService,
 		private queueLoggerService: QueueLoggerService,
 	) {
-		this.logger = this.queueLoggerService.logger.createSubLogger('export-user-lists');
+		this.logger =
+			this.queueLoggerService.logger.createSubLogger("export-user-lists");
 	}
 
 	@bindThis
-	public async process(job: Bull.Job<DbJobDataWithUser>, done: () => void): Promise<void> {
+	public async process(
+		job: Bull.Job<DbJobDataWithUser>,
+		done: () => void,
+	): Promise<void> {
 		this.logger.info(`Exporting user lists of ${job.data.user.id} ...`);
 
 		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
@@ -58,19 +66,21 @@ export class ExportUserListsProcessorService {
 		this.logger.info(`Temp file is ${path}`);
 
 		try {
-			const stream = fs.createWriteStream(path, { flags: 'a' });
+			const stream = fs.createWriteStream(path, { flags: "a" });
 
 			for (const list of lists) {
-				const joinings = await this.userListJoiningsRepository.findBy({ userListId: list.id });
+				const joinings = await this.userListJoiningsRepository.findBy({
+					userListId: list.id,
+				});
 				const users = await this.usersRepository.findBy({
-					id: In(joinings.map(j => j.userId)),
+					id: In(joinings.map((j) => j.userId)),
 				});
 
 				for (const u of users) {
 					const acct = this.utilityService.getFullApAccount(u.username, u.host);
 					const content = `${list.name},${acct}`;
 					await new Promise<void>((res, rej) => {
-						stream.write(content + '\n', err => {
+						stream.write(content + "\n", (err) => {
 							if (err) {
 								this.logger.error(err);
 								rej(err);
@@ -85,8 +95,15 @@ export class ExportUserListsProcessorService {
 			stream.end();
 			this.logger.succ(`Exported to: ${path}`);
 
-			const fileName = 'user-lists-' + dateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.csv';
-			const driveFile = await this.driveService.addFile({ user, path, name: fileName, force: true, ext: 'csv' });
+			const fileName =
+				"user-lists-" + dateFormat(new Date(), "yyyy-MM-dd-HH-mm-ss") + ".csv";
+			const driveFile = await this.driveService.addFile({
+				user,
+				path,
+				name: fileName,
+				force: true,
+				ext: "csv",
+			});
 
 			this.logger.succ(`Exported to: ${driveFile.id}`);
 		} finally {

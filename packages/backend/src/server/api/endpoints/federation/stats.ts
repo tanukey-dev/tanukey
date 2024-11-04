@@ -1,13 +1,16 @@
-import { IsNull, MoreThan, Not } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { FollowingsRepository, InstancesRepository } from '@/models/index.js';
-import { awaitAll } from '@/misc/prelude/await-all.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { InstanceEntityService } from '@/core/entities/InstanceEntityService.js';
-import { DI } from '@/di-symbols.js';
+import { IsNull, MoreThan, Not } from "typeorm";
+import { Inject, Injectable } from "@nestjs/common";
+import type {
+	FollowingsRepository,
+	InstancesRepository,
+} from "@/models/Repositories.js";
+import { awaitAll } from "@/misc/prelude/await-all.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { InstanceEntityService } from "@/core/entities/InstanceEntityService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['federation'],
+	tags: ["federation"],
 
 	requireCredential: false,
 
@@ -16,9 +19,9 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 10 },
 	},
 	required: [],
 } as const;
@@ -36,39 +39,44 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private instanceEntityService: InstanceEntityService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const [topSubInstances, topPubInstances, allSubCount, allPubCount] = await Promise.all([
-				this.instancesRepository.find({
-					where: {
-						followersCount: MoreThan(0),
-					},
-					order: {
-						followersCount: 'DESC',
-					},
-					take: ps.limit,
-				}),
-				this.instancesRepository.find({
-					where: {
-						followingCount: MoreThan(0),
-					},
-					order: {
-						followingCount: 'DESC',
-					},
-					take: ps.limit,
-				}),
-				this.followingsRepository.count({
-					where: {
-						followeeHost: Not(IsNull()),
-					},
-				}),
-				this.followingsRepository.count({
-					where: {
-						followerHost: Not(IsNull()),
-					},
-				}),
-			]);
+			const [topSubInstances, topPubInstances, allSubCount, allPubCount] =
+				await Promise.all([
+					this.instancesRepository.find({
+						where: {
+							followersCount: MoreThan(0),
+						},
+						order: {
+							followersCount: "DESC",
+						},
+						take: ps.limit,
+					}),
+					this.instancesRepository.find({
+						where: {
+							followingCount: MoreThan(0),
+						},
+						order: {
+							followingCount: "DESC",
+						},
+						take: ps.limit,
+					}),
+					this.followingsRepository.count({
+						where: {
+							followeeHost: Not(IsNull()),
+						},
+					}),
+					this.followingsRepository.count({
+						where: {
+							followerHost: Not(IsNull()),
+						},
+					}),
+				]);
 
-			const gotSubCount = topSubInstances.map(x => x.followersCount).reduce((a, b) => a + b, 0);
-			const gotPubCount = topPubInstances.map(x => x.followingCount).reduce((a, b) => a + b, 0);
+			const gotSubCount = topSubInstances
+				.map((x) => x.followersCount)
+				.reduce((a, b) => a + b, 0);
+			const gotPubCount = topPubInstances
+				.map((x) => x.followingCount)
+				.reduce((a, b) => a + b, 0);
 
 			return await awaitAll({
 				topSubInstances: this.instanceEntityService.packMany(topSubInstances),

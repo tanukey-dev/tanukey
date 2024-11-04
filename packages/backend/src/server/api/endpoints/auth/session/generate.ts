@@ -1,48 +1,54 @@
-import { randomUUID } from 'node:crypto';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AppsRepository, AuthSessionsRepository } from '@/models/index.js';
-import { IdService } from '@/core/IdService.js';
-import type { Config } from '@/config.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import { randomUUID } from "node:crypto";
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type {
+	AppsRepository,
+	AuthSessionsRepository,
+} from "@/models/Repositories.js";
+import { IdService } from "@/core/IdService.js";
+import type { Config } from "@/config.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../../error.js";
 
 export const meta = {
-	tags: ['auth'],
+	tags: ["auth"],
 
 	requireCredential: false,
 
 	res: {
-		type: 'object',
-		optional: false, nullable: false,
+		type: "object",
+		optional: false,
+		nullable: false,
 		properties: {
 			token: {
-				type: 'string',
-				optional: false, nullable: false,
+				type: "string",
+				optional: false,
+				nullable: false,
 			},
 			url: {
-				type: 'string',
-				optional: false, nullable: false,
-				format: 'url',
+				type: "string",
+				optional: false,
+				nullable: false,
+				format: "url",
 			},
 		},
 	},
 
 	errors: {
 		noSuchApp: {
-			message: 'No such app.',
-			code: 'NO_SUCH_APP',
-			id: '92f93e63-428e-4f2f-a5a4-39e1407fe998',
+			message: "No such app.",
+			code: "NO_SUCH_APP",
+			id: "92f93e63-428e-4f2f-a5a4-39e1407fe998",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		appSecret: { type: 'string' },
+		appSecret: { type: "string" },
 	},
-	required: ['appSecret'],
+	required: ["appSecret"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -74,12 +80,16 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const token = randomUUID();
 
 			// Create session token document
-			const doc = await this.authSessionsRepository.insert({
-				id: this.idService.genId(),
-				createdAt: new Date(),
-				appId: app.id,
-				token: token,
-			}).then(x => this.authSessionsRepository.findOneByOrFail(x.identifiers[0]));
+			const doc = await this.authSessionsRepository
+				.insert({
+					id: this.idService.genId(),
+					createdAt: new Date(),
+					appId: app.id,
+					token: token,
+				})
+				.then((x) =>
+					this.authSessionsRepository.findOneByOrFail(x.identifiers[0]),
+				);
 
 			return {
 				token: doc.token,

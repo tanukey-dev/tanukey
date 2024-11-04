@@ -1,11 +1,11 @@
-import bcrypt from 'bcryptjs';
-import * as OTPAuth from 'otpauth';
-import * as QRCode from 'qrcode';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UserProfilesRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
+import bcrypt from "bcryptjs";
+import * as OTPAuth from "otpauth";
+import * as QRCode from "qrcode";
+import { Inject, Injectable } from "@nestjs/common";
+import type { UserProfilesRepository } from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { DI } from "@/di-symbols.js";
+import type { Config } from "@/config.js";
 
 export const meta = {
 	requireCredential: true,
@@ -14,11 +14,11 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		password: { type: 'string' },
+		password: { type: "string" },
 	},
-	required: ['password'],
+	required: ["password"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -32,13 +32,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private userProfilesRepository: UserProfilesRepository,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({
+				userId: me.id,
+			});
 
 			// Compare password
 			const same = await bcrypt.compare(ps.password, profile.password!);
 
 			if (!same) {
-				throw new Error('incorrect password');
+				throw new Error("incorrect password");
 			}
 
 			// Generate user's secret key

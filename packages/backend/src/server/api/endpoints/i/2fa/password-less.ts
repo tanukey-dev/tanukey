@@ -1,10 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import type { UserProfilesRepository, UserSecurityKeysRepository } from '@/models/index.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
+import type {
+	UserProfilesRepository,
+	UserSecurityKeysRepository,
+} from "@/models/Repositories.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../../error.js";
 
 export const meta = {
 	requireCredential: true,
@@ -13,19 +16,19 @@ export const meta = {
 
 	errors: {
 		noKey: {
-			message: 'No security key.',
-			code: 'NO_SECURITY_KEY',
-			id: 'f9c54d7f-d4c2-4d3c-9a8g-a70daac86512',
+			message: "No security key.",
+			code: "NO_SECURITY_KEY",
+			id: "f9c54d7f-d4c2-4d3c-9a8g-a70daac86512",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		value: { type: 'boolean' },
+		value: { type: "boolean" },
 	},
-	required: ['value'],
+	required: ["value"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -69,10 +72,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			});
 
 			// Publish meUpdated event
-			this.globalEventService.publishMainStream(me.id, 'meUpdated', await this.userEntityService.pack(me.id, me, {
-				detail: true,
-				includeSecrets: true,
-			}));
+			this.globalEventService.publishMainStream(
+				me.id,
+				"meUpdated",
+				await this.userEntityService.pack(me.id, me, {
+					detail: true,
+					includeSecrets: true,
+				}),
+			);
 		});
 	}
 }

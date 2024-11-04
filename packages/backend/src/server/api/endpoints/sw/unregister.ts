@@ -1,22 +1,22 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { SwSubscriptionsRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import type { SwSubscriptionsRepository } from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['account'],
+	tags: ["account"],
 
 	requireCredential: false,
 
-	description: 'Unregister from receiving push notifications.',
+	description: "Unregister from receiving push notifications.",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		endpoint: { type: 'string' },
+		endpoint: { type: "string" },
 	},
-	required: ['endpoint'],
+	required: ["endpoint"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

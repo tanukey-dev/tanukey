@@ -1,17 +1,22 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { MoreThan } from 'typeorm';
-import { DI } from '@/di-symbols.js';
-import type { DriveFilesRepository, NotesRepository, UserProfilesRepository, UsersRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import type { DriveFile } from '@/models/entities/DriveFile.js';
-import type { Note } from '@/models/entities/Note.js';
-import { EmailService } from '@/core/EmailService.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
-import type Bull from 'bull';
-import type { DbUserDeleteJobData } from '../types.js';
-import { bindThis } from '@/decorators.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { MoreThan } from "typeorm";
+import { DI } from "@/di-symbols.js";
+import type {
+	DriveFilesRepository,
+	NotesRepository,
+	UserProfilesRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import type { Config } from "@/config.js";
+import type Logger from "@/logger.js";
+import { DriveService } from "@/core/DriveService.js";
+import type { DriveFile } from "@/models/entities/DriveFile.js";
+import type { Note } from "@/models/entities/Note.js";
+import { EmailService } from "@/core/EmailService.js";
+import { QueueLoggerService } from "../QueueLoggerService.js";
+import type Bull from "bull";
+import type { DbUserDeleteJobData } from "../types.js";
+import { bindThis } from "@/decorators.js";
 
 @Injectable()
 export class DeleteAccountProcessorService {
@@ -37,11 +42,14 @@ export class DeleteAccountProcessorService {
 		private emailService: EmailService,
 		private queueLoggerService: QueueLoggerService,
 	) {
-		this.logger = this.queueLoggerService.logger.createSubLogger('delete-account');
+		this.logger =
+			this.queueLoggerService.logger.createSubLogger("delete-account");
 	}
 
 	@bindThis
-	public async process(job: Bull.Job<DbUserDeleteJobData>): Promise<string | void> {
+	public async process(
+		job: Bull.Job<DbUserDeleteJobData>,
+	): Promise<string | void> {
 		this.logger.info(`Deleting account of ${job.data.user.id} ...`);
 
 		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
@@ -54,31 +62,33 @@ export class DeleteAccountProcessorService {
 		});
 
 		try {
-			{ // Delete notes
+			{
+				// Delete notes
 				while (true) {
-					const notes = await this.notesRepository.find({
+					const notes = (await this.notesRepository.find({
 						where: {
 							userId: user.id,
 						},
 						select: { id: true, userId: true },
 						take: 10,
-					}) as Note[];
+					})) as Note[];
 
 					if (notes.length === 0) {
 						break;
 					}
 
-					await this.notesRepository.delete(notes.map(note => note.id));
+					await this.notesRepository.delete(notes.map((note) => note.id));
 				}
 
-				this.logger.succ('All of notes deleted');
+				this.logger.succ("All of notes deleted");
 			}
 
-			{ // Delete files
-				let cursor: DriveFile['id'] | null = null;
+			{
+				// Delete files
+				let cursor: DriveFile["id"] | null = null;
 
 				while (true) {
-					const files = await this.driveFilesRepository.find({
+					const files = (await this.driveFilesRepository.find({
 						where: {
 							userId: user.id,
 							...(cursor ? { id: MoreThan(cursor) } : {}),
@@ -87,7 +97,7 @@ export class DeleteAccountProcessorService {
 						order: {
 							id: 1,
 						},
-					}) as DriveFile[];
+					})) as DriveFile[];
 
 					if (files.length === 0) {
 						break;
@@ -100,15 +110,21 @@ export class DeleteAccountProcessorService {
 					}
 				}
 
-				this.logger.succ('All of files deleted');
+				this.logger.succ("All of files deleted");
 			}
 
-			{ // Send email notification
-				const profile = await this.userProfilesRepository.findOneByOrFail({ userId: user.id });
+			{
+				// Send email notification
+				const profile = await this.userProfilesRepository.findOneByOrFail({
+					userId: user.id,
+				});
 				if (profile.email && profile.emailVerified) {
-					this.emailService.sendEmail(profile.email, 'Account deleted',
-						'Your account has been deleted.',
-						'Your account has been deleted.');
+					this.emailService.sendEmail(
+						profile.email,
+						"Account deleted",
+						"Your account has been deleted.",
+						"Your account has been deleted.",
+					);
 				}
 			}
 		} catch (e) {
@@ -121,11 +137,11 @@ export class DeleteAccountProcessorService {
 
 		// soft指定されている場合は物理削除しない
 		if (job.data.soft) {
-		// nop
+			// nop
 		} else {
 			await this.usersRepository.delete(job.data.user.id);
 		}
 
-		return 'Account deleted';
+		return "Account deleted";
 	}
 }

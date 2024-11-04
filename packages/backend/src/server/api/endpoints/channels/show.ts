@@ -1,6 +1,6 @@
 import { ChannelEntityService } from "@/core/entities/ChannelEntityService.js";
 import { DI } from "@/di-symbols.js";
-import type { Channel, ChannelsRepository } from "@/models/index.js";
+import type { Channel, ChannelsRepository } from "@/models/Repositories.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { Brackets, In } from "typeorm";

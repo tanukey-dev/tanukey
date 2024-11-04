@@ -1,19 +1,22 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { NotesRepository, UsersRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import { MetaService } from '@/core/MetaService.js';
-import { MAX_NOTE_TEXT_LENGTH } from '@/const.js';
-import { MemorySingleCache } from '@/misc/cache.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { bindThis } from '@/decorators.js';
-import NotesChart from '@/core/chart/charts/notes.js';
-import UsersChart from '@/core/chart/charts/users.js';
-import { DEFAULT_POLICIES } from '@/core/RoleService.js';
-import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import { Inject, Injectable } from "@nestjs/common";
+import { DI } from "@/di-symbols.js";
+import type {
+	NotesRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import type { Config } from "@/config.js";
+import { MetaService } from "@/core/MetaService.js";
+import { MAX_NOTE_TEXT_LENGTH } from "@/const.js";
+import { MemorySingleCache } from "@/misc/cache.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
+import { bindThis } from "@/decorators.js";
+import NotesChart from "@/core/chart/charts/notes.js";
+import UsersChart from "@/core/chart/charts/users.js";
+import { DEFAULT_POLICIES } from "@/core/RoleService.js";
+import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 
-const nodeinfo2_1path = '/nodeinfo/2.1';
-const nodeinfo2_0path = '/nodeinfo/2.0';
+const nodeinfo2_1path = "/nodeinfo/2.1";
+const nodeinfo2_0path = "/nodeinfo/2.0";
 
 @Injectable()
 export class NodeinfoServerService {
@@ -37,24 +40,30 @@ export class NodeinfoServerService {
 
 	@bindThis
 	public getLinks() {
-		return [/* (awaiting release) {
+		return [
+			/* (awaiting release) {
 			rel: 'http://nodeinfo.diaspora.software/ns/schema/2.1',
 			href: config.url + nodeinfo2_1path
-		}, */{
-				rel: 'http://nodeinfo.diaspora.software/ns/schema/2.0',
+		}, */ {
+				rel: "http://nodeinfo.diaspora.software/ns/schema/2.0",
 				href: this.config.url + nodeinfo2_0path,
-			}];
+			},
+		];
 	}
 
 	@bindThis
-	public createServer(fastify: FastifyInstance, options: FastifyPluginOptions, done: (err?: Error) => void) {
+	public createServer(
+		fastify: FastifyInstance,
+		options: FastifyPluginOptions,
+		done: (err?: Error) => void,
+	) {
 		const nodeinfo2 = async () => {
 			const now = Date.now();
 
-			const notesChart = await this.notesChart.getChart('hour', 1, null);
+			const notesChart = await this.notesChart.getChart("hour", 1, null);
 			const localPosts = notesChart.local.total[0];
 
-			const usersChart = await this.usersChart.getChart('hour', 1, null);
+			const usersChart = await this.usersChart.getChart("hour", 1, null);
 			const total = usersChart.local.total[0];
 
 			const [
@@ -71,20 +80,24 @@ export class NodeinfoServerService {
 			const activeHalfyear = null;
 			const activeMonth = null;
 
-			const proxyAccount = meta.proxyAccountId ? await this.userEntityService.pack(meta.proxyAccountId).catch(() => null) : null;
+			const proxyAccount = meta.proxyAccountId
+				? await this.userEntityService
+						.pack(meta.proxyAccountId)
+						.catch(() => null)
+				: null;
 
 			const basePolicies = { ...DEFAULT_POLICIES, ...meta.policies };
 
 			return {
 				software: {
-					name: 'tanukey',
+					name: "tanukey",
 					version: this.config.version,
 					repository: meta.repositoryUrl,
 				},
-				protocols: ['activitypub'],
+				protocols: ["activitypub"],
 				services: {
 					inbound: [] as string[],
-					outbound: ['atom1.0', 'rss2.0'],
+					outbound: ["atom1.0", "rss2.0"],
 				},
 				openRegistrations: !meta.disableRegistration,
 				usage: {
@@ -113,18 +126,20 @@ export class NodeinfoServerService {
 					enableEmail: meta.enableEmail,
 					enableServiceWorker: meta.enableServiceWorker,
 					proxyAccountName: proxyAccount ? proxyAccount.username : null,
-					themeColor: meta.themeColor ?? '#86b300',
+					themeColor: meta.themeColor ?? "#86b300",
 				},
 			};
 		};
 
-		const cache = new MemorySingleCache<Awaited<ReturnType<typeof nodeinfo2>>>(1000 * 60 * 10);
+		const cache = new MemorySingleCache<Awaited<ReturnType<typeof nodeinfo2>>>(
+			1000 * 60 * 10,
+		);
 
 		fastify.get(nodeinfo2_1path, async (request, reply) => {
 			const base = await cache.fetch(() => nodeinfo2());
 
-			reply.header('Cache-Control', 'public, max-age=600');
-			return { version: '2.1', ...base };
+			reply.header("Cache-Control", "public, max-age=600");
+			return { version: "2.1", ...base };
 		});
 
 		fastify.get(nodeinfo2_0path, async (request, reply) => {
@@ -132,8 +147,8 @@ export class NodeinfoServerService {
 
 			delete (base as any).software.repository;
 
-			reply.header('Cache-Control', 'public, max-age=600');
-			return { version: '2.0', ...base };
+			reply.header("Cache-Control", "public, max-age=600");
+			return { version: "2.0", ...base };
 		});
 
 		done();

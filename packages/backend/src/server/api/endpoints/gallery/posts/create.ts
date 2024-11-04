@@ -4,7 +4,7 @@ import { Endpoint } from "@/server/api/endpoint-base.js";
 import type {
 	DriveFilesRepository,
 	GalleryPostsRepository,
-} from "@/models/index.js";
+} from "@/models/Repositories.js";
 import {
 	GalleryPost,
 	ViewMode,

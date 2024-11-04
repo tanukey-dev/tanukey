@@ -1,32 +1,32 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { WebhooksRepository } from '@/models/index.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { WebhooksRepository } from "@/models/Repositories.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../../error.js";
 
 export const meta = {
-	tags: ['webhooks'],
+	tags: ["webhooks"],
 
 	requireCredential: true,
 
-	kind: 'write:account',
+	kind: "write:account",
 
 	errors: {
 		noSuchWebhook: {
-			message: 'No such webhook.',
-			code: 'NO_SUCH_WEBHOOK',
-			id: 'bae73e5a-5522-4965-ae19-3a8688e71d82',
+			message: "No such webhook.",
+			code: "NO_SUCH_WEBHOOK",
+			id: "bae73e5a-5522-4965-ae19-3a8688e71d82",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		webhookId: { type: 'string', format: 'misskey:id' },
+		webhookId: { type: "string", format: "misskey:id" },
 	},
-	required: ['webhookId'],
+	required: ["webhookId"],
 } as const;
 
 // TODO: ロジックをサービスに切り出す
@@ -52,7 +52,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			await this.webhooksRepository.delete(webhook.id);
 
-			this.globalEventService.publishInternalEvent('webhookDeleted', webhook);
+			this.globalEventService.publishInternalEvent("webhookDeleted", webhook);
 		});
 	}
 }

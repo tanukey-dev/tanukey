@@ -1,34 +1,36 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { RegistrationTicketsRepository } from '@/models/index.js';
-import { InviteCodeEntityService } from '@/core/entities/InviteCodeEntityService.js';
-import { QueryService } from '@/core/QueryService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { RegistrationTicketsRepository } from "@/models/Repositories.js";
+import { InviteCodeEntityService } from "@/core/entities/InviteCodeEntityService.js";
+import { QueryService } from "@/core/QueryService.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['meta'],
+	tags: ["meta"],
 
 	requireCredential: true,
-	requireRolePolicy: 'canInvite',
-	kind: 'read:invite-codes',
+	requireRolePolicy: "canInvite",
+	kind: "read:invite-codes",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
+			type: "object",
+			optional: false,
+			nullable: false,
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 30 },
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 30 },
+		sinceId: { type: "string", format: "misskey:id" },
+		untilId: { type: "string", format: "misskey:id" },
 	},
 	required: [],
 } as const;
@@ -44,14 +46,17 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const query = this.queryService.makePaginationQuery(this.registrationTicketsRepository.createQueryBuilder('ticket'), ps.sinceId, ps.untilId)
-				.andWhere('ticket.createdById = :meId', { meId: me.id })
-				.leftJoinAndSelect('ticket.createdBy', 'createdBy')
-				.leftJoinAndSelect('ticket.usedBy', 'usedBy');
+			const query = this.queryService
+				.makePaginationQuery(
+					this.registrationTicketsRepository.createQueryBuilder("ticket"),
+					ps.sinceId,
+					ps.untilId,
+				)
+				.andWhere("ticket.createdById = :meId", { meId: me.id })
+				.leftJoinAndSelect("ticket.createdBy", "createdBy")
+				.leftJoinAndSelect("ticket.usedBy", "usedBy");
 
-			const tickets = await query
-				.limit(ps.limit)
-				.getMany();
+			const tickets = await query.limit(ps.limit).getMany();
 
 			return await this.inviteCodeEntityService.packMany(tickets, me);
 		});

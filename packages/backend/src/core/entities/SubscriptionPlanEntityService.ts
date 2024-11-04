@@ -1,8 +1,8 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { DI } from "@/di-symbols.js";
-import { SubscriptionPlan, User } from "@/models/index.js";
+import { SubscriptionPlan, User } from "@/models/Repositories.js";
 import { RoleEntityService } from "@/core/entities/RoleEntityService.js";
-import type { SubscriptionPlansRepository } from "@/models/index.js";
+import type { SubscriptionPlansRepository } from "@/models/Repositories.js";
 import { bindThis } from "@/decorators.js";
 import { Packed } from "@/misc/json-schema.js";
 import { awaitAll } from "@/misc/prelude/await-all.js";
@@ -14,15 +14,17 @@ export class SubscriptionPlanEntityService {
 		private subscriptionPlansRepository: SubscriptionPlansRepository,
 
 		private roleEntityService: RoleEntityService,
-	) {
-	}
+	) {}
 
 	@bindThis
 	public async pack(
-		src: SubscriptionPlan['id'] | SubscriptionPlan,
-		me: { id: User['id'] } | null | undefined,
-	) : Promise<Packed<'SubscriptionPlan'>> {
-		const subscriptionPlan = typeof src === 'object' ? src : await this.subscriptionPlansRepository.findOneByOrFail({ id: src });
+		src: SubscriptionPlan["id"] | SubscriptionPlan,
+		me: { id: User["id"] } | null | undefined,
+	): Promise<Packed<"SubscriptionPlan">> {
+		const subscriptionPlan =
+			typeof src === "object"
+				? src
+				: await this.subscriptionPlansRepository.findOneByOrFail({ id: src });
 
 		return await awaitAll({
 			id: subscriptionPlan.id,

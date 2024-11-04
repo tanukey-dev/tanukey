@@ -1,18 +1,18 @@
-import { MoreThan } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import { USER_ONLINE_THRESHOLD } from '@/const.js';
-import type { UsersRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
+import { MoreThan } from "typeorm";
+import { Inject, Injectable } from "@nestjs/common";
+import { USER_ONLINE_THRESHOLD } from "@/const.js";
+import type { UsersRepository } from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['meta'],
+	tags: ["meta"],
 
 	requireCredential: false,
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {},
 	required: [],
 } as const;

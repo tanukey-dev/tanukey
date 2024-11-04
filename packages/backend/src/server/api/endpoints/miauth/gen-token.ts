@@ -1,41 +1,47 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AccessTokensRepository } from '@/models/index.js';
-import { IdService } from '@/core/IdService.js';
-import { secureRndstr } from '@/misc/secure-rndstr.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { AccessTokensRepository } from "@/models/Repositories.js";
+import { IdService } from "@/core/IdService.js";
+import { secureRndstr } from "@/misc/secure-rndstr.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['auth'],
+	tags: ["auth"],
 
 	requireCredential: true,
-	requireRolePolicy: 'canCreateToken',
+	requireRolePolicy: "canCreateToken",
 	secure: true,
 
 	res: {
-		type: 'object',
-		optional: false, nullable: false,
+		type: "object",
+		optional: false,
+		nullable: false,
 		properties: {
 			token: {
-				type: 'string',
-				optional: false, nullable: false,
+				type: "string",
+				optional: false,
+				nullable: false,
 			},
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		session: { type: 'string', nullable: true },
-		name: { type: 'string', nullable: true },
-		description: { type: 'string', nullable: true },
-		iconUrl: { type: 'string', nullable: true },
-		permission: { type: 'array', uniqueItems: true, items: {
-			type: 'string',
-		} },
+		session: { type: "string", nullable: true },
+		name: { type: "string", nullable: true },
+		description: { type: "string", nullable: true },
+		iconUrl: { type: "string", nullable: true },
+		permission: {
+			type: "array",
+			uniqueItems: true,
+			items: {
+				type: "string",
+			},
+		},
 	},
-	required: ['session', 'permission'],
+	required: ["session", "permission"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

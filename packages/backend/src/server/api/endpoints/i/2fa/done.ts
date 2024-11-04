@@ -1,11 +1,11 @@
-import * as OTPAuth from 'otpauth';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import type { UserProfilesRepository } from '@/models/index.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import type { Config } from '@/config.js';
-import { DI } from '@/di-symbols.js';
+import * as OTPAuth from "otpauth";
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
+import type { UserProfilesRepository } from "@/models/Repositories.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import type { Config } from "@/config.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
 	requireCredential: true,
@@ -14,11 +14,11 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		token: { type: 'string' },
+		token: { type: "string" },
 	},
-	required: ['token'],
+	required: ["token"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -35,12 +35,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private globalEventService: GlobalEventService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const token = ps.token.replace(/\s/g, '');
+			const token = ps.token.replace(/\s/g, "");
 
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({
+				userId: me.id,
+			});
 
 			if (profile.twoFactorTempSecret == null) {
-				throw new Error('二段階認証の設定が開始されていません');
+				throw new Error("二段階認証の設定が開始されていません");
 			}
 
 			const delta = OTPAuth.TOTP.validate({
@@ -51,7 +53,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			});
 
 			if (delta === null) {
-				throw new Error('not verified');
+				throw new Error("not verified");
 			}
 
 			await this.userProfilesRepository.update(me.id, {
@@ -60,10 +62,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			});
 
 			// Publish meUpdated event
-			this.globalEventService.publishMainStream(me.id, 'meUpdated', await this.userEntityService.pack(me.id, me, {
-				detail: true,
-				includeSecrets: true,
-			}));
+			this.globalEventService.publishMainStream(
+				me.id,
+				"meUpdated",
+				await this.userEntityService.pack(me.id, me, {
+					detail: true,
+					includeSecrets: true,
+				}),
+			);
 		});
 	}
 }

@@ -73,7 +73,7 @@ import {
 	EventCircle,
 	SubscriptionPlan,
 	SubscriptionStatus,
-} from "./index.js";
+} from "./Repositories.js";
 import type { DataSource } from "typeorm";
 import type { Provider } from "@nestjs/common";
 

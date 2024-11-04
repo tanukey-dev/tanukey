@@ -1,22 +1,26 @@
-import { Brackets, In } from 'typeorm';
-import { Injectable, Inject } from '@nestjs/common';
-import type { User, LocalUser, RemoteUser } from '@/models/entities/User.js';
-import type { Note, IMentionedRemoteUsers } from '@/models/entities/Note.js';
-import type { InstancesRepository, NotesRepository, UsersRepository } from '@/models/index.js';
-import { RelayService } from '@/core/RelayService.js';
-import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
-import { DI } from '@/di-symbols.js';
-import type { Config } from '@/config.js';
-import NotesChart from '@/core/chart/charts/notes.js';
-import PerUserNotesChart from '@/core/chart/charts/per-user-notes.js';
-import InstanceChart from '@/core/chart/charts/instance.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { ApRendererService } from '@/core/activitypub/ApRendererService.js';
-import { ApDeliverManagerService } from '@/core/activitypub/ApDeliverManagerService.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
-import { bindThis } from '@/decorators.js';
-import { MetaService } from '@/core/MetaService.js';
+import { Brackets, In } from "typeorm";
+import { Injectable, Inject } from "@nestjs/common";
+import type { User, LocalUser, RemoteUser } from "@/models/entities/User.js";
+import type { Note, IMentionedRemoteUsers } from "@/models/entities/Note.js";
+import type {
+	InstancesRepository,
+	NotesRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import { RelayService } from "@/core/RelayService.js";
+import { FederatedInstanceService } from "@/core/FederatedInstanceService.js";
+import { DI } from "@/di-symbols.js";
+import type { Config } from "@/config.js";
+import NotesChart from "@/core/chart/charts/notes.js";
+import PerUserNotesChart from "@/core/chart/charts/per-user-notes.js";
+import InstanceChart from "@/core/chart/charts/instance.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { ApRendererService } from "@/core/activitypub/ApRendererService.js";
+import { ApDeliverManagerService } from "@/core/activitypub/ApDeliverManagerService.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
+import { NoteEntityService } from "@/core/entities/NoteEntityService.js";
+import { bindThis } from "@/decorators.js";
+import { MetaService } from "@/core/MetaService.js";
 
 @Injectable()
 export class NoteDeleteService {
@@ -45,27 +49,48 @@ export class NoteDeleteService {
 		private perUserNotesChart: PerUserNotesChart,
 		private instanceChart: InstanceChart,
 	) {}
-	
+
 	/**
 	 * 投稿を削除します。
 	 * @param user 投稿者
 	 * @param note 投稿
 	 */
-	async delete(user: { id: User['id']; uri: User['uri']; host: User['host']; isBot: User['isBot']; }, note: Note, quiet = false) {
+	async delete(
+		user: {
+			id: User["id"];
+			uri: User["uri"];
+			host: User["host"];
+			isBot: User["isBot"];
+		},
+		note: Note,
+		quiet = false,
+	) {
 		const deletedAt = new Date();
 
 		// この投稿を除く指定したユーザーによる指定したノートのリノートが存在しないとき
-		if (note.renoteId && (await this.noteEntityService.countSameRenotes(user.id, note.renoteId, note.id)) === 0) {
-			this.notesRepository.decrement({ id: note.renoteId }, 'renoteCount', 1);
-			if (!user.isBot) this.notesRepository.decrement({ id: note.renoteId }, 'score', 1);
+		if (
+			note.renoteId &&
+			(await this.noteEntityService.countSameRenotes(
+				user.id,
+				note.renoteId,
+				note.id,
+			)) === 0
+		) {
+			this.notesRepository.decrement({ id: note.renoteId }, "renoteCount", 1);
+			if (!user.isBot)
+				this.notesRepository.decrement({ id: note.renoteId }, "score", 1);
 		}
 
 		if (note.replyId) {
-			await this.notesRepository.decrement({ id: note.replyId }, 'repliesCount', 1);
+			await this.notesRepository.decrement(
+				{ id: note.replyId },
+				"repliesCount",
+				1,
+			);
 		}
 
 		if (!quiet) {
-			this.globalEventService.publishNoteStream(note.id, 'deleted', {
+			this.globalEventService.publishNoteStream(note.id, "deleted", {
 				deletedAt: deletedAt,
 			});
 
@@ -74,25 +99,52 @@ export class NoteDeleteService {
 				let renote: Note | null = null;
 
 				// if deletd note is renote
-				if (note.renoteId && note.text == null && !note.hasPoll && (note.fileIds == null || note.fileIds.length === 0)) {
+				if (
+					note.renoteId &&
+					note.text == null &&
+					!note.hasPoll &&
+					(note.fileIds == null || note.fileIds.length === 0)
+				) {
 					renote = await this.notesRepository.findOneBy({
 						id: note.renoteId,
 					});
 				}
 
-				const content = this.apRendererService.addContext(renote
-					? this.apRendererService.renderUndo(this.apRendererService.renderAnnounce(renote.uri ?? `${this.config.url}/notes/${renote.id}`, note), user)
-					: this.apRendererService.renderDelete(this.apRendererService.renderTombstone(`${this.config.url}/notes/${note.id}`), user));
+				const content = this.apRendererService.addContext(
+					renote
+						? this.apRendererService.renderUndo(
+								this.apRendererService.renderAnnounce(
+									renote.uri ?? `${this.config.url}/notes/${renote.id}`,
+									note,
+								),
+								user,
+							)
+						: this.apRendererService.renderDelete(
+								this.apRendererService.renderTombstone(
+									`${this.config.url}/notes/${note.id}`,
+								),
+								user,
+							),
+				);
 
 				this.deliverToConcerned(user, note, content);
 			}
 
 			// also deliever delete activity to cascaded notes
-			const cascadingNotes = (await this.findCascadingNotes(note)).filter(note => !note.localOnly); // filter out local-only notes
+			const cascadingNotes = (await this.findCascadingNotes(note)).filter(
+				(note) => !note.localOnly,
+			); // filter out local-only notes
 			for (const cascadingNote of cascadingNotes) {
 				if (!cascadingNote.user) continue;
 				if (!this.userEntityService.isLocalUser(cascadingNote.user)) continue;
-				const content = this.apRendererService.addContext(this.apRendererService.renderDelete(this.apRendererService.renderTombstone(`${this.config.url}/notes/${cascadingNote.id}`), cascadingNote.user));
+				const content = this.apRendererService.addContext(
+					this.apRendererService.renderDelete(
+						this.apRendererService.renderTombstone(
+							`${this.config.url}/notes/${cascadingNote.id}`,
+						),
+						cascadingNote.user,
+					),
+				);
 				this.deliverToConcerned(cascadingNote.user, cascadingNote, content);
 			}
 			//#endregion
@@ -100,14 +152,16 @@ export class NoteDeleteService {
 			const meta = await this.metaService.fetch();
 
 			this.notesChart.update(note, false);
-			if (meta.enableChartsForRemoteUser || (user.host == null)) {
+			if (meta.enableChartsForRemoteUser || user.host == null) {
 				this.perUserNotesChart.update(user, note, false);
 			}
 
 			if (this.userEntityService.isRemoteUser(user)) {
-				this.federatedInstanceService.fetch(user.host).then(async i => {
-					this.instancesRepository.decrement({ id: i.id }, 'notesCount', 1);
-					if ((await this.metaService.fetch()).enableChartsForFederatedInstances) {
+				this.federatedInstanceService.fetch(user.host).then(async (i) => {
+					this.instancesRepository.decrement({ id: i.id }, "notesCount", 1);
+					if (
+						(await this.metaService.fetch()).enableChartsForFederatedInstances
+					) {
 						this.instanceChart.updateNote(i.host, note, false);
 					}
 				});
@@ -125,13 +179,17 @@ export class NoteDeleteService {
 		const cascadingNotes: Note[] = [];
 
 		const recursive = async (noteId: string) => {
-			const query = this.notesRepository.createQueryBuilder('note')
-				.where('note.replyId = :noteId', { noteId })
-				.orWhere(new Brackets(q => {
-					q.where('note.renoteId = :noteId', { noteId })
-						.andWhere('note.text IS NOT NULL');
-				}))
-				.leftJoinAndSelect('note.user', 'user');
+			const query = this.notesRepository
+				.createQueryBuilder("note")
+				.where("note.replyId = :noteId", { noteId })
+				.orWhere(
+					new Brackets((q) => {
+						q.where("note.renoteId = :noteId", { noteId }).andWhere(
+							"note.text IS NOT NULL",
+						);
+					}),
+				)
+				.leftJoinAndSelect("note.user", "user");
 			const replies = await query.getMany();
 			for (const reply of replies) {
 				cascadingNotes.push(reply);
@@ -140,7 +198,7 @@ export class NoteDeleteService {
 		};
 		await recursive(note.id);
 
-		return cascadingNotes.filter(note => note.userHost === null); // filter out non-local users
+		return cascadingNotes.filter((note) => note.userHost === null); // filter out non-local users
 	}
 
 	@bindThis
@@ -148,11 +206,11 @@ export class NoteDeleteService {
 		const where = [] as any[];
 
 		// mention / reply / dm
-		const uris = (JSON.parse(note.mentionedRemoteUsers) as IMentionedRemoteUsers).map(x => x.uri);
+		const uris = (
+			JSON.parse(note.mentionedRemoteUsers) as IMentionedRemoteUsers
+		).map((x) => x.uri);
 		if (uris.length > 0) {
-			where.push(
-				{ uri: In(uris) },
-			);
+			where.push({ uri: In(uris) });
 		}
 
 		// renote / quote
@@ -164,13 +222,17 @@ export class NoteDeleteService {
 
 		if (where.length === 0) return [];
 
-		return await this.usersRepository.find({
+		return (await this.usersRepository.find({
 			where,
-		}) as RemoteUser[];
+		})) as RemoteUser[];
 	}
 
 	@bindThis
-	private async deliverToConcerned(user: { id: LocalUser['id']; host: null; }, note: Note, content: any) {
+	private async deliverToConcerned(
+		user: { id: LocalUser["id"]; host: null },
+		note: Note,
+		content: any,
+	) {
 		this.apDeliverManagerService.deliverToFollowers(user, content);
 		this.relayService.deliverToRelays(user, content);
 		const remoteUsers = await this.getMentionedRemoteUsers(note);

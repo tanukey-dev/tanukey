@@ -1,30 +1,33 @@
-import { IsNull, Not } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UsersRepository, FollowingsRepository } from '@/models/index.js';
-import type { User } from '@/models/entities/User.js';
-import type { RelationshipJobData } from '@/queue/types.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { UserSuspendService } from '@/core/UserSuspendService.js';
-import { DI } from '@/di-symbols.js';
-import { bindThis } from '@/decorators.js';
-import { RoleService } from '@/core/RoleService.js';
-import { QueueService } from '@/core/QueueService.js';
+import { IsNull, Not } from "typeorm";
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type {
+	UsersRepository,
+	FollowingsRepository,
+} from "@/models/Repositories.js";
+import type { User } from "@/models/entities/User.js";
+import type { RelationshipJobData } from "@/queue/types.js";
+import { ModerationLogService } from "@/core/ModerationLogService.js";
+import { UserSuspendService } from "@/core/UserSuspendService.js";
+import { DI } from "@/di-symbols.js";
+import { bindThis } from "@/decorators.js";
+import { RoleService } from "@/core/RoleService.js";
+import { QueueService } from "@/core/QueueService.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:suspend-user',
+	kind: "write:admin:suspend-user",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: { type: "string", format: "misskey:id" },
 	},
-	required: ['userId'],
+	required: ["userId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -46,24 +49,24 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const user = await this.usersRepository.findOneBy({ id: ps.userId });
 
 			if (user == null) {
-				throw new Error('user not found');
+				throw new Error("user not found");
 			}
 
 			if (await this.roleService.isModerator(user)) {
-				throw new Error('cannot suspend moderator account');
+				throw new Error("cannot suspend moderator account");
 			}
 
 			await this.usersRepository.update(user.id, {
 				isSuspended: true,
 			});
 
-			this.moderationLogService.insertModerationLog(me, 'suspend', {
+			this.moderationLogService.insertModerationLog(me, "suspend", {
 				targetId: user.id,
 			});
 
 			(async () => {
-				await this.userSuspendService.doPostSuspend(user).catch(e => {});
-				await this.unFollowAll(user).catch(e => {});
+				await this.userSuspendService.doPostSuspend(user).catch((e) => {});
+				await this.unFollowAll(user).catch((e) => {});
 			})();
 		});
 	}

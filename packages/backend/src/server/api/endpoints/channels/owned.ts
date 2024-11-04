@@ -1,35 +1,37 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Brackets } from 'typeorm';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { ChannelsRepository } from '@/models/index.js';
-import { QueryService } from '@/core/QueryService.js';
-import { ChannelEntityService } from '@/core/entities/ChannelEntityService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Brackets } from "typeorm";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { ChannelsRepository } from "@/models/Repositories.js";
+import { QueryService } from "@/core/QueryService.js";
+import { ChannelEntityService } from "@/core/entities/ChannelEntityService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['channels', 'account'],
+	tags: ["channels", "account"],
 
 	requireCredential: true,
 
-	kind: 'read:channels',
+	kind: "read:channels",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'Channel',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "Channel",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 5 },
+		sinceId: { type: "string", format: "misskey:id" },
+		untilId: { type: "string", format: "misskey:id" },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 5 },
 	},
 	required: [],
 } as const;
@@ -45,18 +47,26 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const query = this.queryService.makePaginationQuery(this.channelsRepository.createQueryBuilder('channel'), ps.sinceId, ps.untilId)
-				.andWhere('channel.isArchived = FALSE')
-				.andWhere(new Brackets(qb => qb
-					.where({ userId: me.id })
-					.orWhere(':id = ANY(channel.moderatorUserIds)', { id: me.id }),
-				));
+			const query = this.queryService
+				.makePaginationQuery(
+					this.channelsRepository.createQueryBuilder("channel"),
+					ps.sinceId,
+					ps.untilId,
+				)
+				.andWhere("channel.isArchived = FALSE")
+				.andWhere(
+					new Brackets((qb) =>
+						qb
+							.where({ userId: me.id })
+							.orWhere(":id = ANY(channel.moderatorUserIds)", { id: me.id }),
+					),
+				);
 
-			const channels = await query
-				.limit(ps.limit)
-				.getMany();
+			const channels = await query.limit(ps.limit).getMany();
 
-			return await Promise.all(channels.map(x => this.channelEntityService.pack(x, me)));
+			return await Promise.all(
+				channels.map((x) => this.channelEntityService.pack(x, me)),
+			);
 		});
 	}
 }

@@ -1,15 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
-import ms from 'ms';
-import bcrypt from 'bcryptjs';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UsersRepository, UserProfilesRepository } from '@/models/index.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { EmailService } from '@/core/EmailService.js';
-import type { Config } from '@/config.js';
-import { DI } from '@/di-symbols.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { L_CHARS, secureRndstr } from '@/misc/secure-rndstr.js';
-import { ApiError } from '../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import ms from "ms";
+import bcrypt from "bcryptjs";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type {
+	UsersRepository,
+	UserProfilesRepository,
+} from "@/models/Repositories.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
+import { EmailService } from "@/core/EmailService.js";
+import type { Config } from "@/config.js";
+import { DI } from "@/di-symbols.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { L_CHARS, secureRndstr } from "@/misc/secure-rndstr.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
 	requireCredential: true,
@@ -17,32 +20,32 @@ export const meta = {
 	secure: true,
 
 	limit: {
-		duration: ms('1hour'),
+		duration: ms("1hour"),
 		max: 3,
 	},
 
 	errors: {
 		incorrectPassword: {
-			message: 'Incorrect password.',
-			code: 'INCORRECT_PASSWORD',
-			id: 'e54c1d7e-e7d6-4103-86b6-0a95069b4ad3',
+			message: "Incorrect password.",
+			code: "INCORRECT_PASSWORD",
+			id: "e54c1d7e-e7d6-4103-86b6-0a95069b4ad3",
 		},
 
 		unavailable: {
-			message: 'Unavailable email address.',
-			code: 'UNAVAILABLE',
-			id: 'a2defefb-f220-8849-0af6-17f816099323',
+			message: "Unavailable email address.",
+			code: "UNAVAILABLE",
+			id: "a2defefb-f220-8849-0af6-17f816099323",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		password: { type: 'string' },
-		email: { type: 'string', nullable: true },
+		password: { type: "string" },
+		email: { type: "string", nullable: true },
 	},
-	required: ['password'],
+	required: ["password"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -63,7 +66,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private globalEventService: GlobalEventService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({
+				userId: me.id,
+			});
 
 			// Compare password
 			const same = await bcrypt.compare(ps.password, profile.password!);
@@ -91,7 +96,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			});
 
 			// Publish meUpdated event
-			this.globalEventService.publishMainStream(me.id, 'meUpdated', iObj);
+			this.globalEventService.publishMainStream(me.id, "meUpdated", iObj);
 
 			if (ps.email != null) {
 				const code = secureRndstr(16, { chars: L_CHARS });
@@ -102,9 +107,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 				const link = `${this.config.url}/verify-email/${code}`;
 
-				this.emailService.sendEmail(ps.email, 'Email verification',
+				this.emailService.sendEmail(
+					ps.email,
+					"Email verification",
 					`To verify email, please click this link:<br><a href="${link}">${link}</a>`,
-					`To verify email, please click this link: ${link}`);
+					`To verify email, please click this link: ${link}`,
+				);
 			}
 
 			return iObj;

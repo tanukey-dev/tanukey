@@ -1,19 +1,23 @@
-import * as fs from 'node:fs';
-import { Inject, Injectable } from '@nestjs/common';
-import { MoreThan } from 'typeorm';
-import { format as dateFormat } from 'date-fns';
-import { DI } from '@/di-symbols.js';
-import type { NotesRepository, PollsRepository, UsersRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { createTemp } from '@/misc/create-temp.js';
-import type { Poll } from '@/models/entities/Poll.js';
-import type { Note } from '@/models/entities/Note.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
-import type Bull from 'bull';
-import type { DbJobDataWithUser } from '../types.js';
+import * as fs from "node:fs";
+import { Inject, Injectable } from "@nestjs/common";
+import { MoreThan } from "typeorm";
+import { format as dateFormat } from "date-fns";
+import { DI } from "@/di-symbols.js";
+import type {
+	NotesRepository,
+	PollsRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import type { Config } from "@/config.js";
+import type Logger from "@/logger.js";
+import { DriveService } from "@/core/DriveService.js";
+import { createTemp } from "@/misc/create-temp.js";
+import type { Poll } from "@/models/entities/Poll.js";
+import type { Note } from "@/models/entities/Note.js";
+import { bindThis } from "@/decorators.js";
+import { QueueLoggerService } from "../QueueLoggerService.js";
+import type Bull from "bull";
+import type { DbJobDataWithUser } from "../types.js";
 
 @Injectable()
 export class ExportNotesProcessorService {
@@ -35,11 +39,15 @@ export class ExportNotesProcessorService {
 		private driveService: DriveService,
 		private queueLoggerService: QueueLoggerService,
 	) {
-		this.logger = this.queueLoggerService.logger.createSubLogger('export-notes');
+		this.logger =
+			this.queueLoggerService.logger.createSubLogger("export-notes");
 	}
 
 	@bindThis
-	public async process(job: Bull.Job<DbJobDataWithUser>, done: () => void): Promise<void> {
+	public async process(
+		job: Bull.Job<DbJobDataWithUser>,
+		done: () => void,
+	): Promise<void> {
 		this.logger.info(`Exporting notes of ${job.data.user.id} ...`);
 
 		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
@@ -54,11 +62,11 @@ export class ExportNotesProcessorService {
 		this.logger.info(`Temp file is ${path}`);
 
 		try {
-			const stream = fs.createWriteStream(path, { flags: 'a' });
+			const stream = fs.createWriteStream(path, { flags: "a" });
 
 			const write = (text: string): Promise<void> => {
 				return new Promise<void>((res, rej) => {
-					stream.write(text, err => {
+					stream.write(text, (err) => {
 						if (err) {
 							this.logger.error(err);
 							rej(err);
@@ -69,13 +77,13 @@ export class ExportNotesProcessorService {
 				});
 			};
 
-			await write('[');
+			await write("[");
 
 			let exportedNotesCount = 0;
-			let cursor: Note['id'] | null = null;
+			let cursor: Note["id"] | null = null;
 
 			while (true) {
-				const notes = await this.notesRepository.find({
+				const notes = (await this.notesRepository.find({
 					where: {
 						userId: user.id,
 						...(cursor ? { id: MoreThan(cursor) } : {}),
@@ -84,7 +92,7 @@ export class ExportNotesProcessorService {
 					order: {
 						id: 1,
 					},
-				}) as Note[];
+				})) as Note[];
 
 				if (notes.length === 0) {
 					job.progress(100);
@@ -96,11 +104,13 @@ export class ExportNotesProcessorService {
 				for (const note of notes) {
 					let poll: Poll | undefined;
 					if (note.hasPoll) {
-						poll = await this.pollsRepository.findOneByOrFail({ noteId: note.id });
+						poll = await this.pollsRepository.findOneByOrFail({
+							noteId: note.id,
+						});
 					}
 					const content = JSON.stringify(serialize(note, poll));
 					const isFirst = exportedNotesCount === 0;
-					await write(isFirst ? content : ',\n' + content);
+					await write(isFirst ? content : ",\n" + content);
 					exportedNotesCount++;
 				}
 
@@ -111,13 +121,20 @@ export class ExportNotesProcessorService {
 				job.progress(exportedNotesCount / total);
 			}
 
-			await write(']');
+			await write("]");
 
 			stream.end();
 			this.logger.succ(`Exported to: ${path}`);
 
-			const fileName = 'notes-' + dateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.json';
-			const driveFile = await this.driveService.addFile({ user, path, name: fileName, force: true, ext: 'json' });
+			const fileName =
+				"notes-" + dateFormat(new Date(), "yyyy-MM-dd-HH-mm-ss") + ".json";
+			const driveFile = await this.driveService.addFile({
+				user,
+				path,
+				name: fileName,
+				force: true,
+				ext: "json",
+			});
 
 			this.logger.succ(`Exported to: ${driveFile.id}`);
 		} finally {
@@ -128,7 +145,10 @@ export class ExportNotesProcessorService {
 	}
 }
 
-function serialize(note: Note, poll: Poll | null = null): Record<string, unknown> {
+function serialize(
+	note: Note,
+	poll: Poll | null = null,
+): Record<string, unknown> {
 	return {
 		id: note.id,
 		text: note.text,

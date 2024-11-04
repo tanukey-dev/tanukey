@@ -1,54 +1,54 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { RolesRepository, UsersRepository } from '@/models/index.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '@/server/api/error.js';
-import { RoleService } from '@/core/RoleService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type {
+	RolesRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "@/server/api/error.js";
+import { RoleService } from "@/core/RoleService.js";
 
 export const meta = {
-	tags: ['admin', 'role'],
+	tags: ["admin", "role"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:roles',
+	kind: "write:admin:roles",
 
 	errors: {
 		noSuchRole: {
-			message: 'No such role.',
-			code: 'NO_SUCH_ROLE',
-			id: '6e519036-a70d-4c76-b679-bc8fb18194e2',
+			message: "No such role.",
+			code: "NO_SUCH_ROLE",
+			id: "6e519036-a70d-4c76-b679-bc8fb18194e2",
 		},
 
 		noSuchUser: {
-			message: 'No such user.',
-			code: 'NO_SUCH_USER',
-			id: '2b730f78-1179-461b-88ad-d24c9af1a5ce',
+			message: "No such user.",
+			code: "NO_SUCH_USER",
+			id: "2b730f78-1179-461b-88ad-d24c9af1a5ce",
 		},
 
 		notAssigned: {
-			message: 'Not assigned.',
-			code: 'NOT_ASSIGNED',
-			id: 'b9060ac7-5c94-4da4-9f55-2047c953df44',
+			message: "Not assigned.",
+			code: "NOT_ASSIGNED",
+			id: "b9060ac7-5c94-4da4-9f55-2047c953df44",
 		},
 
 		accessDenied: {
-			message: 'Only administrators can edit members of the role.',
-			code: 'ACCESS_DENIED',
-			id: '24636eee-e8c1-493e-94b2-e16ad401e262',
+			message: "Only administrators can edit members of the role.",
+			code: "ACCESS_DENIED",
+			id: "24636eee-e8c1-493e-94b2-e16ad401e262",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		roleId: { type: 'string', format: 'misskey:id' },
-		userId: { type: 'string', format: 'misskey:id' },
+		roleId: { type: "string", format: "misskey:id" },
+		userId: { type: "string", format: "misskey:id" },
 	},
-	required: [
-		'roleId',
-		'userId',
-	],
+	required: ["roleId", "userId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -69,7 +69,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.noSuchRole);
 			}
 
-			if (!role.canEditMembersByModerator && !(await this.roleService.isAdministrator(me))) {
+			if (
+				!role.canEditMembersByModerator &&
+				!(await this.roleService.isAdministrator(me))
+			) {
 				throw new ApiError(meta.errors.accessDenied);
 			}
 

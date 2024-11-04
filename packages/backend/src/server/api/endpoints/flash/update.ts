@@ -1,51 +1,57 @@
-import ms from 'ms';
-import { Inject, Injectable } from '@nestjs/common';
-import type { FlashsRepository, DriveFilesRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import ms from "ms";
+import { Inject, Injectable } from "@nestjs/common";
+import type {
+	FlashsRepository,
+	DriveFilesRepository,
+} from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['flash'],
+	tags: ["flash"],
 
 	requireCredential: true,
 
 	prohibitMoved: true,
 
-	kind: 'write:flash',
+	kind: "write:flash",
 
 	limit: {
-		duration: ms('1hour'),
+		duration: ms("1hour"),
 		max: 300,
 	},
 
 	errors: {
 		noSuchFlash: {
-			message: 'No such flash.',
-			code: 'NO_SUCH_FLASH',
-			id: '611e13d2-309e-419a-a5e4-e0422da39b02',
+			message: "No such flash.",
+			code: "NO_SUCH_FLASH",
+			id: "611e13d2-309e-419a-a5e4-e0422da39b02",
 		},
 
 		accessDenied: {
-			message: 'Access denied.',
-			code: 'ACCESS_DENIED',
-			id: '08e60c88-5948-478e-a132-02ec701d67b2',
+			message: "Access denied.",
+			code: "ACCESS_DENIED",
+			id: "08e60c88-5948-478e-a132-02ec701d67b2",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		flashId: { type: 'string', format: 'misskey:id' },
-		title: { type: 'string' },
-		summary: { type: 'string' },
-		script: { type: 'string' },
-		permissions: { type: 'array', items: {
-			type: 'string',
-		} },
+		flashId: { type: "string", format: "misskey:id" },
+		title: { type: "string" },
+		summary: { type: "string" },
+		script: { type: "string" },
+		permissions: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
 	},
-	required: ['flashId', 'title', 'summary', 'script', 'permissions'],
+	required: ["flashId", "title", "summary", "script", "permissions"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

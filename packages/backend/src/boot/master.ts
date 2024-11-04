@@ -17,7 +17,7 @@ const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
 const meta = JSON.parse(
-	fs.readFileSync(`${_dirname}/../../../../built/meta.json`, "utf-8"),
+	fs.readFileSync(`${_dirname}/../../../../../built/meta.json`, "utf-8"),
 );
 
 const logger = new Logger("core", "cyan");
@@ -114,7 +114,7 @@ function showNodejsVersion(): void {
 	nodejsLogger.info(`Version ${process.version} detected.`);
 
 	const minVersion = fs
-		.readFileSync(`${_dirname}/../../../../.node-version`, "utf-8")
+		.readFileSync(`${_dirname}/../../../../../.node-version`, "utf-8")
 		.trim();
 	if (semver.lt(process.version, minVersion)) {
 		nodejsLogger.error(`At least Node.js ${minVersion} required!`);

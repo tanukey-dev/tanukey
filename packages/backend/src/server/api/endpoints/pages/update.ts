@@ -1,7 +1,10 @@
 import ms from "ms";
 import { Not } from "typeorm";
 import { Inject, Injectable } from "@nestjs/common";
-import type { PagesRepository, DriveFilesRepository } from "@/models/index.js";
+import type {
+	PagesRepository,
+	DriveFilesRepository,
+} from "@/models/Repositories.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { DI } from "@/di-symbols.js";
 import { ApiError } from "../../error.js";

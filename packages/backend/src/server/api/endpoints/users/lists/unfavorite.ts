@@ -1,38 +1,41 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UserListFavoritesRepository, UserListsRepository } from '@/models/index.js';
-import { ApiError } from '@/server/api/error.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type {
+	UserListFavoritesRepository,
+	UserListsRepository,
+} from "@/models/Repositories.js";
+import { ApiError } from "@/server/api/error.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
 	requireCredential: true,
-	kind: 'write:account',
+	kind: "write:account",
 	errors: {
 		noSuchList: {
-			message: 'No such user list.',
-			code: 'NO_SUCH_USER_LIST',
-			id: 'baedb33e-76b8-4b0c-86a8-9375c0a7b94b',
+			message: "No such user list.",
+			code: "NO_SUCH_USER_LIST",
+			id: "baedb33e-76b8-4b0c-86a8-9375c0a7b94b",
 		},
 
 		notFavorited: {
-			message: 'You have not favorited the list.',
-			code: 'ALREADY_FAVORITED',
-			id: '835c4b27-463d-4cfa-969b-a9058678d465',
+			message: "You have not favorited the list.",
+			code: "ALREADY_FAVORITED",
+			id: "835c4b27-463d-4cfa-969b-a9058678d465",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		listId: { type: 'string', format: 'misskey:id' },
+		listId: { type: "string", format: "misskey:id" },
 	},
-	required: ['listId'],
+	required: ["listId"],
 } as const;
 
 @Injectable() // eslint-disable-next-line import/no-default-export
 export default class extends Endpoint<typeof meta, typeof paramDef> {
-	constructor (
+	constructor(
 		@Inject(DI.userListsRepository)
 		private userListsRepository: UserListsRepository,
 

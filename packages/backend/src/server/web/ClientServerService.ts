@@ -44,13 +44,13 @@ import type {
 	PagesRepository,
 	UserProfilesRepository,
 	UsersRepository,
-} from "@/models/index.js";
+} from "@/models/Repositories.js";
 import type Logger from "@/logger.js";
 import { deepClone } from "@/misc/clone.js";
 import { bindThis } from "@/decorators.js";
 import { FlashEntityService } from "@/core/entities/FlashEntityService.js";
 import { RoleService } from "@/core/RoleService.js";
-import manifest from "./manifest.json" assert { type: "json" };
+import manifest from "./manifest.json" with { type: "json" };
 import { FeedService } from "./FeedService.js";
 import { UrlPreviewService } from "./UrlPreviewService.js";
 import { ClientLoggerService } from "./ClientLoggerService.js";
@@ -64,11 +64,11 @@ import Parameters from "typescript";
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
-const staticAssets = `${_dirname}/../../../assets/`;
-const clientAssets = `${_dirname}/../../../../frontend/assets/`;
-const assets = `${_dirname}/../../../../../built/_frontend_dist_/`;
-const swAssets = `${_dirname}/../../../../../built/_sw_dist_/`;
-const viteOut = `${_dirname}/../../../../../built/_vite_/`;
+const staticAssets = `${_dirname}/../../../../assets/`;
+const clientAssets = `${_dirname}/../../../../../frontend/assets/`;
+const assets = `${_dirname}/../../../../../../built/_frontend_dist_/`;
+const swAssets = `${_dirname}/../../../../../../built/_sw_dist_/`;
+const viteOut = `${_dirname}/../../../../../../built/_vite_/`;
 
 @Injectable()
 export class ClientServerService {

@@ -4,7 +4,7 @@ import { DI } from "@/di-symbols.js";
 import { isUserRelated } from "@/misc/is-user-related.js";
 import type { Packed } from "@/misc/json-schema.js";
 import type { Channel as _Channel } from "@/models/entities/Channel.js";
-import type { ChannelsRepository } from "@/models/index.js";
+import type { ChannelsRepository } from "@/models/Repositories.js";
 import { Inject, Injectable } from "@nestjs/common";
 import Channel from "../channel.js";
 import type { StreamMessages } from "../types.js";

@@ -1,251 +1,306 @@
-import { IsNull, LessThanOrEqual, MoreThan, Brackets } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import JSON5 from 'json5';
-import { Client as OpenSearch } from '@opensearch-project/opensearch';
-import type { AdsRepository, UsersRepository } from '@/models/index.js';
-import { MAX_NOTE_TEXT_LENGTH } from '@/const.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { UserEntityService } from '@/core/entities/UserEntityService.js';
-import { MetaService } from '@/core/MetaService.js';
-import type { Config } from '@/config.js';
-import { DI } from '@/di-symbols.js';
-import { DEFAULT_POLICIES } from '@/core/RoleService.js';
+import { IsNull, LessThanOrEqual, MoreThan, Brackets } from "typeorm";
+import { Inject, Injectable } from "@nestjs/common";
+import JSON5 from "json5";
+import { Client as OpenSearch } from "@opensearch-project/opensearch";
+import type { AdsRepository, UsersRepository } from "@/models/Repositories.js";
+import { MAX_NOTE_TEXT_LENGTH } from "@/const.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { UserEntityService } from "@/core/entities/UserEntityService.js";
+import { MetaService } from "@/core/MetaService.js";
+import type { Config } from "@/config.js";
+import { DI } from "@/di-symbols.js";
+import { DEFAULT_POLICIES } from "@/core/RoleService.js";
 
 export const meta = {
-	tags: ['meta'],
+	tags: ["meta"],
 
 	requireCredential: false,
 
 	res: {
-		type: 'object',
-		optional: false, nullable: false,
+		type: "object",
+		optional: false,
+		nullable: false,
 		properties: {
 			maintainerName: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			maintainerEmail: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			version: {
-				type: 'string',
-				optional: false, nullable: false,
+				type: "string",
+				optional: false,
+				nullable: false,
 			},
 			name: {
-				type: 'string',
-				optional: false, nullable: false,
+				type: "string",
+				optional: false,
+				nullable: false,
 			},
 			uri: {
-				type: 'string',
-				optional: false, nullable: false,
-				format: 'url',
-				example: 'https://misskey.example.com',
+				type: "string",
+				optional: false,
+				nullable: false,
+				format: "url",
+				example: "https://misskey.example.com",
 			},
 			description: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			langs: {
-				type: 'array',
-				optional: false, nullable: false,
+				type: "array",
+				optional: false,
+				nullable: false,
 				items: {
-					type: 'string',
-					optional: false, nullable: false,
+					type: "string",
+					optional: false,
+					nullable: false,
 				},
 			},
 			tosUrl: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			repositoryUrl: {
-				type: 'string',
-				optional: false, nullable: false,
-				default: 'https://github.com/misskey-dev/misskey',
+				type: "string",
+				optional: false,
+				nullable: false,
+				default: "https://github.com/misskey-dev/misskey",
 			},
 			feedbackUrl: {
-				type: 'string',
-				optional: false, nullable: false,
-				default: 'https://github.com/misskey-dev/misskey/issues/new',
+				type: "string",
+				optional: false,
+				nullable: false,
+				default: "https://github.com/misskey-dev/misskey/issues/new",
 			},
 			defaultDarkTheme: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			defaultLightTheme: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			disableRegistration: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 			cacheRemoteFiles: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 			emailRequiredForSignup: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 			enableHcaptcha: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 			hcaptchaSiteKey: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			enableRecaptcha: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 			recaptchaSiteKey: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			enableTurnstile: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 			turnstileSiteKey: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			swPublickey: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			mascotImageUrl: {
-				type: 'string',
-				optional: false, nullable: false,
-				default: '/assets/ai.png',
+				type: "string",
+				optional: false,
+				nullable: false,
+				default: "/assets/ai.png",
 			},
 			bannerUrl: {
-				type: 'string',
-				optional: false, nullable: false,
+				type: "string",
+				optional: false,
+				nullable: false,
 			},
 			serverErrorImageUrl: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			infoImageUrl: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			notFoundImageUrl: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			iconUrl: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			maxNoteTextLength: {
-				type: 'number',
-				optional: false, nullable: false,
+				type: "number",
+				optional: false,
+				nullable: false,
 			},
 			ads: {
-				type: 'array',
-				optional: false, nullable: false,
+				type: "array",
+				optional: false,
+				nullable: false,
 				items: {
-					type: 'object',
-					optional: false, nullable: false,
+					type: "object",
+					optional: false,
+					nullable: false,
 					properties: {
 						place: {
-							type: 'string',
-							optional: false, nullable: false,
+							type: "string",
+							optional: false,
+							nullable: false,
 						},
 						url: {
-							type: 'string',
-							optional: false, nullable: false,
-							format: 'url',
+							type: "string",
+							optional: false,
+							nullable: false,
+							format: "url",
 						},
 						imageUrl: {
-							type: 'string',
-							optional: false, nullable: false,
-							format: 'url',
+							type: "string",
+							optional: false,
+							nullable: false,
+							format: "url",
 						},
 						forceShowAds: {
-							type: 'boolean',
-							optional: false, nullable: false,
+							type: "boolean",
+							optional: false,
+							nullable: false,
 							example: false,
 						},
 					},
 				},
 			},
 			requireSetup: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 				example: false,
 			},
 			enableEmail: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 			enableServiceWorker: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 			enableOpenSearch: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 			translatorAvailable: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 			proxyAccountName: {
-				type: 'string',
-				optional: false, nullable: true,
+				type: "string",
+				optional: false,
+				nullable: true,
 			},
 			mediaProxy: {
-				type: 'string',
-				optional: false, nullable: false,
+				type: "string",
+				optional: false,
+				nullable: false,
 			},
 			pinnedLtlChannelIds: {
-				type: 'array',
-				optional: false, nullable: false,
+				type: "array",
+				optional: false,
+				nullable: false,
 				items: {
-					type: 'string',
-					optional: false, nullable: false,
+					type: "string",
+					optional: false,
+					nullable: false,
 				},
 			},
 			features: {
-				type: 'object',
-				optional: true, nullable: false,
+				type: "object",
+				optional: true,
+				nullable: false,
 				properties: {
 					registration: {
-						type: 'boolean',
-						optional: false, nullable: false,
+						type: "boolean",
+						optional: false,
+						nullable: false,
 					},
 					localTimeLine: {
-						type: 'boolean',
-						optional: false, nullable: false,
+						type: "boolean",
+						optional: false,
+						nullable: false,
 					},
 					globalTimeLine: {
-						type: 'boolean',
-						optional: false, nullable: false,
+						type: "boolean",
+						optional: false,
+						nullable: false,
 					},
 					hcaptcha: {
-						type: 'boolean',
-						optional: false, nullable: false,
+						type: "boolean",
+						optional: false,
+						nullable: false,
 					},
 					recaptcha: {
-						type: 'boolean',
-						optional: false, nullable: false,
+						type: "boolean",
+						optional: false,
+						nullable: false,
 					},
 					objectStorage: {
-						type: 'boolean',
-						optional: false, nullable: false,
+						type: "boolean",
+						optional: false,
+						nullable: false,
 					},
 					serviceWorker: {
-						type: 'boolean',
-						optional: false, nullable: false,
+						type: "boolean",
+						optional: false,
+						nullable: false,
 					},
 					miauth: {
-						type: 'boolean',
-						optional: true, nullable: false,
+						type: "boolean",
+						optional: true,
+						nullable: false,
 						default: true,
 					},
 				},
@@ -255,9 +310,9 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		detail: { type: 'boolean', default: true },
+		detail: { type: "boolean", default: true },
 	},
 	required: [],
 } as const;
@@ -268,7 +323,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	constructor(
 		@Inject(DI.config)
 		private config: Config,
-	
+
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
 
@@ -284,16 +339,20 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		super(meta, paramDef, async (ps, me) => {
 			const instance = await this.metaService.fetch(true);
 
-			const ads = await this.adsRepository.createQueryBuilder("ads")
-				.where('ads.expiresAt > :now', { now: new Date() })
-				.andWhere('ads.startsAt <= :now', { now: new Date() })
-				.andWhere(new Brackets(qb => {
-					// 曜日のビットフラグを確認する
-					qb.where('ads.dayOfWeek & :dayOfWeek > 0', { dayOfWeek: 1 << new Date().getDay() })
-						.orWhere('ads.dayOfWeek = 0');
-				}))
+			const ads = await this.adsRepository
+				.createQueryBuilder("ads")
+				.where("ads.expiresAt > :now", { now: new Date() })
+				.andWhere("ads.startsAt <= :now", { now: new Date() })
+				.andWhere(
+					new Brackets((qb) => {
+						// 曜日のビットフラグを確認する
+						qb.where("ads.dayOfWeek & :dayOfWeek > 0", {
+							dayOfWeek: 1 << new Date().getDay(),
+						}).orWhere("ads.dayOfWeek = 0");
+					}),
+				)
 				.getMany();
-		
+
 			const response: any = {
 				maintainerName: instance.maintainerName,
 				maintainerEmail: instance.maintainerEmail,
@@ -327,9 +386,13 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				logoImageUrl: instance.logoImageUrl,
 				maxNoteTextLength: MAX_NOTE_TEXT_LENGTH,
 				// クライアントの手間を減らすためあらかじめJSONに変換しておく
-				defaultLightTheme: instance.defaultLightTheme ? JSON.stringify(JSON5.parse(instance.defaultLightTheme)) : null,
-				defaultDarkTheme: instance.defaultDarkTheme ? JSON.stringify(JSON5.parse(instance.defaultDarkTheme)) : null,
-				ads: ads.map(ad => ({
+				defaultLightTheme: instance.defaultLightTheme
+					? JSON.stringify(JSON5.parse(instance.defaultLightTheme))
+					: null,
+				defaultDarkTheme: instance.defaultDarkTheme
+					? JSON.stringify(JSON5.parse(instance.defaultDarkTheme))
+					: null,
+				ads: ads.map((ad) => ({
 					id: ad.id,
 					url: ad.url,
 					place: ad.place,
@@ -352,16 +415,23 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				pinnedLtlChannelIds: instance.pinnedLtlChannelIds,
 				enableSubscriptions: instance.enableSubscriptions,
 
-				...(ps.detail ? {
-					cacheRemoteFiles: instance.cacheRemoteFiles,
-					requireSetup: (await this.usersRepository.countBy({
-						host: IsNull(),
-					})) === 0,
-				} : {}),
+				...(ps.detail
+					? {
+							cacheRemoteFiles: instance.cacheRemoteFiles,
+							requireSetup:
+								(await this.usersRepository.countBy({
+									host: IsNull(),
+								})) === 0,
+						}
+					: {}),
 			};
 
 			if (ps.detail) {
-				const proxyAccount = instance.proxyAccountId ? await this.userEntityService.pack(instance.proxyAccountId).catch(() => null) : null;
+				const proxyAccount = instance.proxyAccountId
+					? await this.userEntityService
+							.pack(instance.proxyAccountId)
+							.catch(() => null)
+					: null;
 
 				response.proxyAccountName = proxyAccount ? proxyAccount.username : null;
 				response.features = {

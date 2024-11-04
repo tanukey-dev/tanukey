@@ -10,7 +10,7 @@ import type {
 	ChannelsRepository,
 	UsersRepository,
 	NotesRepository,
-} from "@/models/index.js";
+} from "@/models/Repositories.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { ApiError } from "../../error.js";

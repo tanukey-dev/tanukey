@@ -1,24 +1,29 @@
-import { Inject, Injectable } from '@nestjs/common';
-import bcrypt from 'bcryptjs';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UsersRepository, UserProfilesRepository } from '@/models/index.js';
-import { DI } from '@/di-symbols.js';
-import { secureRndstr } from '@/misc/secure-rndstr.js';
+import { Inject, Injectable } from "@nestjs/common";
+import bcrypt from "bcryptjs";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type {
+	UsersRepository,
+	UserProfilesRepository,
+} from "@/models/Repositories.js";
+import { DI } from "@/di-symbols.js";
+import { secureRndstr } from "@/misc/secure-rndstr.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:reset-password',
+	kind: "write:admin:reset-password",
 
 	res: {
-		type: 'object',
-		optional: false, nullable: false,
+		type: "object",
+		optional: false,
+		nullable: false,
 		properties: {
 			password: {
-				type: 'string',
-				optional: false, nullable: false,
+				type: "string",
+				optional: false,
+				nullable: false,
 				minLength: 8,
 				maxLength: 8,
 			},
@@ -27,11 +32,11 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: { type: "string", format: "misskey:id" },
 	},
-	required: ['userId'],
+	required: ["userId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -48,11 +53,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const user = await this.usersRepository.findOneBy({ id: ps.userId });
 
 			if (user == null) {
-				throw new Error('user not found');
+				throw new Error("user not found");
 			}
 
 			if (user.isRoot) {
-				throw new Error('cannot reset password of root');
+				throw new Error("cannot reset password of root");
 			}
 
 			const passwd = secureRndstr(8);
@@ -60,11 +65,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			// Generate hash of password
 			const hash = bcrypt.hashSync(passwd);
 
-			await this.userProfilesRepository.update({
-				userId: user.id,
-			}, {
-				password: hash,
-			});
+			await this.userProfilesRepository.update(
+				{
+					userId: user.id,
+				},
+				{
+					password: hash,
+				},
+			);
 
 			return {
 				password: passwd,

@@ -57,7 +57,7 @@ import type {
 	NotesRepository,
 	UserProfilesRepository,
 	UsersRepository,
-} from "@/models/index.js";
+} from "@/models/Repositories.js";
 import { Inject, Injectable, OnApplicationShutdown } from "@nestjs/common";
 import RE2 from "re2";
 import * as mfm from "tfm-js";

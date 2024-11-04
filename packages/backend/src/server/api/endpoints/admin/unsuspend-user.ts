@@ -1,24 +1,24 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UsersRepository } from '@/models/index.js';
-import { ModerationLogService } from '@/core/ModerationLogService.js';
-import { UserSuspendService } from '@/core/UserSuspendService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { UsersRepository } from "@/models/Repositories.js";
+import { ModerationLogService } from "@/core/ModerationLogService.js";
+import { UserSuspendService } from "@/core/UserSuspendService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:unsuspend-user',
+	kind: "write:admin:unsuspend-user",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: { type: "string", format: "misskey:id" },
 	},
-	required: ['userId'],
+	required: ["userId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -35,14 +35,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const user = await this.usersRepository.findOneBy({ id: ps.userId });
 
 			if (user == null) {
-				throw new Error('user not found');
+				throw new Error("user not found");
 			}
 
 			await this.usersRepository.update(user.id, {
 				isSuspended: false,
 			});
 
-			this.moderationLogService.insertModerationLog(me, 'unsuspend', {
+			this.moderationLogService.insertModerationLog(me, "unsuspend", {
 				targetId: user.id,
 			});
 

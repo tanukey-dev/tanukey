@@ -10,7 +10,7 @@ import type {
 	UserProfilesRepository,
 	AttestationChallengesRepository,
 	UsersRepository,
-} from "@/models/index.js";
+} from "@/models/Repositories.js";
 import type { Config } from "@/config.js";
 import { getIpHash } from "@/misc/get-ip-hash.js";
 import type { LocalUser } from "@/models/entities/User.js";

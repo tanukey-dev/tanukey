@@ -5,7 +5,10 @@ import { RoleService } from "@/core/RoleService.js";
 import ActiveUsersChart from "@/core/chart/charts/active-users.js";
 import { NoteEntityService } from "@/core/entities/NoteEntityService.js";
 import { DI } from "@/di-symbols.js";
-import type { FollowingsRepository, NotesRepository } from "@/models/index.js";
+import type {
+	FollowingsRepository,
+	NotesRepository,
+} from "@/models/Repositories.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { Brackets } from "typeorm";

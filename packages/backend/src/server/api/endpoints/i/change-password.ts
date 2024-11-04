@@ -1,8 +1,8 @@
-import bcrypt from 'bcryptjs';
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UserProfilesRepository } from '@/models/index.js';
-import { DI } from '@/di-symbols.js';
+import bcrypt from "bcryptjs";
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { UserProfilesRepository } from "@/models/Repositories.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
 	requireCredential: true,
@@ -11,12 +11,12 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		currentPassword: { type: 'string' },
-		newPassword: { type: 'string', minLength: 1 },
+		currentPassword: { type: "string" },
+		newPassword: { type: "string", minLength: 1 },
 	},
-	required: ['currentPassword', 'newPassword'],
+	required: ["currentPassword", "newPassword"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -27,13 +27,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private userProfilesRepository: UserProfilesRepository,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: me.id });
+			const profile = await this.userProfilesRepository.findOneByOrFail({
+				userId: me.id,
+			});
 
 			// Compare password
 			const same = await bcrypt.compare(ps.currentPassword, profile.password!);
 
 			if (!same) {
-				throw new Error('incorrect password');
+				throw new Error("incorrect password");
 			}
 
 			// Generate hash of password

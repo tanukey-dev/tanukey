@@ -1,32 +1,42 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { AdsRepository } from '@/models/index.js';
-import { IdService } from '@/core/IdService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { AdsRepository } from "@/models/Repositories.js";
+import { IdService } from "@/core/IdService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:ad',
+	kind: "write:admin:ad",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		url: { type: 'string', minLength: 1 },
-		memo: { type: 'string' },
-		place: { type: 'string' },
-		priority: { type: 'string' },
-		ratio: { type: 'integer' },
-		expiresAt: { type: 'integer' },
-		startsAt: { type: 'integer' },
-		imageUrl: { type: 'string', minLength: 1 },
-		forceShowAds: { type: 'boolean', nullable: false },
-		dayOfWeek: { type: 'integer' },
+		url: { type: "string", minLength: 1 },
+		memo: { type: "string" },
+		place: { type: "string" },
+		priority: { type: "string" },
+		ratio: { type: "integer" },
+		expiresAt: { type: "integer" },
+		startsAt: { type: "integer" },
+		imageUrl: { type: "string", minLength: 1 },
+		forceShowAds: { type: "boolean", nullable: false },
+		dayOfWeek: { type: "integer" },
 	},
-	required: ['url', 'memo', 'place', 'priority', 'ratio', 'expiresAt', 'startsAt', 'imageUrl', 'dayOfWeek'],
+	required: [
+		"url",
+		"memo",
+		"place",
+		"priority",
+		"ratio",
+		"expiresAt",
+		"startsAt",
+		"imageUrl",
+		"dayOfWeek",
+	],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

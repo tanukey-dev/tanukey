@@ -4,7 +4,7 @@ import type { SearchService } from "@/core/SearchService.js";
 import type { NoteEntityService } from "@/core/entities/NoteEntityService.js";
 import { DI } from "@/di-symbols.js";
 import * as Acct from "@/misc/acct.js";
-import type { UsersRepository } from "@/models/index.js";
+import type { UsersRepository } from "@/models/Repositories.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { IsNull } from "typeorm";

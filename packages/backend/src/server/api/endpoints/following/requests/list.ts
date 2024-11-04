@@ -1,38 +1,43 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { QueryService } from '@/core/QueryService.js';
-import type { FollowRequestsRepository } from '@/models/index.js';
-import { FollowRequestEntityService } from '@/core/entities/FollowRequestEntityService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { QueryService } from "@/core/QueryService.js";
+import type { FollowRequestsRepository } from "@/models/Repositories.js";
+import { FollowRequestEntityService } from "@/core/entities/FollowRequestEntityService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['following', 'account'],
+	tags: ["following", "account"],
 
 	requireCredential: true,
 
-	kind: 'read:following',
+	kind: "read:following",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
+			type: "object",
+			optional: false,
+			nullable: false,
 			properties: {
 				id: {
-					type: 'string',
-					optional: false, nullable: false,
-					format: 'id',
+					type: "string",
+					optional: false,
+					nullable: false,
+					format: "id",
 				},
 				follower: {
-					type: 'object',
-					optional: false, nullable: false,
-					ref: 'UserLite',
+					type: "object",
+					optional: false,
+					nullable: false,
+					ref: "UserLite",
 				},
 				followee: {
-					type: 'object',
-					optional: false, nullable: false,
-					ref: 'UserLite',
+					type: "object",
+					optional: false,
+					nullable: false,
+					ref: "UserLite",
 				},
 			},
 		},
@@ -40,11 +45,11 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		sinceId: { type: 'string', format: 'misskey:id' },
-		untilId: { type: 'string', format: 'misskey:id' },
-		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
+		sinceId: { type: "string", format: "misskey:id" },
+		untilId: { type: "string", format: "misskey:id" },
+		limit: { type: "integer", minimum: 1, maximum: 100, default: 10 },
 	},
 	required: [],
 } as const;
@@ -60,14 +65,19 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private queryService: QueryService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const query = this.queryService.makePaginationQuery(this.followRequestsRepository.createQueryBuilder('request'), ps.sinceId, ps.untilId)
-				.andWhere('request.followeeId = :meId', { meId: me.id });
+			const query = this.queryService
+				.makePaginationQuery(
+					this.followRequestsRepository.createQueryBuilder("request"),
+					ps.sinceId,
+					ps.untilId,
+				)
+				.andWhere("request.followeeId = :meId", { meId: me.id });
 
-			const requests = await query
-				.limit(ps.limit)
-				.getMany();
+			const requests = await query.limit(ps.limit).getMany();
 
-			return await Promise.all(requests.map(req => this.followRequestEntityService.pack(req)));
+			return await Promise.all(
+				requests.map((req) => this.followRequestEntityService.pack(req)),
+			);
 		});
 	}
 }

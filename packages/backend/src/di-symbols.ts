@@ -110,4 +110,8 @@ export const DI = {
 	globalEventService: "GlobalEventService",
 	metaService: "MetaService",
 	httpRequestService: "HttpRequestService",
+	cacheService: "CacheService",
+	authenticateService: "AuthenticateService",
+	channelsService: "ChannelsService",
+	notificationService: "NotificationService",
 };

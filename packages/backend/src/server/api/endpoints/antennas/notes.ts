@@ -2,7 +2,10 @@ import type { NoteReadService } from "@/core/NoteReadService.js";
 import type { SearchService } from "@/core/SearchService.js";
 import type { NoteEntityService } from "@/core/entities/NoteEntityService.js";
 import { DI } from "@/di-symbols.js";
-import type { AntennasRepository, UsersRepository } from "@/models/index.js";
+import type {
+	AntennasRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { ApiError } from "../../error.js";

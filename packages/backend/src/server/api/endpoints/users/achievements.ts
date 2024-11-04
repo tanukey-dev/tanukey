@@ -1,21 +1,21 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { UserProfilesRepository } from '@/models/index.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { UserProfilesRepository } from "@/models/Repositories.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
 	requireCredential: false,
 
 	res: {
-		type: 'array',
+		type: "array",
 		items: {
-			type: 'object',
+			type: "object",
 			properties: {
 				name: {
-					type: 'string',
+					type: "string",
 				},
 				unlockedAt: {
-					type: 'number',
+					type: "number",
 				},
 			},
 		},
@@ -23,11 +23,11 @@ export const meta = {
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		userId: { type: 'string', format: 'misskey:id' },
+		userId: { type: "string", format: "misskey:id" },
 	},
-	required: ['userId'],
+	required: ["userId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -38,7 +38,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private userProfilesRepository: UserProfilesRepository,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const profile = await this.userProfilesRepository.findOneByOrFail({ userId: ps.userId });
+			const profile = await this.userProfilesRepository.findOneByOrFail({
+				userId: ps.userId,
+			});
 
 			return profile.achievements;
 		});

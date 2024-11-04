@@ -1,34 +1,39 @@
-import { IsNull } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
-import type { UsedUsernamesRepository, UsersRepository } from '@/models/index.js';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import { localUsernameSchema } from '@/models/entities/User.js';
-import { DI } from '@/di-symbols.js';
-import { MetaService } from '@/core/MetaService.js';
+import { IsNull } from "typeorm";
+import { Inject, Injectable } from "@nestjs/common";
+import type {
+	UsedUsernamesRepository,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import { localUsernameSchema } from "@/models/entities/User.js";
+import { DI } from "@/di-symbols.js";
+import { MetaService } from "@/core/MetaService.js";
 
 export const meta = {
-	tags: ['users'],
+	tags: ["users"],
 
 	requireCredential: false,
 
 	res: {
-		type: 'object',
-		optional: false, nullable: false,
+		type: "object",
+		optional: false,
+		nullable: false,
 		properties: {
 			available: {
-				type: 'boolean',
-				optional: false, nullable: false,
+				type: "boolean",
+				optional: false,
+				nullable: false,
 			},
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
 		username: localUsernameSchema,
 	},
-	required: ['username'],
+	required: ["username"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -49,10 +54,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				usernameLower: ps.username.toLowerCase(),
 			});
 
-			const exist2 = await this.usedUsernamesRepository.countBy({ username: ps.username.toLowerCase() });
+			const exist2 = await this.usedUsernamesRepository.countBy({
+				username: ps.username.toLowerCase(),
+			});
 
 			const meta = await this.metaService.fetch();
-			const isPreserved = meta.preservedUsernames.map(x => x.toLowerCase()).includes(ps.username.toLowerCase());
+			const isPreserved = meta.preservedUsernames
+				.map((x) => x.toLowerCase())
+				.includes(ps.username.toLowerCase());
 
 			return {
 				available: exist === 0 && exist2 === 0 && !isPreserved,

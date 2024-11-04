@@ -1,29 +1,30 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { DriveFilesRepository } from '@/models/index.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { DriveFilesRepository } from "@/models/Repositories.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
-	tags: ['drive'],
+	tags: ["drive"],
 
 	requireCredential: true,
 
-	kind: 'read:drive',
+	kind: "read:drive",
 
-	description: 'Check if a given file exists.',
+	description: "Check if a given file exists.",
 
 	res: {
-		type: 'boolean',
-		optional: false, nullable: false,
+		type: "boolean",
+		optional: false,
+		nullable: false,
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		md5: { type: 'string' },
+		md5: { type: "string" },
 	},
-	required: ['md5'],
+	required: ["md5"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

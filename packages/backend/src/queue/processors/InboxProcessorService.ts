@@ -5,7 +5,7 @@ import { DI } from "@/di-symbols.js";
 import type {
 	InstancesRepository,
 	DriveFilesRepository,
-} from "@/models/index.js";
+} from "@/models/Repositories.js";
 import type { Config } from "@/config.js";
 import type Logger from "@/logger.js";
 import { MetaService } from "@/core/MetaService.js";

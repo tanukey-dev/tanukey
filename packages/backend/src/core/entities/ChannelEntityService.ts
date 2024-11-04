@@ -11,7 +11,7 @@ import type {
 	DriveFilesRepository,
 	NoteUnreadsRepository,
 	NotesRepository,
-} from "@/models/index.js";
+} from "@/models/Repositories.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { In } from "typeorm";
 import { DriveFileEntityService } from "./DriveFileEntityService.js";

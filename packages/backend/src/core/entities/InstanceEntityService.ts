@@ -1,12 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DI } from '@/di-symbols.js';
-import type { InstancesRepository } from '@/models/index.js';
-import type { Packed } from '@/misc/json-schema.js';
-import type { } from '@/models/entities/Blocking.js';
-import type { Instance } from '@/models/entities/Instance.js';
-import { MetaService } from '@/core/MetaService.js';
-import { bindThis } from '@/decorators.js';
-import { UtilityService } from '../UtilityService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { DI } from "@/di-symbols.js";
+import type { InstancesRepository } from "@/models/Repositories.js";
+import type { Packed } from "@/misc/json-schema.js";
+import type {} from "@/models/entities/Blocking.js";
+import type { Instance } from "@/models/entities/Instance.js";
+import { MetaService } from "@/core/MetaService.js";
+import { bindThis } from "@/decorators.js";
+import { UtilityService } from "../UtilityService.js";
 
 @Injectable()
 export class InstanceEntityService {
@@ -17,13 +17,10 @@ export class InstanceEntityService {
 		private metaService: MetaService,
 
 		private utilityService: UtilityService,
-	) {
-	}
+	) {}
 
 	@bindThis
-	public async pack(
-		instance: Instance,
-	): Promise<Packed<'FederationInstance'>> {
+	public async pack(instance: Instance): Promise<Packed<"FederationInstance">> {
 		const meta = await this.metaService.fetch();
 		return {
 			id: instance.id,
@@ -35,7 +32,10 @@ export class InstanceEntityService {
 			followersCount: instance.followersCount,
 			isNotResponding: instance.isNotResponding,
 			isSuspended: instance.isSuspended,
-			isBlocked: this.utilityService.isBlockedHost(meta.blockedHosts, instance.host) || (meta.enableAllowedHostsInWhiteList && !this.utilityService.isAllowedHost(meta.allowedHosts, instance.host)),
+			isBlocked:
+				this.utilityService.isBlockedHost(meta.blockedHosts, instance.host) ||
+				(meta.enableAllowedHostsInWhiteList &&
+					!this.utilityService.isAllowedHost(meta.allowedHosts, instance.host)),
 			softwareName: instance.softwareName,
 			softwareVersion: instance.softwareVersion,
 			openRegistrations: instance.openRegistrations,
@@ -46,15 +46,14 @@ export class InstanceEntityService {
 			iconUrl: instance.iconUrl,
 			faviconUrl: instance.faviconUrl,
 			themeColor: instance.themeColor,
-			infoUpdatedAt: instance.infoUpdatedAt ? instance.infoUpdatedAt.toISOString() : null,
+			infoUpdatedAt: instance.infoUpdatedAt
+				? instance.infoUpdatedAt.toISOString()
+				: null,
 		};
 	}
 
 	@bindThis
-	public packMany(
-		instances: Instance[],
-	) {
-		return Promise.all(instances.map(x => this.pack(x)));
+	public packMany(instances: Instance[]) {
+		return Promise.all(instances.map((x) => this.pack(x)));
 	}
 }
-

@@ -1,53 +1,54 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { DriveFoldersRepository } from '@/models/index.js';
-import { DriveFolderEntityService } from '@/core/entities/DriveFolderEntityService.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { DriveFoldersRepository } from "@/models/Repositories.js";
+import { DriveFolderEntityService } from "@/core/entities/DriveFolderEntityService.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../../error.js";
 
 export const meta = {
-	tags: ['drive'],
+	tags: ["drive"],
 
 	requireCredential: true,
 
-	kind: 'write:drive',
+	kind: "write:drive",
 
 	errors: {
 		noSuchFolder: {
-			message: 'No such folder.',
-			code: 'NO_SUCH_FOLDER',
-			id: 'f7974dac-2c0d-4a27-926e-23583b28e98e',
+			message: "No such folder.",
+			code: "NO_SUCH_FOLDER",
+			id: "f7974dac-2c0d-4a27-926e-23583b28e98e",
 		},
 
 		noSuchParentFolder: {
-			message: 'No such parent folder.',
-			code: 'NO_SUCH_PARENT_FOLDER',
-			id: 'ce104e3a-faaf-49d5-b459-10ff0cbbcaa1',
+			message: "No such parent folder.",
+			code: "NO_SUCH_PARENT_FOLDER",
+			id: "ce104e3a-faaf-49d5-b459-10ff0cbbcaa1",
 		},
 
 		recursiveNesting: {
-			message: 'It can not be structured like nesting folders recursively.',
-			code: 'RECURSIVE_NESTING',
-			id: 'dbeb024837894013aed44279f9199740',
+			message: "It can not be structured like nesting folders recursively.",
+			code: "RECURSIVE_NESTING",
+			id: "dbeb024837894013aed44279f9199740",
 		},
 	},
 
 	res: {
-		type: 'object',
-		optional: false, nullable: false,
-		ref: 'DriveFolder',
+		type: "object",
+		optional: false,
+		nullable: false,
+		ref: "DriveFolder",
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		folderId: { type: 'string', format: 'misskey:id' },
-		name: { type: 'string', maxLength: 200 },
-		parentId: { type: 'string', format: 'misskey:id', nullable: true },
+		folderId: { type: "string", format: "misskey:id" },
+		name: { type: "string", maxLength: 200 },
+		parentId: { type: "string", format: "misskey:id", nullable: true },
 	},
-	required: ['folderId'],
+	required: ["folderId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -124,7 +125,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const folderObj = await this.driveFolderEntityService.pack(folder);
 
 			// Publish folderUpdated event
-			this.globalEventService.publishDriveStream(me.id, 'folderUpdated', folderObj);
+			this.globalEventService.publishDriveStream(
+				me.id,
+				"folderUpdated",
+				folderObj,
+			);
 
 			return folderObj;
 		});

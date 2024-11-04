@@ -4,7 +4,7 @@ import { Endpoint } from "@/server/api/endpoint-base.js";
 import type {
 	DriveFilesRepository,
 	GalleryPostsRepository,
-} from "@/models/index.js";
+} from "@/models/Repositories.js";
 import type { DriveFile } from "@/models/entities/DriveFile.js";
 import { GalleryPostEntityService } from "@/core/entities/GalleryPostEntityService.js";
 import { ViewMode, ViewSettings } from "@/models/entities/GalleryPost.js";

@@ -1,34 +1,37 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { ChannelFollowingsRepository, ChannelsRepository } from '@/models/index.js';
-import { GlobalEventService } from '@/core/GlobalEventService.js';
-import { DI } from '@/di-symbols.js';
-import { ApiError } from '../../error.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type {
+	ChannelFollowingsRepository,
+	ChannelsRepository,
+} from "@/models/Repositories.js";
+import { GlobalEventService } from "@/core/GlobalEventService.js";
+import { DI } from "@/di-symbols.js";
+import { ApiError } from "../../error.js";
 
 export const meta = {
-	tags: ['channels'],
+	tags: ["channels"],
 
 	requireCredential: true,
 
 	prohibitMoved: true,
 
-	kind: 'write:channels',
+	kind: "write:channels",
 
 	errors: {
 		noSuchChannel: {
-			message: 'No such channel.',
-			code: 'NO_SUCH_CHANNEL',
-			id: '19959ee9-0153-4c51-bbd9-a98c49dc59d6',
+			message: "No such channel.",
+			code: "NO_SUCH_CHANNEL",
+			id: "19959ee9-0153-4c51-bbd9-a98c49dc59d6",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		channelId: { type: 'string', format: 'misskey:id' },
+		channelId: { type: "string", format: "misskey:id" },
 	},
-	required: ['channelId'],
+	required: ["channelId"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export

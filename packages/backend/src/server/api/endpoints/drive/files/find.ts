@@ -1,37 +1,44 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { IsNull } from 'typeorm';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { DriveFilesRepository } from '@/models/index.js';
-import { DriveFileEntityService } from '@/core/entities/DriveFileEntityService.js';
-import { DI } from '@/di-symbols.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { IsNull } from "typeorm";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { DriveFilesRepository } from "@/models/Repositories.js";
+import { DriveFileEntityService } from "@/core/entities/DriveFileEntityService.js";
+import { DI } from "@/di-symbols.js";
 
 export const meta = {
 	requireCredential: true,
 
-	tags: ['drive'],
+	tags: ["drive"],
 
-	kind: 'read:drive',
+	kind: "read:drive",
 
-	description: 'Search for a drive file by the given parameters.',
+	description: "Search for a drive file by the given parameters.",
 
 	res: {
-		type: 'array',
-		optional: false, nullable: false,
+		type: "array",
+		optional: false,
+		nullable: false,
 		items: {
-			type: 'object',
-			optional: false, nullable: false,
-			ref: 'DriveFile',
+			type: "object",
+			optional: false,
+			nullable: false,
+			ref: "DriveFile",
 		},
 	},
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		name: { type: 'string' },
-		folderId: { type: 'string', format: 'misskey:id', nullable: true, default: null },
+		name: { type: "string" },
+		folderId: {
+			type: "string",
+			format: "misskey:id",
+			nullable: true,
+			default: null,
+		},
 	},
-	required: ['name'],
+	required: ["name"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -50,7 +57,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				folderId: ps.folderId ?? IsNull(),
 			});
 
-			return await Promise.all(files.map(file => this.driveFileEntityService.pack(file, { self: true })));
+			return await Promise.all(
+				files.map((file) =>
+					this.driveFileEntityService.pack(file, { self: true }),
+				),
+			);
 		});
 	}
 }

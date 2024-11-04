@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { UserPointService } from "@/core/entities/UserPointService.js";
-import type { UserPointsRepository } from "@/models/index.js";
+import type { UserPointsRepository } from "@/models/Repositories.js";
 import { DI } from "@/di-symbols.js";
 
 export const meta = {

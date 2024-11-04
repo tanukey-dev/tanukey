@@ -1,25 +1,25 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Endpoint } from '@/server/api/endpoint-base.js';
-import type { InstancesRepository } from '@/models/index.js';
-import { UtilityService } from '@/core/UtilityService.js';
-import { DI } from '@/di-symbols.js';
-import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
+import { Inject, Injectable } from "@nestjs/common";
+import { Endpoint } from "@/server/api/endpoint-base.js";
+import type { InstancesRepository } from "@/models/Repositories.js";
+import { UtilityService } from "@/core/UtilityService.js";
+import { DI } from "@/di-symbols.js";
+import { FederatedInstanceService } from "@/core/FederatedInstanceService.js";
 
 export const meta = {
-	tags: ['admin'],
+	tags: ["admin"],
 
 	requireCredential: true,
 	requireModerator: true,
-	kind: 'write:admin:federation',
+	kind: "write:admin:federation",
 } as const;
 
 export const paramDef = {
-	type: 'object',
+	type: "object",
 	properties: {
-		host: { type: 'string' },
-		isSuspended: { type: 'boolean' },
+		host: { type: "string" },
+		isSuspended: { type: "boolean" },
 	},
-	required: ['host', 'isSuspended'],
+	required: ["host", "isSuspended"],
 } as const;
 
 // eslint-disable-next-line import/no-default-export
@@ -33,10 +33,12 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private federatedInstanceService: FederatedInstanceService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
-			const instance = await this.instancesRepository.findOneBy({ host: this.utilityService.toPuny(ps.host) });
+			const instance = await this.instancesRepository.findOneBy({
+				host: this.utilityService.toPuny(ps.host),
+			});
 
 			if (instance == null) {
-				throw new Error('instance not found');
+				throw new Error("instance not found");
 			}
 
 			this.federatedInstanceService.update(instance.id, {

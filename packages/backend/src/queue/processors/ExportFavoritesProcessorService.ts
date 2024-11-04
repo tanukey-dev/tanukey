@@ -1,19 +1,26 @@
-import * as fs from 'node:fs';
-import { Inject, Injectable } from '@nestjs/common';
-import { MoreThan } from 'typeorm';
-import { format as dateFormat } from 'date-fns';
-import { DI } from '@/di-symbols.js';
-import type { NoteFavorite, NoteFavoritesRepository, NotesRepository, PollsRepository, User, UsersRepository } from '@/models/index.js';
-import type { Config } from '@/config.js';
-import type Logger from '@/logger.js';
-import { DriveService } from '@/core/DriveService.js';
-import { createTemp } from '@/misc/create-temp.js';
-import type { Poll } from '@/models/entities/Poll.js';
-import type { Note } from '@/models/entities/Note.js';
-import { bindThis } from '@/decorators.js';
-import { QueueLoggerService } from '../QueueLoggerService.js';
-import type Bull from 'bull';
-import type { DbJobDataWithUser } from '../types.js';
+import * as fs from "node:fs";
+import { Inject, Injectable } from "@nestjs/common";
+import { MoreThan } from "typeorm";
+import { format as dateFormat } from "date-fns";
+import { DI } from "@/di-symbols.js";
+import type {
+	NoteFavorite,
+	NoteFavoritesRepository,
+	NotesRepository,
+	PollsRepository,
+	User,
+	UsersRepository,
+} from "@/models/Repositories.js";
+import type { Config } from "@/config.js";
+import type Logger from "@/logger.js";
+import { DriveService } from "@/core/DriveService.js";
+import { createTemp } from "@/misc/create-temp.js";
+import type { Poll } from "@/models/entities/Poll.js";
+import type { Note } from "@/models/entities/Note.js";
+import { bindThis } from "@/decorators.js";
+import { QueueLoggerService } from "../QueueLoggerService.js";
+import type Bull from "bull";
+import type { DbJobDataWithUser } from "../types.js";
 
 @Injectable()
 export class ExportFavoritesProcessorService {
@@ -38,11 +45,15 @@ export class ExportFavoritesProcessorService {
 		private driveService: DriveService,
 		private queueLoggerService: QueueLoggerService,
 	) {
-		this.logger = this.queueLoggerService.logger.createSubLogger('export-favorites');
+		this.logger =
+			this.queueLoggerService.logger.createSubLogger("export-favorites");
 	}
 
 	@bindThis
-	public async process(job: Bull.Job<DbJobDataWithUser>, done: () => void): Promise<void> {
+	public async process(
+		job: Bull.Job<DbJobDataWithUser>,
+		done: () => void,
+	): Promise<void> {
 		this.logger.info(`Exporting favorites of ${job.data.user.id} ...`);
 
 		const user = await this.usersRepository.findOneBy({ id: job.data.user.id });
@@ -57,11 +68,11 @@ export class ExportFavoritesProcessorService {
 		this.logger.info(`Temp file is ${path}`);
 
 		try {
-			const stream = fs.createWriteStream(path, { flags: 'a' });
+			const stream = fs.createWriteStream(path, { flags: "a" });
 
 			const write = (text: string): Promise<void> => {
 				return new Promise<void>((res, rej) => {
-					stream.write(text, err => {
+					stream.write(text, (err) => {
 						if (err) {
 							this.logger.error(err);
 							rej(err);
@@ -72,13 +83,13 @@ export class ExportFavoritesProcessorService {
 				});
 			};
 
-			await write('[');
+			await write("[");
 
 			let exportedFavoritesCount = 0;
-			let cursor: NoteFavorite['id'] | null = null;
+			let cursor: NoteFavorite["id"] | null = null;
 
 			while (true) {
-				const favorites = await this.noteFavoritesRepository.find({
+				const favorites = (await this.noteFavoritesRepository.find({
 					where: {
 						userId: user.id,
 						...(cursor ? { id: MoreThan(cursor) } : {}),
@@ -87,8 +98,8 @@ export class ExportFavoritesProcessorService {
 					order: {
 						id: 1,
 					},
-					relations: ['note', 'note.user'],
-				}) as (NoteFavorite & { note: Note & { user: User } })[];
+					relations: ["note", "note.user"],
+				})) as (NoteFavorite & { note: Note & { user: User } })[];
 
 				if (favorites.length === 0) {
 					job.progress(100);
@@ -100,11 +111,13 @@ export class ExportFavoritesProcessorService {
 				for (const favorite of favorites) {
 					let poll: Poll | undefined;
 					if (favorite.note.hasPoll) {
-						poll = await this.pollsRepository.findOneByOrFail({ noteId: favorite.note.id });
+						poll = await this.pollsRepository.findOneByOrFail({
+							noteId: favorite.note.id,
+						});
 					}
 					const content = JSON.stringify(serialize(favorite, poll));
 					const isFirst = exportedFavoritesCount === 0;
-					await write(isFirst ? content : ',\n' + content);
+					await write(isFirst ? content : ",\n" + content);
 					exportedFavoritesCount++;
 				}
 
@@ -115,13 +128,20 @@ export class ExportFavoritesProcessorService {
 				job.progress(exportedFavoritesCount / total);
 			}
 
-			await write(']');
+			await write("]");
 
 			stream.end();
 			this.logger.succ(`Exported to: ${path}`);
 
-			const fileName = 'favorites-' + dateFormat(new Date(), 'yyyy-MM-dd-HH-mm-ss') + '.json';
-			const driveFile = await this.driveService.addFile({ user, path, name: fileName, force: true, ext: 'json' });
+			const fileName =
+				"favorites-" + dateFormat(new Date(), "yyyy-MM-dd-HH-mm-ss") + ".json";
+			const driveFile = await this.driveService.addFile({
+				user,
+				path,
+				name: fileName,
+				force: true,
+				ext: "json",
+			});
 
 			this.logger.succ(`Exported to: ${driveFile.id}`);
 		} finally {
@@ -132,7 +152,10 @@ export class ExportFavoritesProcessorService {
 	}
 }
 
-function serialize(favorite: NoteFavorite & { note: Note & { user: User } }, poll: Poll | null = null): Record<string, unknown> {
+function serialize(
+	favorite: NoteFavorite & { note: Note & { user: User } },
+	poll: Poll | null = null,
+): Record<string, unknown> {
 	return {
 		id: favorite.id,
 		createdAt: favorite.createdAt,
