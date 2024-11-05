@@ -525,7 +525,7 @@ export const router = createRouter({
 				},
 				{
 					path: "custom-emojis",
-					component: page(() => import("./pages/about.emojis.vue")),
+					component: page(() => import("./pages/emojis/about.emojis.vue")),
 					props: true,
 				},
 				{

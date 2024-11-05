@@ -9,20 +9,9 @@
 <script lang="ts" setup>
 import { customEmojis } from "@/custom-emojis";
 import { computed } from 'vue';
-import XEmoji from "./emojis.emoji.vue";
+import XEmoji from "../emojis.emoji.vue";
 
-const emojis = computed(() => customEmojis.value.filter((emoji) => {
-	if (emoji.updatedAt === null) {
-		return false;
-	}
-	if (emoji.status !== 'APPROVED') {
-		return false;
-	}
-	// 3日以内の絵文字を抽出
-	const checkDate = new Date(emoji.updatedAt);
-	checkDate.setDate(checkDate.getDate() + 3);
-	return checkDate > new Date();
-}));
+const emojis = computed(() => customEmojis.value.filter((emoji) => emoji.status === 'REJECTED'));
 
 </script>
 

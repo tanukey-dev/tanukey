@@ -7,11 +7,12 @@
 </template>
 
 <script lang="ts" setup>
+import { $i } from "@/account";
 import { customEmojis } from "@/custom-emojis";
 import { computed } from 'vue';
-import XEmoji from "./emojis.emoji.vue";
+import XEmoji from "../emojis.emoji.vue";
 
-const emojis = computed(() => customEmojis.value.filter((emoji) => emoji.status === 'REJECTED'));
+const emojis = computed(() => customEmojis.value.filter((emoji) => emoji.uploadedUserName === $i?.username))
 
 </script>
 

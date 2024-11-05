@@ -9,9 +9,9 @@
 <script lang="ts" setup>
 import { customEmojis } from "@/custom-emojis";
 import { computed } from 'vue';
-import XEmoji from "./emojis.emoji.vue";
+import XEmoji from "../emojis.emoji.vue";
 
-const emojis = computed(() => customEmojis.value.filter((emoji) => emoji.uploadedUserName === null))
+const emojis = computed(() => customEmojis.value.filter((emoji) => emoji.status === 'DRAFT'));
 
 </script>
 

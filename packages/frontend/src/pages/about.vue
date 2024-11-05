@@ -104,7 +104,6 @@
 
 <script lang="ts" setup>
 import { computed, watch } from "vue";
-import XEmojis from "./about.emojis.vue";
 import XFederation from "./about.federation.vue";
 import { version, host } from "@/config";
 import FormLink from "@/components/form/link.vue";

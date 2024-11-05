@@ -41,7 +41,7 @@ import * as os from "@/os";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import * as Misskey from "misskey-js";
 import { computed, defineAsyncComponent, ref, watch } from "vue";
-import XEmoji from "./emojis.emoji.vue";
+import XEmoji from "../emojis.emoji.vue";
 
 const q = $ref("");
 let searchEmojis = $ref<Misskey.entities.CustomEmoji[]>(null);
