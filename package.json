@@ -1,11 +1,11 @@
 {
 	"name": "tanukey",
-	"version": "14.24.12",
+	"version": "14.24.13",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/tanukey-dev/tanukey.git"
 	},
-	"packageManager": "pnpm@9.11.0",
+	"packageManager": "pnpm@9.12.3",
 	"workspaces": ["packages/frontend", "packages/backend", "packages/sw"],
 	"private": true,
 	"scripts": {
