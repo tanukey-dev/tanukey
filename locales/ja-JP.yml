@@ -2305,3 +2305,9 @@ _publicSettings:
   remote: "リモートフォローを表示"
   local: "パブリック投稿を表示"
   channel: "チャンネルを表示"
+
+_emojis:
+  status: "ステータス"
+  draft: "ドラフト"
+  approved: "承認"
+  rejected: "却下"

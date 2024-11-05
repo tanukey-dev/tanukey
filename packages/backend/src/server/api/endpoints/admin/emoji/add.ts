@@ -44,6 +44,10 @@ export const paramDef = {
 				type: "string",
 			},
 		},
+		status: {
+			type: "string",
+			enum: ["DRAFT", "APPROVED", "REJECTED"],
+		},
 		license: { type: "string", nullable: true },
 		isSensitive: { type: "boolean" },
 		localOnly: { type: "boolean" },
@@ -54,7 +58,7 @@ export const paramDef = {
 			},
 		},
 	},
-	required: ["name", "fileId"],
+	required: ["name", "fileId", "status"],
 } as const;
 
 // TODO: ロジックをサービスに切り出す
@@ -82,7 +86,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				category: ps.category ?? null,
 				aliases: ps.aliases ?? [],
 				host: null,
-				status: EmojiStatus.APPROVED,
+				status: EmojiStatus[ps.status as keyof typeof EmojiStatus],
 				license: ps.license ?? null,
 				isSensitive: ps.isSensitive ?? false,
 				localOnly: ps.localOnly ?? false,

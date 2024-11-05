@@ -2390,6 +2390,12 @@ export interface Locale {
         "local": string;
         "channel": string;
     };
+    "_emojis": {
+        "status": string;
+        "draft": string;
+        "approved": string;
+        "rejected": string;
+    };
 }
 declare const locales: {
     [lang: string]: Locale;

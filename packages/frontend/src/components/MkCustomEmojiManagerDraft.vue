@@ -203,7 +203,7 @@ async function deleteDraft(emoji) {
 			>.imgDark {
 				display: grid;
 				grid-column: 2;
-				background-color: #000;
+				background-color: rgb(25, 35, 32);
 
 				>img {
 					max-height: 30px;

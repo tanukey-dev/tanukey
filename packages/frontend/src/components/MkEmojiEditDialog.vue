@@ -9,16 +9,10 @@
 			<MkSpacer :marginMin="20" :marginMax="28">
 				<div class="_gaps_m">
 					<div v-if="imgUrl != null" :class="$style.imgs">
-						<div style="background: #000;" :class="$style.imgContainer">
-							<img :src="imgUrl" :class="$style.img" />
-						</div>
-						<div style="background: #222;" :class="$style.imgContainer">
-							<img :src="imgUrl" :class="$style.img" />
-						</div>
-						<div style="background: #ddd;" :class="$style.imgContainer">
-							<img :src="imgUrl" :class="$style.img" />
-						</div>
 						<div style="background: #fff;" :class="$style.imgContainer">
+							<img :src="imgUrl" :class="$style.img" />
+						</div>
+						<div style="background: rgb(25, 35, 32);" :class="$style.imgContainer">
 							<img :src="imgUrl" :class="$style.img" />
 						</div>
 					</div>
@@ -59,6 +53,12 @@
 							<MkInfo warn>{{ i18n.ts.rolesThatCanBeUsedThisEmojiAsReactionPublicRoleWarn }}</MkInfo>
 						</div>
 					</MkFolder>
+					<MkSelect v-if="!isRequest" v-model="status">
+						<template #label>{{ i18n.ts._emojis.status }}</template>
+						<option value="DRAFT">{{ i18n.ts._emojis.draft }}</option>
+						<option value="APPROVED">{{ i18n.ts._emojis.approved }}</option>
+						<option value="REJECTED">{{ i18n.ts._emojis.rejected }}</option>
+					</MkSelect>
 					<MkSwitch v-model="isSensitive">{{ i18n.ts.isSensitive }}</MkSwitch>
 					<MkSwitch v-model="localOnly">{{ i18n.ts.localOnly }}</MkSwitch>
 				</div>
@@ -86,12 +86,13 @@ import MkInput from "@/components/MkInput.vue";
 import MkModalWindow from "@/components/MkModalWindow.vue";
 import MkRolePreview from "@/components/MkRolePreview.vue";
 import MkSwitch from "@/components/MkSwitch.vue";
+import MkSelect from "./MkSelect.vue";
 import { customEmojiCategories } from "@/custom-emojis";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
 import { selectFile } from "@/scripts/select-file";
 import * as misskey from "misskey-js";
-import { computed, watch } from "vue";
+import { computed, watch, ref } from "vue";
 
 const props = defineProps<{
 	emoji?: any;
@@ -111,6 +112,7 @@ const roleIdsThatCanBeUsedThisEmojiAsReaction = $ref(
 let rolesThatCanBeUsedThisEmojiAsReaction = $ref([]);
 let file = $ref<misskey.entities.DriveFile>();
 const isRequest = $ref(props.isRequest);
+const status = ref(props.emoji ? props.emoji.status : "DRAFT");
 
 watch(
 	$$(roleIdsThatCanBeUsedThisEmojiAsReaction),
@@ -181,6 +183,7 @@ async function done() {
 		localOnly,
 		roleIdsThatCanBeUsedThisEmojiAsReaction:
 			rolesThatCanBeUsedThisEmojiAsReaction.map((x) => x.id),
+		status: status.value,
 	};
 
 	if (file) {
@@ -255,7 +258,7 @@ async function del() {
 .img {
 	display: block;
 	height: 64px;
-	width: 64px;
+	width: 128px;
 	object-fit: contain;
 }
 
