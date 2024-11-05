@@ -193,6 +193,7 @@ async function deleteDraft(emoji) {
 				display: grid;
 				grid-column: 1;
 				background-color: #fff;
+				padding: 10px;
 
 				>img {
 					max-height: 30px;
@@ -204,6 +205,7 @@ async function deleteDraft(emoji) {
 				display: grid;
 				grid-column: 2;
 				background-color: rgb(25, 35, 32);
+				padding: 10px;
 
 				>img {
 					max-height: 30px;
