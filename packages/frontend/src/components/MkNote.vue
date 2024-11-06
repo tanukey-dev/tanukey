@@ -19,10 +19,14 @@
 				</template>
 			</I18n>
 			<div :class="$style.renoteInfo">
-				<button ref="renoteTime" :class="$style.renoteTime" class="_button" @click="showRenoteMenu()">
+				<button v-if="isRenote" ref="renoteTime" :class="$style.renoteTime" class="_button"
+					@click="showRenoteMenu()">
 					<i v-if="isMyRenote" class="ti ti-dots" :class="$style.renoteMenu"></i>
 					<MkTime :time="note.createdAt" />
 				</button>
+				<div v-else :class="$style.renoteTime">
+					<MkTime :time="note.createdAt" />
+				</div>
 				<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;"
 					:title="i18n.ts._visibility[note.visibility]">
 					<i v-if="note.visibility === 'home'" class="ti ti-home"></i>
