@@ -7,11 +7,6 @@
 			<Transition :name="defaultStore.state.animation ? 'fade' : ''" mode="out-in">
 				<div v-if="page" :key="page.id" class="xcukqgmh">
 					<div class="main">
-						<!--
-				<div class="header">
-					<h1>{{ page.title }}</h1>
-				</div>
-				-->
 						<div class="banner">
 							<img v-if="page.eyeCatchingImageId" :src="page.eyeCatchingImage.url" />
 						</div>
@@ -45,8 +40,6 @@
 								:transparent="false" :full="true" large class="koudoku" />
 						</div>
 						<div class="links">
-							<MkA :to="`/secure/@${username}/pages/${pageName}/view-source`" class="link">{{
-								i18n.ts._pages.viewSource }}</MkA>
 							<template v-if="$i && $i.id === page.userId">
 								<MkA :to="`/secure/pages/edit/${page.id}`" class="link">{{ i18n.ts._pages.editThisPage
 									}}</MkA>

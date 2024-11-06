@@ -22,14 +22,6 @@ export const router = createRouter({
 			component: page(() => import("./pages/timeline-public.vue")),
 		},
 		{
-			path: "/@:initUser/pages/:initPageName/view-source",
-			component: page(() => import("./pages/page-editor/page-editor.vue")),
-			props: true,
-			meta: {
-				loginedUserRedirect: true,
-			},
-		},
-		{
 			path: "/@:username/pages/:pageName",
 			component: page(() => import("./pages/page.vue")),
 			props: true,
@@ -185,14 +177,6 @@ export const router = createRouter({
 					path: "user-info/:userId",
 					component: page(() => import("./pages/user-info.vue")),
 					props: true,
-				},
-				{
-					path: "@:initUser/pages/:initPageName/view-source",
-					component: page(() => import("./pages/page-editor/page-editor.vue")),
-					props: true,
-					meta: {
-						notLoginedUserRedirect: true,
-					},
 				},
 				{
 					path: "@:username/pages/:pageName",
