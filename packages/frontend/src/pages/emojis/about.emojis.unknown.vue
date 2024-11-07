@@ -1,7 +1,7 @@
 <template>
 	<MkSpacer :contentMax="1000" :marginMin="20">
 		<div :class="$style.emojis">
-			<XEmoji v-for="emoji in emojis" :key="emoji.name" :emoji="emoji" :draft="emoji.status === 'DRAFT'" />
+			<XEmoji v-for="emoji in emojis" :key="emoji.name" :emoji="emoji" />
 		</div>
 	</MkSpacer>
 </template>

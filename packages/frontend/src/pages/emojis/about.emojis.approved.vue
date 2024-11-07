@@ -15,8 +15,7 @@
 		<MkFoldableSection v-if="searchEmojis">
 			<template #header>{{ i18n.ts.searchResult }}</template>
 			<div :class="$style.emojis">
-				<XEmoji v-for="emoji in searchEmojis" :key="emoji.name" :emoji="emoji"
-					:draft="emoji.status === 'DRAFT'" />
+				<XEmoji v-for="emoji in searchEmojis" :key="emoji.name" :emoji="emoji" />
 			</div>
 		</MkFoldableSection>
 
@@ -24,7 +23,7 @@
 			<template #header>{{ category || i18n.ts.other }}</template>
 			<div :class="$style.emojis">
 				<XEmoji v-for="emoji in customEmojis.filter(e => e.category === category && e.status !== 'DRAFT')"
-					:key="emoji.name" :emoji="emoji" :draft="emoji.status === 'DRAFT'" />
+					:key="emoji.name" :emoji="emoji" />
 			</div>
 		</MkFoldableSection>
 	</MkSpacer>
