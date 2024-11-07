@@ -119,6 +119,9 @@ const emojiDb = computed(() => {
 		if (x.status !== 'APPROVED') {
 			continue;
 		}
+		if (x.uploadedUserName === null) {
+			continue;
+		}
 
 		customEmojiDB.push({
 			name: x.name,
