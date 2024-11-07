@@ -150,7 +150,7 @@ watch(q, () => {
 
 	const searchCustom = () => {
 		const max = 100;
-		const emojis = customEmojis.value.filter((emoji) => emoji.status === 'APPROVED');
+		const emojis = customEmojis.value.filter((emoji) => emoji.status === 'APPROVED').filter((emoji) => emoji.uploadedUserName !== null);
 		const matches = new Set<Misskey.entities.CustomEmoji>();
 
 		const exactMatch = emojis.find((emoji) => emoji.name === newQ);
