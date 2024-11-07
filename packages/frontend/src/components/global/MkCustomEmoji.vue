@@ -1,5 +1,5 @@
 <template>
-	<span v-if="errored || isDraft">:{{ customEmojiName }}:</span>
+	<span v-if="errored || isNotApproved">:{{ customEmojiName }}:</span>
 	<img v-else :class="[$style.root, { [$style.normal]: normal, [$style.noStyle]: noStyle }]" :src="url" :alt="alt"
 		:title="alt" decoding="async" @error="errored = true" @load="errored = false" />
 </template>
@@ -31,10 +31,10 @@ const isLocal = computed(
 		(customEmojiName.value.endsWith("@.") ||
 			!customEmojiName.value.includes("@")),
 );
-const isDraft = computed(() => {
+const isNotApproved = computed(() => {
 	const emoji = customEmojisMap.get(customEmojiName.value);
 	if (!emoji) return false;
-	return emoji.status === 'DRAFT';
+	return emoji.status !== 'APPROVED';
 });
 
 const rawUrl = computed(() => {

@@ -116,7 +116,7 @@ const emojiDb = computed(() => {
 	const customEmojiDB: EmojiDef[] = [];
 
 	for (const x of customEmojis.value) {
-		if (x.status === 'DRAFT') {
+		if (x.status !== 'APPROVED') {
 			continue;
 		}
 

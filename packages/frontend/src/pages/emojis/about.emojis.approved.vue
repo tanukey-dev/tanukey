@@ -22,7 +22,7 @@
 		<MkFoldableSection v-for="category in customEmojiCategories" v-once :key="category" :expanded="false">
 			<template #header>{{ category || i18n.ts.other }}</template>
 			<div :class="$style.emojis">
-				<XEmoji v-for="emoji in customEmojis.filter(e => e.category === category && e.status !== 'DRAFT')"
+				<XEmoji v-for="emoji in customEmojis.filter(e => e.category === category && e.status === 'APPROVED')"
 					:key="emoji.name" :emoji="emoji" />
 			</div>
 		</MkFoldableSection>
@@ -37,9 +37,8 @@ import MkInput from "@/components/MkInput.vue";
 import { customEmojiCategories, customEmojis } from "@/custom-emojis";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
-import { definePageMetadata } from "@/scripts/page-metadata";
 import * as Misskey from "misskey-js";
-import { computed, defineAsyncComponent, ref, watch } from "vue";
+import { defineAsyncComponent, watch } from "vue";
 import XEmoji from "../emojis.emoji.vue";
 
 const q = $ref("");

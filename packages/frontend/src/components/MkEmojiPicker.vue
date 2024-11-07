@@ -46,7 +46,7 @@
 			<div v-once class="group">
 				<header class="_acrylic">{{ i18n.ts.customEmojis }}</header>
 				<XSection v-for="category in customEmojiCategories" :key="`custom:${category}`" :initialShown="false"
-					:emojis="computed(() => customEmojis.filter(emoji => emoji.status !== 'DRAFT').filter(e => category === null ? (e.category === 'null' || !e.category) : e.category === category).filter(filterAvailable).map(e => `:${e.name}:`))"
+					:emojis="computed(() => customEmojis.filter(emoji => emoji.status === 'APPROVED').filter(e => category === null ? (e.category === 'null' || !e.category) : e.category === category).filter(filterAvailable).map(e => `:${e.name}:`))"
 					@chosen="chosen">
 					{{ category || i18n.ts.other }}
 				</XSection>
