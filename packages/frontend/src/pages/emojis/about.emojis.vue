@@ -16,6 +16,8 @@
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { defineAsyncComponent, computed } from "vue";
+import MkStickyContainer from "@/components/global/MkStickyContainer.vue";
+import MkPageHeader from "@/components/global/MkPageHeader.vue";
 
 
 const Emojis = defineAsyncComponent(() => import('./about.emojis.approved.vue'));

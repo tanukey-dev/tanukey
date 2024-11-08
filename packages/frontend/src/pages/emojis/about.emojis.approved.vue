@@ -1,11 +1,5 @@
 <template>
 	<MkSpacer :contentMax="1000" :marginMin="20">
-		<MkButton v-if="$i && ($i.isModerator || $i.policies.canManageCustomEmojis)" primary link
-			to="/secure/custom-emojis-manager">{{ i18n.ts.manageCustomEmojis }}</MkButton>
-		<MkButton
-			v-if="$i && (!$i.isModerator && !$i.policies.canManageCustomEmojis && $i.policies.canRequestCustomEmojis)"
-			primary @click="edit">{{ i18n.ts.requestCustomEmojis }}</MkButton>
-
 		<div style="margin-top: 10px;">
 			<MkInput v-model="q" class="" :placeholder="i18n.ts.search">
 				<template #prefix><i class="ti ti-search"></i></template>
@@ -30,13 +24,10 @@
 </template>
 
 <script lang="ts" setup>
-import { $i } from "@/account";
-import MkButton from "@/components/MkButton.vue";
 import MkFoldableSection from "@/components/MkFoldableSection.vue";
 import MkInput from "@/components/MkInput.vue";
 import { customEmojiCategories, customEmojis } from "@/custom-emojis";
 import { i18n } from "@/i18n";
-import * as os from "@/os";
 import * as Misskey from "misskey-js";
 import { defineAsyncComponent, watch } from "vue";
 import XEmoji from "../emojis.emoji.vue";
@@ -71,20 +62,6 @@ function search() {
 		);
 	}
 }
-
-const edit = () => {
-	os.popup(
-		defineAsyncComponent(() => import("@/components/MkEmojiEditDialog.vue")),
-		{
-			isRequest: true,
-		},
-		{
-			done: (result) => {
-			},
-		},
-		"closed",
-	);
-};
 
 watch($$(q), () => {
 	search();

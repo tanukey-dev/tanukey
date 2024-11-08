@@ -16,14 +16,27 @@ import { initializeSw } from "@/scripts/initialize-sw";
 import { readNoteCache } from "@/scripts/read-note";
 import Vue3TouchEvents from "vue3-touch-events";
 import VueGtag from "vue-gtag";
-import "vuetify/styles";
 import { createVuetify } from "vuetify";
+import { VAlert } from "vuetify/components/VAlert";
+import { aliases, mdi } from "vuetify/iconsets/mdi";
+import "@mdi/font/css/materialdesignicons.css";
 
 export async function mainBoot() {
 	const { isClientUpdated } = await common(() => {
 		const app = createApp(defineAsyncComponent(() => import("@/app.vue")));
 
-		const vuetify = createVuetify();
+		const vuetify = createVuetify({
+			icons: {
+				defaultSet: "mdi",
+				aliases,
+				sets: {
+					mdi,
+				},
+			},
+			components: {
+				VAlert,
+			},
+		});
 		app.use(vuetify);
 
 		app.use(Vue3TouchEvents);

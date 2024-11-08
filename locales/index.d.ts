@@ -2395,6 +2395,7 @@ export interface Locale {
         "draft": string;
         "approved": string;
         "rejected": string;
+        "approveRequest": string;
     };
 }
 declare const locales: {

@@ -5,6 +5,41 @@
 		<template v-else-if="isRequest" #header>{{ i18n.ts.requestCustomEmojis }}</template>
 		<template v-else #header>New emoji</template>
 
+		<v-alert v-if="isRequest" title="申請に関する諸注意" type="info" variant="tonal">
+			<p>現在、絵文字リアクションは基本的に承認を通さずに追加できます。ただし一部条件で申請できない、または承認を通す必要があります。</p>
+			<p>以下の場合は申請できません。</p>
+			<p>
+				・商用利用不可のフォントを含む<br>
+				・JASRAC、NexToneなどの管理楽曲の歌詞を含む<br>
+				・申請者が権利を持っていない、またはライセンスで2次利用が許可されていない素材を含む<br>
+				・制作者・ライセンスが不明なもの
+			</p>
+			<p>
+				以下の場合は承認が必要です。承認リクエストフラグを有効化して作成してください。当てはまるか不明な場合、心配な場合は承認を通してください。
+				承認は不定期に行われるため、利用可能まで時間がかかる場合があります。また審査により却下される場合があります。
+				一度リジェクトされた絵文字の再申請は強制的に承認リクエストが有効になります。
+			</p>
+			<p>■ 共通</p>
+			<p>
+				・アニメーションが含まれる絵文字<br>
+				・色彩がきつく目に痛い可能性がある絵文字<br>
+				・政治、宗教、特定の主張を含む絵文字<br>
+				・性的な表現を含む絵文字<br>
+				・グロテスクな表現を含む絵文字
+			</p>
+			<p>■ 文字入りの場合</p>
+			<p>
+				・特定の人物、キャラクター、団体、キャッチコピーなどを含むもの<br>
+				・批判的、ネガティブな意味合いを含むもの<br>
+				・サーバールールへの言及など自治行為に繋がりかねないもの
+			</p>
+			<p>■ イラスト入りの場合</p>
+			<p>
+				・虫など苦手な人がいそうと思われるもの<br>
+				・別サービスのアイコン
+			</p>
+			<p>承認可能な権利をもつユーザーを基本的に信用する形の運用となっております。上記内容をよく読んで申請をお願いいたします。申請が通っている絵文字もあとから運営の判断で却下される場合があります。</p>
+		</v-alert>
 		<div>
 			<MkSpacer :marginMin="20" :marginMax="28">
 				<div class="_gaps_m">
@@ -61,6 +96,7 @@
 					</MkSelect>
 					<MkSwitch v-model="isSensitive">{{ i18n.ts.isSensitive }}</MkSwitch>
 					<MkSwitch v-model="localOnly">{{ i18n.ts.localOnly }}</MkSwitch>
+					<MkSwitch v-model="approveRequest">{{ i18n.ts._emojis.approveRequest }}</MkSwitch>
 				</div>
 			</MkSpacer>
 			<div :class="$style.footer">
@@ -113,6 +149,7 @@ let rolesThatCanBeUsedThisEmojiAsReaction = $ref([]);
 let file = $ref<misskey.entities.DriveFile>();
 const isRequest = $ref(props.isRequest);
 const status = ref(props.emoji ? props.emoji.status : "DRAFT");
+const approveRequest = ref(props.emoji ? props.emoji.status !== "APPROVED" : false);
 
 watch(
 	$$(roleIdsThatCanBeUsedThisEmojiAsReaction),
@@ -183,7 +220,7 @@ async function done() {
 		localOnly,
 		roleIdsThatCanBeUsedThisEmojiAsReaction:
 			rolesThatCanBeUsedThisEmojiAsReaction.map((x) => x.id),
-		status: status.value,
+		status: isRequest ? approveRequest.value ? "DRAFT" : "APPROVED" : status.value,
 	};
 
 	if (file) {
@@ -192,6 +229,11 @@ async function done() {
 
 	if (props.emoji) {
 		if (isRequest) {
+			// リジェクトされた絵文字を再申請する場合、ステータスを強制的にドラフトにする
+			if (props.emoji.status === "REJECTED") {
+				params.status = "DRAFT";
+			}
+
 			await os.apiWithDialog("admin/emoji/update-draft", {
 				id: props.emoji.id,
 				...params,

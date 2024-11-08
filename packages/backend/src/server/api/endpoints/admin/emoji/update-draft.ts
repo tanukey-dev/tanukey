@@ -54,6 +54,10 @@ export const paramDef = {
 				type: "string",
 			},
 		},
+		status: {
+			type: "string",
+			enum: ["DRAFT", "APPROVED"],
+		},
 		license: { type: "string", nullable: true },
 		isSensitive: { type: "boolean" },
 		localOnly: { type: "boolean" },
@@ -110,7 +114,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				category: ps.category ?? null,
 				aliases: ps.aliases,
 				license: ps.license ?? null,
-				status: EmojiStatus.DRAFT,
+				status: EmojiStatus[ps.status as keyof typeof EmojiStatus],
 				isSensitive: ps.isSensitive,
 				localOnly: ps.localOnly,
 				roleIdsThatCanBeUsedThisEmojiAsReaction:

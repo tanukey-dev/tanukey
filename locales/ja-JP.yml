@@ -2311,3 +2311,4 @@ _emojis:
   draft: "ドラフト"
   approved: "承認"
   rejected: "却下"
+  approveRequest: "承認リクエスト"

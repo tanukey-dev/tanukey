@@ -79,6 +79,7 @@
 		"vuetify": "^3.7.3"
 	},
 	"devDependencies": {
+		"@mdi/font": "^7.4.47",
 		"@types/escape-regexp": "0.0.1",
 		"@types/estree": "1.0.1",
 		"@types/gulp": "4.0.10",
