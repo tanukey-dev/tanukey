@@ -52,7 +52,8 @@ async function menu(ev) {
 			{
 				text: i18n.ts.edit,
 				icon: "ti ti-edit",
-				disabled: props.emoji.uploadedUserName !== null && props.emoji.uploadedUserName !== $i?.username,
+				// 自身以外がアップロードした絵文字、またはドラフト状態の絵文字は編集できない
+				disabled: (props.emoji.uploadedUserName !== null && props.emoji.uploadedUserName !== $i?.username) || props.emoji.status === 'DRAFT',
 				action: () => {
 					edit();
 				},
