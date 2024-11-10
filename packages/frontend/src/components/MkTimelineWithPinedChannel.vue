@@ -29,6 +29,10 @@ import MkSpacer from "./global/MkSpacer.vue";
 import { $i } from "@/account";
 import { onBeforeMount } from "vue";
 
+const props = defineProps<{
+	src: string;
+}>();
+
 const tabs = ref<Tab[]>([
 	{ key: "public", title: i18n.ts.public, icon: "ti ti-planet" },
 ]);
@@ -40,7 +44,7 @@ const srcCh = computed(() =>
 const postChannel = computed(defaultStore.makeGetterSetter("postChannel"));
 const tab = ref<string>("public");
 const selectedTab = computed(
-	defaultStore.makeGetterSetter("selectedChannelTab"),
+	props.src === "recommend" ? defaultStore.makeGetterSetter("selectedChannelTab") : defaultStore.makeGetterSetter("selectedUserChannelTab"),
 );
 const channelId = computed(() =>
 	tab.value === "public"
@@ -74,26 +78,59 @@ onBeforeMount(async () => {
 	let t: any[] = [];
 	let ids: string[] = [];
 
-	for (let id of instance.pinnedLtlChannelIds) {
-		ids.push(id);
-	}
+	if (props.src === "recommend") {
+		for (let id of instance.pinnedLtlChannelIds) {
+			ids.push(id);
+		}
 
-	let pinnedChs = await os.api("channels/show", {
-		channelIds: ids,
-	});
+		let pinnedChs = await os.api("channels/show", {
+			channelIds: ids,
+		});
 
-	if (pinnedChs) {
-		for (let ch of pinnedChs) {
-			if (ch != null) {
-				t.push({ key: ch.id, title: ch.name, icon: "ti ti-device-tv" });
+		if (pinnedChs) {
+			for (let ch of pinnedChs) {
+				if (ch != null) {
+					t.push({ key: ch.id, title: ch.name, icon: "ti ti-device-tv" });
+				}
 			}
 		}
+
+		tabs.value.push(...t);
+	} else {
+		const s: Set<string> = new Set<string>();
+
+		const userPinnedLtlChannelIds = defaultStore.makeGetterSetter(
+			"userPinnedLtlChannelIds",
+		);
+		const userPinnedChIds = userPinnedLtlChannelIds.get();
+		for (let id of userPinnedChIds) {
+			if (!s.has(id.value)) {
+				ids.push(id.value);
+				s.add(id.value);
+			}
+		}
+
+		const pinnedChs = await os.api("channels/show", {
+			channelIds: ids,
+		});
+
+		if (pinnedChs) {
+			for (const ch of pinnedChs) {
+				if (ch != null) {
+					t.push({ key: ch.id, title: ch.name, icon: "ti ti-device-tv" });
+				}
+			}
+		}
+
+		tabs.value.push(...t);
 	}
 
-	tabs.value.push(...t);
-
 	if (selectedTab.value == null) {
-		tab.value = "local";
+		if (tabs.value.length > 0) {
+			tab.value = tabs.value[0].key;
+		} else {
+			tab.value = 'public';
+		}
 	} else {
 		tab.value = selectedTab.value;
 	}

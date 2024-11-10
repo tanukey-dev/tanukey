@@ -5,10 +5,8 @@
 				:displayMyAvatar="true" />
 		</template>
 		<div ref="rootEl">
-			<MkTimelineWithPinedChannel v-if="isNeedPinnedChannels()" ref="tlComponent" :key="src" :src="src"
-				:sound="true" />
-			<MkTimelineWithUserPinedChannel v-else-if="isNeedUserPinnedChannels()" ref="tlComponent" :src="src"
-				:sound="true" />
+			<MkTimelineWithPinedChannel v-if="src === 'recommend' || src === 'feed'" ref="tlComponent" :key="src"
+				:src="src" :sound="true" />
 			<MkSpacer v-else :contentMax="800" style="padding: 0;">
 				<XCommonTimeline ref="tlComponent" :key="src" :src="src" :sound="true" />
 			</MkSpacer>
@@ -37,17 +35,6 @@ const XCommonTimeline = defineAsyncComponent(
 const MkTimelineWithPinedChannel = defineAsyncComponent(
 	() => import("@/components/MkTimelineWithPinedChannel.vue"),
 );
-const MkTimelineWithUserPinedChannel = defineAsyncComponent(
-	() => import("@/components/MkTimelineWithUserPinedChannel.vue"),
-);
-
-function isNeedPinnedChannels(): boolean {
-	return src === "recommend";
-}
-
-function isNeedUserPinnedChannels(): boolean {
-	return src === "feed";
-}
 
 const isLocalTimelineAvailable =
 	($i == null && instance.policies.ltlAvailable) ||

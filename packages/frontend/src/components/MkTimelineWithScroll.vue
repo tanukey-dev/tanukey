@@ -1,27 +1,26 @@
 <template>
-<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" @click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
-<XTutorial v-if="$i && defaultStore.reactiveState.timelineTutorial.value != -1" class="_panel" style="margin-bottom: var(--margin);"/>
-<MkPostForm v-if="defaultStore.reactiveState.showFixedPostForm.value" :class="$style.postForm" class="post-form _panel" fixed style="margin-bottom: var(--margin);"/>
-<MkFoldableSection v-if="channel && channel.pinnedNotes?.length > 0" :persistKey="channel.id">
-	<template #header><i class="ti ti-pin ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.pinnedNotes }}</template>
-	<div v-if="channel.pinnedNotes.length > 0" class="_gaps">
-		<MkNote v-for="note in channel.pinnedNotes" :key="note.id" class="_panel" :note="note"/>
+	<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" @click="top()">{{ i18n.ts.newNoteRecived
+			}}</button></div>
+	<XTutorial v-if="$i && defaultStore.reactiveState.timelineTutorial.value != -1" class="_panel"
+		style="margin-bottom: var(--margin);" />
+	<MkPostForm v-if="defaultStore.reactiveState.showFixedPostForm.value" :class="$style.postForm"
+		class="post-form _panel" fixed style="margin-bottom: var(--margin);" />
+	<MkFoldableSection v-if="channel && channel.pinnedNotes?.length > 0" :persistKey="channel.id">
+		<template #header><i class="ti ti-pin ti-fw" style="margin-right: 0.5em;"></i>{{ i18n.ts.pinnedNotes
+			}}</template>
+		<div v-if="channel.pinnedNotes.length > 0" class="_gaps">
+			<MkNote v-for="note in channel.pinnedNotes" :key="note.id" class="_panel" :note="note" />
+		</div>
+	</MkFoldableSection>
+	<div v-if="channel && channel.pinnedNotes?.length > 0" :class="$style.header">
+		<div :class="$style.title">
+			<div><i class="ti ti-timeline" style="margin-right: 0.5em;"></i>{{ i18n.ts.timeline }}</div>
+		</div>
+		<div :class="$style.divider"></div>
 	</div>
-</MkFoldableSection>
-<div v-if="channel && channel.pinnedNotes?.length > 0" :class="$style.header">
-	<div :class="$style.title"><div><i class="ti ti-timeline" style="margin-right: 0.5em;"></i>{{ i18n.ts.timeline }}</div></div>
-	<div :class="$style.divider"></div>
-</div>
-<div ref="el" :class="$style.tl">
-	<MkTimeline
-		ref="tlComponent"
-		:key="src"
-		:src="src"
-		:channel="channelId"
-		:sound="true"
-		@queue="queueUpdated"
-	/>
-</div>
+	<div ref="el" :class="$style.tl">
+		<MkTimeline ref="tlComponent" :key="src" :src="src" :channel="channelId" :sound="true" @queue="queueUpdated" />
+	</div>
 </template>
 <script lang="ts" setup>
 import {
@@ -94,13 +93,14 @@ const top = () => {
 		margin-top: calc(-0.675em - 8px - var(--margin));
 	}
 
-	> button {
+	>button {
 		display: block;
 		margin: var(--margin) auto 0 auto;
 		padding: 8px 16px;
 		border-radius: 32px;
 	}
 }
+
 .postForm {
 	border-radius: var(--radius);
 }
@@ -120,12 +120,14 @@ const top = () => {
 	-webkit-backdrop-filter: var(--blur, blur(8px));
 	backdrop-filter: var(--blur, blur(20px));
 }
+
 .divider {
 	flex: 1;
 	margin: auto;
 	height: 1px;
 	background: var(--divider);
 }
+
 .title {
 	display: grid;
 	place-content: center;
