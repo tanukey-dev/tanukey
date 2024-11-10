@@ -24,7 +24,7 @@
 					<i v-if="isMyRenote" class="ti ti-dots" :class="$style.renoteMenu"></i>
 					<MkTime :time="note.createdAt" />
 				</button>
-				<div v-else :class="$style.renoteTime">
+				<div v-else :class="$style.renoteTime" class="_button">
 					<MkTime :time="note.createdAt" />
 				</div>
 				<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;"
