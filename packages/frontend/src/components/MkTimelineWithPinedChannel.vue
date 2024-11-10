@@ -26,7 +26,7 @@ import { Tab } from "./global/MkPageHeader.tabs.vue";
 import MkStickyContainer from "./global/MkStickyContainer.vue";
 import MkPageHeader from "./global/MkPageHeader.vue";
 import MkSpacer from "./global/MkSpacer.vue";
-import { $i } from "@/account";
+import { $i, iAmModerator } from "@/account";
 import { onBeforeMount } from "vue";
 
 const props = defineProps<{
@@ -52,6 +52,33 @@ const channelId = computed(() =>
 		: tab.value,
 );
 const disableSwipe = computed(defaultStore.makeGetterSetter("disableSwipe"));
+
+async function channelTabMenu(ev: MouseEvent): Promise<void> {
+	const channel = postChannel.value;
+	const canEdit =
+		($i &&
+			($i.id === channel.userId ||
+				channel.moderatorUserIds.includes($i.id))) ||
+		iAmModerator;
+
+	const items = [{
+		type: "link" as const,
+		text: i18n.ts.viewChannel,
+		icon: "ti ti-device-tv",
+		to: `/secure/channels/${postChannel.value.id}`,
+	}];
+
+	if (canEdit) {
+		items.push({
+			type: "link" as const,
+			icon: "ti ti-settings",
+			text: i18n.ts.viewChannelSettings,
+			to: `/secure/channels/${postChannel.value.id}/edit`,
+		});
+	}
+
+	os.popupMenu(items, ev.currentTarget ?? ev.target);
+}
 
 watch(tab, async () => {
 	selectedTab.value = tab.value;
@@ -90,7 +117,7 @@ onBeforeMount(async () => {
 		if (pinnedChs) {
 			for (let ch of pinnedChs) {
 				if (ch != null) {
-					t.push({ key: ch.id, title: ch.name, icon: "ti ti-device-tv" });
+					t.push({ key: ch.id, title: ch.name, icon: "ti ti-device-tv", onRightClick: channelTabMenu });
 				}
 			}
 		}
@@ -117,7 +144,7 @@ onBeforeMount(async () => {
 		if (pinnedChs) {
 			for (const ch of pinnedChs) {
 				if (ch != null) {
-					t.push({ key: ch.id, title: ch.name, icon: "ti ti-device-tv" });
+					t.push({ key: ch.id, title: ch.name, icon: "ti ti-device-tv", onRightClick: channelTabMenu });
 				}
 			}
 		}
