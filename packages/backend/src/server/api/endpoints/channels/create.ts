@@ -77,7 +77,12 @@ export const paramDef = {
 				type: "string",
 			},
 		},
-		antennaId: { type: "string", format: "misskey:id", nullable: true },
+		notificationTags: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
 	},
 	required: ["name"],
 } as const;
@@ -123,8 +128,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					privateUserIds: ps.privateUserIds ?? [],
 					moderatorUserIds: ps.moderatorUserIds ?? [],
 					tags: ps.tags,
+					notificationTags: ps.notificationTags,
 					...(ps.color !== undefined ? { color: ps.color } : {}),
-					antennaId: ps.antennaId ?? null,
 				} as Channel)
 				.then((x) => this.channelsRepository.findOneByOrFail(x.identifiers[0]));
 

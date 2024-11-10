@@ -78,7 +78,6 @@ watch([
 let endpoint;
 let query;
 let connection;
-let connection2;
 let pagenation: Paging;
 
 const stream = useStream();
@@ -162,10 +161,6 @@ const setupStream = () => {
 			channelId: props.channel,
 		});
 		connection.on("note", prepend);
-		connection2 = stream.useChannel("channelAntenna", {
-			channelId: props.channel,
-		});
-		connection2.on("note", prepend);
 	} else if (props.src === "role") {
 		endpoint = "roles/notes";
 		query = {
@@ -191,7 +186,6 @@ onBeforeMount(() => {
 
 onUnmounted(() => {
 	connection?.dispose();
-	connection2?.dispose();
 });
 
 const timetravel = (date?: Date): void => {

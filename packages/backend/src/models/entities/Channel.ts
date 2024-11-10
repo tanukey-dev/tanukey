@@ -136,6 +136,7 @@ export class Channel {
 	})
 	public usersCount: number;
 
+	// 収集タグ
 	@Index()
 	@Column("varchar", {
 		length: 128,
@@ -144,10 +145,12 @@ export class Channel {
 	})
 	public tags: string[];
 
+	// 通知タグ
 	@Index()
-	@Column({
-		...id(),
-		nullable: true,
+	@Column("varchar", {
+		length: 128,
+		array: true,
+		default: "{}",
 	})
-	public antennaId: Antenna["id"] | null;
+	public notificationTags: string[];
 }

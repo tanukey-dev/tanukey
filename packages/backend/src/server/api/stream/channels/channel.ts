@@ -52,9 +52,13 @@ class ChannelChannel extends Channel {
 				return;
 			}
 
-			// 収集タグ
+			// 収集タグと通知タグ両方該当しない場合
 			const tags: string[] = this.channel.tags;
-			if (note.tags.filter((item) => tags.includes(item)).length === 0) {
+			const notificationTags: string[] = this.channel.notificationTags;
+			if (
+				note.tags.filter((item) => tags.includes(item)).length === 0 &&
+				note.tags.filter((item) => notificationTags.includes(item)).length === 0
+			) {
 				return;
 			}
 		}

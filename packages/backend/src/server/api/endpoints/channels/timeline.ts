@@ -114,54 +114,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			filters.push(channelFilter);
 
-			if (channel.antennaId && channel.antennaId !== "") {
-				const antenna = await antennasRepository.findOne({
-					where: {
-						id: channel.antennaId,
-					},
-				});
-
-				if (antenna) {
-					let userIds: string[] = [];
-
-					if (antenna.users && antenna.users.length > 0) {
-						const users = await usersRepository.find({
-							where: [
-								...antenna.users.map((username) => {
-									const acct = Acct.parse(username);
-									return {
-										username: acct.username,
-										host: acct.host ?? IsNull(),
-									};
-								}),
-							],
-						});
-						userIds = users.map((u) => u.id);
-					}
-
-					const antennaFilter = await this.searchService.getFilter(
-						"",
-						{
-							userIds: userIds,
-							origin: "remote",
-							keywords: antenna.keywords ?? [],
-							excludeKeywords: antenna.excludeKeywords ?? [],
-							checkChannelSearchable: true,
-							reverseOrder: false,
-							hasFile: antenna.withFile,
-							includeReplies: antenna.withReplies,
-						},
-						{
-							untilId: ps.untilId,
-							sinceId: ps.sinceId,
-							limit: ps.limit,
-						},
-					);
-
-					filters.push(antennaFilter);
-				}
-			}
-
 			if (channel.tags.length > 0) {
 				const tagsFilter = await this.searchService.getFilter(
 					"",

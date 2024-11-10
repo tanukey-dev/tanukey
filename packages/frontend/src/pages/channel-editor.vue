@@ -46,6 +46,10 @@
 					<template #label>{{ i18n.ts.channelTagsSetting }}</template>
 				</MkInput>
 
+				<MkInput v-model="notificationTags">
+					<template #label>{{ i18n.ts.channelNotificationTagsSetting }}</template>
+				</MkInput>
+
 				<MkSwitch v-model="federation" :disabled="isPrivate">
 					{{ i18n.ts.channelFederation }}
 				</MkSwitch>
@@ -89,10 +93,6 @@
 					</div>
 				</MkFolder>
 
-				<MkInput v-model="antennaId">
-					<template #label>{{ i18n.ts._channel.antenna }}</template>
-				</MkInput>
-
 				<div class="_buttons">
 					<MkButton primary @click="save()"><i class="ti ti-device-floppy"></i> {{ channelId ? i18n.ts.save :
 						i18n.ts.create }}</MkButton>
@@ -132,6 +132,7 @@ const props = defineProps<{
 let channel = $ref(null);
 let name = $ref(null);
 let tags = $ref("");
+let notificationTags = $ref("");
 let description = $ref(null);
 let bannerUrl = $ref<string | null>(null);
 let bannerId = $ref<string | null>(null);
@@ -140,7 +141,6 @@ const federation = ref(false);
 const searchable = ref(true);
 const isNoteCollapsed = ref(true);
 const isPrivate = ref(false);
-const antennaId = ref<string | null>(null);
 const privateUserIds = ref<{ value: string; label: string }[]>([]);
 const moderatorUserIds = ref<{ value: string; label: string }[]>([]);
 const pinnedNotes = ref([]);
@@ -189,7 +189,7 @@ async function fetchChannel() {
 	isNoteCollapsed.value = channel.isNoteCollapsed;
 	isPrivate.value = channel.isPrivate;
 	tags = channel.tags.join(" ");
-	antennaId.value = channel.antennaId;
+	notificationTags = channel.notificationTags.join(" ");
 
 	const pusers = await os.api("users/show", {
 		userIds: channel.privateUserIds,
@@ -261,7 +261,7 @@ function save() {
 		moderatorUserIds: moderatorUserIds.value.map((v) => v.value),
 		color: color.value,
 		tags: tags.trim() === "" ? [] : tags.replace("#", "").split(/\s+/),
-		antennaId: antennaId.value ?? null,
+		notificationTags: notificationTags.trim() === "" ? [] : notificationTags.replace("#", "").split(/\s+/),
 	};
 
 	if (props.channelId) {

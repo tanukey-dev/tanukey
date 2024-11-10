@@ -112,7 +112,7 @@ export class ChannelEntityService {
 			usersCount: channel.usersCount,
 			notesCount: channel.notesCount,
 			tags: channel.tags,
-			antennaId: channel.antennaId,
+			notificationTags: channel.notificationTags,
 
 			...(me
 				? {

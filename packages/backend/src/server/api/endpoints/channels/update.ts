@@ -89,7 +89,12 @@ export const paramDef = {
 				type: "string",
 			},
 		},
-		antennaId: { type: "string", format: "misskey:id", nullable: true },
+		notificationTags: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
 	},
 	required: ["channelId"],
 } as const;
@@ -173,6 +178,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					: {}),
 				...(banner ? { bannerId: banner.id } : {}),
 				...(ps.tags !== undefined ? { tags: ps.tags } : {}),
+				...(ps.notificationTags !== undefined
+					? { notificationTags: ps.notificationTags }
+					: {}),
 				...(ps.antennaId !== undefined ? { antennaId: ps.antennaId } : {}),
 			});
 

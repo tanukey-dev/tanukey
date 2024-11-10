@@ -129,10 +129,15 @@ export const packedChannelSchema = {
 				nullable: false,
 			},
 		},
-		antennaId: {
-			type: "string",
+		notificationTags: {
+			type: "array",
 			optional: true,
-			nullable: true,
+			nullable: false,
+			items: {
+				type: "string",
+				optional: false,
+				nullable: false,
+			},
 		},
 	},
 } as const;
