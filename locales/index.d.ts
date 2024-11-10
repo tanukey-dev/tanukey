@@ -193,6 +193,7 @@ export interface Locale {
     "channelSearchable": string;
     "channelModerators": string;
     "channelTags": string;
+    "channelNotificationTags": string;
     "channelTagsSetting": string;
     "channelNotificationTagsSetting": string;
     "searchTagsSetting": string;

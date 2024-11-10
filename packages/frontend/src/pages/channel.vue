@@ -37,8 +37,19 @@
 						<MkMention v-for="moderator in moderators" :key="moderator.id" :username="moderator.username"
 							:host="host" />
 					</MkInfo>
-					<MkInfo v-if="channel.tags.length > 0">{{ i18n.ts.channelTags }}: <MkA v-for="tag in tags"
-							:key="tag" :to="'/secure/tags/' + tag" style="color:var(--hashtag);">#{{ tag + ' ' }}</MkA>
+					<MkInfo v-if="channel.tags.length > 0">
+						{{ i18n.ts.channelTags }}:
+						<MkA v-for="tag in channel.tags" :key="tag" :to="'/secure/tags/' + tag"
+							style="color:var(--hashtag);">
+							#{{ tag + ' ' }}
+						</MkA>
+					</MkInfo>
+					<MkInfo v-if="channel.notificationTags.length > 0">
+						{{ i18n.ts.channelNotificationTags }}:
+						<MkA v-for="tag in channel.notificationTags" :key="tag" :to="'/secure/tags/' + tag"
+							style="color:var(--hashtag);">
+							#{{ tag + ' ' }}
+						</MkA>
 					</MkInfo>
 
 					<MkFoldableSection>
