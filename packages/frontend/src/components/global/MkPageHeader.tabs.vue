@@ -5,7 +5,7 @@
 				class="_button"
 				:class="[$style.tab, { [$style.active]: t.key != null && t.key === props.tab, [$style.animate]: defaultStore.reactiveState.animation.value }]"
 				@mousedown="(ev) => onTabMousedown(t, ev)" @click="(ev) => onTabClick(t, ev)"
-				@click.right="(ev) => onTabRightClick(t, ev)" v-touch:hold="(ev) => onTabRightClick(t, ev)">
+				@click.right="(ev) => onTabRightClick(t, ev)" v-touch:longtap="(ev) => onTabRightClick(t, ev)">
 				<div :class="$style.tabInner">
 					<i v-if="t.icon" :class="[$style.tabIcon, t.icon]"></i>
 					<div v-if="!t.iconOnly || (!defaultStore.reactiveState.animation.value && t.key === tab)"
