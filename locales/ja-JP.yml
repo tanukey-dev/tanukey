@@ -1947,7 +1947,7 @@ _auth:
   shareAccessAsk: "アカウントへのアクセスを許可しますか？"
   permission: "{name}は次の権限を要求しています"
   permissionAsk: "このアプリは次の権限を要求しています"
-  pleaseGoBack: "アプリケーションに戻ってやっていってください"
+  pleaseGoBack: "アプリケーションに戻ってください"
   callback: "アプリケーションに戻っています"
   denied: "アクセスを拒否しました"
   pleaseLogin: "アプリケーションにアクセス許可を与えるには、ログインが必要です。"

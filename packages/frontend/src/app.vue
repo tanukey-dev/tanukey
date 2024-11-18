@@ -13,7 +13,12 @@ const fontSize = computed(
     defaultStore.makeGetterSetter("fontSize"),
 );
 
+const subBootPaths = ["/share", "/auth", "/miauth"];
+
 const BaseUi = new URLSearchParams(window.location.search).has("zen")
+    || window.location.pathname.startsWith("/share")
+    || window.location.pathname.startsWith("/auth")
+    || window.location.pathname.startsWith("/miauth")
     ? defineAsyncComponent(() => import("@/ui/zen.vue"))
     : !$i
         ? defineAsyncComponent(() => import("@/ui/visitor.vue"))
