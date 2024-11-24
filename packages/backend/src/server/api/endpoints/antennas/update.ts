@@ -147,13 +147,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			const filter = await this.antennasService.genarateFilter(
 				antenna.id,
+				ps.name,
 				ps.users,
 				ps.excludeUsers,
 				ps.keywords,
 				ps.excludeKeywords,
-				ps.src,
-				ps.localOnly,
-				ps.remoteOnly,
+				ps.localOnly ? "local" : ps.remoteOnly ? "remote" : "combined",
+				true,
+				false,
 				ps.withFile,
 				ps.withReplies,
 				ps.compositeAntennaIds,

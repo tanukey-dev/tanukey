@@ -57,6 +57,14 @@
 						</Sortable>
 					</div>
 				</MkFolder>
+
+				<MkFolder :defaultOpen="false">
+					<template #label>{{ i18n.ts.filterPreview }}</template>
+
+					<div class="_gaps">
+						<textarea v-model="filterPreview" :rows="filterPreview.split('\n').length" readonly></textarea>
+					</div>
+				</MkFolder>
 			</div>
 			<div :class="$style.actions">
 				<MkButton inline primary @click="saveAntenna()">
@@ -110,6 +118,7 @@ let isPublic: boolean = $ref();
 let pinnedAntennas = $ref<{ id: string }[]>([]);
 let antenna: any = $ref(null);
 let searchOrigin = $ref<string>("local");
+let filterPreview: string = $ref("");
 
 watch(() => route.params.antennaId, async (newId, oldId) => {
 	antenna = await os.api("antennas/show", { antennaId: newId })
@@ -127,6 +136,7 @@ watch(() => route.params.antennaId, async (newId, oldId) => {
 	notify = antenna.notify;
 	isPublic = antenna.public;
 	pinnedAntennas = antenna.compositeAntennaIds.map((x) => { return { id: x }; });
+	filterPreview = JSON.stringify(JSON.parse(antenna.filterTree), null, 2);
 }, { immediate: true });
 
 async function saveAntenna() {

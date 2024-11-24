@@ -61,6 +61,7 @@ export class AntennaService {
 	@bindThis
 	public async genarateFilter(
 		antennaId: string,
+		antennaName: string,
 		users?: string[] | null,
 		excludeUsers?: string[] | null,
 		keywords?: string[][],
@@ -74,7 +75,7 @@ export class AntennaService {
 		idSet?: Set<string>,
 	) {
 		let userIds: string[] = [];
-		if (users) {
+		if (users && users.length > 0) {
 			userIds = (
 				(await this.usersRepository.find({
 					where: [
@@ -88,7 +89,7 @@ export class AntennaService {
 		}
 
 		let excludeUserIds: string[] = [];
-		if (excludeUsers) {
+		if (excludeUsers && excludeUsers.length > 0) {
 			excludeUserIds = (
 				(await this.usersRepository.find({
 					where: [
@@ -117,18 +118,16 @@ export class AntennaService {
 		const baseIdSet = idSet ?? new Set<string>();
 		baseIdSet.add(antennaId);
 
-		if (compositeAntennaIds) {
+		if (compositeAntennaIds && compositeAntennaIds.length > 0) {
 			const tmpFilter = {
 				bool: {
-					must: {
-						bool: {
-							should: [] as any[],
-							minimum_should_match: 1,
-						},
-					},
+					// _name: "composite antennas",
+					should: [] as any[],
+					minimum_should_match: 1,
 				},
 			};
 
+			let update = false;
 			for (const compositeAntennaId of compositeAntennaIds) {
 				if (baseIdSet.has(compositeAntennaId)) {
 					// 循環参照
@@ -146,23 +145,31 @@ export class AntennaService {
 
 				const childFilter = await this.genarateFilter(
 					compositeAntennaId,
+					antenna.name,
 					antenna.users,
 					antenna.excludeUsers,
 					antenna.keywords,
 					antenna.excludeKeywords,
-					antenna.src,
-					antenna.localOnly,
-					antenna.remoteOnly,
+					antenna.localOnly
+						? "local"
+						: antenna.remoteOnly
+							? "remote"
+							: "combined",
+					true,
+					false,
 					antenna.withFile,
 					antenna.withReplies,
 					antenna.compositeAntennaIds,
 					baseIdSet,
 				);
 
-				tmpFilter.bool.must.bool.should.push(childFilter);
+				tmpFilter.bool.should.push(childFilter);
+				update = true;
 			}
 
-			filter.bool.must.push(tmpFilter);
+			if (update) {
+				filter.bool.must.push(tmpFilter);
+			}
 		}
 
 		return filter;
@@ -175,13 +182,18 @@ export class AntennaService {
 			antenna.filterTree = JSON.stringify(
 				await this.genarateFilter(
 					antenna.id,
+					antenna.name,
 					antenna.users,
 					antenna.excludeUsers,
 					antenna.keywords,
 					antenna.excludeKeywords,
-					antenna.src,
-					antenna.localOnly,
-					antenna.remoteOnly,
+					antenna.localOnly
+						? "local"
+						: antenna.remoteOnly
+							? "remote"
+							: "combined",
+					true,
+					false,
 					antenna.withFile,
 					antenna.withReplies,
 					antenna.compositeAntennaIds,
@@ -202,13 +214,18 @@ export class AntennaService {
 			// データ不整合っぽいので再度フィルタを生成
 			filter = await this.genarateFilter(
 				antenna.id,
+				antenna.name,
 				antenna.users,
 				antenna.excludeUsers,
 				antenna.keywords,
 				antenna.excludeKeywords,
-				antenna.src,
-				antenna.localOnly,
-				antenna.remoteOnly,
+				antenna.localOnly
+					? "local"
+					: antenna.remoteOnly
+						? "remote"
+						: "combined",
+				true,
+				false,
 				antenna.withFile,
 				antenna.withReplies,
 				antenna.compositeAntennaIds,
@@ -218,8 +235,6 @@ export class AntennaService {
 				filterTree: JSON.stringify(filter),
 			});
 		}
-
-		JSON.stringify(filter, null, 2);
 
 		return filter;
 	}

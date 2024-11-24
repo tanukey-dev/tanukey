@@ -403,6 +403,7 @@ export interface Locale {
     "pinnedClipId": string;
     "pinnedNotes": string;
     "pinnedAntennas": string;
+    "filterPreview": string;
     "hcaptcha": string;
     "enableHcaptcha": string;
     "hcaptchaSiteKey": string;

@@ -69,6 +69,8 @@ export class SearchService {
 											tags: { type: "keyword" },
 											replyId: { type: "keyword" },
 											renoteId: { type: "keyword" },
+											renoteText: { type: "text" },
+											renoteCw: { type: "text" },
 											visibility: { type: "keyword" },
 											visibleUserIds: { type: "keyword" },
 											hasFile: { type: "boolean" },
@@ -130,6 +132,8 @@ export class SearchService {
 										tags: { type: "keyword" },
 										replyId: { type: "keyword" },
 										renoteId: { type: "keyword" },
+										renoteText: { type: "text" },
+										renoteCw: { type: "text" },
 										visibility: { type: "keyword" },
 										visibleUserIds: { type: "keyword" },
 										hasFile: { type: "boolean" },
@@ -157,6 +161,29 @@ export class SearchService {
 		callback: () => void,
 	): Promise<void> {
 		if (this.opensearch) {
+			let renote = null;
+			const isQuote = (note: Note) => {
+				return (
+					!!note.renote &&
+					(!!note.text ||
+						!!note.cw ||
+						(!!note.fileIds && !!note.fileIds.length) ||
+						!!note.hasPoll)
+				);
+			};
+			if (note.renoteId) {
+				renote = await this.notesRepository.findOne({
+					where: { id: note.renoteId },
+					select: ["text", "cw", "renoteId"],
+				});
+				// 引用でなくリノートの場合、リノートのさらに先が見えるケースがあるのでそちらで判定する
+				if (!isQuote(note) && renote?.renoteId) {
+					renote = await this.notesRepository.findOne({
+						where: { id: renote.renoteId },
+						select: ["text", "cw"],
+					});
+				}
+			}
 			const body = {
 				createdAt: this.idService.parse(note.id).date.getTime(),
 				userId: note.userId,
@@ -167,6 +194,8 @@ export class SearchService {
 				tags: note.tags,
 				replyId: note.replyId,
 				renoteId: note.renoteId,
+				renoteText: renote?.text,
+				renoteCw: renote?.cw,
 				visibility: note.visibility,
 				visibleUserIds: note.visibleUserIds,
 				hasFile: note.fileIds.length !== 0,
@@ -297,56 +326,70 @@ export class SearchService {
 			if (opts.excludeUserIds && opts.excludeUserIds.length > 0) {
 				userIds = userIds.filter((xs) => !opts.excludeUserIds?.includes(xs));
 			}
-			esFilter.bool.must.push({
-				bool: {
-					should: [
-						...userIds.map((id) => {
-							return { term: { userId: id } };
-						}),
-					],
-				},
-			});
+			if (userIds.length > 0) {
+				esFilter.bool.must.push({
+					bool: {
+						// _name: "userIds",
+						should: [
+							...userIds.map((id) => {
+								return { term: { userId: id } };
+							}),
+						],
+					},
+				});
+			}
 		}
 		if (opts.excludeUserIds && opts.excludeUserIds.length > 0) {
 			const excludeUserIds = opts.excludeUserIds.filter((xs) => xs !== "");
-			esFilter.bool.must.push({
-				bool: {
-					must_not: {
-						bool: {
-							should: [
-								...excludeUserIds.map((id) => {
-									return { term: { userId: id } };
-								}),
-							],
-							minimum_should_match: 1,
+			if (excludeUserIds.length > 0) {
+				esFilter.bool.must.push({
+					bool: {
+						// _name: "excludeUserIds",
+						must_not: {
+							bool: {
+								should: [
+									...excludeUserIds.map((id) => {
+										return { term: { userId: id } };
+									}),
+								],
+								minimum_should_match: 1,
+							},
 						},
 					},
-				},
-			});
+				});
+			}
 		}
 		if (opts.channelId)
-			esFilter.bool.must.push({ term: { channelId: opts.channelId } });
+			esFilter.bool.must.push({
+				// _name: "channelId",
+				term: { channelId: opts.channelId },
+			});
 		if (opts.origin === "local") {
 			esFilter.bool.must.push({
+				// _name: "origin local only",
 				bool: { must_not: [{ exists: { field: "userHost" } }] },
 			});
 		} else if (opts.origin === "remote") {
 			esFilter.bool.must.push({
+				// _name: "origin remote only",
 				bool: { must: [{ exists: { field: "userHost" } }] },
 			});
 		}
 		if (opts.createAtBegin && opts.createAtEnd) {
 			esFilter.bool.must.push({
+				// _name: "createdAt range AtBegin and AtEnd",
 				range: {
 					createdAt: { gte: opts.createAtBegin, lte: opts.createAtEnd },
 				},
 			});
 		} else if (opts.createAtBegin) {
 			esFilter.bool.must.push({
+				// _name: "createdAt range AtBegin",
 				range: { createdAt: { gte: opts.createAtBegin } },
 			});
 		} else if (opts.createAtEnd) {
 			esFilter.bool.must.push({
+				// _name: "createdAt range AtEnd",
 				range: { createdAt: { lte: opts.createAtEnd } },
 			});
 		}
@@ -359,6 +402,7 @@ export class SearchService {
 				.map((s) => `"${s}"`)
 				.join(" ");
 			esFilter.bool.must.push({
+				// _name: "query",
 				bool: {
 					should: [
 						{ wildcard: { text: { value: fixedQuery } } },
@@ -377,6 +421,22 @@ export class SearchService {
 								default_operator: "and",
 							},
 						},
+						{ wildcard: { renoteText: { value: fixedQuery } } },
+						{
+							simple_query_string: {
+								fields: ["renoteText"],
+								query: fixedQuery,
+								default_operator: "and",
+							},
+						},
+						{ wildcard: { renoteCw: { value: fixedQuery } } },
+						{
+							simple_query_string: {
+								fields: ["renoteCw"],
+								query: fixedQuery,
+								default_operator: "and",
+							},
+						},
 					],
 					minimum_should_match: 1,
 				},
@@ -391,6 +451,7 @@ export class SearchService {
 
 			if (keywordsList.length > 0) {
 				const filter = {
+					// _name: "keywords",
 					bool: {
 						must: {
 							bool: {
@@ -429,6 +490,26 @@ export class SearchService {
 							default_operator: "and",
 						},
 					});
+					filter.bool.must.bool.should.push({
+						wildcard: { renoteText: { value: fixedQuery } },
+					});
+					filter.bool.must.bool.should.push({
+						simple_query_string: {
+							fields: ["renoteText"],
+							query: fixedQuery,
+							default_operator: "and",
+						},
+					});
+					filter.bool.must.bool.should.push({
+						wildcard: { renoteCw: { value: fixedQuery } },
+					});
+					filter.bool.must.bool.should.push({
+						simple_query_string: {
+							fields: ["renoteCw"],
+							query: fixedQuery,
+							default_operator: "and",
+						},
+					});
 				}
 
 				esFilter.bool.must.push(filter);
@@ -443,6 +524,7 @@ export class SearchService {
 
 			if (excludeKeywordsList.length > 0) {
 				const filter = {
+					// _name: "excludeKeywords",
 					bool: {
 						must_not: {
 							bool: {
@@ -481,6 +563,26 @@ export class SearchService {
 							default_operator: "and",
 						},
 					});
+					filter.bool.must_not.bool.should.push({
+						wildcard: { renoteText: { value: fixedQuery } },
+					});
+					filter.bool.must_not.bool.should.push({
+						simple_query_string: {
+							fields: ["renoteText"],
+							query: fixedQuery,
+							default_operator: "and",
+						},
+					});
+					filter.bool.must_not.bool.should.push({
+						wildcard: { renoteCw: { value: fixedQuery } },
+					});
+					filter.bool.must_not.bool.should.push({
+						simple_query_string: {
+							fields: ["renoteCw"],
+							query: fixedQuery,
+							default_operator: "and",
+						},
+					});
 				}
 
 				esFilter.bool.must.push(filter);
@@ -489,18 +591,21 @@ export class SearchService {
 
 		if (opts.hasFile) {
 			esFilter.bool.must.push({
+				// _name: "hasFile",
 				bool: { must: [{ term: { hasFile: true } }] },
 			});
 		}
 
 		if (!opts.includeReplies) {
 			esFilter.bool.must.push({
+				// _name: "includeReplies",
 				bool: { must_not: [{ exists: { field: "replyId" } }] },
 			});
 		}
 
 		if (opts.tags && opts.tags.length > 0) {
 			const filter = {
+				// _name: "tags",
 				bool: {
 					must: {
 						bool: {

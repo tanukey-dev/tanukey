@@ -400,6 +400,7 @@ pinnedPagesDescription: "サーバーのトップページにピン留めした�
 pinnedClipId: "ピン留めするクリップのID"
 pinnedNotes: "ピン留めされたノート"
 pinnedAntennas: "ピン留めされたアンテナ"
+filterPreview: "フィルター内容プレビュー(現在のOpenSearchのフィルター設定です。保存後に反映されます)"
 hcaptcha: "hCaptcha"
 enableHcaptcha: "hCaptchaを有効にする"
 hcaptchaSiteKey: "サイトキー"
