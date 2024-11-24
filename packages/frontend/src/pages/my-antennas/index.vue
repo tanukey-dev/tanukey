@@ -45,7 +45,7 @@
 
 				<div v-if="antennas.length > 0" class="_gaps">
 					<MkA v-for="antenna in antennas" :key="antenna.id" :class="$style.antenna"
-						:to="`/secure/my/antennas/${antenna.id}`">
+						:to="`/secure/timeline/antenna/${antenna.id}`">
 						<div class="name">{{ antenna.name }}</div>
 					</MkA>
 				</div>
