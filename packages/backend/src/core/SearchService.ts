@@ -579,8 +579,7 @@ export class SearchService {
 	}
 
 	@bindThis
-	public async addPagenation(
-		filter: any,
+	public getPagenation(
 		opts: {
 			checkChannelSearchable?: boolean;
 			reverseOrder?: boolean;
@@ -592,15 +591,16 @@ export class SearchService {
 			limit?: number;
 		},
 	) {
+		const filter: any[] = [];
 		if (pagination.equal) {
-			filter.bool.must.push({
+			filter.push({
 				term: {
 					createdAt: this.idService.parse(pagination.equal).date.getTime(),
 				},
 			});
 		} else if (opts.reverseOrder) {
 			if (pagination.untilId)
-				filter.bool.must.push({
+				filter.push({
 					range: {
 						createdAt: {
 							gte: this.idService.parse(pagination.untilId).date.getTime(),
@@ -608,7 +608,7 @@ export class SearchService {
 					},
 				});
 			if (pagination.sinceId)
-				filter.bool.must.push({
+				filter.push({
 					range: {
 						createdAt: {
 							lte: this.idService.parse(pagination.sinceId).date.getTime(),
@@ -617,7 +617,7 @@ export class SearchService {
 				});
 		} else {
 			if (pagination.untilId)
-				filter.bool.must.push({
+				filter.push({
 					range: {
 						createdAt: {
 							lte: this.idService.parse(pagination.untilId).date.getTime(),
@@ -625,7 +625,7 @@ export class SearchService {
 					},
 				});
 			if (pagination.sinceId)
-				filter.bool.must.push({
+				filter.push({
 					range: {
 						createdAt: {
 							gte: this.idService.parse(pagination.sinceId).date.getTime(),
@@ -633,6 +633,7 @@ export class SearchService {
 					},
 				});
 		}
+		return filter;
 	}
 
 	@bindThis
@@ -654,16 +655,21 @@ export class SearchService {
 			return [];
 		}
 
+		const pagenationFilter = this.getPagenation(opts, pagination);
+
 		let filter: any;
 		if (esFilters.length === 1) {
-			filter = { bool: { must: [] } };
-			const f = Object.assign(filter, esFilters[0]);
-			this.addPagenation(f, opts, pagination);
+			for (const pf of pagenationFilter) {
+				esFilters[0].bool.must.push(pf);
+			}
+			filter = esFilters[0];
 		} else {
 			filter = { bool: { should: [], minimum_should_match: 1 } };
 			for (const f of esFilters) {
+				for (const pf of pagenationFilter) {
+					f.bool.must.push(pf);
+				}
 				filter.bool.should.push(f);
-				this.addPagenation(f, opts, pagination);
 			}
 		}
 

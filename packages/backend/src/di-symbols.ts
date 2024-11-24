@@ -111,4 +111,5 @@ export const DI = {
 	metaService: "MetaService",
 	httpRequestService: "HttpRequestService",
 	antennaEntityService: "AntennaEntityService",
+	antennaService: "AntennaService",
 };

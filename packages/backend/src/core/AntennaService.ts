@@ -11,6 +11,8 @@ import type { User } from "@/models/entities/User.js";
 import type { AntennasRepository } from "@/models/index.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { IsNull } from "typeorm";
+import { fi, id } from "date-fns/locale";
+import { get } from "nested-property";
 
 @Injectable()
 export class AntennaService {
@@ -57,6 +59,172 @@ export class AntennaService {
 	}
 
 	@bindThis
+	public async genarateFilter(
+		antennaId: string,
+		users?: string[] | null,
+		excludeUsers?: string[] | null,
+		keywords?: string[][],
+		excludeKeywords?: string[][],
+		origin?: string,
+		checkChannelSearchable?: boolean,
+		reverseOrder?: boolean,
+		hasFile?: boolean,
+		includeReplies?: boolean,
+		compositeAntennaIds?: string[],
+		idSet?: Set<string>,
+	) {
+		let userIds: string[] = [];
+		if (users) {
+			userIds = (
+				(await this.usersRepository.find({
+					where: [
+						...users.map((username) => {
+							const acct = Acct.parse(username);
+							return { username: acct.username, host: acct.host ?? IsNull() };
+						}),
+					],
+				})) ?? []
+			).map((u) => u.id);
+		}
+
+		let excludeUserIds: string[] = [];
+		if (excludeUsers) {
+			excludeUserIds = (
+				(await this.usersRepository.find({
+					where: [
+						...excludeUsers.map((username) => {
+							const acct = Acct.parse(username);
+							return { username: acct.username, host: acct.host ?? IsNull() };
+						}),
+					],
+				})) ?? []
+			).map((u) => u.id);
+		}
+
+		const filter = await this.searchService.getFilter("", {
+			userIds: userIds,
+			excludeUserIds: excludeUserIds,
+			origin: origin,
+			keywords: keywords,
+			excludeKeywords: excludeKeywords,
+			checkChannelSearchable: checkChannelSearchable,
+			reverseOrder: reverseOrder,
+			hasFile: hasFile,
+			includeReplies: includeReplies,
+			tags: [],
+		});
+
+		const baseIdSet = idSet ?? new Set<string>();
+		baseIdSet.add(antennaId);
+
+		if (compositeAntennaIds) {
+			const tmpFilter = {
+				bool: {
+					must: {
+						bool: {
+							should: [] as any[],
+							minimum_should_match: 1,
+						},
+					},
+				},
+			};
+
+			for (const compositeAntennaId of compositeAntennaIds) {
+				if (baseIdSet.has(compositeAntennaId)) {
+					// 循環参照
+					continue;
+				}
+
+				const antenna = await this.antennasRepository.findOneBy({
+					id: compositeAntennaId,
+				});
+
+				if (!antenna) {
+					// 存在しないアンテナ
+					continue;
+				}
+
+				const childFilter = await this.genarateFilter(
+					compositeAntennaId,
+					antenna.users,
+					antenna.excludeUsers,
+					antenna.keywords,
+					antenna.excludeKeywords,
+					antenna.src,
+					antenna.localOnly,
+					antenna.remoteOnly,
+					antenna.withFile,
+					antenna.withReplies,
+					antenna.compositeAntennaIds,
+					baseIdSet,
+				);
+
+				tmpFilter.bool.must.bool.should.push(childFilter);
+			}
+
+			filter.bool.must.push(tmpFilter);
+		}
+
+		return filter;
+	}
+
+	@bindThis
+	public async getOrGenerateFilter(antenna: Antenna) {
+		if (!antenna.filterTree) {
+			// フィルター未生成
+			antenna.filterTree = JSON.stringify(
+				await this.genarateFilter(
+					antenna.id,
+					antenna.users,
+					antenna.excludeUsers,
+					antenna.keywords,
+					antenna.excludeKeywords,
+					antenna.src,
+					antenna.localOnly,
+					antenna.remoteOnly,
+					antenna.withFile,
+					antenna.withReplies,
+					antenna.compositeAntennaIds,
+				),
+			);
+
+			await this.antennasRepository.update(antenna.id, {
+				filterTree: antenna.filterTree,
+			});
+		}
+
+		let filter = JSON.parse(antenna.filterTree);
+		if (
+			filter === undefined ||
+			filter.bool === undefined ||
+			filter.bool.must === undefined
+		) {
+			// データ不整合っぽいので再度フィルタを生成
+			filter = await this.genarateFilter(
+				antenna.id,
+				antenna.users,
+				antenna.excludeUsers,
+				antenna.keywords,
+				antenna.excludeKeywords,
+				antenna.src,
+				antenna.localOnly,
+				antenna.remoteOnly,
+				antenna.withFile,
+				antenna.withReplies,
+				antenna.compositeAntennaIds,
+			);
+
+			await this.antennasRepository.update(antenna.id, {
+				filterTree: JSON.stringify(filter),
+			});
+		}
+
+		JSON.stringify(filter, null, 2);
+
+		return filter;
+	}
+
+	@bindThis
 	public async checkHitAntenna(
 		antenna: Antenna,
 		note: Note | Packed<"Note">,
@@ -64,13 +232,9 @@ export class AntennaService {
 		if (note.visibility === "specified") return false;
 		if (note.visibility === "followers") return false;
 
-		if (!antenna.filterTree) {
-			return true;
-		}
-
 		const notes = await this.searchService.searchNoteWithFilter(
 			null,
-			[JSON.parse(antenna.filterTree)],
+			[await this.getOrGenerateFilter(antenna)],
 			{
 				checkChannelSearchable: true,
 				reverseOrder: false,

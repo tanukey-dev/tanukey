@@ -12,8 +12,7 @@ import type { SearchService } from "@/core/SearchService.js";
 import { DI } from "@/di-symbols.js";
 import type { RoleService } from "@/core/RoleService.js";
 import { ApiError } from "../../error.js";
-import * as Acct from "@/misc/acct.js";
-import { IsNull } from "typeorm";
+import type { AntennaService } from "@/core/AntennaService.js";
 
 export const meta = {
 	tags: ["antennas"],
@@ -117,6 +116,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		@Inject(DI.antennasRepository)
 		private antennasRepository: AntennasRepository,
 
+		@Inject(DI.antennaService)
+		private antennasService: AntennaService,
+
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
 
@@ -149,95 +151,33 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.tooManyAntennas);
 			}
 
-			let userList;
-
-			if (ps.src === "list" && ps.userListId) {
-				userList = await this.userListsRepository.findOneBy({
-					id: ps.userListId,
-					userId: me.id,
-				});
-
-				if (userList == null) {
-					throw new ApiError(meta.errors.noSuchUserList);
-				}
-			}
-
-			let userIds: string[] = [];
-			if (ps.users) {
-				const users = await this.usersRepository.find({
-					where: [
-						...ps.users.map((username) => {
-							const acct = Acct.parse(username);
-							return { username: acct.username, host: acct.host ?? IsNull() };
-						}),
-					],
-				});
-				userIds = users.map((u) => u.id);
-			}
-
-			let excludeUserIds: string[] = [];
-			if (ps.excludeUsers) {
-				const users = await this.usersRepository.find({
-					where: [
-						...ps.excludeUsers.map((username) => {
-							const acct = Acct.parse(username);
-							return { username: acct.username, host: acct.host ?? IsNull() };
-						}),
-					],
-				});
-				excludeUserIds = users.map((u) => u.id);
-			}
-
+			const id = this.idService.genId();
 			const now = new Date();
 
-			const filter = await this.searchService.getFilter("", {
-				userIds: userIds,
-				excludeUserIds: excludeUserIds,
-				origin: ps.localOnly ? "local" : ps.remoteOnly ? "remote" : "combined",
-				keywords: ps.keywords,
-				excludeKeywords: ps.excludeKeywords,
-				checkChannelSearchable: true,
-				reverseOrder: false,
-				hasFile: ps.withFile,
-				includeReplies: ps.withReplies,
-				tags: [],
-			});
-
-			if (ps.compositeAntennaIds) {
-				for (const compositeAntennaId of ps.compositeAntennaIds) {
-					const tmpFilter = {
-						bool: {
-							must: {
-								bool: {
-									should: [] as any[],
-									minimum_should_match: 1,
-								},
-							},
-						},
-					};
-
-					const antenna = await this.antennasRepository.findOneBy({
-						id: compositeAntennaId,
-					});
-					if (antenna?.filterTree) {
-						tmpFilter.bool.must.bool.should.push(
-							JSON.parse(antenna.filterTree),
-						);
-						filter.bool.must.push(tmpFilter);
-					}
-				}
-			}
+			const filter = await this.antennasService.genarateFilter(
+				id,
+				ps.users,
+				ps.excludeUsers,
+				ps.keywords,
+				ps.excludeKeywords,
+				ps.src,
+				ps.localOnly,
+				ps.remoteOnly,
+				ps.withFile,
+				ps.withReplies,
+				ps.compositeAntennaIds,
+			);
 
 			const antenna = await this.antennasRepository
 				.insert({
-					id: this.idService.genId(),
+					id: id,
 					createdAt: now,
 					lastUsedAt: now,
 					public: ps.public,
 					userId: me.id,
 					name: ps.name,
 					src: ps.src,
-					userListId: userList ? userList.id : null,
+					userListId: null,
 					keywords: ps.keywords,
 					excludeKeywords: ps.excludeKeywords,
 					users: ps.users,

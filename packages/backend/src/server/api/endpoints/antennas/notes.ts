@@ -6,8 +6,7 @@ import type { AntennasRepository, UsersRepository } from "@/models/index.js";
 import { Endpoint } from "@/server/api/endpoint-base.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { ApiError } from "../../error.js";
-import * as Acct from "@/misc/acct.js";
-import { IsNull } from "typeorm";
+import type { AntennaService } from "@/core/AntennaService.js";
 
 export const meta = {
 	tags: ["antennas", "account", "notes"],
@@ -57,6 +56,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		@Inject(DI.antennasRepository)
 		private antennasRepository: AntennasRepository,
 
+		@Inject(DI.antennaService)
+		private antennasService: AntennaService,
+
 		@Inject(DI.noteEntityService)
 		private noteEntityService: NoteEntityService,
 
@@ -79,83 +81,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.noSuchAntenna);
 			}
 
-			if (!antenna.filterTree) {
-				let userIds: string[] = [];
-				if (antenna.users) {
-					const users = await this.usersRepository.find({
-						where: [
-							...antenna.users.map((username) => {
-								const acct = Acct.parse(username);
-								return { username: acct.username, host: acct.host ?? IsNull() };
-							}),
-						],
-					});
-					userIds = users.map((u) => u.id);
-				}
-
-				let excludeUserIds: string[] = [];
-				if (antenna.excludeUsers) {
-					const users = await this.usersRepository.find({
-						where: [
-							...antenna.excludeUsers.map((username) => {
-								const acct = Acct.parse(username);
-								return { username: acct.username, host: acct.host ?? IsNull() };
-							}),
-						],
-					});
-					excludeUserIds = users.map((u) => u.id);
-				}
-
-				const filter = await this.searchService.getFilter("", {
-					userIds: userIds,
-					excludeUserIds: excludeUserIds,
-					origin: antenna.localOnly
-						? "local"
-						: antenna.remoteOnly
-							? "remote"
-							: "combined",
-					keywords: antenna.keywords,
-					excludeKeywords: antenna.excludeKeywords,
-					checkChannelSearchable: true,
-					reverseOrder: false,
-					hasFile: antenna.withFile,
-					includeReplies: antenna.withReplies,
-					tags: [],
-				});
-
-				for (const compositeAntennaId of antenna.compositeAntennaIds) {
-					const tmpFilter = {
-						bool: {
-							must: {
-								bool: {
-									should: [] as any[],
-									minimum_should_match: 1,
-								},
-							},
-						},
-					};
-
-					const antenna = await this.antennasRepository.findOneBy({
-						id: compositeAntennaId,
-					});
-					if (antenna?.filterTree) {
-						tmpFilter.bool.must.bool.should.push(
-							JSON.parse(antenna.filterTree),
-						);
-						filter.bool.must.push(tmpFilter);
-					}
-				}
-
-				antenna.filterTree = JSON.stringify(filter);
-
-				await this.antennasRepository.update(antenna.id, {
-					filterTree: antenna.filterTree,
-				});
-			}
-
+			const filter = await this.antennasService.getOrGenerateFilter(antenna);
 			const notes = await this.searchService.searchNoteWithFilter(
 				me,
-				[JSON.parse(antenna.filterTree)],
+				[filter],
 				{
 					checkChannelSearchable: true,
 					reverseOrder: false,
