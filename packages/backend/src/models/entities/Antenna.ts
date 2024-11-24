@@ -25,6 +25,12 @@ export class Antenna {
 	public lastUsedAt: Date;
 
 	@Index()
+	@Column("boolean", {
+		default: false,
+	})
+	public public: boolean;
+
+	@Index()
 	@Column({
 		...id(),
 		comment: "The owner ID.",
@@ -64,6 +70,13 @@ export class Antenna {
 		default: "{}",
 	})
 	public users: string[];
+
+	@Column("varchar", {
+		length: 1024,
+		array: true,
+		default: "{}",
+	})
+	public excludeUsers: string[];
 
 	@Column("jsonb", {
 		default: [],
@@ -107,4 +120,14 @@ export class Antenna {
 		default: false,
 	})
 	public localOnly: boolean;
+
+	@Column("jsonb", {
+		default: [],
+	})
+	public compositeAntennaIds: Antenna["id"][];
+
+	@Column("text", {
+		nullable: true,
+	})
+	public filterTree: string | null;
 }

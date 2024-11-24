@@ -57,11 +57,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		@Inject(DI.antennasRepository)
 		private antennasRepository: AntennasRepository,
 
-		@Inject(DI.usersRepository)
-		private usersRepository: UsersRepository,
-
 		@Inject(DI.noteEntityService)
 		private noteEntityService: NoteEntityService,
+
+		@Inject(DI.usersRepository)
+		private usersRepository: UsersRepository,
 
 		@Inject(DI.searchService)
 		private searchService: SearchService,
@@ -79,24 +79,36 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.noSuchAntenna);
 			}
 
-			let userIds: string[] = [];
-			if (antenna.users) {
-				const users = await this.usersRepository.find({
-					where: [
-						...antenna.users.map((username) => {
-							const acct = Acct.parse(username);
-							return { username: acct.username, host: acct.host ?? IsNull() };
-						}),
-					],
-				});
-				userIds = users.map((u) => u.id);
-			}
+			if (antenna.filterTree == null) {
+				let userIds: string[] = [];
+				if (antenna.users) {
+					const users = await this.usersRepository.find({
+						where: [
+							...antenna.users.map((username) => {
+								const acct = Acct.parse(username);
+								return { username: acct.username, host: acct.host ?? IsNull() };
+							}),
+						],
+					});
+					userIds = users.map((u) => u.id);
+				}
 
-			const notes = await this.searchService.searchNote(
-				"",
-				me,
-				{
+				let excludeUserIds: string[] = [];
+				if (antenna.excludeUsers) {
+					const users = await this.usersRepository.find({
+						where: [
+							...antenna.excludeUsers.map((username) => {
+								const acct = Acct.parse(username);
+								return { username: acct.username, host: acct.host ?? IsNull() };
+							}),
+						],
+					});
+					excludeUserIds = users.map((u) => u.id);
+				}
+
+				const filter = await this.searchService.getFilter("", {
 					userIds: userIds,
+					excludeUserIds: excludeUserIds,
 					origin: antenna.localOnly ? "local" : undefined,
 					keywords: antenna.keywords,
 					excludeKeywords: antenna.excludeKeywords,
@@ -104,6 +116,45 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					reverseOrder: false,
 					hasFile: antenna.withFile,
 					includeReplies: antenna.withReplies,
+					tags: [],
+				});
+
+				for (const compositeAntennaId of antenna.compositeAntennaIds) {
+					const tmpFilter = {
+						bool: {
+							must: {
+								bool: {
+									should: [] as any[],
+									minimum_should_match: 1,
+								},
+							},
+						},
+					};
+
+					const antenna = await this.antennasRepository.findOneBy({
+						id: compositeAntennaId,
+					});
+					if (antenna?.filterTree) {
+						tmpFilter.bool.must.bool.should.push(
+							JSON.parse(antenna.filterTree),
+						);
+						filter.bool.must.push(tmpFilter);
+					}
+				}
+
+				antenna.filterTree = JSON.stringify(filter);
+
+				await this.antennasRepository.update(antenna.id, {
+					filterTree: antenna.filterTree,
+				});
+			}
+
+			const notes = await this.searchService.searchNoteWithFilter(
+				me,
+				[JSON.parse(antenna.filterTree)],
+				{
+					checkChannelSearchable: true,
+					reverseOrder: false,
 				},
 				{
 					untilId: ps.untilId,

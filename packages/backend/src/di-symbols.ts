@@ -110,4 +110,5 @@ export const DI = {
 	globalEventService: "GlobalEventService",
 	metaService: "MetaService",
 	httpRequestService: "HttpRequestService",
+	antennaEntityService: "AntennaEntityService",
 };

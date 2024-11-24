@@ -41,6 +41,7 @@ export interface Locale {
     "uploading": string;
     "save": string;
     "users": string;
+    "excludeUsers": string;
     "addUser": string;
     "favorite": string;
     "favorites": string;
@@ -401,6 +402,7 @@ export interface Locale {
     "pinnedPagesDescription": string;
     "pinnedClipId": string;
     "pinnedNotes": string;
+    "pinnedAntennas": string;
     "hcaptcha": string;
     "enableHcaptcha": string;
     "hcaptchaSiteKey": string;
@@ -1070,6 +1072,7 @@ export interface Locale {
     "showClipButtonInNoteFooter": string;
     "largeNoteReactions": string;
     "noteIdOrUrl": string;
+    "antennaIdOrUrl": string;
     "video": string;
     "videos": string;
     "dataSaver": string;

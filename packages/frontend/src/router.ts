@@ -386,7 +386,7 @@ export const router = createRouter({
 				},
 				{
 					path: "my/antennas/:antennaId",
-					component: page(() => import("./pages/my-antennas/edit.vue")),
+					component: page(() => import("./pages/my-antennas/editor.vue")),
 					props: (route) => Object.assign({}, route.query, route.params),
 				},
 				{

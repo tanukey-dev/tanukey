@@ -13,6 +13,11 @@ export const packedAntennaSchema = {
 			nullable: false,
 			format: "date-time",
 		},
+		public: {
+			type: "boolean",
+			optional: false,
+			nullable: false,
+		},
 		name: {
 			type: "string",
 			optional: false,
@@ -70,6 +75,16 @@ export const packedAntennaSchema = {
 				nullable: false,
 			},
 		},
+		excludeUsers: {
+			type: "array",
+			optional: false,
+			nullable: false,
+			items: {
+				type: "string",
+				optional: false,
+				nullable: false,
+			},
+		},
 		caseSensitive: {
 			type: "boolean",
 			optional: false,
@@ -108,6 +123,20 @@ export const packedAntennaSchema = {
 			optional: false,
 			nullable: false,
 			default: false,
+		},
+		compositeAntennaIds: {
+			type: "array",
+			nullable: false,
+			optional: false,
+			items: {
+				type: "string",
+				format: "id",
+			},
+		},
+		filterTree: {
+			type: "string",
+			optional: false,
+			nullable: true,
 		},
 	},
 } as const;

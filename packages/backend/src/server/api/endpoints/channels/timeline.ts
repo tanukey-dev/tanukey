@@ -98,35 +98,19 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			const filters: any[] = [];
 
-			const channelFilter = await this.searchService.getFilter(
-				"",
-				{
-					origin: "local",
-					channelId: ps.channelId,
-					includeReplies: true,
-				},
-				{
-					untilId: ps.untilId,
-					sinceId: ps.sinceId,
-					limit: ps.limit,
-				},
-			);
+			const channelFilter = await this.searchService.getFilter("", {
+				origin: "local",
+				channelId: ps.channelId,
+				includeReplies: true,
+			});
 
 			filters.push(channelFilter);
 
 			if (channel.tags.length > 0) {
-				const tagsFilter = await this.searchService.getFilter(
-					"",
-					{
-						origin: "local",
-						tags: channel.tags.map((tag) => tag.trim().replaceAll("#", "")),
-					},
-					{
-						untilId: ps.untilId,
-						sinceId: ps.sinceId,
-						limit: ps.limit,
-					},
-				);
+				const tagsFilter = await this.searchService.getFilter("", {
+					origin: "local",
+					tags: channel.tags.map((tag) => tag.trim().replaceAll("#", "")),
+				});
 
 				filters.push(tagsFilter);
 			}
@@ -134,9 +118,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const notes = await this.searchService.searchNoteWithFilter(
 				me,
 				filters,
-				false,
-				false,
-				ps.limit,
+				{
+					checkChannelSearchable: false,
+					reverseOrder: false,
+				},
+				{
+					untilId: ps.untilId,
+					sinceId: ps.sinceId,
+					limit: ps.limit,
+				},
 			);
 
 			if (me) this.activeUsersChart.read(me);

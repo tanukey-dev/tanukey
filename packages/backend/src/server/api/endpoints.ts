@@ -86,6 +86,7 @@ import * as ep___antennas_list from "./endpoints/antennas/list.js";
 import * as ep___antennas_notes from "./endpoints/antennas/notes.js";
 import * as ep___antennas_show from "./endpoints/antennas/show.js";
 import * as ep___antennas_update from "./endpoints/antennas/update.js";
+import * as ep___antennas_search from "./endpoints/antennas/search.js";
 import * as ep___ap_get from "./endpoints/ap/get.js";
 import * as ep___ap_show from "./endpoints/ap/show.js";
 import * as ep___app_create from "./endpoints/app/create.js";
@@ -452,6 +453,7 @@ const eps = [
 	["antennas/notes", ep___antennas_notes],
 	["antennas/show", ep___antennas_show],
 	["antennas/update", ep___antennas_update],
+	["antennas/search", ep___antennas_search],
 	["ap/get", ep___ap_get],
 	["ap/show", ep___ap_show],
 	["app/create", ep___app_create],

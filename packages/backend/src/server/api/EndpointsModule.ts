@@ -88,6 +88,7 @@ import * as ep___antennas_list from "./endpoints/antennas/list.js";
 import * as ep___antennas_notes from "./endpoints/antennas/notes.js";
 import * as ep___antennas_show from "./endpoints/antennas/show.js";
 import * as ep___antennas_update from "./endpoints/antennas/update.js";
+import * as ep___antennas_search from "./endpoints/antennas/search.js";
 import * as ep___ap_get from "./endpoints/ap/get.js";
 import * as ep___ap_show from "./endpoints/ap/show.js";
 import * as ep___app_create from "./endpoints/app/create.js";
@@ -695,6 +696,10 @@ const $antennas_show: Provider = {
 const $antennas_update: Provider = {
 	provide: "ep:antennas/update",
 	useClass: ep___antennas_update.default,
+};
+const $antennas_search: Provider = {
+	provide: "ep:antennas/search",
+	useClass: ep___antennas_search.default,
 };
 const $ap_get: Provider = {
 	provide: "ep:ap/get",
@@ -1843,6 +1848,7 @@ const $retention: Provider = {
 		$antennas_notes,
 		$antennas_show,
 		$antennas_update,
+		$antennas_search,
 		$ap_get,
 		$ap_show,
 		$app_create,
@@ -2200,6 +2206,7 @@ const $retention: Provider = {
 		$antennas_notes,
 		$antennas_show,
 		$antennas_update,
+		$antennas_search,
 		$ap_get,
 		$ap_show,
 		$app_create,
