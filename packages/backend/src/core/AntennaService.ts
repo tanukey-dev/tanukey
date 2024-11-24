@@ -64,7 +64,7 @@ export class AntennaService {
 		if (note.visibility === "specified") return false;
 		if (note.visibility === "followers") return false;
 
-		if (antenna.filterTree == null) {
+		if (!antenna.filterTree) {
 			return true;
 		}
 

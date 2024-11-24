@@ -79,7 +79,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.noSuchAntenna);
 			}
 
-			if (antenna.filterTree == null) {
+			if (!antenna.filterTree) {
 				let userIds: string[] = [];
 				if (antenna.users) {
 					const users = await this.usersRepository.find({
