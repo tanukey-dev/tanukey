@@ -656,8 +656,9 @@ export class SearchService {
 
 		let filter: any;
 		if (esFilters.length === 1) {
-			filter = esFilters[0];
-			this.addPagenation(filter, opts, pagination);
+			filter = { bool: { must: [] } };
+			const f = Object.assign(filter, esFilters[0]);
+			this.addPagenation(f, opts, pagination);
 		} else {
 			filter = { bool: { should: [], minimum_should_match: 1 } };
 			for (const f of esFilters) {
