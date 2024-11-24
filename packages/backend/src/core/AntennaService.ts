@@ -64,31 +64,12 @@ export class AntennaService {
 		if (note.visibility === "specified") return false;
 		if (note.visibility === "followers") return false;
 
-		let userIds: string[] = [];
-		if (antenna.users && antenna.users.length > 0) {
-			const users = await this.usersRepository.find({
-				where: [
-					...antenna.users.map((username) => {
-						const acct = Acct.parse(username);
-						return { username: acct.username, host: acct.host ?? IsNull() };
-					}),
-				],
-			});
-			userIds = users.map((u) => u.id);
-		}
-
-		const notes = await this.searchService.searchNote(
-			"",
+		const notes = await this.searchService.searchNoteWithFilter(
 			null,
+			[JSON.parse(antenna.filterTree ?? "{}")],
 			{
-				userIds: userIds,
-				origin: antenna.localOnly ? "local" : undefined,
-				keywords: antenna.keywords,
-				excludeKeywords: antenna.excludeKeywords,
 				checkChannelSearchable: true,
 				reverseOrder: false,
-				hasFile: antenna.withFile,
-				includeReplies: antenna.withReplies,
 			},
 			{
 				equal: note.id,
