@@ -121,6 +121,11 @@ export class Antenna {
 	})
 	public localOnly: boolean;
 
+	@Column("boolean", {
+		default: false,
+	})
+	public remoteOnly: boolean;
+
 	@Column("jsonb", {
 		default: [],
 	})

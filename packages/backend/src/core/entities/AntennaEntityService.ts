@@ -32,6 +32,7 @@ export class AntennaEntityService {
 			excludeUsers: antenna.excludeUsers,
 			caseSensitive: antenna.caseSensitive,
 			localOnly: antenna.localOnly,
+			remoteOnly: antenna.remoteOnly,
 			notify: antenna.notify,
 			withReplies: antenna.withReplies,
 			withFile: antenna.withFile,

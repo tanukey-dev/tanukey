@@ -75,7 +75,6 @@ import FormSplit from "@/components/form/split.vue";
 import { i18n } from "@/i18n";
 import * as os from "@/os";
 import { router } from "@/router";
-import { channel } from "diagnostics_channel";
 import * as Acct from "misskey-js/built/acct";
 import { ref, watch } from "vue";
 

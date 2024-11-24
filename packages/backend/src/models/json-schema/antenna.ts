@@ -97,6 +97,12 @@ export const packedAntennaSchema = {
 			nullable: false,
 			default: false,
 		},
+		remoteOnly: {
+			type: "boolean",
+			optional: false,
+			nullable: false,
+			default: false,
+		},
 		notify: {
 			type: "boolean",
 			optional: false,

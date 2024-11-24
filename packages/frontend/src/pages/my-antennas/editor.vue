@@ -29,7 +29,11 @@
 					<template #label>{{ i18n.ts.antennaExcludeKeywords }}</template>
 					<template #caption>{{ i18n.ts.antennaKeywordsDescription }}</template>
 				</MkTextarea>
-				<MkSwitch v-model="localOnly">{{ i18n.ts.localOnly }}</MkSwitch>
+				<MkRadios v-model="searchOrigin">
+					<option value="local">{{ i18n.ts.local }}</option>
+					<option value="remote">{{ i18n.ts.remote }}</option>
+					<option value="combined">{{ i18n.ts.all }}</option>
+				</MkRadios>
 				<MkSwitch v-model="withFile">{{ i18n.ts.withFileAntenna }}</MkSwitch>
 				<MkSwitch v-model="notify">{{ i18n.ts.notifyAntenna }}</MkSwitch>
 
@@ -74,6 +78,7 @@ import MkInput from "@/components/MkInput.vue";
 import MkTextarea from "@/components/MkTextarea.vue";
 import MkSwitch from "@/components/MkSwitch.vue";
 import MkFolder from "@/components/MkFolder.vue";
+import MkRadios from "@/components/MkRadios.vue";
 import * as os from "@/os";
 import { i18n } from "@/i18n";
 import { useRoute } from 'vue-router';
@@ -98,13 +103,13 @@ let excludeUsers: string = $ref();
 let keywords: string = $ref();
 let excludeKeywords: string = $ref();
 let caseSensitive: boolean = $ref();
-let localOnly: boolean = $ref();
 let withReplies: boolean = $ref();
 let withFile: boolean = $ref();
 let notify: boolean = $ref();
 let isPublic: boolean = $ref();
 let pinnedAntennas = $ref<{ id: string }[]>([]);
 let antenna: any = $ref(null);
+let searchOrigin = $ref<string>("local");
 
 watch(() => route.params.antennaId, async (newId, oldId) => {
 	antenna = await os.api("antennas/show", { antennaId: newId })
@@ -116,7 +121,7 @@ watch(() => route.params.antennaId, async (newId, oldId) => {
 	keywords = antenna.keywords.map((x) => x.join(" ")).join("\n");
 	excludeKeywords = antenna.excludeKeywords.map((x) => x.join(" ")).join("\n");
 	caseSensitive = antenna.caseSensitive;
-	localOnly = antenna.localOnly;
+	searchOrigin = antenna.localOnly ? "local" : antenna.remoteOnly ? "remote" : "combined";
 	withReplies = antenna.withReplies;
 	withFile = antenna.withFile;
 	notify = antenna.notify;
@@ -133,7 +138,8 @@ async function saveAntenna() {
 		withFile,
 		notify,
 		caseSensitive,
-		localOnly,
+		localOnly: searchOrigin === "local",
+		remoteOnly: searchOrigin === "remote",
 		public: isPublic,
 		users: users
 			.trim()

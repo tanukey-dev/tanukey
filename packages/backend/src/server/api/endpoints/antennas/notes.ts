@@ -109,7 +109,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				const filter = await this.searchService.getFilter("", {
 					userIds: userIds,
 					excludeUserIds: excludeUserIds,
-					origin: antenna.localOnly ? "local" : undefined,
+					origin: antenna.localOnly
+						? "local"
+						: antenna.remoteOnly
+							? "remote"
+							: "combined",
 					keywords: antenna.keywords,
 					excludeKeywords: antenna.excludeKeywords,
 					checkChannelSearchable: true,
