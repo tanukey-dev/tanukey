@@ -11,6 +11,7 @@ import { User } from "@/models/index.js";
 import type { NotesRepository } from "@/models/index.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { Client as OpenSearch } from "@opensearch-project/opensearch";
+import { add } from "date-fns";
 import { Brackets, In, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 
 @Injectable()
@@ -578,9 +579,8 @@ export class SearchService {
 	}
 
 	@bindThis
-	public async searchNoteWithFilter(
-		me: User | null,
-		esFilters: any[],
+	public async addPagenation(
+		filter: any,
 		opts: {
 			checkChannelSearchable?: boolean;
 			reverseOrder?: boolean;
@@ -591,21 +591,7 @@ export class SearchService {
 			sinceId?: Note["id"];
 			limit?: number;
 		},
-	): Promise<Note[]> {
-		if (!this.opensearch) {
-			return [];
-		}
-
-		let filter: any;
-		if (esFilters.length === 1) {
-			filter = esFilters[0];
-		} else {
-			filter = { bool: { should: [], minimum_should_match: 1 } };
-			for (const f of esFilters) {
-				filter.bool.should.push(f);
-			}
-		}
-
+	) {
 		if (pagination.equal) {
 			filter.bool.must.push({
 				term: {
@@ -646,6 +632,38 @@ export class SearchService {
 						},
 					},
 				});
+		}
+	}
+
+	@bindThis
+	public async searchNoteWithFilter(
+		me: User | null,
+		esFilters: any[],
+		opts: {
+			checkChannelSearchable?: boolean;
+			reverseOrder?: boolean;
+		},
+		pagination: {
+			equal?: Note["id"];
+			untilId?: Note["id"];
+			sinceId?: Note["id"];
+			limit?: number;
+		},
+	): Promise<Note[]> {
+		if (!this.opensearch) {
+			return [];
+		}
+
+		let filter: any;
+		if (esFilters.length === 1) {
+			filter = esFilters[0];
+			this.addPagenation(filter, opts, pagination);
+		} else {
+			filter = { bool: { should: [], minimum_should_match: 1 } };
+			for (const f of esFilters) {
+				filter.bool.should.push(f);
+				this.addPagenation(f, opts, pagination);
+			}
 		}
 
 		const res = await this.opensearch.search({
