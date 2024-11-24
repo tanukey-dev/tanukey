@@ -64,9 +64,13 @@ export class AntennaService {
 		if (note.visibility === "specified") return false;
 		if (note.visibility === "followers") return false;
 
+		if (antenna.filterTree == null) {
+			return true;
+		}
+
 		const notes = await this.searchService.searchNoteWithFilter(
 			null,
-			[JSON.parse(antenna.filterTree ?? "{}")],
+			[JSON.parse(antenna.filterTree)],
 			{
 				checkChannelSearchable: true,
 				reverseOrder: false,
