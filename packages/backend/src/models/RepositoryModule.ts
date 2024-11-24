@@ -68,9 +68,6 @@ import {
 	UserMemo,
 	UserPoint,
 	UserListFavorite,
-	Circle,
-	Event,
-	EventCircle,
 	SubscriptionPlan,
 	SubscriptionStatus,
 } from "./index.js";
@@ -491,24 +488,6 @@ const $userPointsRepository: Provider = {
 	inject: [DI.db],
 };
 
-const $circlesRepository: Provider = {
-	provide: DI.circlesRepository,
-	useFactory: (db: DataSource) => db.getRepository(Circle),
-	inject: [DI.db],
-};
-
-const $eventsRepository: Provider = {
-	provide: DI.eventsRepository,
-	useFactory: (db: DataSource) => db.getRepository(Event),
-	inject: [DI.db],
-};
-
-const $eventCirclesRepository: Provider = {
-	provide: DI.eventCirclesRepository,
-	useFactory: (db: DataSource) => db.getRepository(EventCircle),
-	inject: [DI.db],
-};
-
 @Module({
 	imports: [],
 	providers: [
@@ -581,9 +560,6 @@ const $eventCirclesRepository: Provider = {
 		$flashLikesRepository,
 		$userMemosRepository,
 		$userPointsRepository,
-		$circlesRepository,
-		$eventsRepository,
-		$eventCirclesRepository,
 	],
 	exports: [
 		$usersRepository,
@@ -655,9 +631,6 @@ const $eventCirclesRepository: Provider = {
 		$flashLikesRepository,
 		$userMemosRepository,
 		$userPointsRepository,
-		$circlesRepository,
-		$eventsRepository,
-		$eventCirclesRepository,
 	],
 })
 export class RepositoryModule {}

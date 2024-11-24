@@ -57,16 +57,6 @@ export const navbarItemDef = reactive({
 			lookup();
 		},
 	},
-	events: {
-		title: i18n.ts.event,
-		icon: "ti ti-calendar-event",
-		to: "/secure/events",
-	},
-	circles: {
-		title: i18n.ts.circle,
-		icon: "ti ti-circles-relation",
-		to: "/secure/circles",
-	},
 	lists: {
 		title: i18n.ts.lists,
 		icon: "ti ti-list",

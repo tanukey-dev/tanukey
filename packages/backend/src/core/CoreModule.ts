@@ -119,9 +119,6 @@ import { ApQuestionService } from "./activitypub/models/ApQuestionService.js";
 import { QueueModule } from "./QueueModule.js";
 import { QueueService } from "./QueueService.js";
 import { LoggerService } from "./LoggerService.js";
-import { CircleEntityService } from "./entities/CircleEntityService.js";
-import { EventEntityService } from "./entities/EventEntityService.js";
-import { EventCircleEntityService } from "./entities/EventCircleEntityService.js";
 import { UserPointService } from "./entities/UserPointService.js";
 import type { Provider } from "@nestjs/common";
 
@@ -595,18 +592,6 @@ const $ApQuestionService: Provider = {
 	provide: "ApQuestionService",
 	useExisting: ApQuestionService,
 };
-const $CircleEntityService: Provider = {
-	provide: "CircleEntityService",
-	useExisting: CircleEntityService,
-};
-const $EventEntityService: Provider = {
-	provide: "EventEntityService",
-	useExisting: EventEntityService,
-};
-const $EventCircleEntityService: Provider = {
-	provide: "EventCircleEntityService",
-	useExisting: EventCircleEntityService,
-};
 const $UserPointService: Provider = {
 	provide: "UserPointService",
 	useExisting: UserPointService,
@@ -736,9 +721,6 @@ const $UserPointService: Provider = {
 		ApPersonService,
 		ApQuestionService,
 		QueueService,
-		CircleEntityService,
-		EventEntityService,
-		EventCircleEntityService,
 		UserPointService,
 
 		//#region 文字列ベースでのinjection用(循環参照対応のため)
@@ -860,9 +842,6 @@ const $UserPointService: Provider = {
 		$ApNoteService,
 		$ApPersonService,
 		$ApQuestionService,
-		$CircleEntityService,
-		$EventEntityService,
-		$EventCircleEntityService,
 		$UserPointService,
 		//#endregion
 	],
@@ -986,9 +965,6 @@ const $UserPointService: Provider = {
 		ApPersonService,
 		ApQuestionService,
 		QueueService,
-		CircleEntityService,
-		EventEntityService,
-		EventCircleEntityService,
 		UserPointService,
 
 		//#region 文字列ベースでのinjection用(循環参照対応のため)
@@ -1109,9 +1085,6 @@ const $UserPointService: Provider = {
 		$ApNoteService,
 		$ApPersonService,
 		$ApQuestionService,
-		$CircleEntityService,
-		$EventEntityService,
-		$EventCircleEntityService,
 		$UserPointService,
 		//#endregion
 	],

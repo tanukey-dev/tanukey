@@ -116,44 +116,6 @@ export const router = createRouter({
 			},
 		},
 		{
-			path: "/events",
-			component: page(() => import("./pages/events.vue")),
-			meta: {
-				loginedUserRedirect: true,
-			},
-		},
-		{
-			path: "/events/:eventId",
-			component: page(() => import("./pages/event.vue")),
-			props: (route) => Object.assign({}, route.query, route.params),
-			meta: {
-				loginedUserRedirect: true,
-			},
-		},
-		{
-			path: "/events/:eventId/:eventCircleId",
-			component: page(() => import("./pages/event-circle.vue")),
-			props: (route) => Object.assign({}, route.query, route.params),
-			meta: {
-				loginedUserRedirect: true,
-			},
-		},
-		{
-			path: "/circles",
-			component: page(() => import("./pages/circles.vue")),
-			meta: {
-				loginedUserRedirect: true,
-			},
-		},
-		{
-			path: "/circles/:circleId",
-			component: page(() => import("./pages/circle.vue")),
-			props: (route) => Object.assign({}, route.query, route.params),
-			meta: {
-				loginedUserRedirect: true,
-			},
-		},
-		{
 			path: "/tags/:tag",
 			component: page(() => import("./pages/tag.vue")),
 			props: (route) => Object.assign({}, route.query, route.params),
@@ -361,72 +323,6 @@ export const router = createRouter({
 					meta: {
 						notLoginedUserRedirect: true,
 					},
-				},
-				{
-					path: "events",
-					component: page(() => import("./pages/events.vue")),
-					meta: {
-						notLoginedUserRedirect: true,
-					},
-				},
-				{
-					path: "events/new",
-					component: page(() => import("./pages/event-editor.vue")),
-				},
-				{
-					path: "events/:eventId/join",
-					component: page(() => import("./pages/event-circle-editor.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-				},
-				{
-					path: "events/:eventId/edit",
-					component: page(() => import("./pages/event-editor.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-				},
-				{
-					path: "events/:eventId/:eventCircleId/edit",
-					component: page(() => import("./pages/event-circle-editor.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-				},
-				{
-					path: "events/:eventId",
-					component: page(() => import("./pages/event.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-					meta: {
-						notLoginedUserRedirect: true,
-					},
-				},
-				{
-					path: "events/:eventId/:eventCircleId",
-					component: page(() => import("./pages/event-circle.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-					meta: {
-						notLoginedUserRedirect: true,
-					},
-				},
-				{
-					path: "circles",
-					component: page(() => import("./pages/circles.vue")),
-					meta: {
-						notLoginedUserRedirect: true,
-					},
-				},
-				{
-					path: "circles/:circleId",
-					component: page(() => import("./pages/circle.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-					meta: {
-						notLoginedUserRedirect: true,
-					},
-				},
-				{
-					path: "circles/:circleId/edit",
-					component: page(() => import("./pages/circle-editor.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-				},
-				{
-					path: "circles/new",
-					component: page(() => import("./pages/circle-editor.vue")),
 				},
 				{
 					path: "custom-emojis-manager",

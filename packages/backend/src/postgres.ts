@@ -73,9 +73,6 @@ import { Flash } from "@/models/entities/Flash.js";
 import { FlashLike } from "@/models/entities/FlashLike.js";
 import { UserMemo } from "@/models/entities/UserMemo.js";
 import { UserPoint } from "@/models/entities/UserPoint.js";
-import { Circle } from "@/models/entities/Circle.js";
-import { Event } from "@/models/entities/Event.js";
-import { EventCircle } from "@/models/entities/EventCircle.js";
 import { SubscriptionPlan } from "@/models/entities/SubscriptionPlan.js";
 import { SubscriptionStatus } from "@/models/entities/SubscriptionStatus.js";
 
@@ -195,9 +192,6 @@ export const entities = [
 	FlashLike,
 	UserMemo,
 	UserPoint,
-	Circle,
-	Event,
-	EventCircle,
 	SubscriptionPlan,
 	SubscriptionStatus,
 	...charts,

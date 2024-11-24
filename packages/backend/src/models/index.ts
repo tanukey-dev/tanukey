@@ -10,15 +10,12 @@ import { AuthSession } from "@/models/entities/AuthSession.js";
 import { Blocking } from "@/models/entities/Blocking.js";
 import { ChannelFollowing } from "@/models/entities/ChannelFollowing.js";
 import { ChannelFavorite } from "@/models/entities/ChannelFavorite.js";
-import { Circle } from "@/models/entities/Circle.js";
 import { Clip } from "@/models/entities/Clip.js";
 import { ClipNote } from "@/models/entities/ClipNote.js";
 import { ClipFavorite } from "@/models/entities/ClipFavorite.js";
 import { DriveFile } from "@/models/entities/DriveFile.js";
 import { DriveFolder } from "@/models/entities/DriveFolder.js";
 import { Emoji } from "@/models/entities/Emoji.js";
-import { Event } from "@/models/entities/Event.js";
-import { EventCircle } from "@/models/entities/EventCircle.js";
 import { Following } from "@/models/entities/Following.js";
 import { FollowRequest } from "@/models/entities/FollowRequest.js";
 import { GalleryLike } from "@/models/entities/GalleryLike.js";
@@ -85,15 +82,12 @@ export {
 	Blocking,
 	ChannelFollowing,
 	ChannelFavorite,
-	Circle,
 	Clip,
 	ClipNote,
 	ClipFavorite,
 	DriveFile,
 	DriveFolder,
 	Emoji,
-	Event,
-	EventCircle,
 	Following,
 	FollowRequest,
 	GalleryLike,
@@ -214,8 +208,5 @@ export type FlashsRepository = Repository<Flash>;
 export type FlashLikesRepository = Repository<FlashLike>;
 export type UserMemoRepository = Repository<UserMemo>;
 export type UserPointsRepository = Repository<UserPoint>;
-export type CirclesRepository = Repository<Circle>;
-export type EventsRepository = Repository<Event>;
-export type EventCirclesRepository = Repository<EventCircle>;
 export type SubscriptionPlansRepository = Repository<SubscriptionPlan>;
 export type SubscriptionStatusesRepository = Repository<SubscriptionStatus>;

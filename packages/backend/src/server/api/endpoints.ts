@@ -123,10 +123,6 @@ import * as ep___charts_user_notes from "./endpoints/charts/user/notes.js";
 import * as ep___charts_user_pv from "./endpoints/charts/user/pv.js";
 import * as ep___charts_user_reactions from "./endpoints/charts/user/reactions.js";
 import * as ep___charts_users from "./endpoints/charts/users.js";
-import * as ep___circles_create from "./endpoints/circles/create.js";
-import * as ep___circles_owned from "./endpoints/circles/owned.js";
-import * as ep___circles_show from "./endpoints/circles/show.js";
-import * as ep___circles_update from "./endpoints/circles/update.js";
 import * as ep___clips_addNote from "./endpoints/clips/add-note.js";
 import * as ep___clips_create from "./endpoints/clips/create.js";
 import * as ep___clips_delete from "./endpoints/clips/delete.js";
@@ -161,14 +157,6 @@ import * as ep___emoji from "./endpoints/emoji.js";
 import * as ep___emojis from "./endpoints/emojis.js";
 import * as ep___endpoint from "./endpoints/endpoint.js";
 import * as ep___endpoints from "./endpoints/endpoints.js";
-import * as ep___eventCircles_create from "./endpoints/event-circles/create.js";
-import * as ep___eventCircles_show from "./endpoints/event-circles/show.js";
-import * as ep___eventCircles_update from "./endpoints/event-circles/update.js";
-import * as ep___events_create from "./endpoints/events/create.js";
-import * as ep___events_owned from "./endpoints/events/owned.js";
-import * as ep___events_search from "./endpoints/events/search.js";
-import * as ep___events_show from "./endpoints/events/show.js";
-import * as ep___events_update from "./endpoints/events/update.js";
 import * as ep___exportCustomEmojis from "./endpoints/export-custom-emojis.js";
 import * as ep___federation_followers from "./endpoints/federation/followers.js";
 import * as ep___federation_following from "./endpoints/federation/following.js";
@@ -735,18 +723,6 @@ const eps = [
 	["users/update-memo", ep___users_updateMemo],
 	["fetch-rss", ep___fetchRss],
 	["retention", ep___retention],
-	["circles/create", ep___circles_create],
-	["circles/owned", ep___circles_owned],
-	["circles/show", ep___circles_show],
-	["circles/update", ep___circles_update],
-	["eventCircles/create", ep___eventCircles_create],
-	["eventCircles/show", ep___eventCircles_show],
-	["eventCircles/update", ep___eventCircles_update],
-	["events/create", ep___events_create],
-	["events/owned", ep___events_owned],
-	["events/search", ep___events_search],
-	["events/show", ep___events_show],
-	["events/update", ep___events_update],
 ];
 
 interface IEndpointMetaBase {
