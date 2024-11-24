@@ -310,11 +310,16 @@ export class SearchService {
 			const excludeUserIds = opts.excludeUserIds.filter((xs) => xs !== "");
 			esFilter.bool.must.push({
 				bool: {
-					must_not: [
-						...excludeUserIds.map((id) => {
-							return { term: { userId: id } };
-						}),
-					],
+					must_not: {
+						bool: {
+							should: [
+								...excludeUserIds.map((id) => {
+									return { term: { userId: id } };
+								}),
+							],
+							minimum_should_match: 1,
+						},
+					},
 				},
 			});
 		}

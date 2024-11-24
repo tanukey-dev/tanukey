@@ -156,10 +156,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 
 			let userIds: string[] = [];
-			if (antenna.users) {
+			if (ps.users) {
 				const users = await this.usersRepository.find({
 					where: [
-						...antenna.users.map((username) => {
+						...ps.users.map((username) => {
 							const acct = Acct.parse(username);
 							return { username: acct.username, host: acct.host ?? IsNull() };
 						}),
@@ -169,10 +169,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			}
 
 			let excludeUserIds: string[] = [];
-			if (antenna.excludeUsers) {
+			if (ps.excludeUsers) {
 				const users = await this.usersRepository.find({
 					where: [
-						...antenna.excludeUsers.map((username) => {
+						...ps.excludeUsers.map((username) => {
 							const acct = Acct.parse(username);
 							return { username: acct.username, host: acct.host ?? IsNull() };
 						}),
@@ -184,34 +184,38 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			const filter = await this.searchService.getFilter("", {
 				userIds: userIds,
 				excludeUserIds: excludeUserIds,
-				origin: antenna.localOnly ? "local" : undefined,
-				keywords: antenna.keywords,
-				excludeKeywords: antenna.excludeKeywords,
+				origin: ps.localOnly ? "local" : undefined,
+				keywords: ps.keywords,
+				excludeKeywords: ps.excludeKeywords,
 				checkChannelSearchable: true,
 				reverseOrder: false,
-				hasFile: antenna.withFile,
-				includeReplies: antenna.withReplies,
+				hasFile: ps.withFile,
+				includeReplies: ps.withReplies,
 				tags: [],
 			});
 
-			for (const compositeAntennaId of antenna.compositeAntennaIds) {
-				const tmpFilter = {
-					bool: {
-						must: {
-							bool: {
-								should: [] as any[],
-								minimum_should_match: 1,
+			if (ps.compositeAntennaIds) {
+				for (const compositeAntennaId of ps.compositeAntennaIds) {
+					const tmpFilter = {
+						bool: {
+							must: {
+								bool: {
+									should: [] as any[],
+									minimum_should_match: 1,
+								},
 							},
 						},
-					},
-				};
+					};
 
-				const antenna = await this.antennasRepository.findOneBy({
-					id: compositeAntennaId,
-				});
-				if (antenna?.filterTree) {
-					tmpFilter.bool.must.bool.should.push(JSON.parse(antenna.filterTree));
-					filter.bool.must.push(tmpFilter);
+					const antenna = await this.antennasRepository.findOneBy({
+						id: compositeAntennaId,
+					});
+					if (antenna?.filterTree) {
+						tmpFilter.bool.must.bool.should.push(
+							JSON.parse(antenna.filterTree),
+						);
+						filter.bool.must.push(tmpFilter);
+					}
 				}
 			}
 
