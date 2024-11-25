@@ -123,5 +123,10 @@ export const packedDriveFileSchema = {
 			nullable: true,
 			ref: "UserLite",
 		},
+		metadata: {
+			type: "object",
+			optional: false,
+			nullable: false,
+		},
 	},
 } as const;

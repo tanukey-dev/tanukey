@@ -216,4 +216,9 @@ export class DriveFile {
 		nullable: true,
 	})
 	public requestIp: string | null;
+
+	@Column("jsonb", {
+		default: {},
+	})
+	public metadata: any;
 }

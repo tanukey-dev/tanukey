@@ -104,6 +104,8 @@ export type Source = {
 	siteGtagGoogleAnalytics: string;
 	siteGtagGoogleAds: string;
 	siteGtagGoogleAdsConversion: string;
+
+	openaiApiKey: string;
 };
 
 /**

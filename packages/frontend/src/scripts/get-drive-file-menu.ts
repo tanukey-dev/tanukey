@@ -39,6 +39,22 @@ function describe(file: Misskey.entities.DriveFile) {
 	);
 }
 
+function metadata(file: Misskey.entities.DriveFile) {
+	os.popup(
+		defineAsyncComponent(
+			() => import("@/components/MkFileMetadataEditWindow.vue"),
+		),
+		{
+			default: file.comment != null ? file.comment : "",
+			file: file,
+		},
+		{
+			done: () => {},
+		},
+		"closed",
+	);
+}
+
 function toggleSensitive(file: Misskey.entities.DriveFile) {
 	os.api("drive/files/update", {
 		fileId: file.id,
@@ -91,6 +107,11 @@ export function getDriveFileMenu(file: Misskey.entities.DriveFile) {
 			text: i18n.ts.describeFile,
 			icon: "ti ti-text-caption",
 			action: () => describe(file),
+		},
+		{
+			text: i18n.ts.metadata,
+			icon: "ti ti-brand-google-big-query",
+			action: () => metadata(file),
 		},
 		null,
 		{

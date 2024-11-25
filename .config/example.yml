@@ -201,3 +201,5 @@ signToActivityPubGet: true
 # siteGtagGoogleAnalytics: ''
 # siteGtagGoogleAds: ''
 # siteGtagGoogleAdsConversion: ''
+
+# openaiApiKey: ''
