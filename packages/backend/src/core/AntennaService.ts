@@ -71,6 +71,8 @@ export class AntennaService {
 		reverseOrder?: boolean,
 		hasFile?: boolean,
 		includeReplies?: boolean,
+		imageTypes?: string[],
+		imageLabels?: string[],
 		compositeAntennaIds?: string[],
 		idSet?: Set<string>,
 	) {
@@ -112,6 +114,8 @@ export class AntennaService {
 			reverseOrder: reverseOrder,
 			hasFile: hasFile,
 			includeReplies: includeReplies,
+			imageTypes: imageTypes,
+			imageLabels: imageLabels,
 			tags: [],
 		});
 
@@ -159,6 +163,8 @@ export class AntennaService {
 					false,
 					antenna.withFile,
 					antenna.withReplies,
+					antenna.imageTypes,
+					antenna.imageLabels,
 					antenna.compositeAntennaIds,
 					baseIdSet,
 				);
@@ -196,6 +202,8 @@ export class AntennaService {
 					false,
 					antenna.withFile,
 					antenna.withReplies,
+					antenna.imageTypes,
+					antenna.imageLabels,
 					antenna.compositeAntennaIds,
 				),
 			);
@@ -228,6 +236,8 @@ export class AntennaService {
 				false,
 				antenna.withFile,
 				antenna.withReplies,
+				antenna.imageTypes,
+				antenna.imageLabels,
 				antenna.compositeAntennaIds,
 			);
 

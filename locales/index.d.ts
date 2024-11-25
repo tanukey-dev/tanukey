@@ -200,6 +200,7 @@ export interface Locale {
     "viewChannel": string;
     "viewChannelSettings": string;
     "searchTagsSetting": string;
+    "searchImageTagsSetting": string;
     "isNoteCollapsed": string;
     "noteNotSearchable": string;
     "instances": string;
@@ -259,6 +260,8 @@ export interface Locale {
     "blocked": string;
     "suspended": string;
     "all": string;
+    "illust": string;
+    "picture": string;
     "subscribing": string;
     "publishing": string;
     "notResponding": string;

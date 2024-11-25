@@ -30,11 +30,19 @@
 					<template #caption>{{ i18n.ts.antennaKeywordsDescription }}</template>
 				</MkTextarea>
 				<MkRadios v-model="searchOrigin">
+					<option value="combined">{{ i18n.ts.all }}</option>
 					<option value="local">{{ i18n.ts.local }}</option>
 					<option value="remote">{{ i18n.ts.remote }}</option>
-					<option value="combined">{{ i18n.ts.all }}</option>
 				</MkRadios>
 				<MkSwitch v-model="withFile">{{ i18n.ts.withFileAntenna }}</MkSwitch>
+				<MkRadios v-model="imageType">
+					<option value="all">{{ i18n.ts.all }}</option>
+					<option value="illust">{{ i18n.ts.illust }}</option>
+					<option value="picture">{{ i18n.ts.picture }}</option>
+				</MkRadios>
+				<MkInput v-model="imageLabels">
+					<template #label>{{ i18n.ts.searchImageTagsSetting }}</template>
+				</MkInput>
 				<MkSwitch v-model="notify">{{ i18n.ts.notifyAntenna }}</MkSwitch>
 
 				<MkFolder :defaultOpen="true">
@@ -106,6 +114,8 @@ const emit = defineEmits<{
 let name: string = $ref("");
 let users: string = $ref("");
 let excludeUsers: string = $ref("");
+let imageType: string = $ref("all");
+let imageLabels: string = $ref("");
 let keywords: string = $ref("");
 let excludeKeywords: string = $ref("");
 let caseSensitive: boolean = $ref(false);
@@ -115,24 +125,28 @@ let notify: boolean = $ref(false);
 let isPublic: boolean = $ref(false);
 let pinnedAntennas = $ref<{ id: string }[]>([]);
 let antenna: any = $ref(null);
-let searchOrigin = $ref<string>("local");
+let searchOrigin = $ref<string>("combined");
 let filterPreview: string = $ref("");
 
 watch(() => route.params.antennaId, async (newId, oldId) => {
 	antenna = await os.api("antennas/show", { antennaId: newId })
-	name = antenna.name;
-	users = antenna.users.join("\n");
-	excludeUsers = antenna.excludeUsers.join("\n");
-	keywords = antenna.keywords.map((x) => x.join(" ")).join("\n");
-	excludeKeywords = antenna.excludeKeywords.map((x) => x.join(" ")).join("\n");
-	caseSensitive = antenna.caseSensitive;
-	searchOrigin = antenna.localOnly ? "local" : antenna.remoteOnly ? "remote" : "combined";
-	withReplies = antenna.withReplies;
-	withFile = antenna.withFile;
-	notify = antenna.notify;
-	isPublic = antenna.public;
-	pinnedAntennas = antenna.compositeAntennaIds.map((x) => { return { id: x }; });
-	filterPreview = JSON.stringify(JSON.parse(antenna.filterTree), null, 2);
+	if (antenna) {
+		name = antenna.name;
+		users = antenna.users.join("\n");
+		excludeUsers = antenna.excludeUsers.join("\n");
+		imageType = antenna.imageTypes?.[0] === "illust" ? "illust" : antenna.imageTypes?.[0] === "picture" ? "picture" : "all";
+		imageLabels = antenna.imageLabels.join(" ");
+		keywords = antenna.keywords.map((x) => x.join(" ")).join("\n");
+		excludeKeywords = antenna.excludeKeywords.map((x) => x.join(" ")).join("\n");
+		caseSensitive = antenna.caseSensitive;
+		searchOrigin = antenna.localOnly ? "local" : antenna.remoteOnly ? "remote" : "combined";
+		withReplies = antenna.withReplies;
+		withFile = antenna.withFile;
+		notify = antenna.notify;
+		isPublic = antenna.public;
+		pinnedAntennas = antenna.compositeAntennaIds.map((x) => { return { id: x }; });
+		filterPreview = JSON.stringify(JSON.parse(antenna.filterTree), null, 2);
+	}
 }, { immediate: true });
 
 async function saveAntenna() {
@@ -162,6 +176,8 @@ async function saveAntenna() {
 			.split("\n")
 			.map((x) => x.trim().replace(/\s+/g, " ").split(" ")),
 		compositeAntennaIds: pinnedAntennas.map((x) => x.id),
+		imageTypes: imageType === "all" ? [] : [imageType],
+		imageLabels: imageLabels.trim().replace(/\s+/g, " ").split(" "),
 	};
 
 	if (route.params.antennaId == null) {

@@ -80,6 +80,18 @@ export const paramDef = {
 				type: "string",
 			},
 		},
+		imageTypes: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
+		imageLabels: {
+			type: "array",
+			items: {
+				type: "string",
+			},
+		},
 		caseSensitive: { type: "boolean" },
 		localOnly: { type: "boolean" },
 		remoteOnly: { type: "boolean" },
@@ -163,6 +175,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				false,
 				ps.withFile,
 				ps.withReplies,
+				ps.imageTypes,
+				ps.imageLabels,
 				ps.compositeAntennaIds,
 			);
 
@@ -184,6 +198,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					withReplies: ps.withReplies,
 					withFile: ps.withFile,
 					notify: ps.notify,
+					imageTypes: ps.imageTypes,
+					imageLabels: ps.imageLabels,
 					compositeAntennaIds: ps.compositeAntennaIds,
 					filterTree: JSON.stringify(filter),
 				})

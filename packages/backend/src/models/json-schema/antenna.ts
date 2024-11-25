@@ -53,18 +53,6 @@ export const packedAntennaSchema = {
 				},
 			},
 		},
-		src: {
-			type: "string",
-			optional: false,
-			nullable: false,
-			enum: ["home", "all", "users", "list"],
-		},
-		userListId: {
-			type: "string",
-			optional: false,
-			nullable: true,
-			format: "id",
-		},
 		users: {
 			type: "array",
 			optional: false,
@@ -76,6 +64,26 @@ export const packedAntennaSchema = {
 			},
 		},
 		excludeUsers: {
+			type: "array",
+			optional: false,
+			nullable: false,
+			items: {
+				type: "string",
+				optional: false,
+				nullable: false,
+			},
+		},
+		imageTypes: {
+			type: "array",
+			optional: false,
+			nullable: false,
+			items: {
+				type: "string",
+				optional: false,
+				nullable: false,
+			},
+		},
+		imageLabels: {
 			type: "array",
 			optional: false,
 			nullable: false,

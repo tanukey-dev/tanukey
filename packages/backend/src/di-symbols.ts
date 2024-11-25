@@ -112,4 +112,5 @@ export const DI = {
 	httpRequestService: "HttpRequestService",
 	antennaEntityService: "AntennaEntityService",
 	antennaService: "AntennaService",
+	driveFileEntityService: "DriveFileEntityService",
 };

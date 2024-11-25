@@ -111,6 +111,20 @@ export class Antenna {
 	})
 	public remoteOnly: boolean;
 
+	@Column("varchar", {
+		length: 1024,
+		array: true,
+		default: [],
+	})
+	public imageTypes: string[];
+
+	@Column("varchar", {
+		length: 1024,
+		array: true,
+		default: [],
+	})
+	public imageLabels: string[];
+
 	@Column("jsonb", {
 		default: [],
 	})

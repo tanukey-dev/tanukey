@@ -13,6 +13,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { Client as OpenSearch } from "@opensearch-project/opensearch";
 import { add } from "date-fns";
 import { Brackets, In, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import type { DriveFileEntityService } from "./entities/DriveFileEntityService.js";
 
 @Injectable()
 export class SearchService {
@@ -41,6 +42,9 @@ export class SearchService {
 
 		@Inject(DI.loggerService)
 		private loggerService: LoggerService,
+
+		@Inject(DI.driveFileEntityService)
+		private driveFileEntityService: DriveFileEntityService,
 	) {
 		this.logger = this.loggerService.getLogger("search");
 
@@ -74,6 +78,8 @@ export class SearchService {
 											visibility: { type: "keyword" },
 											visibleUserIds: { type: "keyword" },
 											hasFile: { type: "boolean" },
+											imageTypes: { type: "keyword" },
+											imageLabels: { type: "keyword" },
 										},
 									},
 									// see: https://aws.amazon.com/jp/blogs/psa/amazon-opensearch-service-sudachi-plugin/
@@ -137,6 +143,8 @@ export class SearchService {
 										visibility: { type: "keyword" },
 										visibleUserIds: { type: "keyword" },
 										hasFile: { type: "boolean" },
+										imageTypes: { type: "keyword" },
+										imageLabels: { type: "keyword" },
 									},
 								},
 							})
@@ -184,6 +192,23 @@ export class SearchService {
 					});
 				}
 			}
+			const imageTypes = [];
+			const imageLabels = [];
+			if (note.fileIds.length > 0) {
+				const files = await this.driveFileEntityService.packManyByIds(
+					note.fileIds,
+				);
+				for (const file of files) {
+					if (file.metadata?.imageType) {
+						imageTypes.push(file.metadata.imageType);
+					}
+					if (file.metadata?.labels) {
+						for (const label of file.metadata.labels) {
+							imageLabels.push(label);
+						}
+					}
+				}
+			}
 			const body = {
 				createdAt: this.idService.parse(note.id).date.getTime(),
 				userId: note.userId,
@@ -199,6 +224,8 @@ export class SearchService {
 				visibility: note.visibility,
 				visibleUserIds: note.visibleUserIds,
 				hasFile: note.fileIds.length !== 0,
+				imageTypes: imageTypes,
+				imageLabels: imageLabels,
 			};
 
 			this.opensearch.index(
@@ -317,6 +344,8 @@ export class SearchService {
 			hasFile?: boolean;
 			includeReplies?: boolean;
 			tags?: string[];
+			imageTypes?: string[];
+			imageLabels?: string[];
 		},
 	) {
 		const esFilter: any = { bool: { must: [] } };
@@ -624,6 +653,62 @@ export class SearchService {
 				filter.bool.must.bool.should.push({
 					match: {
 						tags: tag,
+					},
+				});
+			}
+
+			esFilter.bool.must.push(filter);
+		}
+
+		if (opts.imageTypes && opts.imageTypes.length > 0) {
+			const filter = {
+				// _name: "imageTypes",
+				bool: {
+					must: {
+						bool: {
+							should: [] as any[],
+							minimum_should_match: 1,
+						},
+					},
+				},
+			};
+
+			// Clean up
+			const types = opts.imageTypes
+				.filter((xs) => xs !== "")
+				.map((s) => s.replaceAll('"', "").replaceAll("#", ""));
+			for (const type of types) {
+				filter.bool.must.bool.should.push({
+					match: {
+						imageTypes: type,
+					},
+				});
+			}
+
+			esFilter.bool.must.push(filter);
+		}
+
+		if (opts.imageLabels && opts.imageLabels.length > 0) {
+			const filter = {
+				// _name: "imageLabels",
+				bool: {
+					must: {
+						bool: {
+							should: [] as any[],
+							minimum_should_match: 1,
+						},
+					},
+				},
+			};
+
+			// Clean up
+			const labels = opts.imageLabels
+				.filter((xs) => xs !== "")
+				.map((s) => s.replaceAll('"', "").replaceAll("#", ""));
+			for (const label of labels) {
+				filter.bool.must.bool.should.push({
+					match: {
+						imageLabels: label,
 					},
 				});
 			}
