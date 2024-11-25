@@ -49,8 +49,6 @@ export const paramDef = {
 		antennaId: { type: "string", format: "misskey:id" },
 		name: { type: "string", minLength: 1, maxLength: 100 },
 		public: { type: "boolean" },
-		src: { type: "string", enum: ["home", "all", "users", "list"] },
-		userListId: { type: "string", format: "misskey:id", nullable: true },
 		keywords: {
 			type: "array",
 			items: {
@@ -98,7 +96,6 @@ export const paramDef = {
 	required: [
 		"antennaId",
 		"name",
-		"src",
 		"keywords",
 		"excludeKeywords",
 		"users",
@@ -163,8 +160,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			await this.antennasRepository.update(antenna.id, {
 				public: ps.public,
 				name: ps.name,
-				src: ps.src,
-				userListId: null,
 				keywords: ps.keywords,
 				excludeKeywords: ps.excludeKeywords,
 				users: ps.users,

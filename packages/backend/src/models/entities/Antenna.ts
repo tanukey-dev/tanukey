@@ -49,21 +49,6 @@ export class Antenna {
 	})
 	public name: string;
 
-	@Column("enum", { enum: ["home", "all", "users", "list"] })
-	public src: "home" | "all" | "users" | "list";
-
-	@Column({
-		...id(),
-		nullable: true,
-	})
-	public userListId: UserList["id"] | null;
-
-	@ManyToOne((type) => UserList, {
-		onDelete: "CASCADE",
-	})
-	@JoinColumn()
-	public userList: UserList | null;
-
 	@Column("varchar", {
 		length: 1024,
 		array: true,

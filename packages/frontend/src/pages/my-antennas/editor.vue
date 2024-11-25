@@ -103,18 +103,16 @@ const emit = defineEmits<{
 	(ev: "deleted"): void;
 }>();
 
-let name: string = $ref();
-let src: string = $ref();
-let userListId: any = $ref();
-let users: string = $ref();
-let excludeUsers: string = $ref();
-let keywords: string = $ref();
-let excludeKeywords: string = $ref();
-let caseSensitive: boolean = $ref();
-let withReplies: boolean = $ref();
-let withFile: boolean = $ref();
-let notify: boolean = $ref();
-let isPublic: boolean = $ref();
+let name: string = $ref("");
+let users: string = $ref("");
+let excludeUsers: string = $ref("");
+let keywords: string = $ref("");
+let excludeKeywords: string = $ref("");
+let caseSensitive: boolean = $ref(false);
+let withReplies: boolean = $ref(false);
+let withFile: boolean = $ref(false);
+let notify: boolean = $ref(false);
+let isPublic: boolean = $ref(false);
 let pinnedAntennas = $ref<{ id: string }[]>([]);
 let antenna: any = $ref(null);
 let searchOrigin = $ref<string>("local");
@@ -123,8 +121,6 @@ let filterPreview: string = $ref("");
 watch(() => route.params.antennaId, async (newId, oldId) => {
 	antenna = await os.api("antennas/show", { antennaId: newId })
 	name = antenna.name;
-	src = antenna.src;
-	userListId = antenna.userListId;
 	users = antenna.users.join("\n");
 	excludeUsers = antenna.excludeUsers.join("\n");
 	keywords = antenna.keywords.map((x) => x.join(" ")).join("\n");
@@ -142,8 +138,6 @@ watch(() => route.params.antennaId, async (newId, oldId) => {
 async function saveAntenna() {
 	const antennaData = {
 		name,
-		src,
-		userListId,
 		withReplies,
 		withFile,
 		notify,
