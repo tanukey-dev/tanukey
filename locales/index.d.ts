@@ -245,6 +245,7 @@ export interface Locale {
     "pinLimitExceeded": string;
     "intro": string;
     "done": string;
+    "talk": string;
     "processing": string;
     "preview": string;
     "default": string;

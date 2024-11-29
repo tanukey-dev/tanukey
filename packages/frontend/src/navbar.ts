@@ -107,6 +107,13 @@ export const navbarItemDef = reactive({
 		show: computed(() => $i != null),
 		to: "/secure/my/achievements",
 	},
+	talk: {
+		title: i18n.ts.talk,
+		icon: "ti ti-message-chatbot",
+		action: (ev) => {
+			window.open("https://novetalk.tarbin.net/", "_blank");
+		},
+	},
 	about: {
 		title: i18n.ts.instanceInfo,
 		icon: "ti ti-info-circle",
