@@ -344,8 +344,8 @@ importers:
         specifier: 5.17.16
         version: 5.17.16
       tfm-js:
-        specifier: github:tanukey-dev/tfm.js
-        version: https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab
+        specifier: github:tarbo-studio/tfm.js
+        version: https://codeload.github.com/tarbo-studio/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab
       tinycolor2:
         specifier: 1.6.0
         version: 1.6.0
@@ -712,8 +712,8 @@ importers:
         specifier: 3.1.0
         version: 3.1.0
       tfm-js:
-        specifier: github:tanukey-dev/tfm.js
-        version: https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab
+        specifier: github:tarbo-studio/tfm.js
+        version: https://codeload.github.com/tarbo-studio/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab
       three:
         specifier: 0.153.0
         version: 0.153.0
@@ -7823,8 +7823,8 @@ packages:
     resolution: {integrity: sha512-mk82dS8eRABNbeVJrEiN5/UMSCliINAuz8mkUwH4SwslkNP//gbEzlWNS5au0z5Dpx40SQxzqZevZkn+WYJ9Dw==}
     engines: {node: '>=8'}
 
-  tfm-js@https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab:
-    resolution: {tarball: https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab}
+  tfm-js@https://codeload.github.com/tarbo-studio/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab:
+    resolution: {tarball: https://codeload.github.com/tarbo-studio/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab}
     version: 0.24.2
 
   thenify-all@1.6.0:
@@ -16958,7 +16958,7 @@ snapshots:
 
   textextensions@3.3.0: {}
 
-  tfm-js@https://codeload.github.com/tanukey-dev/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab:
+  tfm-js@https://codeload.github.com/tarbo-studio/tfm.js/tar.gz/e3e618b8312ac12080a02dd2caf2eb09ba1db5ab:
     dependencies:
       '@twemoji/parser': 15.0.0
 

@@ -28,7 +28,7 @@ services:
       POSTGRES_DB: 'tanukey-db'
 
   opensearch: # This is also the hostname of the container within the Docker network (i.e. https://opensearch/)
-    image: ghcr.io/tanukey-dev/opensearch-sudachi-docker:latest # Specifying the latest available image - modify if you want a specific version
+    image: ghcr.io/tarbo-studio/opensearch-sudachi-docker:latest # Specifying the latest available image - modify if you want a specific version
     container_name: opensearch
     environment:
       - cluster.name=opensearch-cluster # Name the cluster
