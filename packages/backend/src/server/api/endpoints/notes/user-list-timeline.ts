@@ -95,10 +95,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				{
 					userIds: userIds,
 					checkChannelSearchable: true,
-					// createAtBegin: ps.createAtBegin ?? undefined,
-					// createAtEnd: ps.createAtEnd ?? undefined,
 					reverseOrder: false,
-					// hasFile: ps.hasFile ?? false,
 				},
 				{
 					untilId: ps.untilId,

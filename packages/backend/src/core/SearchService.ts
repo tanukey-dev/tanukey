@@ -11,7 +11,6 @@ import { User } from "@/models/index.js";
 import type { NotesRepository } from "@/models/index.js";
 import { Inject, Injectable } from "@nestjs/common";
 import { Client as OpenSearch } from "@opensearch-project/opensearch";
-import { add } from "date-fns";
 import { Brackets, In, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 import type { DriveFileEntityService } from "./entities/DriveFileEntityService.js";
 
@@ -73,6 +72,7 @@ export class SearchService {
 											tags: { type: "keyword" },
 											replyId: { type: "keyword" },
 											renoteId: { type: "keyword" },
+											isQuote: { type: "boolean" },
 											renoteText: { type: "text" },
 											renoteCw: { type: "text" },
 											visibility: { type: "keyword" },
@@ -138,6 +138,7 @@ export class SearchService {
 										tags: { type: "keyword" },
 										replyId: { type: "keyword" },
 										renoteId: { type: "keyword" },
+										isQuote: { type: "boolean" },
 										renoteText: { type: "text" },
 										renoteCw: { type: "text" },
 										visibility: { type: "keyword" },
@@ -172,24 +173,27 @@ export class SearchService {
 			let renote = null;
 			const isQuote = (note: Note) => {
 				return (
-					!!note.renote &&
+					!!note.renoteId &&
 					(!!note.text ||
 						!!note.cw ||
 						(!!note.fileIds && !!note.fileIds.length) ||
 						!!note.hasPoll)
 				);
 			};
+			const isQuoteRenote = isQuote(note);
 			if (note.renoteId) {
 				renote = await this.notesRepository.findOne({
 					where: { id: note.renoteId },
 					select: ["text", "cw", "renoteId"],
 				});
 				// 引用でなくリノートの場合、リノートのさらに先が見えるケースがあるのでそちらで判定する
-				if (!isQuote(note) && renote?.renoteId) {
-					renote = await this.notesRepository.findOne({
-						where: { id: renote.renoteId },
-						select: ["text", "cw"],
-					});
+				if (renote) {
+					if (!isQuoteRenote && renote?.renoteId) {
+						renote = await this.notesRepository.findOne({
+							where: { id: renote.renoteId },
+							select: ["text", "cw"],
+						});
+					}
 				}
 			}
 			const imageTypes = [];
@@ -218,6 +222,7 @@ export class SearchService {
 				text: note.text,
 				tags: note.tags,
 				replyId: note.replyId,
+				isQuote: isQuoteRenote,
 				renoteId: note.renoteId,
 				renoteText: renote?.text,
 				renoteCw: renote?.cw,
@@ -341,6 +346,7 @@ export class SearchService {
 			createAtBegin?: number;
 			createAtEnd?: number;
 			reverseOrder?: boolean;
+			excludeRenoteNotQuote?: boolean;
 			hasFile?: boolean;
 			includeReplies?: boolean;
 			tags?: string[];
@@ -625,6 +631,34 @@ export class SearchService {
 			});
 		}
 
+		if (opts.excludeRenoteNotQuote) {
+			esFilter.bool.must.push({
+				// _name: "hasFile",
+				bool: {
+					must: {
+						bool: {
+							should: [
+								{
+									bool: {
+										must_not: [{ exists: { field: "renoteId" } }],
+									},
+								},
+								{
+									bool: {
+										must: [
+											{ exists: { field: "renoteId" } },
+											{ term: { isQuote: true } },
+										],
+									},
+								},
+							] as any[],
+							minimum_should_match: 1,
+						},
+					},
+				},
+			});
+		}
+
 		if (!opts.includeReplies) {
 			esFilter.bool.must.push({
 				// _name: "includeReplies",
@@ -734,9 +768,10 @@ export class SearchService {
 			createAtBegin?: number;
 			createAtEnd?: number;
 			reverseOrder?: boolean;
+			excludeRenoteNotQuote?: boolean;
 			hasFile?: boolean;
 			includeReplies?: boolean;
-			tags: string[];
+			tags?: string[];
 		},
 		pagination: {
 			equal?: Note["id"];
@@ -760,6 +795,7 @@ export class SearchService {
 			createAtBegin: opts.createAtBegin,
 			createAtEnd: opts.createAtEnd,
 			reverseOrder: opts.reverseOrder,
+			excludeRenoteNotQuote: opts.excludeRenoteNotQuote,
 			hasFile: opts.hasFile,
 			includeReplies: opts.includeReplies,
 			tags: opts.tags,

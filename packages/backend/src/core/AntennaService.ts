@@ -112,6 +112,7 @@ export class AntennaService {
 			excludeKeywords: excludeKeywords,
 			checkChannelSearchable: checkChannelSearchable,
 			reverseOrder: reverseOrder,
+			excludeRenoteNotQuote: true,
 			hasFile: hasFile,
 			includeReplies: includeReplies,
 			imageTypes: imageTypes,

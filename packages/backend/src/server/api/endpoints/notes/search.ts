@@ -149,6 +149,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					createAtBegin: ps.createAtBegin ?? undefined,
 					createAtEnd: ps.createAtEnd ?? undefined,
 					reverseOrder: ps.reverseOrder ?? false,
+					excludeRenoteNotQuote: true,
 					hasFile: ps.hasFile ?? false,
 					includeReplies: true,
 					tags: ps.tags ?? [],
