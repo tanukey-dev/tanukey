@@ -125,6 +125,15 @@ export const router = createRouter({
 		},
 		// need login
 		{
+			path: "/share",
+			component: page(() => import("./pages/share.vue")),
+			meta: {
+				needLogin: true,
+				zen: true,
+			},
+		},
+		// need login
+		{
 			path: "/secure",
 			children: [
 				{
@@ -229,10 +238,6 @@ export const router = createRouter({
 				{
 					path: "authorize-follow",
 					component: page(() => import("./pages/follow.vue")),
-				},
-				{
-					path: "share",
-					component: page(() => import("./pages/share.vue")),
 				},
 				{
 					path: "tags/:tag",
@@ -809,6 +814,12 @@ router.beforeEach((to, from, next) => {
 	}
 	if ($i && to.meta.loginedUserRedirect) {
 		return next({ path: `/secure${to.path}` });
+	}
+	if (!$i && to.meta.loginedUserRedirect) {
+		return next({ path: "/signin" });
+	}
+	if (!$i && to.meta.needLogin) {
+		return next({ path: "/signin" });
 	}
 	if (!$i && to.meta.notLoginedUserRedirect) {
 		return next({ path: to.path.slice("/secure".length) });
