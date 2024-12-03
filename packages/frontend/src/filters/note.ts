@@ -1,3 +1,3 @@
 export const notePage = (note) => {
-	return `/secure/notes/${note.id}`;
+	return `/notes/${note.id}`;
 };

@@ -41,7 +41,7 @@ if (acct.startsWith("https://")) {
 		if (res.type === "User") {
 			follow(res.object);
 		} else if (res.type === "Note") {
-			router.push(`/secure/notes/${res.object.id}`);
+			router.push(`/notes/${res.object.id}`);
 		} else {
 			os.alert({
 				type: "error",

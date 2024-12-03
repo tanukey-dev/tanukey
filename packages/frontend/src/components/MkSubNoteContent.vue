@@ -3,10 +3,10 @@
 		<div>
 			<span v-if="note.isHidden" style="opacity: 0.5">({{ i18n.ts.private }})</span>
 			<span v-if="note.deletedAt" style="opacity: 0.5">({{ i18n.ts.deleted }})</span>
-			<MkA v-if="note.replyId" :class="$style.reply" :to="`/secure/notes/${note.replyId}`"><i
+			<MkA v-if="note.replyId" :class="$style.reply" :to="`/notes/${note.replyId}`"><i
 					class="ti ti-arrow-back-up"></i></MkA>
 			<Mfm v-if="note.text" :text="note.text" :author="note.user" :i="$i" :emojiUrls="note.emojis" />
-			<MkA v-if="note.renoteId" :class="$style.rp" :to="`/secure/notes/${note.renoteId}`">RN: ...</MkA>
+			<MkA v-if="note.renoteId" :class="$style.rp" :to="`/notes/${note.renoteId}`">RN: ...</MkA>
 		</div>
 		<details v-if="note.files.length > 0">
 			<summary>({{ i18n.t('withNFiles', { n: note.files.length }) }})</summary>

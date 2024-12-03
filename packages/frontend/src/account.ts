@@ -330,7 +330,7 @@ export async function openAccountMenu(
 					{
 						type: "link" as const,
 						text: i18n.ts.profile,
-						to: `/secure/@${$i.username}`,
+						to: `/@${$i.username}`,
 						avatar: $i,
 					},
 					null,

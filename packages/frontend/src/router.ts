@@ -25,41 +25,26 @@ export const router = createRouter({
 			path: "/@:username/pages/:pageName",
 			component: page(() => import("./pages/page.vue")),
 			props: (route) => Object.assign({}, route.query, route.params),
-			meta: {
-				loginedUserRedirect: true,
-			},
 		},
 		{
 			path: "/@:acct/following",
 			component: page(() => import("./pages/user/following.vue")),
 			props: (route) => Object.assign({}, route.query, route.params),
-			meta: {
-				loginedUserRedirect: true,
-			},
 		},
 		{
 			path: "/@:acct/followers",
 			component: page(() => import("./pages/user/followers.vue")),
 			props: (route) => Object.assign({}, route.query, route.params),
-			meta: {
-				loginedUserRedirect: true,
-			},
 		},
 		{
 			path: "/@:acct/:page?",
 			component: page(() => import("./pages/user/index.vue")),
 			props: (route) => Object.assign({}, route.query, route.params),
-			meta: {
-				loginedUserRedirect: true,
-			},
 		},
 		{
 			path: "/notes/:noteId",
 			component: page(() => import("./pages/note.vue")),
 			props: (route) => Object.assign({}, route.query, route.params),
-			meta: {
-				loginedUserRedirect: true,
-			},
 		},
 		{
 			path: "/pages",
@@ -149,46 +134,6 @@ export const router = createRouter({
 					path: "user-info/:userId",
 					component: page(() => import("./pages/user-info.vue")),
 					props: (route) => Object.assign({}, route.query, route.params),
-				},
-				{
-					path: "@:username/pages/:pageName",
-					component: page(() => import("./pages/page.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-					meta: {
-						notLoginedUserRedirect: true,
-					},
-				},
-				{
-					path: "@:acct/following",
-					component: page(() => import("./pages/user/following.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-					meta: {
-						notLoginedUserRedirect: true,
-					},
-				},
-				{
-					path: "@:acct/followers",
-					component: page(() => import("./pages/user/followers.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-					meta: {
-						notLoginedUserRedirect: true,
-					},
-				},
-				{
-					path: "@:acct/:page?",
-					component: page(() => import("./pages/user/index.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-					meta: {
-						notLoginedUserRedirect: true,
-					},
-				},
-				{
-					path: "notes/:noteId",
-					component: page(() => import("./pages/note.vue")),
-					props: (route) => Object.assign({}, route.query, route.params),
-					meta: {
-						notLoginedUserRedirect: true,
-					},
 				},
 				{
 					path: "list/:listId",

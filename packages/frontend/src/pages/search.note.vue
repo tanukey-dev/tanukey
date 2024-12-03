@@ -205,9 +205,9 @@ async function search() {
 		const res = await promise;
 
 		if (res.type === "User") {
-			router.push(`/secure/@${res.object.username}@${res.object.host}`);
+			router.push(`/@${res.object.username}@${res.object.host}`);
 		} else if (res.type === "Note") {
-			router.push(`/secure/notes/${res.object.id}`);
+			router.push(`/notes/${res.object.id}`);
 		}
 
 		return;
