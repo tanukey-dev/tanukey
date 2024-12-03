@@ -45,30 +45,6 @@
 							</FormLink>
 						</div>
 					</FormSection>
-					<FormSection>
-						<template #label>
-							<Mfm text="$[jelly ❤]" /> {{ i18n.ts._aboutTanukey.patrons }}
-						</template>
-						<div :class="$style.patronsWithIcon">
-							<div v-for="patron in patronsWithIcon" :class="$style.patronWithIcon">
-								<img :src="patron.icon" :class="$style.patronIcon">
-								<span :class="$style.patronName">{{ patron.name }}</span>
-							</div>
-						</div>
-						<div
-							style="margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); grid-gap: 12px;">
-							<div v-for="patron in patrons" :key="patron"><a :href="patron.url" target="_blank"
-									rel="noopener noreferrer">{{ patron.name }}</a></div>
-						</div>
-						<!-- <p>{{ i18n.ts._aboutTanukey.morePatrons }}</p> -->
-					</FormSection>
-					<!--
-				<FormSection>
-					<template #label>Special thanks</template>
-					<div style="text-align: center;">
-					</div>
-				</FormSection>
-				-->
 				</div>
 			</MkSpacer>
 		</div>
@@ -88,27 +64,6 @@ import * as os from "@/os";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { claimAchievement, claimedAchievements } from "@/scripts/achievements";
 import { $i } from "@/account";
-
-const patronsWithIcon = [];
-
-const patrons = [
-	{ name: "峰岸", url: "https://novelskey.tarbin.net/@minegishi_0" },
-	{ name: "倭", url: "https://novelskey.tarbin.net/@toyama_waon" },
-	{ name: "虚影庵", url: "http://kyoeian.vis.ne.jp" },
-	{ name: "=Hatze=", url: "https://cobbitria.net/" },
-	{ name: "にいさ", url: "https://novelskey.tarbin.net/@0323_0323" },
-	{ name: "熊楠", url: "#" },
-	{ name: "のーら", url: "#" },
-	{ name: "鹿", url: "#" },
-	{ name: "あまがっぱ", url: "https://novelskey.tarbin.net/@amagappa1220" },
-	{ name: "のーら", url: "#" },
-	{ name: "萩オス", url: "https://hagios0.net" },
-	{ name: "カリウム", url: "https://twitter.com/contents_conten" },
-	{ name: "鈍兵夢芽", url: "https://novelskey.tarbin.net/@yume_dombay" },
-	{ name: "にゃりつぃん", url: "https://novelskey.tarbin.net/@nyaritsin" },
-	{ name: "キサラギ職員", url: "https://twitter.com/DSnohito" },
-	{ name: "沼崎", url: "#" },
-];
 
 let thereIsTreasure = $ref(
 	$i && !claimedAchievements.includes("foundTreasure"),

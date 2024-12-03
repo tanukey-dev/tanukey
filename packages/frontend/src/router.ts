@@ -156,14 +156,6 @@ export const router = createRouter({
 					component: page(() => import("./pages/announcements.vue")),
 				},
 				{
-					path: "about",
-					component: page(() => import("./pages/about.vue")),
-				},
-				{
-					path: "about-tanukey",
-					component: page(() => import("./pages/about-tanukey.vue")),
-				},
-				{
 					path: "theme-editor",
 					component: page(() => import("./pages/theme-editor.vue")),
 				},
@@ -734,6 +726,14 @@ export const router = createRouter({
 			meta: {
 				zen: true,
 			},
+		},
+		{
+			path: "/about",
+			component: page(() => import("./pages/about.vue")),
+		},
+		{
+			path: "/about-tanukey",
+			component: page(() => import("./pages/about-tanukey.vue")),
 		},
 		{
 			name: "index",

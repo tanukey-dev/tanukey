@@ -117,7 +117,7 @@ export const navbarItemDef = reactive({
 	about: {
 		title: i18n.ts.instanceInfo,
 		icon: "ti ti-info-circle",
-		to: "/secure/about",
+		to: "/about",
 	},
 	reload: {
 		title: i18n.ts.reload,

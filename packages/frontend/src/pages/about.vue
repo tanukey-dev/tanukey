@@ -30,7 +30,7 @@
 						</MkKeyValue>
 						<div v-html="i18n.t('poweredByTanukeyDescription', { name: instance.name ?? host })">
 						</div>
-						<FormLink to="/secure/about-tanukey">{{ i18n.ts.aboutTanukey }}</FormLink>
+						<FormLink to="/about-tanukey">{{ i18n.ts.aboutTanukey }}</FormLink>
 					</div>
 				</FormSection>
 

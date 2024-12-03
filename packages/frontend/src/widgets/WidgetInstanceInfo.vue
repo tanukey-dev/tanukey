@@ -7,7 +7,7 @@
 			</div>
 			<div :class="$style.bodyContainer">
 				<div :class="$style.body">
-					<MkA :class="$style.name" to="/secure/about" behavior="window">{{ instance.name }}</MkA>
+					<MkA :class="$style.name" to="/about" behavior="window">{{ instance.name }}</MkA>
 					<div :class="$style.host">{{ host }}</div>
 				</div>
 			</div>

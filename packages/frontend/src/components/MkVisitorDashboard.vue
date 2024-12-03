@@ -21,6 +21,11 @@
 					<MkButton :class="$style.mainAction" full rounded data-cy-signin @click="signin()">{{ i18n.ts.login
 						}}</MkButton>
 				</div>
+				<div>
+					<MkButton :class="$style.mainAction" full transparent @click="serverInfo">
+						{{ i18n.ts.instanceInfo }}
+					</MkButton>
+				</div>
 			</div>
 		</div>
 		<div v-if="stats" :class="$style.stats">
@@ -69,6 +74,10 @@ function signin() {
 
 function signup() {
 	router.push("/signup");
+}
+
+function serverInfo() {
+	router.push("/about");
 }
 
 </script>

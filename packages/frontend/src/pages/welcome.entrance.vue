@@ -66,7 +66,8 @@
 		</div>
 	</div>
 	<div :class="$style.footer">
-		<div>© 2024 Novelskey / Otoskey Project</div>
+		<div>© 2024 Tarbo Studio.</div>
+		<a @click="serverInfo"><i style="margin-right: 4px;" class="ti ti-external-link"></i>サーバー情報</a>
 	</div>
 </template>
 
@@ -94,6 +95,10 @@ function signup() {
 
 function timeline() {
 	router.push("/timeline");
+}
+
+function serverInfo() {
+	router.push("/about");
 }
 
 </script>
@@ -193,6 +198,7 @@ function timeline() {
 	justify-content: center;
 	padding-top: 20px;
 	padding-bottom: 20px;
+	gap: 20px;
 }
 
 .descriptionImage {
