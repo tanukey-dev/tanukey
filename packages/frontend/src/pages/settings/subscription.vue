@@ -1,10 +1,16 @@
 <template>
 	<div class="_gaps_m">
 		<div class="_gaps_s">
-			<MkKeyValue>
-				<template #key>{{ i18n.ts.subscriptionStatus }}</template>
-				<template #value>{{ i18n.t(`_subscription.${subscriptionStatus}`) }}</template>
-			</MkKeyValue>
+			<FormSection>
+				<div class="_formLinks">
+					<FormLink to="https://gist.github.com/tar-bin/821e665d1902056e65656cec4818164f" external>
+						特定商取引法に基づく表記
+					</FormLink>
+					<FormLink to="https://forms.gle/thN9T41EAL6kVFK8A" external>
+						決済に関するお問い合わせ
+					</FormLink>
+				</div>
+			</FormSection>
 		</div>
 		<div class="_gaps_s">
 			<div v-if="host === 'novelskey.tarbin.net'">
@@ -63,6 +69,8 @@
 <script lang="ts" setup>
 import MkButton from "@/components/MkButton.vue";
 import MkKeyValue from "@/components/MkKeyValue.vue";
+import FormLink from "@/components/form/link.vue";
+import FormSection from "@/components/form/section.vue";
 import FormPagination from "@/components/MkPagination.vue";
 import { host } from "@/config"
 import { i18n } from "@/i18n.js";
