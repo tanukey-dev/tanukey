@@ -221,7 +221,6 @@ cpuAndMemory: "CPUとメモリ"
 network: "ネットワーク"
 disk: "ディスク"
 instanceInfo: "サーバー情報"
-uptedaList: "更新情報"
 statistics: "統計"
 clearQueue: "キューをクリア"
 clearQueueConfirmTitle: "キューをクリアしますか？"
@@ -1628,6 +1627,7 @@ _aboutTanukey:
   taskList: "タスクリスト"
   morePatrons: "他にも多くの方が支援してくれています。ありがとうございます🥰"
   patrons: "支援者"
+  updateList: "更新情報"
 
 _nsfw:
   respect: "閲覧注意のメディアは隠す"

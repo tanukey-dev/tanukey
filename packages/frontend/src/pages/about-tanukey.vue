@@ -39,7 +39,7 @@
 							</FormLink>
 							<FormLink to="https://github.com/tarbo-studio/tanukey/releases" external>
 								<template #icon><i class="ti ti-list-details"></i></template>
-								{{ i18n.ts._aboutTanukey.uptedaList }}
+								{{ i18n.ts._aboutTanukey.updateList }}
 							</FormLink>
 							<FormLink to="https://trello.com/b/4EKgpcEK/tanukey-project" external>
 								<template #icon><i class="ti ti-checklist"></i></template>

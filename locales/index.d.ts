@@ -224,7 +224,6 @@ export interface Locale {
     "network": string;
     "disk": string;
     "instanceInfo": string;
-    "uptedaList": string;
     "statistics": string;
     "clearQueue": string;
     "clearQueueConfirmTitle": string;
@@ -1707,6 +1706,7 @@ export interface Locale {
         "taskList": string;
         "morePatrons": string;
         "patrons": string;
+        "updateList": string;
     };
     "_nsfw": {
         "respect": string;
