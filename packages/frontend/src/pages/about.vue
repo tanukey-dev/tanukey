@@ -25,7 +25,7 @@
 				<FormSection>
 					<div class="_gaps_m">
 						<MkKeyValue :copy="version">
-							<template #key>Misskey</template>
+							<template #key>Tanukey</template>
 							<template #value>{{ version }}</template>
 						</MkKeyValue>
 						<div v-html="i18n.t('poweredByTanukeyDescription', { name: instance.name ?? host })">
@@ -46,6 +46,9 @@
 								<template #value>{{ instance.maintainerEmail }}</template>
 							</MkKeyValue>
 						</FormSplit>
+						<FormLink to="https://gist.github.com/tar-bin/821e665d1902056e65656cec4818164f" external>
+							特定商取引法に基づく表記
+						</FormLink>
 						<MkFolder v-if="instance.serverRules.length > 0">
 							<template #label>{{ i18n.ts.serverRules }}</template>
 
