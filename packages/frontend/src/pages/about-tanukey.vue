@@ -36,17 +36,14 @@
 							<FormLink to="https://github.com/tar-bin/tanukey" external>
 								<template #icon><i class="ti ti-code"></i></template>
 								{{ i18n.ts._aboutTanukey.source }}
-								<template #suffix>GitHub</template>
 							</FormLink>
 							<FormLink to="https://github.com/tarbo-studio/tanukey/releases" external>
 								<template #icon><i class="ti ti-list-details"></i></template>
 								{{ i18n.ts._aboutTanukey.uptedaList }}
-								<template #suffix>更新情報</template>
 							</FormLink>
 							<FormLink to="https://trello.com/b/4EKgpcEK/tanukey-project" external>
 								<template #icon><i class="ti ti-checklist"></i></template>
 								{{ i18n.ts._aboutTanukey.taskList }}
-								<template #suffix>開発計画・不具合対応リスト</template>
 							</FormLink>
 						</div>
 					</FormSection>
