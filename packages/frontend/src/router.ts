@@ -127,8 +127,9 @@ export const router = createRouter({
 		{
 			path: "/share",
 			component: page(() => import("./pages/share.vue")),
+			props: (route) => Object.assign({}, route.query, route.params),
 			meta: {
-				needLogin: true,
+				needSignin: true,
 				zen: true,
 			},
 		},
@@ -815,14 +816,14 @@ router.beforeEach((to, from, next) => {
 	if ($i && to.meta.loginedUserRedirect) {
 		return next({ path: `/secure${to.path}` });
 	}
-	if (!$i && to.meta.loginedUserRedirect) {
+	if (!$i && to.meta.notLoginedUserRedirect) {
+		return next({ path: to.path.slice("/secure".length) });
+	}
+	if (!$i && to.meta.needSignin) {
 		return next({ path: "/signin" });
 	}
 	if (!$i && to.meta.needLogin) {
-		return next({ path: "/signin" });
-	}
-	if (!$i && to.meta.notLoginedUserRedirect) {
-		return next({ path: to.path.slice("/secure".length) });
+		return next({ path: "/" });
 	}
 	if (!$i && to.path.startsWith("/secure")) {
 		return next({ path: "/" });
