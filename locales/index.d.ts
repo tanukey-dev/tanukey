@@ -224,6 +224,7 @@ export interface Locale {
     "network": string;
     "disk": string;
     "instanceInfo": string;
+    "uptedaList": string;
     "statistics": string;
     "clearQueue": string;
     "clearQueueConfirmTitle": string;
