@@ -29,7 +29,7 @@ const canonical =
 		? `@${props.username}`
 		: `@${props.username}@${toUnicode(props.host)}`;
 
-const url = `/secure/${canonical}`;
+const url = `/${canonical}`;
 
 const isMe =
 	$i &&
