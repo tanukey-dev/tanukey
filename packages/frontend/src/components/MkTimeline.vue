@@ -37,7 +37,6 @@ provide(
 const tlComponent: InstanceType<typeof MkNotes> = $ref();
 
 const prepend = async (data) => {
-	console.log(data);
 	let note = data;
 	if (data.idOnly) {
 		note = await os.apiGet("notes/show", { noteId: data.id });
