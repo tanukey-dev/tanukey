@@ -13,6 +13,7 @@ class LocalTimelineChannel extends Channel {
 	public static shouldShare = true;
 	public static requireCredential = false;
 	private withReplies: boolean;
+	private idOnly: boolean;
 
 	constructor(
 		private metaService: MetaService,
@@ -34,6 +35,7 @@ class LocalTimelineChannel extends Channel {
 		if (!policies.ltlAvailable) return;
 
 		this.withReplies = params.withReplies as boolean;
+		this.idOnly = params.idOnly as boolean;
 
 		// Subscribe events
 		this.subscriber.on("notesStream", this.onNote);
@@ -98,9 +100,13 @@ class LocalTimelineChannel extends Channel {
 		)
 			return;
 
-		this.connection.cacheNote(note);
-
-		this.send("note", note);
+		if (this.idOnly && !["followers", "specified"].includes(note.visibility)) {
+			const idOnlyNote = { id: note.id, idOnly: true };
+			this.send("note", idOnlyNote);
+		} else {
+			this.connection.cacheNote(note);
+			this.send("note", note);
+		}
 	}
 
 	@bindThis

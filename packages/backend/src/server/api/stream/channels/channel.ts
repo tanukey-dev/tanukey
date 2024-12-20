@@ -15,6 +15,7 @@ class ChannelChannel extends Channel {
 	public static requireCredential = false as const;
 	private channelId: string;
 	private channel: _Channel | null;
+	private idOnly: boolean;
 
 	constructor(
 		private noteEntityService: NoteEntityService,
@@ -34,6 +35,7 @@ class ChannelChannel extends Channel {
 				id: this.channelId,
 			},
 		});
+		this.idOnly = params.idOnly as boolean;
 
 		this.subscriber.on("notesStream", this.onNote);
 	}
@@ -92,9 +94,13 @@ class ChannelChannel extends Channel {
 		)
 			return;
 
-		this.connection.cacheNote(note);
-
-		this.send("note", note);
+		if (this.idOnly && !["followers", "specified"].includes(note.visibility)) {
+			const idOnlyNote = { id: note.id, idOnly: true };
+			this.send("note", idOnlyNote);
+		} else {
+			this.connection.cacheNote(note);
+			this.send("note", note);
+		}
 	}
 
 	@bindThis

@@ -4,13 +4,14 @@
 </template>
 
 <script lang="ts" setup>
-import { $i } from "@/account";
+import { $i, iAmModerator } from "@/account";
 import MkNotes from "@/components/MkNotes.vue";
 import * as sound from "@/scripts/sound";
 import { defaultStore } from "@/store";
 import { useStream } from "@/stream";
 import { computed, onBeforeMount, onUnmounted, provide, ref, watch } from "vue";
 import { Paging } from "./MkPagination.vue";
+import * as os from "@/os";
 
 const key = ref<number>(0)
 
@@ -35,7 +36,12 @@ provide(
 
 const tlComponent: InstanceType<typeof MkNotes> = $ref();
 
-const prepend = (note) => {
+const prepend = async (data) => {
+	console.log(data);
+	let note = data;
+	if (data.idOnly) {
+		note = await os.apiGet("notes/show", { noteId: data.id });
+	}
 	tlComponent.pagingComponent?.prepend(note);
 
 	emit("note");
@@ -79,6 +85,7 @@ let endpoint;
 let query;
 let connection;
 let pagenation: Paging;
+const idOnly = !iAmModerator;
 
 const stream = useStream();
 
@@ -90,6 +97,7 @@ const setupStream = () => {
 		};
 		connection = stream.useChannel("antenna", {
 			antennaId: props.antenna,
+			idOnly: idOnly,
 		});
 		connection.on("note", prepend);
 	} else if (props.src === "home") {
@@ -99,6 +107,7 @@ const setupStream = () => {
 		};
 		connection = stream.useChannel("homeTimeline", {
 			withReplies: defaultStore.state.showTimelineReplies,
+			idOnly: idOnly,
 		});
 		connection.on("note", prepend);
 	} else if (props.src === "local") {
@@ -108,6 +117,7 @@ const setupStream = () => {
 		};
 		connection = stream.useChannel("localTimeline", {
 			withReplies: defaultStore.state.showTimelineReplies,
+			idOnly: idOnly,
 		});
 		connection.on("note", prepend);
 	} else if (props.src === "public") {
@@ -123,6 +133,7 @@ const setupStream = () => {
 			withLocal: defaultStore.state.publicTlShowLocalPost,
 			withRemote: defaultStore.state.publicTlShowRemoteFollowPost,
 			withChannel: defaultStore.state.publicTlShowChannelFollowPost,
+			idOnly: idOnly,
 		});
 		connection.on("note", prepend);
 	} else if (props.src === "mentions") {
@@ -149,7 +160,9 @@ const setupStream = () => {
 		connection = stream.useChannel("userList", {
 			listId: props.list,
 		});
-		connection.on("note", prepend);
+		connection.on("note", prepend, {
+			idOnly: idOnly,
+		});
 		connection.on("userAdded", onUserAdded);
 		connection.on("userRemoved", onUserRemoved);
 	} else if (props.src === "channel") {
@@ -159,6 +172,7 @@ const setupStream = () => {
 		};
 		connection = stream.useChannel("channel", {
 			channelId: props.channel,
+			idOnly: idOnly,
 		});
 		connection.on("note", prepend);
 	} else if (props.src === "role") {
@@ -168,6 +182,7 @@ const setupStream = () => {
 		};
 		connection = stream.useChannel("roleTimeline", {
 			roleId: props.role,
+			idOnly: idOnly,
 		});
 		connection.on("note", prepend);
 	}
