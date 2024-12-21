@@ -38,9 +38,15 @@ const tlComponent: InstanceType<typeof MkNotes> = $ref();
 
 const prepend = async (data) => {
 	let note = data;
-	if (data.idOnly) {
-		note = await os.apiGet("notes/show", { noteId: data.id });
+
+	// チェックするプロパティはなんでも良い
+	// idOnlyが有効でid以外が存在しない場合は取得する
+	if (!data.visibility) {
+		const res = await fetch(`/notes/${data.id}.json`);
+		if (!res.ok) return;
+		note = await res.json();
 	}
+
 	tlComponent.pagingComponent?.prepend(note);
 
 	emit("note");

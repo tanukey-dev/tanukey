@@ -5,7 +5,6 @@ import type { LocalUser } from "@/models/entities/User.js";
 import type { AccessToken } from "@/models/entities/AccessToken.js";
 import { ApiError } from "./error.js";
 import type { IEndpointMeta } from "./endpoints.js";
-import type { FastifyReply } from 'fastify';
 
 const ajv = new Ajv({
 	useDefaults: true,
@@ -25,7 +24,6 @@ type Executor<T extends IEndpointMeta, Ps extends Schema> = (
 	params: SchemaType<Ps>,
 	user: T["requireCredential"] extends true ? LocalUser : LocalUser | null,
 	token: AccessToken | null,
-	reply: FastifyReply,
 	file?: File,
 	cleanup?: () => any,
 	ip?: string | null,
@@ -39,7 +37,6 @@ export abstract class Endpoint<T extends IEndpointMeta, Ps extends Schema> {
 		params: any,
 		user: T["requireCredential"] extends true ? LocalUser : LocalUser | null,
 		token: AccessToken | null,
-		reply: FastifyReply,
 		file?: File,
 		ip?: string | null,
 		headers?: Record<string, string> | null,
@@ -52,7 +49,6 @@ export abstract class Endpoint<T extends IEndpointMeta, Ps extends Schema> {
 			params: any,
 			user: T["requireCredential"] extends true ? LocalUser : LocalUser | null,
 			token: AccessToken | null,
-			reply: FastifyReply,
 			file?: File,
 			ip?: string | null,
 			headers?: Record<string, string> | null,
@@ -97,7 +93,6 @@ export abstract class Endpoint<T extends IEndpointMeta, Ps extends Schema> {
 				params as SchemaType<Ps>,
 				user,
 				token,
-				reply,
 				file,
 				cleanup,
 				ip,

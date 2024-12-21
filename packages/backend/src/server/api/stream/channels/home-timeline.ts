@@ -120,8 +120,8 @@ class HomeTimelineChannel extends Channel {
 		if (await checkWordMute(note, this.user, this.userProfile!.mutedWords))
 			return;
 
-		if (this.idOnly && !["followers", "specified"].includes(note.visibility)) {
-			const idOnlyNote = { id: note.id, idOnly: true };
+		if (this.idOnly && ['public', 'home'].includes(note.visibility)) {
+			const idOnlyNote = { id: note.id };
 			this.send("note", idOnlyNote);
 		} else {
 			this.connection.cacheNote(note);
